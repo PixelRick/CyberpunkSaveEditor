@@ -231,7 +231,7 @@ public:
       ImGui::BeginChild("nodetree", ImVec2(0, 1000), false, ImGuiWindowFlags_HorizontalScrollbar);
      
       if (m_csav->root_node)
-        for (const auto& n : m_csav->root_node->children)
+        for (const auto& n : m_csav->root_node->children())
           draw_node(n);
 
       ImGui::EndChild();
@@ -243,14 +243,14 @@ public:
     //m_csav->entry_descs
   }
 
-  static inline std::shared_ptr<node_t>& selected_node()
+  static inline std::shared_ptr<const node_t>& selected_node()
   {
-    static std::shared_ptr<node_t> _singleton = {};
+    static std::shared_ptr<const node_t> _singleton = {};
     return _singleton;
   }
 
 protected:
-  void draw_node(const std::shared_ptr<node_t>& node)
+  void draw_node(const std::shared_ptr<const node_t>& node)
   {
     if (!node)
     {
@@ -261,20 +261,20 @@ protected:
     auto& sel_node = selected_node();
     bool selected = node == sel_node;
     ImGuiTreeNodeFlags node_flags = selected ? ImGuiTreeNodeFlags_Selected : 0;
-    if (node->children.empty())
+    if (!node->has_children())
       node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
     bool opened =
-      node->idx < 0
-      ? ImGui::TreeNodeEx((void*)node.get(), node_flags, "%s", node->name.c_str())
-      : ImGui::TreeNodeEx((void*)node.get(), node_flags, "%s (%u)", node->name.c_str(), node->idx);
+      (node->is_blob() or node->is_root())
+      ? ImGui::TreeNodeEx((void*)node.get(), node_flags, "%s", node->name().c_str())
+      : ImGui::TreeNodeEx((void*)node.get(), node_flags, "%s (%u)", node->name().c_str(), node->idx());
 
     if (ImGui::IsItemClicked() && ImGui::IsMouseDoubleClicked(0))
       sel_node = node;
 
-    if (opened && !node->children.empty())
+    if (opened && node->has_children())
     {
-      for (auto& child : node->children)
+      for (auto& child : node->children())
         draw_node(child);
 
       ImGui::TreePop();
@@ -396,7 +396,7 @@ public:
 
   void draw_hexedit()
   {
-    static std::shared_ptr<node_t> last_selected_node {};
+    static std::shared_ptr<const node_t> last_selected_node {};
     static bool opened = false;
     static MemoryEditor mem_edit {};
 
@@ -415,7 +415,8 @@ public:
     ImGui::SetNextWindowSize(ImVec2(700, 400), ImGuiCond_FirstUseEver);
     if (ImGui::Begin("Node Data Editor", &opened, 0))
     {
-      mem_edit.DrawContents(sel_node->data.data(), sel_node->data.size());
+      auto& buf = sel_node->nonconst().data();
+      mem_edit.DrawContents((void*)buf.data(), buf.size());
       ImGui::End();
     }
   }

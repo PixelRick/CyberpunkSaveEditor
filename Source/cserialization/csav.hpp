@@ -58,11 +58,8 @@ public:
   std::filesystem::path filepath;
   uint32_t v1, v2, v3, uk0, uk1;
   std::string suk;
-  std::vector<compressed_chunk_desc> chunk_descs;
-  std::vector<char> nodedata;
   std::vector<node_desc> node_descs;
-
-  std::shared_ptr<node_t> root_node;
+  std::shared_ptr<const node_t> root_node;
 
 public:
   bool open_with_progress(std::filesystem::path path, float& progress)
@@ -71,6 +68,9 @@ public:
     uint32_t nodedescs_start = 0;
     uint32_t magic = 0;
     uint32_t i = 0;
+
+    std::vector<compressed_chunk_desc> chunk_descs;
+    std::vector<char> nodedata;
 
     progress = 0.05f;
 
@@ -252,11 +252,10 @@ public:
 
     // fake descriptor, our buffer should be prefixed with zeroes so the *data==idx will pass..
     uint32_t data_size = (uint32_t)nodedata.size() - chunks_start;
-    node_desc root_desc {"root", -1, 0, chunks_start-4, data_size+4};
-    root_node = read_node(root_desc, 0);
+    node_desc root_desc {"root", NULL_NODE_IDX, 0, chunks_start-4, data_size+4};
+    root_node = read_node(nodedata, root_desc, ROOT_NODE_IDX);
     if (!root_node)
       return false;
-    root_node->idx = -1;
 
     auto tree_size = root_node->calcsize();
     if (tree_size != data_size) // check the unflattening worked
@@ -267,13 +266,12 @@ public:
   }
 
 protected:
-  std::shared_ptr<node_t> make_blob_node(uint32_t start_offset, uint32_t end_offset)
+  std::shared_ptr<const node_t> make_blob_node(const std::vector<char>& nodedata, uint32_t start_offset, uint32_t end_offset)
   {
-    auto node = std::make_shared<node_t>();
-    node->name = "datablob";
-    node->idx = -1;
+    auto node = std::make_shared<const node_t>(BLOB_NODE_IDX, "datablob");
+    auto& nc_node = node->nonconst();
 
-    node->data.assign(
+    nc_node.data().assign(
       nodedata.begin() + start_offset,
       nodedata.begin() + end_offset
     );
@@ -281,19 +279,19 @@ protected:
     return node;
   }
 
-  std::shared_ptr<node_t> read_node(node_desc& desc, uint32_t idx)
+  std::shared_ptr<const node_t> read_node(const std::vector<char>& nodedata, node_desc& desc, int32_t idx)
   {
     uint32_t cur_offset = desc.data_offset + 4;
     uint32_t end_offset = desc.data_offset + desc.data_size;
 
     if (end_offset > nodedata.size())
       return nullptr;
-    if (*(uint32_t*)(nodedata.data() + desc.data_offset) != idx)
+    if (*(uint32_t*)(nodedata.data() + desc.data_offset) != idx && idx != ROOT_NODE_IDX)
       return nullptr;
 
-    auto node = std::make_shared<node_t>();
-    node->name = desc.name;
-    node->idx = idx;
+    auto node = std::make_shared<node_t>(idx, desc.name);
+    auto& nc_node = node->nonconst();
+    auto& nc_children = nc_node.children();
 
     if (desc.child_idx >= 0)
     {
@@ -307,29 +305,29 @@ protected:
         auto& childdesc = node_descs[i];
 
         if (childdesc.data_offset > cur_offset) {
-          node->children.push_back(
-            make_blob_node(cur_offset, childdesc.data_offset)
+          nc_children.push_back(
+            make_blob_node(nodedata, cur_offset, childdesc.data_offset)
           );
         }
 
-        auto childnode = read_node(childdesc, i);
+        auto childnode = read_node(nodedata, childdesc, i);
         if (!childnode) // something went wrong
           return nullptr;
-        node->children.push_back(childnode);
+          nc_node.children().push_back(childnode);
 
         cur_offset = childdesc.data_offset + childdesc.data_size;
         i = childdesc.next_idx;
       }
 
       if (cur_offset < end_offset) {
-        node->children.push_back(
-          make_blob_node(cur_offset, end_offset)
+        nc_children.push_back(
+          make_blob_node(nodedata, cur_offset, end_offset)
         );
       }
     }
     else if (cur_offset < end_offset)
     {
-      node->data.assign(
+      nc_node.data().assign(
         nodedata.begin() + cur_offset,
         nodedata.begin() + end_offset
       );
@@ -350,9 +348,8 @@ public:
     uint32_t magic = 0;
     uint32_t i = 0;
 
-    chunk_descs.clear();
-    nodedata.clear();
-    node_descs.clear();
+    std::vector<compressed_chunk_desc> chunk_descs;
+    std::vector<char> nodedata;
 
     progress = 0.05f;
 
@@ -419,13 +416,12 @@ public:
     // so before creating the node descriptors i fill the buffer to min_offset
     nodedata.resize(chunks_start);
 
-    root_node->idx = 0;
-    uint32_t nd_cnt = root_node->treecount() - 1;
-    root_node->idx = -1;
+    auto& nc_root = root_node->nonconst();
+    uint32_t node_cnt = root_node->treecount();
 
-    node_descs.resize(nd_cnt);
+    node_descs.resize(node_cnt);
     uint32_t next_idx = 0;
-    write_node_children(root_node, next_idx);
+    write_node_children(nodedata, root_node, next_idx);
 
     // check that each blob starts with its node index (dword)
     i = 0;
@@ -510,11 +506,11 @@ public:
     ofs.write((char*)&magic, 4);
 
     // now write node descs
-    write_packed_int(ofs, (int64_t)nd_cnt);
-    for (uint32_t i = 0; i < nd_cnt; ++i)
+    write_packed_int(ofs, (int64_t)node_cnt);
+    for (uint32_t i = 0; i < node_cnt; ++i)
     {
       ofs << node_descs[i];
-      progress = 0.85f + 0.1f * i / (float)nd_cnt;
+      progress = 0.85f + 0.1f * i / (float)node_cnt;
     }
 
     progress = 0.95f;
@@ -536,46 +532,47 @@ public:
   }
 
 protected:
-  node_desc* write_node_visitor(const std::shared_ptr<node_t>& node, uint32_t& next_idx)
+  node_desc* write_node_visitor(std::vector<char>& nodedata, const std::shared_ptr<const node_t>& node, uint32_t& next_idx)
   {
-    if (node->idx >= 0)
+    if (node->idx() >= 0)
     {
       const uint32_t idx = next_idx++;
-      node->idx = idx;
+      node->nonconst().idx(idx);
+
       auto& nd = node_descs[idx];
-      nd.name = node->name;
+      nd.name = node->name();
       nd.data_offset = (uint32_t)nodedata.size();
-      nd.child_idx = node->children.empty() ? -1 : next_idx;
+      nd.child_idx = node->has_children() ? next_idx : NULL_NODE_IDX;
 
-      char* pIdx = (char*)&node->idx;
+      char* pIdx = (char*)&idx;
       std::copy(pIdx, pIdx + 4, std::back_inserter(nodedata));
-      std::copy(node->data.begin(), node->data.end(), std::back_inserter(nodedata));
+      std::copy(node->data().begin(), node->data().end(), std::back_inserter(nodedata));
 
-      write_node_children(node, next_idx);
+      write_node_children(nodedata, node, next_idx);
 
-      nd.next_idx = next_idx < node_descs.size() ? next_idx : -1;
+      nd.next_idx = (next_idx < node_descs.size()) ? next_idx : NULL_NODE_IDX;
       nd.data_size = (uint32_t)nodedata.size() - nd.data_offset;
       return &nd;
     }
     else
     {
       // data blob
-      std::copy(node->data.begin(), node->data.end(), std::back_inserter(nodedata));
+      std::copy(node->data().begin(), node->data().end(), std::back_inserter(nodedata));
     }
     return nullptr;
   }
 
-  void write_node_children(const std::shared_ptr<node_t>& node, uint32_t& next_idx)
+  void write_node_children(std::vector<char>& nodedata, const std::shared_ptr<const node_t>& node, uint32_t& next_idx)
   {
     node_desc* last_child_desc = nullptr;
-    for (auto& c : node->children)
+    for (auto& c : node->children())
     {
-      auto cnd = write_node_visitor(c, next_idx);
+      auto cnd = write_node_visitor(nodedata, c, next_idx);
       if (cnd != nullptr)
         last_child_desc = cnd;
     }
     if (last_child_desc)
-      last_child_desc->next_idx = -1;
+      last_child_desc->next_idx = NULL_NODE_IDX;
   }
 };
 
