@@ -399,12 +399,14 @@ public:
     static std::shared_ptr<node_t> last_selected_node {};
     static bool opened = false;
     static MemoryEditor mem_edit {};
+    bool changed_node = false;
 
     auto& sel_node = csav_collapsable_header::selected_node();
     if (last_selected_node != sel_node)
     {
       last_selected_node = sel_node;
       opened = sel_node != nullptr;
+      changed_node = true;
     }
     if (!opened)
     {
@@ -415,7 +417,70 @@ public:
     ImGui::SetNextWindowSize(ImVec2(700, 400), ImGuiCond_FirstUseEver);
     if (ImGui::Begin("Node Data Editor", &opened, 0))
     {
+      ImGui::BeginChild("", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()));
       mem_edit.DrawContents(sel_node->data.data(), sel_node->data.size());
+      ImGui::EndChild();
+
+      static size_t resize_offset;
+      static int32_t resize_amount;
+      static bool was_resized;
+      if (changed_node)
+      {
+          resize_offset = static_cast<size_t>(-1);
+          resize_amount = 0;
+          was_resized = false;
+      }
+
+      if (mem_edit.DataEditingTakeFocus)
+      {
+          resize_offset = mem_edit.DataEditingAddr;
+      }
+
+      int32_t resize_delete_minimum = static_cast<int32_t>(resize_offset == static_cast<size_t>(-1)
+          ? -static_cast<int32_t>(sel_node->data.size())
+          : -static_cast<int32_t>(sel_node->data.size() - resize_offset));
+      int32_t resize_insert_maximum = std::max(16, static_cast<int32_t>(sel_node->data.size()));
+      if (was_resized)
+      {
+          resize_amount = std::max(resize_delete_minimum, resize_amount);
+          was_resized = false;
+      }
+      ImGui::PushItemWidth(100.f);
+      ImGui::SliderInt("", &resize_amount, resize_delete_minimum, resize_insert_maximum);
+      ImGui::PopItemWidth();
+      ImGui::SameLine();
+      const bool can_resize = resize_amount != 0 && resize_offset != static_cast<size_t>(-1);
+      const bool is_resize_delete = resize_amount < 0;
+      const char* resize_label = !is_resize_delete ? "Insert##Resize" : "Delete##Resize";
+      ImGuiButtonFlags resize_flags = can_resize ? ImGuiButtonFlags_None : ImGuiButtonFlags_Disabled;
+      if (ImGui::ButtonEx(resize_label, ImVec2(0, 0), resize_flags))
+      {
+          resize_amount = std::min(std::max(resize_delete_minimum, resize_amount), std::numeric_limits<int32_t>::max());
+          if (resize_offset != static_cast<size_t>(-1))
+          {
+              if (resize_amount > 0)
+              {
+                  size_t copy_length = sel_node->data.size() - resize_offset;
+                  sel_node->data.resize(sel_node->data.size() + resize_amount);
+                  auto data = sel_node->data.data();
+                  std::memmove(&data[resize_offset + resize_amount], &data[resize_offset], copy_length);
+                  //std::memset(&data[resize_offset], 0xCC, resize_amount);
+                  std::memset(&data[resize_offset], 0x00, resize_amount);
+                  was_resized = true;
+              }
+              else if (resize_amount < 0)
+              {
+                  size_t delete_amount = static_cast<size_t>(-resize_amount);
+                  size_t copy_length = sel_node->data.size() - (resize_offset + delete_amount);
+                  auto data = sel_node->data.data();
+                  std::memmove(&data[resize_offset], &data[resize_offset + delete_amount], copy_length);
+                  sel_node->data.resize(sel_node->data.size() - delete_amount);
+                  was_resized = true;
+              }
+          }
+      }
+      ImGui::SameLine();
+      ImGui::LabelText("", "@%08X", static_cast<uint32_t>(resize_offset));
       ImGui::End();
     }
   }
