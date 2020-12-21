@@ -24,12 +24,12 @@
     <ClCompile Include="Source\AppLib\imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="Source\AppLib\imgui\imgui_impl_win32.cpp" />
     <ClInclude Include="Source\AppLib\stb_image.h" />
-    <ClInclude Include="Source\cnodes\inventory.hpp" />
-    <ClInclude Include="Source\cnodes\itemData.hpp" />
     <ClCompile Include="Source\cserialization\csav.cpp" />
     <ClCompile Include="Source\cserialization\packing.cpp" />
     <ClCompile Include="Source\external\xlz4\lz4.c" />
     <ClCompile Include="Source\utils.cpp" />
+    <ClInclude Include="Source\cserialization\cnodes\inventory.hpp" />
+    <ClInclude Include="Source\cserialization\cnodes\itemData.hpp" />
     <ClInclude Include="Source\widgets\csav_widget.hpp" />
   </ItemGroup>
   <ItemGroup>
