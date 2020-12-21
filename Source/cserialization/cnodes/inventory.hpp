@@ -1,4 +1,5 @@
 #pragma once
+#include "cserialization/node.hpp"
 
 /*
 ------------------------

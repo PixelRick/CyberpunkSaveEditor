@@ -21,11 +21,17 @@
     <Filter Include="Source\imgui_extras">
       <UniqueIdentifier>{ce933798-dbe5-4392-8de2-c5e49012149c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\cnodes">
-      <UniqueIdentifier>{5afc6430-c459-4483-815c-e6a6adfebb5c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\cserialization">
       <UniqueIdentifier>{88d91336-c576-4e5c-9fa2-ef2440c28e1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\widgets">
+      <UniqueIdentifier>{5dd5b1e8-7255-4981-8e35-c8166bf50ae7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\widgets\cnodes">
+      <UniqueIdentifier>{2229f702-6812-40b2-87f4-f8eac67cff6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\cserialization\cnodes">
+      <UniqueIdentifier>{5afc6430-c459-4483-815c-e6a6adfebb5c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\external">
       <UniqueIdentifier>{145ed9b9-b2de-4237-a01c-ea74307ab50d}</UniqueIdentifier>
@@ -35,9 +41,6 @@
     </Filter>
     <Filter Include="Source\external\xlz4">
       <UniqueIdentifier>{ee3e378e-7423-40f9-8c33-76ee06357750}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\widgets">
-      <UniqueIdentifier>{5dd5b1e8-7255-4981-8e35-c8166bf50ae7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -124,12 +127,6 @@
     <ClInclude Include="Source\AppLib\stb_image.h">
       <Filter>Source\AppLib</Filter>
     </ClInclude>
-    <ClInclude Include="Source\cnodes\inventory.hpp">
-      <Filter>Source\cnodes</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\cnodes\itemData.hpp">
-      <Filter>Source\cnodes</Filter>
-    </ClInclude>
     <ClInclude Include="Source\cserialization\node.hpp">
       <Filter>Source\cserialization</Filter>
     </ClInclude>
@@ -146,6 +143,15 @@
       <Filter>Source\cserialization</Filter>
     </ClInclude>
     <ClInclude Include="Source\widgets\csav_widget.hpp">
+      <Filter>Source\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cserialization\cnodes\inventory.hpp">
+      <Filter>Source\cserialization\cnodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cserialization\cnodes\itemData.hpp">
+      <Filter>Source\cserialization\cnodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\widgets\node_editor.hpp">
       <Filter>Source\widgets</Filter>
     </ClInclude>
   </ItemGroup>

@@ -231,7 +231,7 @@ public:
       ImGui::BeginChild("nodetree", ImVec2(0, 1000), false, ImGuiWindowFlags_HorizontalScrollbar);
      
       if (m_csav->root_node)
-        for (const auto& n : m_csav->root_node->children)
+        for (const auto& n : m_csav->root_node->children())
           draw_node(n);
 
       ImGui::EndChild();
@@ -243,14 +243,14 @@ public:
     //m_csav->entry_descs
   }
 
-  static inline std::shared_ptr<node_t>& selected_node()
+  static inline std::shared_ptr<const node_t>& selected_node()
   {
-    static std::shared_ptr<node_t> _singleton = {};
+    static std::shared_ptr<const node_t> _singleton = {};
     return _singleton;
   }
 
 protected:
-  void draw_node(const std::shared_ptr<node_t>& node)
+  void draw_node(const std::shared_ptr<const node_t>& node)
   {
     if (!node)
     {
@@ -261,20 +261,20 @@ protected:
     auto& sel_node = selected_node();
     bool selected = node == sel_node;
     ImGuiTreeNodeFlags node_flags = selected ? ImGuiTreeNodeFlags_Selected : 0;
-    if (node->children.empty())
+    if (!node->has_children())
       node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
     bool opened =
-      node->idx < 0
-      ? ImGui::TreeNodeEx((void*)node.get(), node_flags, "%s", node->name.c_str())
-      : ImGui::TreeNodeEx((void*)node.get(), node_flags, "%s (%u)", node->name.c_str(), node->idx);
+      (node->is_blob() or node->is_root())
+      ? ImGui::TreeNodeEx((void*)node.get(), node_flags, "%s", node->name().c_str())
+      : ImGui::TreeNodeEx((void*)node.get(), node_flags, "%s (%u)", node->name().c_str(), node->idx());
 
     if (ImGui::IsItemClicked() && ImGui::IsMouseDoubleClicked(0))
       sel_node = node;
 
-    if (opened && !node->children.empty())
+    if (opened && node->has_children())
     {
-      for (auto& child : node->children)
+      for (auto& child : node->children())
         draw_node(child);
 
       ImGui::TreePop();
@@ -396,7 +396,7 @@ public:
 
   void draw_hexedit()
   {
-    static std::shared_ptr<node_t> last_selected_node {};
+    static std::shared_ptr<const node_t> last_selected_node {};
     static bool opened = false;
     static MemoryEditor mem_edit {};
     bool changed_node = false;
@@ -417,8 +417,9 @@ public:
     ImGui::SetNextWindowSize(ImVec2(700, 400), ImGuiCond_FirstUseEver);
     if (ImGui::Begin("Node Data Editor", &opened, 0))
     {
+      auto& nc_buf = sel_node->nonconst().data();
       ImGui::BeginChild("", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()));
-      mem_edit.DrawContents(sel_node->data.data(), sel_node->data.size());
+      mem_edit.DrawContents(nc_buf.data(), nc_buf.size());
       ImGui::EndChild();
 
       static size_t resize_offset;
@@ -437,9 +438,9 @@ public:
       }
 
       int32_t resize_delete_minimum = static_cast<int32_t>(resize_offset == static_cast<size_t>(-1)
-          ? -static_cast<int32_t>(sel_node->data.size())
-          : -static_cast<int32_t>(sel_node->data.size() - resize_offset));
-      int32_t resize_insert_maximum = std::max(16, static_cast<int32_t>(sel_node->data.size()));
+          ? -static_cast<int32_t>(nc_buf.size())
+          : -static_cast<int32_t>(nc_buf.size() - resize_offset));
+      int32_t resize_insert_maximum = std::max(16, static_cast<int32_t>(nc_buf.size()));
       if (was_resized)
       {
           resize_amount = std::max(resize_delete_minimum, resize_amount);
@@ -460,9 +461,9 @@ public:
           {
               if (resize_amount > 0)
               {
-                  size_t copy_length = sel_node->data.size() - resize_offset;
-                  sel_node->data.resize(sel_node->data.size() + resize_amount);
-                  auto data = sel_node->data.data();
+                  size_t copy_length = nc_buf.size() - resize_offset;
+                  nc_buf.resize(nc_buf.size() + resize_amount);
+                  auto data = nc_buf.data();
                   std::memmove(&data[resize_offset + resize_amount], &data[resize_offset], copy_length);
                   //std::memset(&data[resize_offset], 0xCC, resize_amount);
                   std::memset(&data[resize_offset], 0x00, resize_amount);
@@ -471,10 +472,10 @@ public:
               else if (resize_amount < 0)
               {
                   size_t delete_amount = static_cast<size_t>(-resize_amount);
-                  size_t copy_length = sel_node->data.size() - (resize_offset + delete_amount);
-                  auto data = sel_node->data.data();
+                  size_t copy_length = nc_buf.size() - (resize_offset + delete_amount);
+                  auto data = nc_buf.data();
                   std::memmove(&data[resize_offset], &data[resize_offset + delete_amount], copy_length);
-                  sel_node->data.resize(sel_node->data.size() - delete_amount);
+                  nc_buf.resize(nc_buf.size() - delete_amount);
                   was_resized = true;
               }
           }
