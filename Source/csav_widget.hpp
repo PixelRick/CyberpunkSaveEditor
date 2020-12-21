@@ -579,14 +579,17 @@ public:
     static bool opened = false;
     static MemoryEditor mem_edit {};
 
-    const auto& sel_node = csav_collapsable_header::selected_node();
+    auto& sel_node = csav_collapsable_header::selected_node();
     if (last_selected_node != sel_node)
     {
       last_selected_node = sel_node;
       opened = sel_node != nullptr;
     }
     if (!opened)
+    {
+      sel_node.reset();
       return;
+    }
 
     ImGui::SetNextWindowSize(ImVec2(700, 400), ImGuiCond_FirstUseEver);
     if (ImGui::Begin("Node Data Editor", &opened, 0))
