@@ -10,7 +10,7 @@
 #include "imgui_extras/imgui_memory_editor.h"
 #include "nlohmann/json.hpp"
 
-#include "csav_widget.hpp"
+#include "widgets/csav_widget.hpp"
 
 using namespace std::chrono_literals;
 

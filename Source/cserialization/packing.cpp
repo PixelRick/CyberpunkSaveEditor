@@ -1,6 +1,6 @@
-#define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
+#include "packing.hpp"
+
 #include <codecvt>
-#include "csav.hpp"
 
 int64_t read_packed_int(std::istream& is)
 {
@@ -15,7 +15,7 @@ int64_t read_packed_int(std::istream& is)
       is.read(&a, 1);
       value |= (a & 0x7F) << 13;
       if (a < 0) {
-      is.read(&a, 1);
+        is.read(&a, 1);
         value |= (a & 0x7F) << 20;
         if (a < 0) {
           is.read(&a, 1);

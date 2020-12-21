@@ -23,11 +23,14 @@
     <ClCompile Include="Source\AppLib\imgui\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Source\AppLib\imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="Source\AppLib\imgui\imgui_impl_win32.cpp" />
-    <ClCompile Include="Source\csav.cpp" />
     <ClInclude Include="Source\AppLib\stb_image.h" />
-    <ClInclude Include="Source\csav.hpp" />
+    <ClInclude Include="Source\cnodes\inventory.hpp" />
+    <ClInclude Include="Source\cnodes\itemData.hpp" />
+    <ClCompile Include="Source\cserialization\csav.cpp" />
+    <ClCompile Include="Source\cserialization\packing.cpp" />
+    <ClCompile Include="Source\external\xlz4\lz4.c" />
     <ClCompile Include="Source\utils.cpp" />
-    <ClCompile Include="Source\xlz4\lz4.c" />
+    <ClInclude Include="Source\widgets\csav_widget.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\AppLib\IApp.h" />
@@ -40,13 +43,15 @@
     <ClInclude Include="Source\AppLib\imgui\imgui_impl_dx11.h" />
     <ClInclude Include="Source\AppLib\imgui\imgui_impl_win32.h" />
     <ClInclude Include="Source\AppLib\pch.h" />
+    <ClInclude Include="Source\cserialization\csav.hpp" />
+    <ClInclude Include="Source\cserialization\node.hpp" />
+    <ClInclude Include="Source\cserialization\packing.hpp" />
+    <ClInclude Include="Source\external\nlohmann\json.hpp" />
+    <ClInclude Include="Source\external\xlz4\lz4.h" />
     <ClInclude Include="Source\imgui_extras\imgui_filebrowser.hpp" />
     <ClInclude Include="Source\imgui_extras\imgui_memory_editor.h" />
-    <ClInclude Include="Source\nlohmann\json.hpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClInclude Include="Source\utils.h" />
-    <ClInclude Include="Source\csav_widget.hpp" />
-    <ClInclude Include="Source\xlz4\lz4.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -120,9 +125,9 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\GameProxyLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Source;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_UNICODE;UNICODE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -144,9 +149,9 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\GameProxyLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Source;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -164,9 +169,9 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\GameProxyLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Source;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_UNICODE;UNICODE;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
