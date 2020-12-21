@@ -228,13 +228,11 @@ public:
     if (ImGui::CollapsingHeader("Node Tree", ImGuiTreeNodeFlags_None))
     {
       ImGui::Indent(5.f);
-      ImGui::BeginChild("nodetree", ImVec2(0, 1000), false, ImGuiWindowFlags_HorizontalScrollbar);
-     
+
       if (m_csav->root_node)
         for (const auto& n : m_csav->root_node->children())
           draw_node(n);
 
-      ImGui::EndChild();
       ImGui::Unindent(5.f);
     }
 
