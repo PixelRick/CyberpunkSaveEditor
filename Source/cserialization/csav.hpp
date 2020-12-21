@@ -526,6 +526,17 @@ public:
 
     if (ofs.fail())
       return false;
+    ofs.close();
+
+    // --------------------------------------------------------
+    //  save decompressed blob (request)
+    // --------------------------------------------------------
+
+    auto dump_path = path;
+    dump_path.replace_filename(L"decompressed_blob.bin");
+    ofs.open(dump_path, ofs.binary | ofs.trunc);
+    ofs.write(nodedata.data(), nodedata.size());
+    ofs.close();
 
     progress = 1.f;
     return true;
