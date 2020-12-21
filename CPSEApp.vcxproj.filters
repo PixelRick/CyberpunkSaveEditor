@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source\AppLib">
+      <UniqueIdentifier>{3a1a7485-1020-4b9e-9da6-d809a4007692}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AppLib\imgui">
+      <UniqueIdentifier>{40b65cf4-c0c5-4c22-8287-0ccce19133bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\AppLib\imgui\imgui">
+      <UniqueIdentifier>{c4d38a95-72f6-4972-b95c-5017a8b21ae3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\nlohmann">
+      <UniqueIdentifier>{efc1694a-8628-4f4c-a916-98b9f7e6c5bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\xlz4">
+      <UniqueIdentifier>{ee3e378e-7423-40f9-8c33-76ee06357750}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\imgui_extras">
+      <UniqueIdentifier>{ce933798-dbe5-4392-8de2-c5e49012149c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\AppLib\IApp.cpp">
+      <Filter>Source\AppLib</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AppLib\imgui\imgui_impl_dx11.cpp">
+      <Filter>Source\AppLib\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AppLib\imgui\imgui_impl_win32.cpp">
+      <Filter>Source\AppLib\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\utils.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\xlz4\lz4.c">
+      <Filter>Source\xlz4</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AppLib\imgui\imgui\imgui.cpp">
+      <Filter>Source\AppLib\imgui\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AppLib\imgui\imgui\imgui_demo.cpp">
+      <Filter>Source\AppLib\imgui\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AppLib\imgui\imgui\imgui_draw.cpp">
+      <Filter>Source\AppLib\imgui\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AppLib\imgui\imgui\imgui_tables.cpp">
+      <Filter>Source\AppLib\imgui\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AppLib\imgui\imgui\imgui_widgets.cpp">
+      <Filter>Source\AppLib\imgui\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\csav.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\main.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\AppLib\IApp.h">
+      <Filter>Source\AppLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AppLib\imgui\imgui_impl_dx11.h">
+      <Filter>Source\AppLib\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AppLib\imgui\imgui_impl_win32.h">
+      <Filter>Source\AppLib\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AppLib\pch.h">
+      <Filter>Source\AppLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\nlohmann\json.hpp">
+      <Filter>Source\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\utils.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\xlz4\lz4.h">
+      <Filter>Source\xlz4</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\imgui_extras\imgui_filebrowser.hpp">
+      <Filter>Source\imgui_extras</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\imgui_extras\imgui_memory_editor.h">
+      <Filter>Source\imgui_extras</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AppLib\imgui\imgui\imconfig.h">
+      <Filter>Source\AppLib\imgui\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AppLib\imgui\imgui\imgui.h">
+      <Filter>Source\AppLib\imgui\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AppLib\imgui\imgui\imgui_internal.h">
+      <Filter>Source\AppLib\imgui\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AppLib\imgui\imgui\imstb_rectpack.h">
+      <Filter>Source\AppLib\imgui\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AppLib\imgui\imgui\imstb_textedit.h">
+      <Filter>Source\AppLib\imgui\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AppLib\imgui\imgui\imstb_truetype.h">
+      <Filter>Source\AppLib\imgui\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav_widget.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AppLib\stb_image.h">
+      <Filter>Source\AppLib</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1209
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CPSEApp", "CPSEApp.vcxproj", "{BB6106AA-32C4-4F09-B978-27C527F0B3B7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+		RelWithDeb|x64 = RelWithDeb|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BB6106AA-32C4-4F09-B978-27C527F0B3B7}.Debug|x64.ActiveCfg = Debug|x64
+		{BB6106AA-32C4-4F09-B978-27C527F0B3B7}.Debug|x64.Build.0 = Debug|x64
+		{BB6106AA-32C4-4F09-B978-27C527F0B3B7}.Release|x64.ActiveCfg = Release|x64
+		{BB6106AA-32C4-4F09-B978-27C527F0B3B7}.Release|x64.Build.0 = Release|x64
+		{BB6106AA-32C4-4F09-B978-27C527F0B3B7}.RelWithDeb|x64.ActiveCfg = RelWithDeb|x64
+		{BB6106AA-32C4-4F09-B978-27C527F0B3B7}.RelWithDeb|x64.Build.0 = RelWithDeb|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3601E2A7-A1F3-49DC-8692-F18731E174ED}
+	EndGlobalSection
+EndGlobal
