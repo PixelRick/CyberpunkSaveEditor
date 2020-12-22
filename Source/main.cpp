@@ -41,7 +41,7 @@ protected:
 	void log_error(const std::string& msg) {}
 
 protected:
-	virtual void startup() override
+	void startup() override
 	{
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
@@ -68,17 +68,17 @@ protected:
 		//IM_ASSERT(font != NULL);
 	}
 
-	virtual void cleanup() override
+	void cleanup() override
 	{
 	}
 
-	virtual void update() override
+	void update() override
 	{
 		now = std::chrono::steady_clock::now();
 		csav_list.update();
 	}
 
-	virtual void draw_imgui() override
+	void draw_imgui() override
 	{
 		//ImGui::ShowDemoWindow();
 
@@ -116,11 +116,11 @@ protected:
 
 	}
 
-	virtual void on_resized() override
+	void on_resized() override
 	{
 	}
 
-	virtual LRESULT window_proc(UINT msg, WPARAM wParam, LPARAM lParam) override
+	LRESULT window_proc(UINT msg, WPARAM wParam, LPARAM lParam) override
 	{
 		switch (msg)
 		{
