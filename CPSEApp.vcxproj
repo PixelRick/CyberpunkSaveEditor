@@ -30,7 +30,9 @@
     <ClCompile Include="Source\utils.cpp" />
     <ClInclude Include="Source\cserialization\cnodes\inventory.hpp" />
     <ClInclude Include="Source\cserialization\cnodes\itemData.hpp" />
+    <ClInclude Include="Source\widgets\csav_experimental.hpp" />
     <ClInclude Include="Source\widgets\csav_widget.hpp" />
+    <ClInclude Include="Source\widgets\hexedit.hpp" />
     <ClInclude Include="Source\widgets\node_editor.hpp" />
   </ItemGroup>
   <ItemGroup>

@@ -30,7 +30,7 @@ if !d:
 ---------
 
 while 1
-  read_string_by_hashid_if_v193p()
+  read_string_by_hashid_if_v193p()  <- question is, can i get a json of names so that i compute the hashes myself ?
   e = read(4)
   if VER1 >= 97:
     f = read(1)
@@ -41,5 +41,10 @@ while 1
 
 struct inventory
 {
+  void deserialize(const std::shared_ptr<const node_t>& node)
+  {
+    auto& data = node->data();
+
+  }
 };
 

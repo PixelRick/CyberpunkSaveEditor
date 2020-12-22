@@ -154,5 +154,11 @@
     <ClInclude Include="Source\widgets\node_editor.hpp">
       <Filter>Source\widgets</Filter>
     </ClInclude>
+    <ClInclude Include="Source\widgets\csav_experimental.hpp">
+      <Filter>Source\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\widgets\hexedit.hpp">
+      <Filter>Source\widgets</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
