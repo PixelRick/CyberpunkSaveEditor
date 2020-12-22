@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <functional>
 #include <string>
 #include <vector>
 #include <map>
@@ -87,17 +88,55 @@ public:
 };
 
 
-class node_dataview
+// secure editing of node
+class node_view
 {
+  static inline std::map<uint64_t, std::list<node_view*>> s_views;
+  std::shared_ptr<node_t> m_node;
+
 protected:
-  std::shared_ptr<const node_t> m_node;
+  node_view() = delete;
+
+  explicit node_view(const std::shared_ptr<const node_t>& node)
+    : m_node(std::const_pointer_cast<node_t>(node))
+  {
+    const uint64_t uid = (uint64_t)m_node.get();
+    auto& list = s_views.emplace(uid, std::list<node_view*>()).first->second;
+    list.emplace_back(this);
+  }
+
+  virtual ~node_view()
+  {
+    // erasing this from s_views
+    const uint64_t uid = (uint64_t)m_node.get();
+    auto& list = s_views.find(uid)->second;
+    list.remove(this);
+  }
 
 public:
-  const std::shared_ptr<const node_t>&
-  node() const { return m_node; }
+  void patch(size_t offset, size_t len, const char* srcbuf, size_t srclen)
+  {
+    auto& buf = m_node->data();
+    auto it_start = buf.begin() + offset;
+    if (len < srclen)
+      buf.insert(it_start, srclen - len, 0);
+    else
+      buf.erase(it_start, it_start + len - srclen);
+    std::copy(srcbuf, srcbuf + srclen, it_start);
 
-public:
-  virtual void commit() = 0;
-  virtual void reload() = 0;
+    signal_dirty(offset, len, srclen);
+  }
+
+  const std::vector<char>& buffer() const { return m_node->data(); } const
+
+  void signal_dirty(size_t offset, size_t len, size_t patch_len) const
+  {
+    const uint64_t uid = (uint64_t)m_node.get();
+    for (auto& view : s_views.find(uid)->second)
+      view->on_dirty(offset, len, patch_len);
+  }
+
+protected:
+  virtual void on_dirty(size_t offset, size_t len, size_t patch_len) = 0;
 };
 
