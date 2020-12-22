@@ -1,7 +1,8 @@
 #pragma once
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
+#include <map>
 #include <numeric>
 
 #define NULL_NODE_IDX -1
@@ -9,22 +10,31 @@
 #define BLOB_NODE_IDX -3
 
 class node_t
-  : std::enable_shared_from_this<node_t>
+  : public std::enable_shared_from_this<const node_t>
 {
   friend class node_dataview;
 
   int32_t m_idx;
-  std::string m_name;
+  const std::string m_name;
   std::vector<std::shared_ptr<const node_t>> m_children;
   std::vector<char> m_data;
 
-public:
+protected:
   explicit node_t(int32_t idx, std::string name)
     : m_name(name)
   {
     if (idx < BLOB_NODE_IDX)
       idx = BLOB_NODE_IDX;
     m_idx = idx;
+  }
+
+public:
+  static std::shared_ptr<const node_t> create_shared(int32_t idx, std::string name)
+  {
+    struct make_shared_enabler : public node_t {
+      make_shared_enabler(int32_t idx, std::string name) : node_t(idx, name) {}
+    };
+    return std::make_shared<const make_shared_enabler>(idx, name);
   }
 
 public:
