@@ -34,8 +34,11 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
 
   ifs.read((char*)&v1, 4);
   ifs.read((char*)&v2, 4);
-  if (v1 > 193 or v2 > 9 or v1 < 125)
-    return false;
+
+  // DISABLED VERSION TEST
+  //if (v1 > 193 or v2 > 9 or v1 < 125)
+  //  return false;
+
   suk = read_str(ifs);
   // there is a weird if v1 >= 5 check, but previous if already ensured it
   ifs.read((char*)&uk0, 4);
