@@ -324,7 +324,7 @@ public:
 
       static ImGuiTableFlags flags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter
         | ImGuiTableFlags_BordersV | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable;
-      ImVec2 size = ImVec2(400, ImGui::GetTextLineHeightWithSpacing() * 30);
+      ImVec2 size = ImVec2(500, ImGui::GetTextLineHeightWithSpacing() * 28);
       if (ImGui::BeginTable("##searchres_table2", 1, flags, size))
       {
         ImGui::TableSetupScrollFreeze(0, 1);
@@ -359,7 +359,7 @@ public:
 
       if (nh) {
         bool opened = true;
-        ImGui::SameLine(420);
+        ImGui::SameLine(510);
         nh->draw_widget();
         if (!opened)
           nh.reset();
@@ -582,12 +582,10 @@ public:
       opened = current_editor != nullptr;
       changed_node = true;
     }
+    if (opened)
+      current_editor->draw_window(&opened);
     if (!opened)
-    {
       sel_node.reset();
-      return;
-    }
-    current_editor->draw_window();
   }
 };
 
