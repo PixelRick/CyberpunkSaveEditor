@@ -419,7 +419,7 @@ public:
     bool changed_node = false;
 
     auto& sel_node = csav_collapsable_header::selected_node();
-    if (sel_node && current_editor->node() != sel_node)
+    if (sel_node && (!current_editor || current_editor->node() != sel_node))
     {
       current_editor = node_editor::create(sel_node);
       opened = current_editor != nullptr;
@@ -430,6 +430,7 @@ public:
       sel_node.reset();
       return;
     }
+    current_editor->draw_window();
   }
 };
 
