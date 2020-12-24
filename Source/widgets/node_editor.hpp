@@ -86,6 +86,7 @@ public:
 
   void draw_window(bool* p_open = nullptr)
   {
+    m_window_opened = true;
     if (ImGui::Begin(m_window_name.c_str(), &m_window_opened))
     {
       draw_widget();
