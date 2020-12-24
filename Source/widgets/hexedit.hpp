@@ -14,11 +14,11 @@
 class node_hexeditor
   : public node_editor
 {
-  static inline std::vector<char> clipboard;
+  static inline std::vector<char> m_clipboard;
   std::vector<char> editbuf;
   MemoryEditor me;
 
-protected:
+public:
   node_hexeditor(const std::shared_ptr<const node_t>& node)
     : node_editor(node)
   {
@@ -30,6 +30,16 @@ protected:
   }
 
 public:
+  static const std::vector<char>& clipboard() { return m_clipboard; }
+
+  void select(size_t offset, size_t len)
+  {
+    me.DataSelectionStart = std::min(offset, editbuf.size() - 1);
+    me.DataSelectionEnd = std::min(offset + len, editbuf.size() - 1);
+    me.DataEditingAddr = -1; // cancel pending edit that shouldn't exist anyway
+    me.ScrollToAddrNext = me.DataSelectionStart;
+  }
+
   void commit() override
   {
     assign_node_data(editbuf.begin(), editbuf.end());
@@ -101,13 +111,13 @@ protected:
         if (!editbuf.empty())
         {
           if (ImGui::Selectable("copy"))
-            clipboard.assign(editbuf.begin() + seladdr_beg, editbuf.begin() + seladdr_end);
+            m_clipboard.assign(editbuf.begin() + seladdr_beg, editbuf.begin() + seladdr_end);
           if (ImGui::Selectable("paste")) {
             editbuf.erase(editbuf.begin() + seladdr_beg, editbuf.begin() + seladdr_end);
-            editbuf.insert(editbuf.begin() + seladdr_beg, clipboard.begin(), clipboard.end());
+            editbuf.insert(editbuf.begin() + seladdr_beg, m_clipboard.begin(), m_clipboard.end());
           }
           if (ImGui::Selectable("paste insert"))
-            editbuf.insert(editbuf.begin() + seladdr_beg, clipboard.begin(), clipboard.end());
+            editbuf.insert(editbuf.begin() + seladdr_beg, m_clipboard.begin(), m_clipboard.end());
           if (ImGui::Selectable("erase"))
             editbuf.erase(editbuf.begin() + seladdr_beg, editbuf.begin() + seladdr_end);
           ImGui::Separator();

@@ -102,6 +102,7 @@ struct MemoryEditor
   bool            DataSelectionDrag;
   size_t          DataSelectionStart;
   size_t          DataSelectionEnd;
+  size_t          ScrollToAddrNext;
   char            ByteInputBuf[3];
   char            DataInputBuf[32];
   char            AddrInputBuf[32];
@@ -137,6 +138,7 @@ struct MemoryEditor
     DataEditingNeedCursorReset = false;
     DataSelectionDrag = false;
     DataSelectionStart = DataSelectionEnd = (size_t)-1;
+    ScrollToAddrNext = (size_t)-1;
     memset(ByteInputBuf, 0, sizeof(ByteInputBuf));
     memset(DataInputBuf, 0, sizeof(DataInputBuf));
     memset(AddrInputBuf, 0, sizeof(AddrInputBuf));
@@ -341,6 +343,14 @@ struct MemoryEditor
       }
 
       DataEditingAddr = DataEditingAddrNext;
+    }
+
+    if (ScrollToAddrNext != (size_t)-1)
+    {
+      size_t rowi = (ScrollToAddrNext / Cols);
+      if (rowi > 0) rowi--;
+      ImGui::SetScrollY(rowi * s.LineHeight);
+      ScrollToAddrNext = (size_t)-1;
     }
 
     // Draw vertical separator
