@@ -7,12 +7,16 @@
 #include <fstream>
 #include <sstream>
 #include <filesystem>
+#include <map>
+#include <vector>
+
 
 #include "AppLib/IApp.h"
 
 #include "utils.h"
 #include "cserialization/csav.hpp"
 #include "node_editor.hpp"
+#include "hexedit.hpp"
 
 void ImGui::ShowDemoWindow(bool* p_open);
 
@@ -79,6 +83,8 @@ protected:
   bool m_opened = true;
   //std::vector<ScanEntryWidget> scan_entries;
   //using scan_entry_it = decltype(scan_entries)::iterator;
+  std::array<char, 24 * 3 + 1> search_needle = {};
+  std::array<char, 24     + 1> search_mask = {};
 
 public:
   csav_collapsable_header(const std::shared_ptr<csav>& csav, const std::shared_ptr<AppImage>& img)
@@ -256,6 +262,112 @@ public:
       ImGui::Unindent(5.f);
     }
 
+    if (ImGui::CollapsingHeader("Search Tools", ImGuiTreeNodeFlags_None))
+    {
+      ImGui::Indent(5.f);
+      ImGui::BeginChild("Search Tools##child", ImVec2(0, 0));
+      
+      int line_width = (int)ImGui::GetContentRegionAvail().x;
+      float slider_width = (float)std::max(line_width - 300, 100);
+
+      static uint32_t u32_v;
+      const bool u32_search = ImGui::Button("search u32", ImVec2(150, 0)); ImGui::SameLine();
+      ImGui::PushItemWidth(slider_width);
+      ImGui::InputScalar("input u32", ImGuiDataType_U32, &u32_v);
+      if (u32_search) {
+        search_pattern_in_nodes(std::string((char*)&u32_v, (char*)&u32_v + 8), "");
+      }
+
+      static float f32_v;
+      const bool f32_search = ImGui::Button("search float", ImVec2(150, 0)); ImGui::SameLine();
+      ImGui::PushItemWidth(slider_width);
+      ImGui::InputScalar("input float", ImGuiDataType_Float, &f32_v, 0, 0);
+      if (f32_search) {
+        search_pattern_in_nodes(std::string((char*)&f32_v, (char*)&f32_v + 4), "");
+      }
+
+      static double f64_v;
+      const bool f64_search = ImGui::Button("search double", ImVec2(150, 0)); ImGui::SameLine();
+      ImGui::PushItemWidth(slider_width);
+      ImGui::InputScalar("input double", ImGuiDataType_Double, &f64_v);
+      if (f64_search) {
+        search_pattern_in_nodes(std::string((char*)&f64_v, (char*)&f64_v + 8), "");
+      }
+
+      ImGui::Separator();
+      if (ImGui::Button("search bytes from editor clipboard (context/copy)"))
+      {
+        auto& cp = node_hexeditor::clipboard();
+        std::string needle(cp.begin(), cp.end());
+        if (needle.size())
+          search_pattern_in_nodes(needle, "");
+      }
+
+      ImGui::Separator();
+
+      // bool pat_search = ImGui::Button("search pattern", ImVec2(150, 0)); ImGui::SameLine();
+      // ImGui::PushItemWidth(slider_width);
+      // ImGui::InputText("pattern bytes", search_needle.data(), (int)search_needle.size(), ImGuiInputTextFlags_CharsUppercase | ImGuiInputTextFlags_AlwaysInsertMode);
+      // ImGui::InvisibleButton("search pattern##inv", ImVec2(150, 1)); ImGui::SameLine();
+      // ImGui::PushItemWidth(slider_width);
+      // ImGui::InputTextEx("pattern mask", "x?xxx??x", search_mask.data(), (int)search_mask.size(), ImVec2(0, 0), ImGuiInputTextFlags_AlwaysInsertMode);
+      
+      // todo, parse hex string
+
+      ImGui::Separator();
+
+      // results
+
+      static std::shared_ptr<node_hexeditor> nh;
+
+      static float u32row_width = ImGui::CalcTextSize("0xFFFFFFFF ").x;
+
+      static ImGuiTableFlags flags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter
+        | ImGuiTableFlags_BordersV | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable;
+      ImVec2 size = ImVec2(line_width - 50, ImGui::GetTextLineHeightWithSpacing() * 30);
+      if (ImGui::BeginTable("##searchres_table", 1, flags, size))
+      {
+        ImGui::TableSetupScrollFreeze(0, 1);
+        ImGui::TableSetupColumn("matches", ImGuiTableColumnFlags_WidthStretch);
+        ImGui::TableHeadersRow();
+
+        ImGuiListClipper clipper;
+        clipper.Begin((int)search_result.size());
+        while (clipper.Step())
+        {
+          for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++)
+          {
+            auto& match = search_result[row];
+            scoped_imgui_id sii{&match};
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            
+            static char matchname[512];
+            ImFormatString(matchname, 512, "offset 0x%08X in node %4d - %s", match.offset, match.n->idx(), match.n->name().c_str());
+
+            if (ImGui::Selectable(matchname, selected_result == row))
+            {
+              selected_result = row;
+              if (!nh || nh->node() != match.n)
+                nh = std::make_shared<node_hexeditor>(match.n);
+              nh->select(match.offset, match.size);
+            }
+          }
+        }
+        ImGui::EndTable();
+      }
+
+      if (nh) {
+        bool opened = true;
+        nh->draw_window(&opened);
+        if (!opened)
+          nh.reset();
+      }
+
+      ImGui::EndChild();
+      ImGui::Unindent(5.f);
+    }
+    
     ImGui::Unindent(indent);
 
     //m_csav->entry_descs
@@ -297,6 +409,50 @@ protected:
 
       ImGui::TreePop();
     }
+  }
+
+  // hex search.. 
+
+  struct search_match {
+    std::shared_ptr<const node_t> n;
+    size_t offset;
+    size_t size;
+  };
+  std::vector<search_match> search_result;
+  size_t selected_result = (size_t)-1;
+
+  std::vector<search_match>& search_pattern_in_nodes(const std::string& needle, const std::string& mask)
+  {
+    selected_result = (size_t)-1;
+    // history draft
+    /*
+    std::stringstream ss;
+    ss << "bytes:";
+    ss << std::hex << std::uppercase;
+    for (auto c : needle)
+      ss << std::setfill('0') << std::setw(2) << c << " ";
+    if (mask.size())
+      ss << "mask:" << mask;
+    auto it = searches.emplace(ss.str(), std::vector<search_match>());
+    */
+    search_result.clear();
+    if (m_csav and !std::all_of(needle.begin(), needle.end(), [](char i) { return i==0; })) // searching for zeroes is just.. the way to die
+      search_pattern_in_nodes_rec(search_result, m_csav->root_node, needle, mask);
+    return search_result;
+  }
+
+  void search_pattern_in_nodes_rec(std::vector<search_match>& matches, const std::shared_ptr<const node_t> node, const std::string& needle, const std::string& mask)
+  {
+    auto& haystack = node->data();
+    std::vector<uintptr_t> match_offsets;
+    if (mask.size())
+      match_offsets = sse2_strstr_masked((uint8_t*)haystack.data(), haystack.size(), (uint8_t*)needle.data(), needle.size(), mask.data(), mask.size());
+    else
+      match_offsets = sse2_strstr((uint8_t*)haystack.data(), haystack.size(), (uint8_t*)needle.data(), needle.size());
+    for (auto off : match_offsets)
+      matches.emplace_back(search_match{node, off, needle.size()});
+    for (auto& c : node->children())
+      search_pattern_in_nodes_rec(matches, c, needle, mask);
   }
 };
 
