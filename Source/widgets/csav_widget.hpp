@@ -324,8 +324,8 @@ public:
 
       static ImGuiTableFlags flags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter
         | ImGuiTableFlags_BordersV | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable;
-      ImVec2 size = ImVec2(line_width - 50, ImGui::GetTextLineHeightWithSpacing() * 30);
-      if (ImGui::BeginTable("##searchres_table", 1, flags, size))
+      ImVec2 size = ImVec2(400, ImGui::GetTextLineHeightWithSpacing() * 30);
+      if (ImGui::BeginTable("##searchres_table2", 1, flags, size))
       {
         ImGui::TableSetupScrollFreeze(0, 1);
         ImGui::TableSetupColumn("matches", ImGuiTableColumnFlags_WidthStretch);
@@ -359,7 +359,8 @@ public:
 
       if (nh) {
         bool opened = true;
-        nh->draw_window(&opened);
+        ImGui::SameLine(420);
+        nh->draw_widget();
         if (!opened)
           nh.reset();
       }
