@@ -97,6 +97,8 @@ public:
     save_job.update();
   }
 
+  static inline std::shared_ptr<const node_t> appearance_src;
+
   void draw()
   {
     scoped_imgui_id sii {this};
@@ -128,6 +130,23 @@ public:
         return m_csav->save_with_progress(m_csav->filepath, progress);
       });
       ImGui::OpenPopup("Saving..##SAVE");
+    }
+
+    ImGui::SameLine();
+    if (ImGui::ButtonEx("COPY SKIN##SAVE", ImVec2(100, 60)))
+    {
+      appearance_src = m_csav->search_node("CharacetrCustomization_Appearances");
+    }
+
+    ImGui::SameLine();
+    if (ImGui::ButtonEx("PASTE SKIN##SAVE", ImVec2(100, 60)))
+    {
+      auto appearance_node = m_csav->search_node("CharacetrCustomization_Appearances");
+      if (appearance_src && appearance_src != appearance_node)
+      {
+        auto& src_buf = appearance_src->data();
+        appearance_node->nonconst().data().assign(src_buf.begin(), src_buf.end());
+      }
     }
 
     // Always center this window when appearing

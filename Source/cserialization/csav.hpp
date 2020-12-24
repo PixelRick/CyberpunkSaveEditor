@@ -65,6 +65,23 @@ public:
   bool open_with_progress(std::filesystem::path path, float& progress);
   bool save_with_progress(std::filesystem::path path, float& progress);
 
+  std::shared_ptr<const node_t> search_node(const std::string name)
+  {
+    if (root_node)
+      return search_node(root_node, name);
+    return nullptr;
+  }
+
+  std::shared_ptr<const node_t> search_node(const std::shared_ptr<const node_t>& node, const std::string name)
+  {
+    if (node->name() == name) return node;
+    for (auto& c : node->children()) {
+      auto res = search_node(c, name);
+      if (res) return res;
+    }
+    return nullptr;
+  }
+
 protected:
   std::shared_ptr<const node_t> make_blob_node(const std::vector<char>& nodedata, uint32_t start_offset, uint32_t end_offset)
   {
