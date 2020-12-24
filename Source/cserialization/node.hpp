@@ -114,7 +114,18 @@ protected:
   }
 
 public:
-  void patch(size_t offset, size_t len, const char* srcbuf, size_t srclen)
+  std::shared_ptr<const node_t> node() const {
+    return std::const_pointer_cast<const node_t>(m_node);
+  }
+
+  template <class Iter>
+  void assign_node_data(Iter first, Iter last)
+  {
+    auto& buf = m_node->data();
+    buf.assign(first, last);
+  }
+
+  void patch_node_data(size_t offset, size_t len, const char* srcbuf, size_t srclen)
   {
     auto& buf = m_node->data();
     auto it_start = buf.begin() + offset;
@@ -127,7 +138,7 @@ public:
     signal_dirty(offset, len, srclen);
   }
 
-  const std::vector<char>& buffer() const { return m_node->data(); } const
+  const std::vector<char>& node_data_buffer() const { return m_node->data(); } const
 
   void signal_dirty(size_t offset, size_t len, size_t patch_len) const
   {

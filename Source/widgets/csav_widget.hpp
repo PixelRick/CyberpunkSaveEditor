@@ -12,6 +12,7 @@
 
 #include "utils.h"
 #include "cserialization/csav.hpp"
+#include "node_editor.hpp"
 
 void ImGui::ShowDemoWindow(bool* p_open);
 
@@ -321,7 +322,7 @@ public:
   {
     for (auto& cs : m_list)
       cs.draw();
-    draw_hexedit();
+    draw_editor();
   }
 
   void draw_menu_item(IApp* owning_app)
@@ -392,118 +393,23 @@ public:
       ImGui::PopStyleColor();
   }
 
-  void draw_hexedit()
+  void draw_editor()
   {
-    static std::shared_ptr<const node_t> last_selected_node {};
+    static std::shared_ptr<node_editor> current_editor {};
     static bool opened = false;
-    static MemoryEditor mem_edit {};
     bool changed_node = false;
 
     auto& sel_node = csav_collapsable_header::selected_node();
-    if (last_selected_node != sel_node)
+    if (sel_node && current_editor->node() != sel_node)
     {
-      last_selected_node = sel_node;
-      opened = sel_node != nullptr;
+      current_editor = node_editor::create(sel_node);
+      opened = current_editor != nullptr;
       changed_node = true;
     }
     if (!opened)
     {
       sel_node.reset();
       return;
-    }
-
-    ImGui::SetNextWindowSize(ImVec2(700, 400), ImGuiCond_FirstUseEver);
-    if (ImGui::Begin("Node Data Editor", &opened, 0))
-    {
-      auto& data = sel_node->nonconst().data();
-
-      ImGui::BeginChild("", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()));
-      mem_edit.DrawContents(data.data(), data.size());
-      ImGui::EndChild();
-
-      static struct
-      {
-        size_t offset;
-        int32_t amount;
-        bool is_dirty;
-        int32_t delete_minimum;
-        int32_t insert_maximum;
-      }
-      resize_state;
-
-      if (changed_node)
-      {
-        resize_state = {};
-        resize_state.offset = 0;
-        resize_state.is_dirty = true;
-      }
-
-      if (resize_state.is_dirty)
-      {
-        resize_state.offset = std::min(resize_state.offset, data.size());
-        resize_state.delete_minimum = -static_cast<int32_t>(data.size() - resize_state.offset);
-        resize_state.insert_maximum = std::max(16, static_cast<int32_t>(data.size()));
-        resize_state.amount = std::min(std::max(resize_state.delete_minimum, resize_state.amount), std::numeric_limits<int32_t>::max());
-        resize_state.is_dirty = false;
-      }
-
-      ImGui::PushItemWidth(100.f);
-      if (ImGui::SliderInt("", &resize_state.amount, resize_state.delete_minimum, resize_state.insert_maximum, "%d", ImGuiSliderFlags_AlwaysClamp))
-      {
-        resize_state.is_dirty = true;
-      }
-      ImGui::PopItemWidth();
-      ImGui::SameLine();
-      const bool can_resize = resize_state.amount != 0;
-      const bool is_resize_delete = resize_state.amount < 0;
-      const char* resize_label = !is_resize_delete ? "Insert##Resize" : "Delete##Resize";
-      ImGuiButtonFlags resize_flags = can_resize ? ImGuiButtonFlags_None : ImGuiButtonFlags_Disabled;
-      if (ImGui::ButtonEx(resize_label, ImVec2(0, 0), resize_flags))
-      {
-        resize_state.amount = std::min(std::max(resize_state.delete_minimum, resize_state.amount), std::numeric_limits<int32_t>::max());
-
-        if (resize_state.amount > 0)
-        {
-          if (resize_state.offset <= data.size())
-          {
-            size_t copy_length = data.size() - resize_state.offset;
-            data.resize(data.size() + resize_state.amount);
-            auto buffer = data.data();
-            if (copy_length)
-            {
-              std::memmove(&buffer[resize_state.offset + resize_state.amount], &buffer[resize_state.offset], copy_length);
-              //std::memset(&data[resize_offset], 0xCC, resize_amount);
-              std::memset(&buffer[resize_state.offset], 0x00, resize_state.amount);
-            }
-            resize_state.is_dirty = true;
-          }
-        }
-        else if (resize_state.amount < 0)
-        {
-          if (resize_state.offset < data.size())
-          {
-            size_t delete_amount = static_cast<size_t>(-resize_state.amount);
-            size_t copy_length = data.size() - (resize_state.offset + delete_amount);
-            auto buffer = data.data();
-            if (copy_length)
-            {
-              std::memmove(&buffer[resize_state.offset], &buffer[resize_state.offset + delete_amount], copy_length);
-            }
-            data.resize(data.size() - delete_amount);
-            resize_state.is_dirty = true;
-          }
-        }
-      }
-      ImGui::SameLine();
-      ImGui::LabelText("", "@%08X", static_cast<uint32_t>(resize_state.offset));
-      ImGui::End();
-
-      const auto& editing_addr = mem_edit.DataEditingAddr;
-      if (editing_addr != static_cast<size_t>(-1) && editing_addr != resize_state.offset)
-      {
-        resize_state.offset = editing_addr;
-        resize_state.is_dirty = true;
-      }
     }
   }
 };

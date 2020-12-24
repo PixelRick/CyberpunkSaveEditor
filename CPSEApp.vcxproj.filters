@@ -103,9 +103,6 @@
     <ClInclude Include="Source\imgui_extras\imgui_filebrowser.hpp">
       <Filter>Source\imgui_extras</Filter>
     </ClInclude>
-    <ClInclude Include="Source\imgui_extras\imgui_memory_editor.h">
-      <Filter>Source\imgui_extras</Filter>
-    </ClInclude>
     <ClInclude Include="Source\AppLib\imgui\imgui\imconfig.h">
       <Filter>Source\AppLib\imgui\imgui</Filter>
     </ClInclude>
@@ -159,6 +156,12 @@
     </ClInclude>
     <ClInclude Include="Source\widgets\hexedit.hpp">
       <Filter>Source\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\external\span.hpp">
+      <Filter>Source\external</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\imgui_extras\imgui_memory_editor.hpp">
+      <Filter>Source\imgui_extras</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

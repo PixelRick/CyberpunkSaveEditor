@@ -113,7 +113,7 @@ protected:
         auto childnode = read_node(nodedata, childdesc, i);
         if (!childnode) // something went wrong
           return nullptr;
-          nc_node.children().push_back(childnode);
+        nc_node.children().push_back(childnode);
 
         cur_offset = childdesc.data_offset + childdesc.data_size;
         i = childdesc.next_idx;

@@ -368,6 +368,13 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress)
 
   ofs.seekp(nodedescs_start);
 
+
+  // experiment: would the game accept big forged file ?
+  // std::vector<char> zerobuf(0x1000000);
+  // ofs.write(zerobuf.data(), zerobuf.size());
+  // nodedescs_start = ofs.tellp();
+
+
   magic = 'NODE';
   ofs.write((char*)&magic, 4);
 

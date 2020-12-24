@@ -7,10 +7,10 @@
 #include <iomanip>
 
 #include "imgui_extras/imgui_filebrowser.hpp"
-#include "imgui_extras/imgui_memory_editor.h"
 #include "nlohmann/json.hpp"
 
 #include "widgets/csav_widget.hpp"
+#include "widgets/hexedit.hpp"
 
 using namespace std::chrono_literals;
 
@@ -66,6 +66,8 @@ protected:
 		//io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
 		//ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
 		//IM_ASSERT(font != NULL);
+
+		node_editor::factory_register_for_node_name<node_hexeditor>(NODE_EDITOR__DEFAULT_EDITOR_NAME);
 	}
 
 	void cleanup() override
@@ -80,7 +82,8 @@ protected:
 
 	void draw_imgui() override
 	{
-		//ImGui::ShowDemoWindow();
+		static bool test_hexeditor = false;
+		static bool imgui_demo = false;
 
 		ImGui::SetNextWindowPos(ImVec2(0, 0));
 		ImGui::SetNextWindowSize(ImVec2((float)m_display_width, (float)m_display_height));
@@ -93,6 +96,8 @@ protected:
 			//| ImGuiWindowFlags_NoBackground
 			| ImGuiWindowFlags_NoBringToFrontOnFocus))
 		{
+			
+
 			if (ImGui::BeginMainMenuBar())
 			{
 				csav_list.draw_menu_item(this);
@@ -103,6 +108,10 @@ protected:
 					ImGui::Separator();
 					ImGui::EndMenu();
 				}
+				if (ImGui::MenuItem("hexedit test", 0, false))
+					test_hexeditor = true;
+				if (ImGui::MenuItem("imgui demo", 0, false))
+					imgui_demo = true;
 
 				// mini-dma
 				if (credits_hash != 0xa8140380a724d4a2)
@@ -114,6 +123,20 @@ protected:
 		}
 		ImGui::End();
 
+		static auto n = node_t::create_shared(123, "testnode");
+		static std::shared_ptr<node_editor> e;
+		if (test_hexeditor)
+		{
+			if (!e) {
+				auto& b = n->nonconst().data();
+				b.assign((char*)this, (char*)this + 100);
+				e = node_editor::create(n);
+			}
+			e->draw_window(&test_hexeditor);
+		}
+
+		if (imgui_demo)
+			ImGui::ShowDemoWindow(&imgui_demo);
 	}
 
 	void on_resized() override
