@@ -14,6 +14,7 @@
 class node_hexeditor
   : public node_editor
 {
+  static inline std::vector<char> clipboard;
   std::vector<char> editbuf;
   MemoryEditor me;
 
@@ -99,7 +100,15 @@ protected:
 
         if (!editbuf.empty())
         {
-          if(ImGui::Selectable("erase"))
+          if (ImGui::Selectable("copy"))
+            clipboard.assign(editbuf.begin() + seladdr_beg, editbuf.begin() + seladdr_end);
+          if (ImGui::Selectable("paste")) {
+            editbuf.erase(editbuf.begin() + seladdr_beg, editbuf.begin() + seladdr_end);
+            editbuf.insert(editbuf.begin() + seladdr_beg, clipboard.begin(), clipboard.end());
+          }
+          if (ImGui::Selectable("paste insert"))
+            editbuf.insert(editbuf.begin() + seladdr_beg, clipboard.begin(), clipboard.end());
+          if (ImGui::Selectable("erase"))
             editbuf.erase(editbuf.begin() + seladdr_beg, editbuf.begin() + seladdr_end);
           ImGui::Separator();
         }
