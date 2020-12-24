@@ -108,10 +108,20 @@ std::vector<uintptr_t> sse2_strstr_masked(const unsigned char* s, size_t m, cons
 
 std::vector<uintptr_t> sse2_strstr(const unsigned char* s, size_t m, const unsigned char* needle, size_t n, size_t maxcnt)
 {
-  assert(n >= 2);
-  assert(m >= n);
+  if (n == 0 || m < n)
+    return {};
 
   std::vector<uintptr_t> ret;
+
+  if (n < 2) {
+    // fallback to default impl
+    const unsigned char* c = s;
+    const unsigned char* e = s + m;
+    while (c < e)
+      if (*c == *needle)
+        ret.push_back(s - c);
+    return ret;
+  }
 
   const __m128i headblk = _mm_set1_epi8((char)needle[0]);
   const __m128i tailblk = _mm_set1_epi8((char)needle[n - 1]);
