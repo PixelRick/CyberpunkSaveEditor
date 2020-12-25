@@ -416,9 +416,10 @@ public:
         ImGui::EndTable();
       }
 
+
       if (nh) {
         bool opened = true;
-        ImGui::SameLine(510);
+        ImGui::SameLine();
         nh->draw_widget();
         if (!opened)
           nh.reset();
