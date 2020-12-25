@@ -27,9 +27,6 @@
     <Filter Include="Source\widgets">
       <UniqueIdentifier>{5dd5b1e8-7255-4981-8e35-c8166bf50ae7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\widgets\cnodes">
-      <UniqueIdentifier>{2229f702-6812-40b2-87f4-f8eac67cff6a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\cserialization\cnodes">
       <UniqueIdentifier>{5afc6430-c459-4483-815c-e6a6adfebb5c}</UniqueIdentifier>
     </Filter>
@@ -41,6 +38,9 @@
     </Filter>
     <Filter Include="Source\external\xlz4">
       <UniqueIdentifier>{ee3e378e-7423-40f9-8c33-76ee06357750}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\widgets\node_editors">
+      <UniqueIdentifier>{2229f702-6812-40b2-87f4-f8eac67cff6a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -145,13 +145,7 @@
     <ClInclude Include="Source\cserialization\cnodes\itemData.hpp">
       <Filter>Source\cserialization\cnodes</Filter>
     </ClInclude>
-    <ClInclude Include="Source\widgets\node_editor.hpp">
-      <Filter>Source\widgets</Filter>
-    </ClInclude>
     <ClInclude Include="Source\widgets\csav_experimental.hpp">
-      <Filter>Source\widgets</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\widgets\hexedit.hpp">
       <Filter>Source\widgets</Filter>
     </ClInclude>
     <ClInclude Include="Source\external\span.hpp">
@@ -159,6 +153,18 @@
     </ClInclude>
     <ClInclude Include="Source\imgui_extras\imgui_memory_editor.hpp">
       <Filter>Source\imgui_extras</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\widgets\node_editors\inventory.hpp">
+      <Filter>Source\widgets\node_editors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\widgets\node_editors\hexedit.hpp">
+      <Filter>Source\widgets\node_editors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\widgets\node_editors.hpp">
+      <Filter>Source\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\widgets\node_editors\node_editor.hpp">
+      <Filter>Source\widgets\node_editors</Filter>
     </ClInclude>
     <ClInclude Include="Source\utils.hpp">
       <Filter>Source</Filter>

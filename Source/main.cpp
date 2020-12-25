@@ -10,7 +10,7 @@
 #include "nlohmann/json.hpp"
 
 #include "widgets/csav_widget.hpp"
-#include "widgets/hexedit.hpp"
+#include "widgets/node_editors/hexedit.hpp"
 
 using namespace std::chrono_literals;
 
@@ -66,8 +66,6 @@ protected:
 		//io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
 		//ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
 		//IM_ASSERT(font != NULL);
-
-		node_editor::factory_register_for_node_name<node_hexeditor>(NODE_EDITOR__DEFAULT_EDITOR_NAME);
 	}
 
 	void cleanup() override

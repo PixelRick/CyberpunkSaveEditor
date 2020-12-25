@@ -33,8 +33,10 @@
     <ClInclude Include="Source\external\span.hpp" />
     <ClInclude Include="Source\widgets\csav_experimental.hpp" />
     <ClInclude Include="Source\widgets\csav_widget.hpp" />
-    <ClInclude Include="Source\widgets\hexedit.hpp" />
-    <ClInclude Include="Source\widgets\node_editor.hpp" />
+    <ClInclude Include="Source\widgets\node_editors.hpp" />
+    <ClInclude Include="Source\widgets\node_editors\hexedit.hpp" />
+    <ClInclude Include="Source\widgets\node_editors\inventory.hpp" />
+    <ClInclude Include="Source\widgets\node_editors\node_editor.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\AppLib\IApp.h" />

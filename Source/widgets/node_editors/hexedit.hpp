@@ -1,4 +1,5 @@
 #pragma once
+
 #include "node_editor.hpp"
 
 #if __has_include(<span>) && (!defined(_HAS_CXX20) or _HAS_CXX20)
@@ -35,7 +36,7 @@ public:
   void select(size_t offset, size_t len)
   {
     me.DataSelectionStart = std::min(offset, editbuf.size() - 1);
-    me.DataSelectionEnd = std::min(offset + len, editbuf.size() - 1);
+    me.DataSelectionEnd = std::min(offset + len - 1, editbuf.size() - 1);
     me.DataEditingAddr = -1; // cancel pending edit that shouldn't exist anyway
     me.ScrollToAddrNext = me.DataSelectionStart;
   }
@@ -77,11 +78,21 @@ protected:
     return false;
   }
 
-  void draw_impl() override
+  void draw_impl(const ImVec2& size) override
   {
     const ImGuiID id = ImGui::GetCurrentWindow()->GetID((void*)node().get()); // MemoryEditor uses this ID too
     ImVec2 c1 = ImGui::GetCursorScreenPos();
-    ImGui::BeginChild(id, ImVec2(0, 400));
+
+    MemoryEditor::Sizes s;
+    me.CalcSizes(s, editbuf.size(), 0);
+    ImVec2 child_size = size;
+    if (child_size.x <= 0)
+      child_size.x = s.WindowWidth;
+    if (child_size.y <= 0)
+      child_size.y = 400;
+
+    //ImGui::SetNextWindowSizeConstraints(ImVec2(0.0f, 0.0f), ImVec2(s.WindowWidth, FLT_MAX));
+    ImGui::BeginChild(id, child_size, 1, ImGuiWindowFlags_AlwaysAutoResize);
 
     me.DrawContents((void*)this, editbuf.size(), 0);
 

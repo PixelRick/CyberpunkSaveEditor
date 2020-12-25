@@ -15,8 +15,7 @@
 
 #include "utils.hpp"
 #include "cserialization/csav.hpp"
-#include "node_editor.hpp"
-#include "hexedit.hpp"
+#include "node_editors.hpp"
 
 void ImGui::ShowDemoWindow(bool* p_open);
 
@@ -86,11 +85,23 @@ protected:
   std::array<char, 24 * 3 + 1> search_needle = {};
   std::array<char, 24     + 1> search_mask = {};
 
+  static inline bool s_inited = false;
+  static inline void register_editors()
+  {
+    node_editor::factory_register_for_node_name<node_hexeditor>(NODE_EDITOR__DEFAULT_EDITOR_NAME);
+    node_editor::factory_register_for_node_name<inventory_editor>("inventory");
+  }
+
 public:
   csav_collapsable_header(const std::shared_ptr<csav>& csav, const std::shared_ptr<AppImage>& img)
     : save_dialog(ImGuiFileBrowserFlags_EnterNewFilename | ImGuiFileBrowserFlags_CreateNewDir)
     , m_csav(csav), m_img(img)
   {
+    if (!s_inited) {
+      s_inited = true;
+      register_editors();
+    }
+
     save_dialog.SetTitle("Saving savefile");
     save_dialog.SetTypeFilters({ ".dat" });
   }

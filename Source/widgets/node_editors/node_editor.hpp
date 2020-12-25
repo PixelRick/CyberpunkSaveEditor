@@ -1,22 +1,14 @@
 #pragma once
+
 #include <memory>
 #include <functional>
 #include <vector>
 #include <map>
 #include <sstream>
+#include <iostream>
 
 #include "AppLib/IApp.h"
 #include "cserialization/node.hpp"
-
-/*
-struct node_dataview
-{
-std::shared_ptr<node_t> node;
-
-virtual void commit() = 0;
-virtual void reload() = 0;
-};
-*/
 
 #define NODE_EDITOR__DEFAULT_EDITOR_NAME "<default_editor>"
 
@@ -51,7 +43,6 @@ public:
     s_factory_map[node_name] = std::bind(&create<make_shared_enabler>, std::placeholders::_1);
   }
 
-public:
   static inline std::shared_ptr<node_editor>
   create(const std::shared_ptr<const node_t>& node)
   {
@@ -87,7 +78,10 @@ public:
   void draw_window(bool* p_open = nullptr)
   {
     m_window_opened = true;
-    if (ImGui::Begin(m_window_name.c_str(), &m_window_opened))
+    auto& io = ImGui::GetIO();
+    ImVec2 center(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f);
+    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+    if (ImGui::Begin(m_window_name.c_str(), &m_window_opened, ImGuiWindowFlags_AlwaysAutoResize))
     {
       draw_widget();
     }
@@ -96,9 +90,9 @@ public:
       *p_open = m_window_opened;
   }
 
-  void draw_widget()
+  void draw_widget(const ImVec2& size = ImVec2(0, 0))
   {
-    draw_impl();
+    draw_impl(size);
 
     if (ImGui::BeginPopupModal("Error##node_editor", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
     {
@@ -130,6 +124,50 @@ public:
   virtual void reload() = 0;
 
 protected:
-  virtual void draw_impl() = 0;
+  virtual void draw_impl(const ImVec2& size) = 0;
+};
+
+/*  starter template
+// ------------------
+
+class node_xxxeditor
+  : public node_editor
+{
+  // attrs
+
+public:
+  node_xxxeditor(const std::shared_ptr<const node_t>& node)
+    : node_editor(node)
+  {
+    reload();
+  }
+
+public:
+  void commit() override
+  {
+  }
+
+  void reload() override
+  {
+  }
+
+protected:
+  void draw_impl(const ImVec2& size) override
+  {
+  }
+
+  void on_dirty(size_t offset, size_t len, size_t patch_len) override
+  {
+  }
+};
+
+*/
+
+template<typename CharT, typename TraitsT = std::char_traits<CharT> >
+class vector_streambuf : public std::basic_streambuf<CharT, TraitsT> {
+public:
+  vector_streambuf(std::vector<CharT> &vec) {
+    this->setg(vec.data(), vec.data(), vec.data() + vec.size());
+  }
 };
 
