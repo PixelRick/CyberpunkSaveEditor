@@ -116,6 +116,7 @@ public:
   }
 
   static inline std::shared_ptr<const node_t> appearance_src;
+  static inline uint32_t appearance_version = 0;
 
   void draw()
   {
@@ -154,6 +155,7 @@ public:
     if (ImGui::ButtonEx("COPY SKIN##SAVE", ImVec2(100, 60)))
     {
       appearance_src = m_csav->search_node("CharacetrCustomization_Appearances");
+      appearance_version = m_csav->v2;
     }
 
     ImGui::SameLine();
@@ -162,9 +164,27 @@ public:
       auto appearance_node = m_csav->search_node("CharacetrCustomization_Appearances");
       if (appearance_src && appearance_src != appearance_node)
       {
-        auto& src_buf = appearance_src->data();
-        appearance_node->nonconst().data().assign(src_buf.begin(), src_buf.end());
+        if (appearance_version != m_csav->v2)
+        {
+          ImGui::OpenPopup("Error##TRANSFER");
+        }
+        else
+        {
+          auto& src_buf = appearance_src->data();
+          appearance_node->nonconst().data().assign(src_buf.begin(), src_buf.end());
+        }
       }
+    }
+
+    if (ImGui::BeginPopupModal("Error##TRANSFER", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove))
+    {
+      ImGui::Text(" saves' version mismatch ");
+      ImGui::Text(" -> update your saves ingame first ");
+      ImGui::Separator();
+      if (ImGui::Button("OK", ImVec2(ImGui::GetContentRegionAvail().x, 0)))
+        ImGui::CloseCurrentPopup();
+
+      ImGui::EndPopup();
     }
 
     // Always center this window when appearing
