@@ -89,7 +89,7 @@ protected:
   static inline bool s_inited = false;
   static inline void register_editors()
   {
-    node_editor::factory_register_for_node_name<node_hexeditor>(NODE_EDITOR__DEFAULT_EDITOR_NAME);
+    node_editor::factory_register_for_node_name<node_hexeditor>(NODE_EDITOR__DEFAULT_LEAF_EDITOR_NAME);
     node_editor::factory_register_for_node_name<inventory_editor>("inventory");
   }
 

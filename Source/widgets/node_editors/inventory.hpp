@@ -18,8 +18,12 @@ public:
   }
 
 public:
-  bool commit() override { return inv.to_node(node()); }
-  bool reload() override
+  bool commit_impl() override
+  {
+    return inv.to_node(node());
+  }
+
+  bool reload_impl() override
   {
     bool success = inv.from_node(node());
     item_editors.clear();
@@ -45,11 +49,6 @@ protected:
       ImGui::PopID();
     }
     ImGui::EndChild();
-  }
-
-  void on_dirty(size_t offset, size_t len, size_t patch_len) override
-  {
-    
   }
 };
 

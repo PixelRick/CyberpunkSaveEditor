@@ -41,19 +41,6 @@ public:
     me.ScrollToAddrNext = me.DataSelectionStart;
   }
 
-  bool commit() override
-  {
-    assign_node_data(editbuf.begin(), editbuf.end());
-    return true;
-  }
-
-  bool reload() override 
-  {
-    const auto& buf = node_data_buffer();
-    editbuf.assign(buf.begin(), buf.end());
-    return true;
-  }
-
 protected:
   static inline ImU8 read_fn(const ImU8* data, size_t off)
   {
@@ -65,9 +52,11 @@ protected:
 
   static inline void write_fn(ImU8* data, size_t off, ImU8 d)
   {
-    auto& buf = ((node_hexeditor*)data)->editbuf;
+    node_hexeditor* e = (node_hexeditor*)data;
+    auto& buf = e->editbuf;
     if (off < buf.size())
       buf[off] = d;
+    e->m_has_changes = true;
   }
 
   static inline bool highlight_fn(const ImU8* data, size_t off)
@@ -110,7 +99,6 @@ protected:
 
     if (ImGui::BeginPopup("context##hexedit"))
     {
-      
       if (me.DataSelectionStart != (size_t)-1 || editbuf.empty())
       {
         size_t seladdr_beg = me.SelectionStart();
@@ -125,14 +113,23 @@ protected:
         {
           if (ImGui::Selectable("copy"))
             m_clipboard.assign(editbuf.begin() + seladdr_beg, editbuf.begin() + seladdr_end);
-          if (ImGui::Selectable("paste")) {
+
+          if (ImGui::Selectable("paste"))
+          {
             editbuf.erase(editbuf.begin() + seladdr_beg, editbuf.begin() + seladdr_end);
             editbuf.insert(editbuf.begin() + seladdr_beg, m_clipboard.begin(), m_clipboard.end());
+            m_has_changes = true;
           }
           if (ImGui::Selectable("paste insert"))
+          {
             editbuf.insert(editbuf.begin() + seladdr_beg, m_clipboard.begin(), m_clipboard.end());
+            m_has_changes = true;
+          }
           if (ImGui::Selectable("erase"))
+          {
             editbuf.erase(editbuf.begin() + seladdr_beg, editbuf.begin() + seladdr_end);
+            m_has_changes = true;
+          }
           ImGui::Separator();
         }
 
@@ -144,20 +141,29 @@ protected:
         static char value = 0;
         ImGui::InputScalar("insert value ##insertvalue", ImGuiDataType_U8, (uint8_t*)&value, &u8_one, &u8_eight, "0x%02X");
 
-        if (ImGui::Selectable("insert")) {
+        if (ImGui::Selectable("insert"))
+        {
           std::vector<char> values((size_t)cnt, value);
           editbuf.insert(editbuf.begin() + seladdr_beg, values.begin(), values.end());
+          m_has_changes = true;
         }
       }
 
       ImGui::EndPopup();
     }
-    
   }
 
-  void on_dirty(size_t offset, size_t len, size_t patch_len) override
+  bool commit_impl() override
   {
-    // nothing to do, hexeditor diffs against node_data_buffer() everyframe
+    assign_node_data(editbuf.begin(), editbuf.end());
+    return true;
+  }
+
+  bool reload_impl() override 
+  {
+    const auto& buf = node_data_buffer();
+    editbuf.assign(buf.begin(), buf.end());
+    return true;
   }
 };
 

@@ -74,8 +74,9 @@ public:
   bool is_root() const { return m_idx == ROOT_NODE_IDX; }
   bool is_blob() const { return m_idx == BLOB_NODE_IDX; }
   bool is_cnode() const { return m_idx >= 0; }
-
+  
   bool has_children() const { return !m_children.empty(); }
+  bool is_leaf() const { return !has_children(); }
 
 public:
   size_t calcsize() const
@@ -135,7 +136,9 @@ public:
   void assign_node_data(Iter first, Iter last)
   {
     auto& buf = m_node->data();
+    size_t oldlen = buf.size();
     buf.assign(first, last);
+    dispatch_node_data_changed();
   }
 
   void patch_node_data(size_t offset, size_t len, const char* srcbuf, size_t srclen)
@@ -148,19 +151,21 @@ public:
       buf.erase(it_start, it_start + len - srclen);
     std::copy(srcbuf, srcbuf + srclen, it_start);
 
-    signal_dirty(offset, len, srclen);
+    dispatch_node_data_changed();
   }
 
   const std::vector<char>& node_data_buffer() const { return m_node->data(); } const
 
-  void signal_dirty(size_t offset, size_t len, size_t patch_len) const
+  void dispatch_node_data_changed() const
   {
     const uint64_t uid = (uint64_t)m_node.get();
-    for (auto& view : s_views.find(uid)->second)
-      view->on_dirty(offset, len, patch_len);
+    for (auto& view : s_views.find(uid)->second) {
+      if (view != this)
+        view->on_node_data_changed();
+    }
   }
 
 protected:
-  virtual void on_dirty(size_t offset, size_t len, size_t patch_len) = 0;
+  virtual void on_node_data_changed() = 0;
 };
 
