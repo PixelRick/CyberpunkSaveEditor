@@ -123,7 +123,7 @@ public:
     scoped_imgui_id sii {this};
 
     std::string label = m_csav->filepath.u8string();
-    
+
     ImGuiStyle& style = ImGui::GetStyle();
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, style.ItemSpacing.y));
 
@@ -200,7 +200,7 @@ public:
     if (ImGui::BeginPopupModal("Saving..##SAVE", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove))
     {
       ImGui::Text("path: %s", m_csav->filepath.string().c_str());
-      
+
       if (save_job.is_running())
       {
         save_job.draw();
@@ -239,6 +239,16 @@ public:
 
     ImGui::Indent(indent);
 
+    //const ImGuiID id = ImGui::GetCurrentWindow()->GetID((void*)this);
+    //ImGui::BeginChild(id);
+    draw_content();
+    //ImGui::EndChild();
+
+    ImGui::Unindent(indent);
+  }
+
+  void draw_content()
+  {
     if (ImGui::CollapsingHeader("Original Node Descriptors", ImGuiTreeNodeFlags_None))
     {
       ImGui::Indent(5.f);
@@ -297,8 +307,7 @@ public:
     if (ImGui::CollapsingHeader("Search Tools", ImGuiTreeNodeFlags_None))
     {
       ImGui::Indent(5.f);
-      ImGui::BeginChild("Search Tools##child", ImVec2(0, 0));
-      
+
       int line_width = (int)ImGui::GetContentRegionAvail().x;
       float slider_width = (float)std::max(line_width - 300, 100);
 
@@ -415,13 +424,8 @@ public:
           nh.reset();
       }
 
-      ImGui::EndChild();
       ImGui::Unindent(5.f);
     }
-    
-    ImGui::Unindent(indent);
-
-    //m_csav->entry_descs
   }
 
   static inline std::shared_ptr<const node_t>& selected_node()
