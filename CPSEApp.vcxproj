@@ -55,7 +55,7 @@
     <ClInclude Include="Source\imgui_extras\imgui_filebrowser.hpp" />
     <ClInclude Include="Source\imgui_extras\imgui_memory_editor.hpp" />
     <ClCompile Include="Source\main.cpp" />
-    <ClInclude Include="Source\utils.h" />
+    <ClInclude Include="Source\utils.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
