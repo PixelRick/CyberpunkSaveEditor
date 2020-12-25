@@ -15,6 +15,7 @@
 
 #include "utils.hpp"
 #include "cserialization/csav.hpp"
+#include "cserialization/cpnames.hpp"
 #include "node_editors.hpp"
 
 void ImGui::ShowDemoWindow(bool* p_open);
@@ -281,12 +282,30 @@ public:
       int line_width = (int)ImGui::GetContentRegionAvail().x;
       float slider_width = (float)std::max(line_width - 300, 100);
 
+      static char search_text[256];
+      const bool text_search = ImGui::Button("search text", ImVec2(150, 0)); ImGui::SameLine();
+      ImGui::PushItemWidth(slider_width);
+      ImGui::InputText("input text", search_text, 256);
+      const bool crc32_search = ImGui::Button("search crc32", ImVec2(150, 0));
+      if (text_search) {
+        search_pattern_in_nodes(search_text, "");
+      }
+      if (crc32_search) {
+        CRC32 crc;
+        crc.feed(search_text, strlen(search_text));
+        uint32_t crcval = crc.get();
+        search_pattern_in_nodes(std::string((char*)&crcval, (char*)&crcval + 4), "");
+      }
+
       static uint32_t u32_v;
       const bool u32_search = ImGui::Button("search u32", ImVec2(150, 0)); ImGui::SameLine();
       ImGui::PushItemWidth(slider_width);
-      ImGui::InputScalar("input u32", ImGuiDataType_U32, &u32_v);
+      ImGui::InputScalar("input u32 (dec)", ImGuiDataType_U32, &u32_v);
+      ImGui::InvisibleButton("search u32##next", ImVec2(150, 1)); ImGui::SameLine();
+      ImGui::PushItemWidth(slider_width);
+      ImGui::InputScalar("input u32 (hex)", ImGuiDataType_U32, &u32_v, 0, 0, "%08X");
       if (u32_search) {
-        search_pattern_in_nodes(std::string((char*)&u32_v, (char*)&u32_v + 8), "");
+        search_pattern_in_nodes(std::string((char*)&u32_v, (char*)&u32_v + 4), "");
       }
 
       static float f32_v;
@@ -486,6 +505,8 @@ public:
     open_dialog.SetTypeFilters({ ".dat" });
   }
 
+  
+  
   void update()
   {
     open_job.update();
