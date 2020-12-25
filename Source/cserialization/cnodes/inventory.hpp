@@ -71,7 +71,7 @@ struct inventory
   struct item_entry
   {
     namehash id;
-    std::shared_ptr<const node_t> item_node;
+    itemData item;
   };
 
   std::vector<item_entry> m_items;
@@ -99,7 +99,7 @@ struct inventory
       return true;
 
     // prepare for iteration of items
-    children[0] = node_t::create_shared_blob(first_blob, 16, (uint32_t)first_blob.size());
+    children[0] = node_t::create_shared_blob(first_blob.data(), 16, (uint32_t)first_blob.size());
     children.pop_back();
 
     for (int i = 0; i < children.size(); i += 2)
@@ -107,21 +107,40 @@ struct inventory
       m_items.emplace_back();
       item_entry& entry = m_items.back();
 
-      auto& hdr = children[i];
-      auto& itemdata = children[i+1];
+      auto& item_hdr = children[i];
+      auto& item_node = children[i+1];
 
-      vector_streambuf<char> hdrbuf(hdr->nonconst().data());
+      vector_streambuf<char> hdrbuf(item_hdr->nonconst().data());
       std::istream is(&hdrbuf);
-      is >> entry.id;
 
-      entry.item_node = itemdata;
+      is >> entry.id;
+      entry.item.from_node(item_node);
     }
+
     return true;
   }
 
   bool to_node(const std::shared_ptr<const node_t>& node)
   {
-    // todo
+    std::vector<std::shared_ptr<const node_t>> child_nodes;
+
+    for (auto& e : m_items)
+    {
+      std::stringstream ss;
+      ss << e.id;
+      auto blob = ss.str();
+
+      // todo, use id from itemData when it is reversed
+
+      child_nodes.emplace_back(
+        node_t::create_shared_blob(blob.data(), 0, (uint32_t)blob.size())
+      );
+      //child_nodes.emplace_back(e.item_node);
+    }
+
+
+    // to finish
+
     return false;
   }
 };

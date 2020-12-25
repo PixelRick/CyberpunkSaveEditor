@@ -110,7 +110,7 @@ protected:
 
         if (childdesc.data_offset > cur_offset) {
           nc_children.push_back(
-            node_t::create_shared_blob(nodedata, cur_offset, childdesc.data_offset)
+            node_t::create_shared_blob(nodedata.data(), cur_offset, childdesc.data_offset)
           );
         }
 
@@ -125,7 +125,7 @@ protected:
 
       if (cur_offset < end_offset) {
         nc_children.push_back(
-          node_t::create_shared_blob(nodedata, cur_offset, end_offset)
+          node_t::create_shared_blob(nodedata.data(), cur_offset, end_offset)
         );
       }
     }

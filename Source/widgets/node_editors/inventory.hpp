@@ -23,8 +23,8 @@ public:
   {
     bool success = inv.from_node(node());
     item_editors.clear();
-    for (auto& e : inv.m_items)
-      item_editors.push_back(node_editor::create(e.item_node));
+    //for (auto& e : inv.m_items)
+      //item_editors.push_back(node_editor::create(e.item));
     return success;
   }
 
@@ -38,9 +38,11 @@ protected:
     ImGui::Text("todo, %d %d %d", inv.m_ukcnt0, inv.m_ukcnt1, inv.m_ukcnt2);
     for (size_t i = 0; i < inv.m_items.size(); ++i)
     {
+      ImGui::PushID(i);
       if (ImGui::CollapsingHeader(cpn.get_name(inv.m_items[i].id).c_str())) {
         if (i < item_editors.size()) item_editors[i]->draw_widget();
       }
+      ImGui::PopID();
     }
     ImGui::EndChild();
   }

@@ -310,7 +310,7 @@ struct MemoryEditor
     if (DataEditingAddrNext != DataEditingAddr)
     {
       // Save edit
-      if (DataEditingAddr)
+      if (DataEditingAddr != (size_t)-1)
       {
         unsigned int data_input_value = 0;
         if (sscanf(ByteInputBuf, "%X", &data_input_value) == 1) {
