@@ -41,15 +41,17 @@ public:
     me.ScrollToAddrNext = me.DataSelectionStart;
   }
 
-  void commit() override
+  bool commit() override
   {
     assign_node_data(editbuf.begin(), editbuf.end());
+    return true;
   }
 
-  void reload() override 
+  bool reload() override 
   {
     const auto& buf = node_data_buffer();
     editbuf.assign(buf.begin(), buf.end());
+    return true;
   }
 
 protected:

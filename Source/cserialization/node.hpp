@@ -38,6 +38,19 @@ public:
     return std::make_shared<const make_shared_enabler>(idx, name);
   }
 
+  static std::shared_ptr<const node_t> create_shared_blob(const std::vector<char>& nodedata, uint32_t start_offset, uint32_t end_offset)
+  {
+    auto node = node_t::create_shared(BLOB_NODE_IDX, "datablob");
+    auto& nc_node = node->nonconst();
+
+    nc_node.data().assign(
+      nodedata.begin() + start_offset,
+      nodedata.begin() + end_offset
+    );
+
+    return node;
+  }
+
 public:
   node_t& nonconst() const { return const_cast<node_t&>(*this); }
 

@@ -92,6 +92,7 @@ public:
 
   void draw_widget(const ImVec2& size = ImVec2(0, 0))
   {
+    ImGui::PushID((void*)this);
     draw_impl(size);
 
     if (ImGui::BeginPopupModal("Error##node_editor", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
@@ -112,6 +113,8 @@ public:
     ImGui::SameLine();
     if (ImGui::Button("discard changes##node_editor"))
       reload();
+
+    ImGui::PopID();
   }
 
   static void error(std::string_view msg)
@@ -120,8 +123,8 @@ public:
     ImGui::OpenPopup("Error##node_editor");
   }
 
-  virtual void commit() = 0;
-  virtual void reload() = 0;
+  virtual bool commit() = 0;
+  virtual bool reload() = 0;
 
 protected:
   virtual void draw_impl(const ImVec2& size) = 0;
@@ -143,11 +146,11 @@ public:
   }
 
 public:
-  void commit() override
+  bool commit() override
   {
   }
 
-  void reload() override
+  bool reload() override
   {
   }
 
@@ -162,12 +165,4 @@ protected:
 };
 
 */
-
-template<typename CharT, typename TraitsT = std::char_traits<CharT> >
-class vector_streambuf : public std::basic_streambuf<CharT, TraitsT> {
-public:
-  vector_streambuf(std::vector<CharT> &vec) {
-    this->setg(vec.data(), vec.data(), vec.data() + vec.size());
-  }
-};
 

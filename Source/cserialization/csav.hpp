@@ -83,19 +83,6 @@ public:
   }
 
 protected:
-  std::shared_ptr<const node_t> make_blob_node(const std::vector<char>& nodedata, uint32_t start_offset, uint32_t end_offset)
-  {
-    auto node = node_t::create_shared(BLOB_NODE_IDX, "datablob");
-    auto& nc_node = node->nonconst();
-
-    nc_node.data().assign(
-      nodedata.begin() + start_offset,
-      nodedata.begin() + end_offset
-    );
-
-    return node;
-  }
-
   std::shared_ptr<const node_t> read_node(const std::vector<char>& nodedata, node_desc& desc, int32_t idx)
   {
     uint32_t cur_offset = desc.data_offset + 4;
@@ -123,7 +110,7 @@ protected:
 
         if (childdesc.data_offset > cur_offset) {
           nc_children.push_back(
-            make_blob_node(nodedata, cur_offset, childdesc.data_offset)
+            node_t::create_shared_blob(nodedata, cur_offset, childdesc.data_offset)
           );
         }
 
@@ -138,7 +125,7 @@ protected:
 
       if (cur_offset < end_offset) {
         nc_children.push_back(
-          make_blob_node(nodedata, cur_offset, end_offset)
+          node_t::create_shared_blob(nodedata, cur_offset, end_offset)
         );
       }
     }

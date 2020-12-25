@@ -44,6 +44,13 @@ public:
 	void reset(uint32_t crc = 0xFFFFFFFF) { value = crc; }
 };
 
+template<typename CharT, typename TraitsT = std::char_traits<CharT> >
+class vector_streambuf : public std::basic_streambuf<CharT, TraitsT> {
+public:
+	vector_streambuf(std::vector<CharT> &vec) {
+		this->setg(vec.data(), vec.data(), vec.data() + vec.size());
+	}
+};
 
 void replace_all_in_str(std::string& s, const std::string& from, const std::string& to);
 
@@ -51,3 +58,4 @@ std::string u64_to_cpp(uint64_t val);
 
 std::vector<uintptr_t> sse2_strstr_masked(const unsigned char* s, size_t m, const unsigned char* needle, size_t n, const char* mask, size_t maxcnt = 0);
 std::vector<uintptr_t> sse2_strstr(const unsigned char* s, size_t m, const unsigned char* needle, size_t n, size_t maxcnt = 0);
+
