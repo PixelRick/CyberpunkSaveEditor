@@ -1,5 +1,6 @@
 #pragma once
 #include "node_editor.hpp"
+#include "cserialization/cpnames.hpp"
 
 class inventory_editor
   : public node_editor
@@ -31,6 +32,8 @@ public:
 
     uint64_t c; is.read((char*)&c, 8);
     uint32_t d; is.read((char*)&d, 4);
+
+    cpnames::get();
   }
 
 protected:

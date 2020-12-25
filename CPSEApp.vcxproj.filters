@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -169,5 +169,13 @@
     <ClInclude Include="Source\utils.hpp">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="Source\cserialization\cpnames.hpp">
+      <Filter>Source\cserialization</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Source\cserialization\names.inl">
+      <Filter>Source\cserialization</Filter>
+    </Text>
   </ItemGroup>
 </Project>

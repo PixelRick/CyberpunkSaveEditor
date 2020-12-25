@@ -25,11 +25,15 @@
     <ClCompile Include="Source\AppLib\imgui\imgui_impl_win32.cpp" />
     <ClInclude Include="Source\AppLib\stb_image.h" />
     <ClCompile Include="Source\cserialization\csav.cpp" />
+    <Text Include="Source\cserialization\names.inl">
+      <FileType>Document</FileType>
+    </Text>
     <ClCompile Include="Source\cserialization\packing.cpp" />
     <ClCompile Include="Source\external\xlz4\lz4.c" />
     <ClCompile Include="Source\utils.cpp" />
     <ClInclude Include="Source\cserialization\cnodes\inventory.hpp" />
     <ClInclude Include="Source\cserialization\cnodes\itemData.hpp" />
+    <ClInclude Include="Source\cserialization\cpnames.hpp" />
     <ClInclude Include="Source\external\span.hpp" />
     <ClInclude Include="Source\widgets\csav_experimental.hpp" />
     <ClInclude Include="Source\widgets\csav_widget.hpp" />
