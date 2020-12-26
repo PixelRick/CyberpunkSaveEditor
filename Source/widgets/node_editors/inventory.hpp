@@ -54,6 +54,17 @@ protected:
       ss << "inventory_" << std::hex << std::uppercase << std::setfill('0') << std::setw(16) << subinv.uid;
       if (ImGui::CollapsingHeader(ss.str().c_str()))
       {
+        if (ImGui::Button("dupe first item row (don't worry about its name not changing during edit)") && subinv.items.size() > 0)
+        {
+          // todo: move that on the data side
+          auto& first_item = subinv.items.front();
+          auto& first_buf = first_item.item_node->data();
+          auto nnode = node_t::create_shared(0, "itemData");
+          nnode->nonconst().assign_data(first_buf.begin(), first_buf.end());
+
+          subinv.items.insert(subinv.items.begin(), 1, inventory::item_entry_t{ first_item.id, nnode });
+        }
+
         for (size_t i = 0; i < subinv.items.size(); ++i)
         {
           ImGui::PushID((int)i);
