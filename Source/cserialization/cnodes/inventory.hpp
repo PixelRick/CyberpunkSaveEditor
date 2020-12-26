@@ -138,9 +138,9 @@ struct inventory
         if (!item_node)
           return nullptr; // todo: don't leave this in this state
 
-        // for now it is hacky, i use the first 16 bytes of itemData..
+        // for now it is hacky, i use the first 15 bytes of itemData..
         auto& item_buf = item_node->data();
-        writer.write(item_buf.data(), 8);
+        writer.write(item_buf.data(), 15);
       
         writer.write_child(item_node);
       }
