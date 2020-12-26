@@ -438,10 +438,10 @@ protected:
       return;
     }
 
-    auto& emgr = node_editors_wndmgr::get();
-    auto editor = emgr.get_opened_editor(node);
+    auto& emgr = node_editors_mgr::get();
+    auto editor = emgr.find_editor(node);
 
-    bool selected = editor != nullptr;
+    const bool selected = editor && editor->has_opened_window();
     const bool focused = editor && editor->has_focus();
 
     ImGuiTreeNodeFlags node_flags = selected ? ImGuiTreeNodeFlags_Selected : 0;
@@ -470,7 +470,7 @@ protected:
       if (editor)
         editor->focus_window();
       else if (ImGui::IsMouseDoubleClicked(0))
-        editor = emgr.open_editor(node);
+        editor = emgr.get_editor(node, true);
     }
 
     if (opened && node->has_children())
@@ -571,7 +571,7 @@ public:
     for (auto& cs : m_list)
       cs.draw();
 
-    node_editors_wndmgr::get().draw_editors();
+    node_editors_mgr::get().draw_editors();
   }
 
   void draw_menu_item(IApp* owning_app)

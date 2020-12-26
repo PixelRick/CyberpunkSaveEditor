@@ -128,8 +128,10 @@ protected:
 			if (!e) {
 				n->nonconst().assign_data((char*)this, (char*)this + 100);
 				e = node_editor::create(n);
+				e->open_window();
 			}
-			e->draw_window(&test_hexeditor);
+			e->draw_window();
+			test_hexeditor = e->has_opened_window();
 		}
 
 		if (imgui_demo)

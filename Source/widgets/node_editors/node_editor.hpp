@@ -57,14 +57,15 @@ public:
   // inlined factory -end-
 
 private:
-  std::shared_ptr<const node_t> m_node;
+  std::weak_ptr<const node_t> m_weaknode;
   std::string m_window_title;
   bool m_window_take_focus = false;
   bool m_window_has_focus = true;
+  bool m_window_opened = true;
 
 protected:
   node_editor(const std::shared_ptr<const node_t>& node)
-    : m_node(node)
+    : m_weaknode(node)
   {
     std::stringstream ss;
     ss << "node:" << node->name() << " idx:" << node->idx();
@@ -74,7 +75,9 @@ protected:
 
   ~node_editor() override
   {
-    m_node->remove_listener(this);
+    auto node = m_weaknode.lock();
+    if (node)
+      node->remove_listener(this);
   };
 
   bool m_dirty = false;
@@ -94,8 +97,8 @@ protected:
 public:
   bool has_changes() const { return m_has_changes; }
 
-  std::shared_ptr<const node_t> node() const { return m_node; }
-  node_t& ncnode() { return m_node->nonconst(); }
+  std::shared_ptr<const node_t> node() const { return m_weaknode.lock(); }
+  std::shared_ptr<node_t> ncnode() { return std::const_pointer_cast<node_t>(m_weaknode.lock()); }
 
   void focus_window()
   {
@@ -107,12 +110,32 @@ public:
     return m_window_has_focus;
   }
 
-  void draw_window(bool* p_open = nullptr)
+  void open_window()
   {
+    m_window_opened = true;
+  }
+
+  bool has_opened_window() const
+  {
+    return m_window_opened;
+  }
+
+  void draw_window()
+  {
+    if (!m_window_opened)
+      return;
+
     if (m_window_take_focus)
     {
       ImGui::SetNextWindowFocus();
       m_window_take_focus = false;
+    }
+
+    auto node = this->node();
+    if (!node)
+    {
+      m_window_opened = false;
+      return;
     }
 
     bool opened = true;
@@ -121,10 +144,10 @@ public:
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
     std::stringstream ss;
-    uint64_t nid = (uint64_t)m_node.get();
-    ss << "node:" << m_node->name();
-    if (m_node->is_cnode())
-      ss << " idx:" << m_node->idx();
+    uint64_t nid = (uint64_t)node.get();
+    ss << "node:" << node->name();
+    if (node->is_cnode())
+      ss << " idx:" << node->idx();
     ss << "##" << nid;
     m_window_title = ss.str();
 
@@ -189,34 +212,42 @@ public:
       ImGui::EndPopup();
     }
 
-    if (p_open)
-      *p_open = opened;
+    m_window_opened = opened;
   }
 
   void draw_widget(const ImVec2& size = ImVec2(0, 0))
   {
     ImGui::PushID((void*)this);
-    draw_impl(size);
 
-    if (ImGui::BeginPopupModal("Error##node_editor", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
+    auto node = m_weaknode.lock();
+    if (!node)
     {
-      ImGui::Text("%s", s_error.c_str());
+      ImGui::Text("node no longer exists");
+    }
+    else
+    {
+      draw_impl(size);
 
-      ImGui::Separator();
-      if (ImGui::Button("OK", ImVec2(ImGui::GetContentRegionAvail().x, 0)))
+      if (ImGui::BeginPopupModal("Error##node_editor", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
       {
-        ImGui::CloseCurrentPopup();
-        s_error = "";
+        ImGui::Text("%s", s_error.c_str());
+
+        ImGui::Separator();
+        if (ImGui::Button("OK", ImVec2(ImGui::GetContentRegionAvail().x, 0)))
+        {
+          ImGui::CloseCurrentPopup();
+          s_error = "";
+        }
+
+        ImGui::EndPopup();
       }
 
-      ImGui::EndPopup();
+      if (ImGui::Button("commit changes##node_editor", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 0)))
+        commit();
+      ImGui::SameLine();
+      if (ImGui::Button("discard and reload##node_editor", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 0)))
+        reload();
     }
-
-    if (ImGui::Button("commit changes##node_editor", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 0)))
-      commit();
-    ImGui::SameLine();
-    if (ImGui::Button("discard and reload##node_editor", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 0)))
-      reload();
 
     ImGui::PopID();
   }
@@ -297,4 +328,80 @@ protected:
 };
 
 */
+
+
+// the idea here is to have a single editor per node
+// and editor state is thus the same between opened window and widget
+// + you could make all widgets have a "to window" button..
+
+class node_editors_mgr
+{
+public:
+  static node_editors_mgr& get()
+  {
+    static node_editors_mgr s;
+    return s;
+  }
+
+  node_editors_mgr(const node_editors_mgr&) = delete;
+  node_editors_mgr& operator=(const node_editors_mgr&) = delete;
+
+private:
+  node_editors_mgr() = default;
+  ~node_editors_mgr() = default;
+
+  std::map<
+    std::weak_ptr<const node_t>,
+    std::shared_ptr<node_editor>,
+    std::owner_less<std::weak_ptr<const node_t>>
+  > m_editors;
+
+public:
+  std::shared_ptr<node_editor> find_editor(const std::shared_ptr<const node_t>& node) const
+  {
+    auto it = m_editors.find(node);
+    if (it != m_editors.end())
+      return it->second;
+    return nullptr;
+  }
+
+  bool has_editor(const std::shared_ptr<const node_t>& node) const
+  {
+    const uint64_t nid = (uint64_t)node.get();
+    return find_editor(node) != nullptr;
+  }
+
+  std::shared_ptr<node_editor> get_editor(const std::shared_ptr<const node_t>& node, bool create_with_opened_window=false)
+  {
+    auto it = m_editors.find(node);
+    if (it != m_editors.end())
+      return it->second;
+    
+    auto editor = node_editor::create(node);
+    m_editors[node] = editor;
+
+    return editor;
+  }
+
+  void draw_editors()
+  {
+    uint64_t id = (uint64_t)this;
+    for (auto it = m_editors.begin(); it != m_editors.end();)
+    {
+      auto n = it->first.lock();
+      if (!n)
+      {
+        it = m_editors.erase(it);
+      }
+      else
+      {
+        ImGui::PushID((int)++id);
+        it->second->draw_window();
+        ImGui::PopID();
+
+        ++it;
+      }
+    }
+  }
+};
 

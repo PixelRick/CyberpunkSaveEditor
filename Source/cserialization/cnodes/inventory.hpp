@@ -76,14 +76,12 @@ struct inventory
 
   struct subinv_t
   {
-    uint32_t ukcnt0 = 0;
-    uint64_t ukcnt1 = 0;
-    uint32_t ukcnt2 = 0;
+    uint64_t uid = 0;
     std::vector<item_entry_t> items;
   };
 
   std::vector<subinv_t> m_subinvs;
-  
+
   bool from_node(const std::shared_ptr<const node_t>& node)
   {
     if (!node)
@@ -91,30 +89,32 @@ struct inventory
 
     node_reader reader(node);
 
-    while (!reader.at_end())
+    uint32_t inventory_cnt;
+    reader.read((char*)&inventory_cnt, 4);
+    m_subinvs.resize(inventory_cnt);
+
+    for (auto& subinv : m_subinvs)
     {
-      m_subinvs.emplace_back();
-      subinv_t& subinv = m_subinvs.back();
-      reader.read((char*)&subinv.ukcnt0, 4);
-      reader.read((char*)&subinv.ukcnt1, 8);
-      reader.read((char*)&subinv.ukcnt2, 4);
+      reader.read((char*)&subinv.uid, 8);
 
-      for (uint32_t i = 0; i < subinv.ukcnt2; ++i)
+      uint32_t items_cnt;
+      reader.read((char*)&items_cnt, 4);
+
+      subinv.items.resize(items_cnt);
+      for (auto& entry : subinv.items)
       {
-        subinv.items.emplace_back();
-        item_entry_t& entry = subinv.items.back();
-
         reader.read((char*)&entry.id.as_u64, 7);
 
         auto item_node = reader.read_child("itemData");
         if (!item_node)
-          return false;
+          return false; // todo: don't leave this in this state
 
-        entry.item.from_node(item_node);
+        if (!entry.item.from_node(item_node))
+          return false; // todo: don't leave this in this state
       }
     }
 
-    return true;
+    return reader.at_end();
   }
 
   bool to_node(const std::shared_ptr<const node_t>& node)

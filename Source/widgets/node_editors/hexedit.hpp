@@ -155,7 +155,7 @@ protected:
 
   bool commit_impl() override
   {
-    ncnode().assign_data(editbuf.begin(), editbuf.end());
+    ncnode()->assign_data(editbuf.begin(), editbuf.end());
     return true;
   }
 
