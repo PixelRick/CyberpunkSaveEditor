@@ -64,22 +64,29 @@ struct itemData
     // todo
     return raw;
   }
+
+  std::string name()
+  {
+    auto& buf = raw->data();
+    if (buf.size() < 7)
+      return "invalid: no namehash in item data";
+    namehash id = *(namehash*)buf.data();
+    id._pad = 0;
+    if (id.uk[0] || id.uk[1])
+      return "invalid: namehash is malformed";
+    auto& cpn = cpnames::get();
+    return cpn.get_name(id);
+  }
+};
+
+struct subinv_t
+{
+  uint64_t uid = 0;
+  std::vector<itemData> items;
 };
 
 struct inventory
 {
-  struct item_entry_t
-  {
-    namehash id;
-    std::shared_ptr<const node_t> item_node;
-  };
-
-  struct subinv_t
-  {
-    uint64_t uid = 0;
-    std::vector<item_entry_t> items;
-  };
-
   std::vector<subinv_t> m_subinvs;
 
   bool from_node(const std::shared_ptr<const node_t>& node)
@@ -103,15 +110,17 @@ struct inventory
       subinv.items.resize(items_cnt);
       for (auto& entry : subinv.items)
       {
-        reader.read((char*)&entry.id.as_u64, 7);
-
-        // < 8 bytes here that i don't read
+        namehash id;
+        reader.read((char*)&id, 7);
+        uint64_t uk;
+        reader.read((char*)&uk, 8);
 
         auto item_node = reader.read_child("itemData");
         if (!item_node)
           return false; // todo: don't leave this in this state
 
-        entry.item_node = item_node;
+        if (!entry.from_node(item_node))
+          return false;
       }
     }
 
@@ -134,7 +143,7 @@ struct inventory
 
       for (auto& entry : subinv.items)
       {
-        auto item_node = entry.item_node;
+        auto item_node = entry.to_node();
         if (!item_node)
           return nullptr; // todo: don't leave this in this state
 

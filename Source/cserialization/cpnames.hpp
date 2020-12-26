@@ -23,6 +23,7 @@ struct namehash
       uint32_t crc;
       uint8_t slen;
       uint8_t uk[2];
+      uint8_t _pad;
     };
     uint64_t as_u64;
   };

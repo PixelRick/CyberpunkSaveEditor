@@ -107,6 +107,17 @@ public:
 
   node_t& nonconst() const { return const_cast<node_t&>(*this); }
 
+  std::shared_ptr<const node_t> deepcopy() const
+  {
+    // not cycle-safe, but shouldn't happen..
+    auto new_node = create_shared(0, name());
+    auto& nc = new_node->nonconst();
+    for (auto& c : m_children)
+      nc.m_children.push_back(c->deepcopy());
+    nc.m_data = m_data;
+    return new_node;
+  }
+
 public: 
   // non const setters
 
@@ -117,11 +128,21 @@ public:
     notify_data_modified();
   }
 
+  void assign_data(const std::vector<char>& buf)
+  {
+    assign_data(buf.begin(), buf.end());
+  }
+
   template <class Iter>
   void assign_children(Iter first, Iter last)
   {
     m_children.assign(first, last);
     notify_children_modified();
+  }
+
+  void assign_children(const std::vector<std::shared_ptr<const node_t>>& children)
+  {
+    assign_children(children.begin(), children.end());
   }
 
   template <class Iter>
@@ -341,7 +362,7 @@ public:
 
     auto data = m_ss.str();
     node.assign_data(data.begin(), data.end());
-    node.assign_children(m_new_children.begin(), m_new_children.begin());
+    node.assign_children(m_new_children.begin(), m_new_children.end());
   }
 };
 

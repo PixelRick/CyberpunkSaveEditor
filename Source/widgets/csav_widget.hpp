@@ -467,10 +467,14 @@ protected:
 
     if (ImGui::IsItemClicked())
     {
+      editor = emgr.get_editor(node);
+
       if (editor)
+      {
+        if (ImGui::IsMouseDoubleClicked(0))
+          editor->open_window();
         editor->focus_window();
-      else if (ImGui::IsMouseDoubleClicked(0))
-        editor = emgr.get_editor(node, true);
+      }
     }
 
     if (opened && node->has_children())

@@ -371,16 +371,15 @@ public:
     return find_editor(node) != nullptr;
   }
 
-  std::shared_ptr<node_editor> get_editor(const std::shared_ptr<const node_t>& node, bool create_with_opened_window=false)
+  std::shared_ptr<node_editor> get_editor(const std::shared_ptr<const node_t>& node)
   {
     auto it = m_editors.find(node);
     if (it != m_editors.end())
       return it->second;
     
     auto editor = node_editor::create(node);
-    m_editors[node] = editor;
-    if (create_with_opened_window)
-      editor->open_window();
+    if (editor)
+      m_editors[node] = editor;
 
     return editor;
   }

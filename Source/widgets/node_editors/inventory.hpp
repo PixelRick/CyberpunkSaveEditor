@@ -19,15 +19,24 @@ public:
     : node_editor(node)
   {
     reload();
+    // todo, listen to child nodes..
+  }
+
+  ~inventory_editor()
+  {
   }
 
 public:
   bool commit_impl() override
   {
-    //inv.to_node();
+    auto rebuilt = inv.to_node();
+    auto curnode = ncnode();
 
-    return false;
+    if (!rebuilt)
+      return false;
 
+    curnode->assign_children(rebuilt->children());
+    curnode->assign_data(rebuilt->data());
   }
 
   bool reload_impl() override
@@ -42,7 +51,7 @@ protected:
     auto& cpn = cpnames::get();
 
     ImGui::BeginChild("##inventory_editor",
-      ImVec2(size.x > 0 ? size.x : 800, size.y > 0 ? size.y : 800));
+      ImVec2(size.x > 0 ? size.x : 800, size.y > 0 ? size.y : 600));
 
     auto& emgr = node_editors_mgr::get();
 
@@ -54,28 +63,37 @@ protected:
       ss << "inventory_" << std::hex << std::uppercase << std::setfill('0') << std::setw(16) << subinv.uid;
       if (ImGui::CollapsingHeader(ss.str().c_str()))
       {
-        if (ImGui::Button("dupe first item row (don't worry about its name not changing during edit)") && subinv.items.size() > 0)
+        if (ImGui::Button("dupe first item row") && subinv.items.size() > 0)
         {
           // todo: move that on the data side
           auto& first_item = subinv.items.front();
-          auto& first_buf = first_item.item_node->data();
-          auto nnode = node_t::create_shared(0, "itemData");
-          nnode->nonconst().assign_data(first_buf.begin(), first_buf.end());
-
-          subinv.items.insert(subinv.items.begin(), 1, inventory::item_entry_t{ first_item.id, nnode });
+          auto new_node = first_item.to_node()->deepcopy();
+          itemData item_data;
+          item_data.from_node(new_node);
+          subinv.items.insert(subinv.items.begin(), 1, item_data);
         }
 
+        int torem_item = -1;
         for (size_t i = 0; i < subinv.items.size(); ++i)
         {
           ImGui::PushID((int)i);
-          if (ImGui::TreeNode(cpn.get_name(subinv.items[i].id).c_str()))
+
+          auto& item_data = subinv.items[i];
+
+          bool treenode = ImGui::TreeNode(item_data.name().c_str());
+          ImGui::SameLine();
+          if (ImGui::Button("-"))
+            torem_item = (int)i;
+          if (treenode)
           {
-            auto e = emgr.get_editor(subinv.items[i].item_node);
+            auto e = emgr.get_editor(item_data.raw);
             e->draw_widget();
             ImGui::TreePop();
           }
           ImGui::PopID();
         }
+        if (torem_item >= 0)
+          subinv.items.erase(subinv.items.begin() + torem_item);
       }
       ImGui::PopID();
     }
