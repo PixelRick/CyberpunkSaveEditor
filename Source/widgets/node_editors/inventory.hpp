@@ -73,6 +73,8 @@ protected:
           subinv.items.insert(subinv.items.begin(), 1, item_data);
         }
 
+        ImGuiWindow* window = ImGui::GetCurrentWindow();
+
         int torem_item = -1;
         for (size_t i = 0; i < subinv.items.size(); ++i)
         {
@@ -80,9 +82,9 @@ protected:
 
           auto& item_data = subinv.items[i];
 
-          bool treenode = ImGui::TreeNode(item_data.name().c_str());
+          bool treenode = ImGui::TreeNodeBehavior(window->GetID((int)i), 0, item_data.name().c_str(), NULL);
           ImGui::SameLine();
-          if (ImGui::Button("-"))
+          if (ImGui::Button("-", ImVec2(50, 0)))
             torem_item = (int)i;
           if (treenode)
           {
