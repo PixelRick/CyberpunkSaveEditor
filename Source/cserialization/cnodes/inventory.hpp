@@ -117,34 +117,33 @@ struct inventory
     return reader.at_end();
   }
 
-  bool to_node(const std::shared_ptr<const node_t>& node)
+  std::shared_ptr<const node_t> to_node()
   {
-    if (!node)
-      return false;
-
     node_writer writer;
-    return false;
 
-    //std::vector<std::shared_ptr<const node_t>> child_nodes;
-    //
-    //for (auto& e : m_items)
-    //{
-    //  std::stringstream ss;
-    //  ss << e.id;
-    //  auto blob = ss.str();
-    //
-    //  // todo, use id from itemData when it is reversed
-    //
-    //  child_nodes.emplace_back(
-    //    node_t::create_shared_blob(blob.data(), 0, (uint32_t)blob.size())
-    //  );
-    //  //child_nodes.emplace_back(e.item_node);
-    //}
+    uint32_t inventory_cnt = (uint32_t)m_subinvs.size();
+    writer.write((char*)&inventory_cnt, 4);
 
+    for (auto& subinv : m_subinvs)
+    {
+      writer.write((char*)&subinv.uid, 8);
 
-    // to finish
+      uint32_t items_cnt = (uint32_t)subinv.items.size();
+      writer.write((char*)&items_cnt, 4);
 
-    return false;
+      for (auto& entry : subinv.items)
+      {
+        writer.write((char*)&entry.id.as_u64, 7);
+        
+        auto item_node = entry.item.to_node();
+        if (!item_node)
+          return nullptr; // todo: don't leave this in this state
+
+        writer.write_child(item_node);
+      }
+    }
+
+    return writer.finalize("inventory");
   }
 };
 

@@ -311,7 +311,7 @@ protected:
   }
   
 public:
-  void append_child(const std::shared_ptr<const node_t>& node)
+  void write_child(const std::shared_ptr<const node_t>& node)
   {
     blobize_pending_data_if_any();
     m_new_children.push_back(node);
