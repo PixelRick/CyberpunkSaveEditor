@@ -71,7 +71,7 @@ struct inventory
   struct item_entry_t
   {
     namehash id;
-    itemData item;
+    std::shared_ptr<const node_t> item_node;
   };
 
   struct subinv_t
@@ -105,12 +105,13 @@ struct inventory
       {
         reader.read((char*)&entry.id.as_u64, 7);
 
+        // < 8 bytes here that i don't read
+
         auto item_node = reader.read_child("itemData");
         if (!item_node)
           return false; // todo: don't leave this in this state
 
-        if (!entry.item.from_node(item_node))
-          return false; // todo: don't leave this in this state
+        entry.item_node = item_node;
       }
     }
 
@@ -133,12 +134,14 @@ struct inventory
 
       for (auto& entry : subinv.items)
       {
-        writer.write((char*)&entry.id.as_u64, 7);
-        
-        auto item_node = entry.item.to_node();
+        auto item_node = entry.item_node;
         if (!item_node)
           return nullptr; // todo: don't leave this in this state
 
+        // for now it is hacky, i use the first 16 bytes of itemData..
+        auto& item_buf = item_node->data();
+        writer.write(item_buf.data(), 8);
+      
         writer.write_child(item_node);
       }
     }

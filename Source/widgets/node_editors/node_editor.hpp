@@ -61,7 +61,7 @@ private:
   std::string m_window_title;
   bool m_window_take_focus = false;
   bool m_window_has_focus = true;
-  bool m_window_opened = true;
+  bool m_window_opened = false;
 
 protected:
   node_editor(const std::shared_ptr<const node_t>& node)
@@ -379,6 +379,8 @@ public:
     
     auto editor = node_editor::create(node);
     m_editors[node] = editor;
+    if (create_with_opened_window)
+      editor->open_window();
 
     return editor;
   }

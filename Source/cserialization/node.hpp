@@ -317,7 +317,7 @@ public:
     m_new_children.push_back(node);
   }
 
-  void write(char* buf, size_t len)
+  void write(const char* buf, size_t len)
   {
     m_ss.write(buf, len);
   }

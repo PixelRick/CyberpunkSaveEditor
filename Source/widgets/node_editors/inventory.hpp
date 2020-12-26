@@ -13,7 +13,6 @@ class inventory_editor
 {
   // attrs
   inventory inv;
-  std::map<uint64_t, std::shared_ptr<node_editor>> m_item_widgets;
 
 public:
   inventory_editor(const std::shared_ptr<const node_t>& node)
@@ -58,9 +57,11 @@ protected:
         for (size_t i = 0; i < subinv.items.size(); ++i)
         {
           ImGui::PushID((int)i);
-          if (ImGui::CollapsingHeader(cpn.get_name(subinv.items[i].id).c_str()))
+          if (ImGui::TreeNode(cpn.get_name(subinv.items[i].id).c_str()))
           {
-            
+            auto e = emgr.get_editor(subinv.items[i].item_node);
+            e->draw_widget();
+            ImGui::TreePop();
           }
           ImGui::PopID();
         }
