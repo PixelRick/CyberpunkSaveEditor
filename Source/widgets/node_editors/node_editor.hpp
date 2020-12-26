@@ -13,7 +13,7 @@
 #define NODE_EDITOR__DEFAULT_LEAF_EDITOR_NAME "<default_editor>"
 
 class node_editor
-  : protected node_view
+  : public node_listener_t
 {
   // inlined factory -start-
 
@@ -57,40 +57,80 @@ public:
   // inlined factory -end-
 
 private:
-  static inline std::string s_error;
-  bool m_window_opened = true;
-  std::string m_window_name;
+  std::shared_ptr<const node_t> m_node;
+  std::string m_window_title;
+  bool m_window_take_focus = false;
+  bool m_window_has_focus = true;
 
 protected:
   node_editor(const std::shared_ptr<const node_t>& node)
-    : node_view(node)
+    : m_node(node)
   {
     std::stringstream ss;
     ss << "node:" << node->name() << " idx:" << node->idx();
-    m_window_name = ss.str();
+    m_window_title = ss.str();
+    node->add_listener(this);
   }
 
-  ~node_editor() override {};
+  ~node_editor() override
+  {
+    m_node->remove_listener(this);
+  };
 
   bool m_dirty = false;
   bool m_has_changes = false;
 
-private:
-  void on_node_data_changed() override {
+protected:
+  void on_node_data_modified(const std::shared_ptr<const node_t>& node) override
+  {
+    m_dirty = true;
+  }
+
+  void on_node_children_modified(const std::shared_ptr<const node_t>& node) override
+  {
     m_dirty = true;
   }
 
 public:
-  std::shared_ptr<const node_t> node() const { return node_view::node(); }
+  bool has_changes() const { return m_has_changes; }
+
+  std::shared_ptr<const node_t> node() const { return m_node; }
+  node_t& ncnode() { return m_node->nonconst(); }
+
+  void focus_window()
+  {
+    m_window_take_focus = true;
+  }
+
+  bool has_focus() const
+  {
+    return m_window_has_focus;
+  }
 
   void draw_window(bool* p_open = nullptr)
   {
-    m_window_opened = true;
+    if (m_window_take_focus)
+    {
+      ImGui::SetNextWindowFocus();
+      m_window_take_focus = false;
+    }
+
+    bool opened = true;
     auto& io = ImGui::GetIO();
     ImVec2 center(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f);
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-    if (ImGui::Begin(m_window_name.c_str(), &m_window_opened, ImGuiWindowFlags_AlwaysAutoResize))
+
+    std::stringstream ss;
+    uint64_t nid = (uint64_t)m_node.get();
+    ss << "node:" << m_node->name();
+    if (m_node->is_cnode())
+      ss << " idx:" << m_node->idx();
+    ss << "##" << nid;
+    m_window_title = ss.str();
+
+    if (ImGui::Begin(m_window_title.c_str(), &opened, ImGuiWindowFlags_AlwaysAutoResize))
     {
+      m_window_has_focus = ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows);
       if (m_dirty)
       {
         //ImGui::PushStyleColor
@@ -123,9 +163,9 @@ public:
 
     if (m_has_changes)
     {
-      if (!m_window_opened)
+      if (!opened)
         ImGui::OpenPopup("Unsaved changes##node_editor");
-      m_window_opened = true;
+      opened = true;
     }
 
     if (ImGui::BeginPopupModal("Unsaved changes##node_editor", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
@@ -135,14 +175,14 @@ public:
       ImGui::Separator();
       if (ImGui::ButtonEx("NO", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 0), ImGuiButtonFlags_PressedOnDoubleClick))
       {
-        m_window_opened = false;
+        opened = false;
         ImGui::CloseCurrentPopup();
       }
       ImGui::SameLine();
       if (ImGui::Button("YES", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 0)))
       {
         if (commit())
-          m_window_opened = false;
+          opened = false;
         ImGui::CloseCurrentPopup();
       }
 
@@ -150,7 +190,7 @@ public:
     }
 
     if (p_open)
-      *p_open = m_window_opened;
+      *p_open = opened;
   }
 
   void draw_widget(const ImVec2& size = ImVec2(0, 0))
@@ -181,12 +221,17 @@ public:
     ImGui::PopID();
   }
 
+private:
+  static inline std::string s_error;
+
+protected:
   static void error(std::string_view msg)
   {
     s_error = msg;
     ImGui::OpenPopup("Error##node_editor");
   }
 
+public:
   bool commit()
   {
     if (!commit_impl())

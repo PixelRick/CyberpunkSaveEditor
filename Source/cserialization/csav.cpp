@@ -193,8 +193,8 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
 
   // fake descriptor, our buffer should be prefixed with zeroes so the *data==idx will pass..
   uint32_t data_size = (uint32_t)nodedata.size() - chunks_start;
-  node_desc root_desc {"root", NULL_NODE_IDX, 0, chunks_start-4, data_size+4};
-  root_node = read_node(nodedata, root_desc, ROOT_NODE_IDX);
+  node_desc root_desc {"root", node_t::null_node_idx, 0, chunks_start-4, data_size+4};
+  root_node = read_node(nodedata, root_desc, node_t::root_node_idx);
   if (!root_node)
     return false;
 

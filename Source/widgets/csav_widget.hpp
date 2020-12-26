@@ -171,7 +171,7 @@ public:
         else
         {
           auto& src_buf = appearance_src->data();
-          appearance_node->nonconst().data().assign(src_buf.begin(), src_buf.end());
+          appearance_node->nonconst().assign_data(src_buf.begin(), src_buf.end());
         }
       }
     }
@@ -429,12 +429,6 @@ public:
     }
   }
 
-  static inline std::shared_ptr<const node_t>& selected_node()
-  {
-    static std::shared_ptr<const node_t> _singleton = {};
-    return _singleton;
-  }
-
 protected:
   void draw_node(const std::shared_ptr<const node_t>& node)
   {
@@ -444,19 +438,40 @@ protected:
       return;
     }
 
-    auto& sel_node = selected_node();
-    bool selected = node == sel_node;
+    auto& emgr = node_editors_wndmgr::get();
+    auto editor = emgr.get_opened_editor(node);
+
+    bool selected = editor != nullptr;
+    const bool focused = editor && editor->has_focus();
+
     ImGuiTreeNodeFlags node_flags = selected ? ImGuiTreeNodeFlags_Selected : 0;
     if (!node->has_children())
       node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+    if (focused)
+    {
+      auto& focus_col = ImGui::GetStyleColorVec4(ImGuiCol_HeaderHovered);
+      ImGui::PushStyleColor(ImGuiCol_HeaderActive, focus_col);
+      ImGui::PushStyleColor(ImGuiCol_Header, focus_col);
+    }
 
     bool opened =
       (node->is_blob() or node->is_root())
       ? ImGui::TreeNodeEx((void*)node.get(), node_flags, "%s", node->name().c_str())
       : ImGui::TreeNodeEx((void*)node.get(), node_flags, "%s (%u)", node->name().c_str(), node->idx());
 
-    if (ImGui::IsItemClicked() && ImGui::IsMouseDoubleClicked(0))
-      sel_node = node;
+    if (focused)
+    {
+      ImGui::PopStyleColor(2);
+    }
+
+    if (ImGui::IsItemClicked())
+    {
+      if (editor)
+        editor->focus_window();
+      else if (ImGui::IsMouseDoubleClicked(0))
+        editor = emgr.open_editor(node);
+    }
 
     if (opened && node->has_children())
     {
@@ -555,7 +570,8 @@ public:
   {
     for (auto& cs : m_list)
       cs.draw();
-    draw_editor();
+
+    node_editors_wndmgr::get().draw_editors();
   }
 
   void draw_menu_item(IApp* owning_app)
@@ -624,25 +640,6 @@ public:
 
     if (pushed_stylecol)
       ImGui::PopStyleColor();
-  }
-
-  void draw_editor()
-  {
-    static std::shared_ptr<node_editor> current_editor {};
-    static bool opened = false;
-    bool changed_node = false;
-
-    auto& sel_node = csav_collapsable_header::selected_node();
-    if (sel_node && (!current_editor || current_editor->node() != sel_node))
-    {
-      current_editor = node_editor::create(sel_node);
-      opened = current_editor != nullptr;
-      changed_node = true;
-    }
-    if (opened)
-      current_editor->draw_window(&opened);
-    if (!opened)
-      sel_node.reset();
   }
 };
 

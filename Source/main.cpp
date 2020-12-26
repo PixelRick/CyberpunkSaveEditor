@@ -126,8 +126,7 @@ protected:
 		if (test_hexeditor)
 		{
 			if (!e) {
-				auto& b = n->nonconst().data();
-				b.assign((char*)this, (char*)this + 100);
+				n->nonconst().assign_data((char*)this, (char*)this + 100);
 				e = node_editor::create(n);
 			}
 			e->draw_window(&test_hexeditor);

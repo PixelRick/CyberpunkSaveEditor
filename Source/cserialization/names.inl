@@ -1,3 +1,11 @@
+"Ammo.AmmoBase",
+"Ammo.HandgunAmmo",
+"Ammo.RifleAmmo",
+"Ammo.ShotgunAmmo",
+"Ammo.SniperRifleAmmo",
+"Ammo.Special",
+"Ammo.Standard",
+
 //
 // https://docs.google.com/document/u/1/d/e/2PACX-1vRJaq1sHobpHjNxPzjtSHVltNUXU6g5uYUfjw9zgrfaC9MQzEmEXFsqDcYVJDWS5cdpGuixH_A_n2fN/pub
 //

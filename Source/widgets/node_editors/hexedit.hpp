@@ -63,7 +63,7 @@ protected:
   {
     const node_hexeditor* e = (node_hexeditor*)data;
     auto& buf = e->editbuf;
-    auto& original = e->node_data_buffer();
+    auto& original = e->node()->data();
     if (off < buf.size() && off < original.size())
       return buf[off] != original[off];
     return false;
@@ -155,13 +155,13 @@ protected:
 
   bool commit_impl() override
   {
-    assign_node_data(editbuf.begin(), editbuf.end());
+    ncnode().assign_data(editbuf.begin(), editbuf.end());
     return true;
   }
 
   bool reload_impl() override 
   {
-    const auto& buf = node_data_buffer();
+    const auto& buf = node()->data();
     editbuf.assign(buf.begin(), buf.end());
     return true;
   }

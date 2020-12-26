@@ -5,16 +5,29 @@
 #include <vector>
 #include <map>
 #include <numeric>
+#include <sstream>
+#include <set>
 
-#define NULL_NODE_IDX -1
-#define ROOT_NODE_IDX -2
-#define BLOB_NODE_IDX -3
+class node_t;
+
+struct node_listener_t
+{
+  virtual ~node_listener_t() = default;
+
+  virtual void on_node_data_modified(const std::shared_ptr<const node_t>& node) = 0;
+  virtual void on_node_children_modified(const std::shared_ptr<const node_t>& node) = 0;
+};
+
 
 class node_t
   : public std::enable_shared_from_this<const node_t>
 {
-  friend class node_dataview;
+public:
+  static const int32_t null_node_idx = -1;
+  static const int32_t root_node_idx = -2;
+  static const int32_t blob_node_idx = -3;
 
+private:
   int32_t m_idx;
   const std::string m_name;
   std::vector<std::shared_ptr<const node_t>> m_children;
@@ -24,8 +37,8 @@ protected:
   explicit node_t(int32_t idx, std::string name)
     : m_name(name)
   {
-    if (idx < BLOB_NODE_IDX)
-      idx = BLOB_NODE_IDX;
+    if (idx < blob_node_idx)
+      idx = blob_node_idx;
     m_idx = idx;
   }
 
@@ -38,22 +51,20 @@ public:
     return std::make_shared<const make_shared_enabler>(idx, name);
   }
 
-  static std::shared_ptr<const node_t> create_shared_blob(const char* nodedata, uint32_t start_offset, uint32_t end_offset)
+  template <class Iter>
+  static std::shared_ptr<const node_t> create_shared_blob(Iter first, Iter last)
   {
-    auto node = node_t::create_shared(BLOB_NODE_IDX, "datablob");
-    auto& nc_node = node->nonconst();
-
-    nc_node.data().assign(
-      nodedata + start_offset,
-      nodedata + end_offset
-    );
-
+    auto node = node_t::create_shared(node_t::blob_node_idx, "datablob");
+    node->nonconst().assign_data(first, last);
     return node;
   }
 
-public:
-  node_t& nonconst() const { return const_cast<node_t&>(*this); }
+  static std::shared_ptr<const node_t>
+  create_shared_blob(const char* nodedata, uint32_t start_offset, uint32_t end_offset) {
+    return create_shared_blob(nodedata + start_offset, nodedata + end_offset);
+  }
 
+public:
   int32_t idx() const { return m_idx; }
   void idx(int32_t idx) { m_idx = idx; }
 
@@ -62,17 +73,11 @@ public:
   const std::vector<std::shared_ptr<const node_t>>&
   children() const { return m_children; }
 
-  std::vector<std::shared_ptr<const node_t>>&
-  children() { return m_children; }
-
   const std::vector<char>&
   data() const { return m_data; }
 
-  std::vector<char>&
-  data() { return m_data; }
-
-  bool is_root() const { return m_idx == ROOT_NODE_IDX; }
-  bool is_blob() const { return m_idx == BLOB_NODE_IDX; }
+  bool is_root() const { return m_idx == root_node_idx; }
+  bool is_blob() const { return m_idx == blob_node_idx; }
   bool is_cnode() const { return m_idx >= 0; }
   
   bool has_children() const { return !m_children.empty(); }
@@ -99,73 +104,244 @@ public:
     }
     return 0;
   }
-};
 
+  node_t& nonconst() const { return const_cast<node_t&>(*this); }
 
-// secure editing of node
-class node_view
-{
-  static inline std::map<uint64_t, std::list<node_view*>> s_views;
-  std::shared_ptr<node_t> m_node;
+public: 
+  // non const setters
 
-protected:
-  node_view() = delete;
-
-  explicit node_view(const std::shared_ptr<const node_t>& node)
-    : m_node(std::const_pointer_cast<node_t>(node))
+  template <class Iter>
+  void assign_data(Iter first, Iter last)
   {
-    const uint64_t uid = (uint64_t)m_node.get();
-    auto& list = s_views.emplace(uid, std::list<node_view*>()).first->second;
-    list.emplace_back(this);
-  }
-
-  virtual ~node_view()
-  {
-    // erasing this from s_views
-    const uint64_t uid = (uint64_t)m_node.get();
-    auto& list = s_views.find(uid)->second;
-    list.remove(this);
-  }
-
-public:
-  std::shared_ptr<const node_t> node() const {
-    return std::const_pointer_cast<const node_t>(m_node);
+    m_data.assign(first, last);
+    notify_data_modified();
   }
 
   template <class Iter>
-  void assign_node_data(Iter first, Iter last)
+  void assign_children(Iter first, Iter last)
   {
-    auto& buf = m_node->data();
-    size_t oldlen = buf.size();
-    buf.assign(first, last);
-    dispatch_node_data_changed();
+    m_children.assign(first, last);
+    notify_children_modified();
   }
 
-  void patch_node_data(size_t offset, size_t len, const char* srcbuf, size_t srclen)
+  template <class Iter>
+  void push_back_node(const std::shared_ptr<const node_t>& node)
   {
-    auto& buf = m_node->data();
-    auto it_start = buf.begin() + offset;
-    if (len < srclen)
-      buf.insert(it_start, srclen - len, 0);
-    else
-      buf.erase(it_start, it_start + len - srclen);
-    std::copy(srcbuf, srcbuf + srclen, it_start);
-
-    dispatch_node_data_changed();
-  }
-
-  const std::vector<char>& node_data_buffer() const { return m_node->data(); } const
-
-  void dispatch_node_data_changed() const
-  {
-    const uint64_t uid = (uint64_t)m_node.get();
-    for (auto& view : s_views.find(uid)->second) {
-      if (view != this)
-        view->on_node_data_changed();
-    }
+    m_children.push_back(node);
+    notify_children_modified();
   }
 
 protected:
-  virtual void on_node_data_changed() = 0;
+  std::set<node_listener_t*> m_listeners;
+
+  void notify_data_modified() const
+  {
+    std::set<node_listener_t*> listeners = m_listeners;
+    for (auto& l : listeners) {
+      l->on_node_data_modified(shared_from_this());
+    }
+  }
+
+  void notify_children_modified() const
+  {
+    std::set<node_listener_t*> listeners = m_listeners;
+    for (auto& l : listeners) {
+      l->on_node_children_modified(shared_from_this());
+    }
+  }
+
+public:
+  // provided as const for ease of use
+
+  void add_listener(node_listener_t* listener) const
+  {
+    auto& listeners = nonconst().m_listeners;
+    listeners.insert(listener);
+  }
+
+  void remove_listener(node_listener_t* listener) const
+  {
+    auto& listeners = nonconst().m_listeners;
+    listeners.erase(listener);
+  }
+};
+
+// only to read at node level
+class node_reader
+{
+  std::shared_ptr<const node_t> m_node;
+  size_t m_cur_idx;
+  bool m_missed_data = false;
+
+  size_t m_data_offset = 0;
+
+public:
+  explicit node_reader(const std::shared_ptr<const node_t>& root)
+    : m_node(root), m_data_offset(0), m_cur_idx(0) {}
+
+  virtual ~node_reader() = default;
+
+  bool has_missed_data() { return m_missed_data; }
+
+protected:
+  std::shared_ptr<const node_t> current_blob()
+  {
+    // the node is the blob (leaf)
+    if (m_node->is_leaf())
+      return m_cur_idx == 0 ? m_node : nullptr;
+
+    if (m_cur_idx >= m_node->children().size())
+      return nullptr;
+
+    const auto& cur_node = m_node->children()[m_cur_idx];
+    if (cur_node->is_blob())
+      return cur_node;
+
+    return nullptr;
+  }
+
+  void seek_past_current_blob_if_any()
+  {
+    const auto& blob = current_blob();
+    if (!blob)
+      return;
+
+    if (m_data_offset < blob->data().size())
+      m_missed_data = true;
+
+    m_data_offset = 0;
+    m_cur_idx++;
+  }
+
+public:
+  std::shared_ptr<const node_t> read_child(const std::string& name)
+  {
+    seek_past_current_blob_if_any();
+
+    if (m_cur_idx >= m_node->children().size())
+      return nullptr;
+
+    const auto& cur_node = m_node->children()[m_cur_idx];
+    if (cur_node->name() != name)
+      return nullptr;
+
+    m_cur_idx++;
+    return cur_node;
+  }
+
+  bool read(char* buf, size_t len)
+  {
+    const auto& blob = current_blob();
+    if (!blob)
+      return false;
+
+    const auto& data = blob->data();
+
+    if (m_data_offset + len > data.size()) // overread
+    {
+      std::fill(buf, buf + len, 0);
+      return false;
+    }
+
+    std::copy(
+      data.begin() + m_data_offset,
+      data.begin() + m_data_offset + len,
+      buf);
+
+    m_data_offset += len;
+    return true;
+  }
+
+  bool skip(size_t len)
+  {
+    const auto& blob = current_blob();
+    if (!blob)
+      return false;
+
+    const auto& data = blob->data();
+
+    if (m_data_offset + len > data.size())
+      return false;
+
+    m_data_offset += len;
+    return true;
+  }
+
+  bool at_end()
+  {
+    if (m_node->is_leaf())
+      return m_data_offset == m_node->data().size() || m_cur_idx > 0;
+
+    const auto& blob = current_blob();
+    if (blob && m_data_offset < blob->data().size())
+      return false;
+    // !!blob == (m_data_offset == blob-data().size())
+
+    size_t childcnt = m_node->children().size();
+    if (blob && m_cur_idx == childcnt - 1)
+      return true;
+
+    return m_cur_idx >= childcnt;
+  }
+};
+
+
+// only to write at node level
+// does not actually modify input node until finalize() is called
+class node_writer
+{
+  std::vector<std::shared_ptr<const node_t>> m_new_children;
+  std::stringstream m_ss;
+
+public:
+  node_writer() = default;
+  virtual ~node_writer() = default;
+
+protected:
+  void blobize_pending_data_if_any()
+  {
+    auto data = m_ss.str();
+    // todo: add ss error check
+    if (data.size())
+    {
+      m_new_children.push_back(
+        node_t::create_shared_blob(data.begin(), data.end()));
+    }
+    std::stringstream().swap(m_ss);
+  }
+  
+public:
+  void append_child(const std::shared_ptr<const node_t>& node)
+  {
+    blobize_pending_data_if_any();
+    m_new_children.push_back(node);
+  }
+
+  void write(char* buf, size_t len)
+  {
+    m_ss.write(buf, len);
+  }
+
+  void pad(size_t len)
+  {
+    m_ss << std::string(len, 0);
+  }
+
+  std::shared_ptr<const node_t> finalize(std::string name)
+  {
+    auto node = node_t::create_shared(0, name);
+    finalize_in(node->nonconst());
+    return node;
+  }
+
+  void finalize_in(node_t& node)
+  {
+    if (m_new_children.size())
+      blobize_pending_data_if_any();
+
+    auto data = m_ss.str();
+    node.assign_data(data.begin(), data.end());
+    node.assign_children(m_new_children.begin(), m_new_children.begin());
+  }
 };
 
