@@ -79,11 +79,13 @@ struct itemData
   }
 };
 
+
 struct subinv_t
 {
   uint64_t uid = 0;
   std::vector<itemData> items;
 };
+
 
 struct inventory
 {
