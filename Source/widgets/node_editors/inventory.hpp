@@ -57,13 +57,14 @@ protected:
       ss << "inventory_" << std::hex << std::uppercase << std::setfill('0') << std::setw(16) << subinv.uid;
       if (ImGui::TreeNodeBehavior(row_id, ImGuiTreeNodeFlags_Framed, ss.str().c_str()))
       {
-        if (ImGui::Button("dupe first row") && subinv.items.size() > 0)
+        if (ImGui::Button("add dummy item (alcohol6)") && subinv.items.size() > 0)
         {
           // todo: move that on the data side
-          auto& first_item = subinv.items.front();
-          auto new_node = first_item.to_node()->deepcopy();
           itemData item_data;
-          item_data.from_node(new_node);
+          item_data.iid.nameid.as_u64 = 0x1859EA0850; // Alcohol6
+          item_data.iid.uk.uk4 = 2;
+          item_data.uk1_012 = 0x213ACD;
+          item_data.uk2_01 = 1; // quantity
           subinv.items.insert(subinv.items.begin(), 1, item_data);
         }
 
