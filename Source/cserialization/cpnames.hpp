@@ -28,15 +28,17 @@ struct namehash
     uint64_t as_u64;
   };
 
-  friend std::istream& operator>>(std::istream& is, namehash& id)
+  template <typename IStream>
+  friend IStream& operator>>(IStream& is, namehash& id)
   {
-    is.read((char*)&id.as_u64, 7);
+    is.read((char*)&id.as_u64, 8);
     return is;
   }
 
-  friend std::ostream& operator<<(std::ostream& os, const namehash& id)
+  template <typename OStream>
+  friend OStream& operator<<(OStream& os, const namehash& id)
   {
-    os.write((char*)&id.as_u64, 7);
+    os.write((char*)&id.as_u64, 8);
     return os;
   }
 };
@@ -45,6 +47,7 @@ class cpnames
 {
   std::vector<std::string> m_namelist;
   std::map<uint64_t, std::string> m_namemap;
+  std::map<uint32_t, std::string> m_namemap2;
 
 private:
   cpnames()
@@ -58,6 +61,7 @@ private:
     {
       namehash id(s);
       m_namemap[id.as_u64] = s;
+      m_namemap2[id.crc] = s;
     }
   }
   ~cpnames() {}
@@ -85,6 +89,16 @@ public:
       return it->second;
     std::stringstream ss;
     ss << "unknown_name_" << id.as_u64;
+    return ss.str();
+  }
+
+  std::string get_name(const uint32_t& crc) const
+  {
+    auto it = m_namemap2.find(crc);
+    if (it != m_namemap2.end())
+      return it->second;
+    std::stringstream ss;
+    ss << "unknown_name_" << crc;
     return ss.str();
   }
 };

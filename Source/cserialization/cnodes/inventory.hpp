@@ -3,7 +3,9 @@
 
 #include "cserialization/node.hpp"
 #include "cserialization/cpnames.hpp"
+#include "cserialization/packing.hpp"
 #include "utils.hpp"
+
 
 /*
 ------------------------
@@ -43,28 +45,29 @@ while 1
 
 */
 
-struct item_id
+#pragma pack(push, 1)
+
+struct uk_thing
 {
-  namehash nameid;
   uint32_t uk4;
   uint8_t uk1;
   uint16_t uk2;
 
-  friend node_reader& operator<<(node_reader& reader, item_id& iid)
+  template <typename IStream>
+  friend IStream& operator>>(IStream& reader, uk_thing& kt)
   {
-    reader.read((char*)&iid.nameid.as_u64, 8);
-    reader.read((char*)&iid.uk4, 4);
-    reader.read((char*)&iid.uk1, 1);
-    reader.read((char*)&iid.uk2, 2);
+    reader.read((char*)&kt.uk4, 4);
+    reader.read((char*)&kt.uk1, 1);
+    reader.read((char*)&kt.uk2, 2);
     return reader;
   }
 
-  friend node_writer& operator<<(node_writer& writer, item_id& iid)
+  template <typename OStream>
+  friend OStream& operator<<(OStream& writer, uk_thing& kt)
   {
-    writer.write((char*)&iid.nameid.as_u64, 8);
-    writer.write((char*)&iid.uk4, 4);
-    writer.write((char*)&iid.uk1, 1);
-    writer.write((char*)&iid.uk2, 2);
+    writer.write((char*)&kt.uk4, 4);
+    writer.write((char*)&kt.uk1, 1);
+    writer.write((char*)&kt.uk2, 2);
     return writer;
   }
 
@@ -75,6 +78,28 @@ struct item_id
     if (uk1 == 3) return 0;
     return uk4 != 2 ? 2 : 1;
   }
+};
+
+struct item_id
+{
+  namehash nameid;
+  uk_thing uk;
+
+  template <typename IStream>
+  friend IStream& operator>>(IStream& reader, item_id& iid)
+  {
+    reader.read((char*)&iid.nameid.as_u64, 8);
+    reader >> iid.uk;
+    return reader;
+  }
+
+  template <typename OStream>
+  friend OStream& operator<<(OStream& writer, item_id& iid)
+  {
+    writer.write((char*)&iid.nameid.as_u64, 8);
+    writer << iid.uk;
+    return writer;
+  }
 
   std::string name() const
   {
@@ -83,10 +108,65 @@ struct item_id
   }
 };
 
+#pragma pack(pop)
+
+struct data_2 // kind 2 tree node
+{
+  item_id iid;
+  std::string uk0;
+  namehash uk1;
+  std::vector<data_2> subs;
+  uint32_t uk2;
+  namehash uk3;
+  uint32_t uk4;
+  uint32_t uk5;
+
+  template <typename IStream>
+  friend IStream& operator>>(IStream& reader, data_2& d2)
+  {
+    reader >> d2.iid;
+    d2.uk0 = read_str(reader);
+    reader >> d2.uk1;
+    const size_t cnt = read_packed_int(reader);
+    d2.subs.resize(cnt);
+    for (auto& sub : d2.subs)
+      reader >> sub;
+    reader.read((char*)&d2.uk2, 4);
+    reader >> d2.uk3;
+    reader.read((char*)&d2.uk4, 4);
+    reader.read((char*)&d2.uk5, 4);
+    return reader;
+  }
+
+  template <typename OStream>
+  friend OStream& operator<<(OStream& writer, data_2& d2)
+  {
+    writer << d2.iid;
+    return writer;
+  }
+
+
+};
+
+
 struct itemData
 {
   std::shared_ptr<const node_t> raw;
   item_id iid;
+
+  // kind 1 stuff
+  uint8_t  uk1_0;
+  uint32_t uk1_1;
+  uint32_t uk1_2;
+
+  // kind 2 stuff
+  uint8_t  uk2_0;
+  uint32_t uk2_1;
+  namehash uk2_2;
+  uint32_t uk2_3;
+  uint32_t uk2_4;
+  data_2 root2;
+
 
   // (8, 4, 1, 2), 1, 4, 8, 4, 4, (8, 4, 1, 2), 1, 4, 8, 1, (8, 4, 1, 2), 1, 4, 8, 1, 4, 8, 4, 4, (8, 4, 1, 2), 1, 4, 8, 1, 4, 8, 4, 4, (8, 4, 1, 2), 1, 4, 8, 1, 4, 8, 4, 4, 4, 8, 4, 4, 
   // (8, 4, 1, 2), 1, 4, 8, 4, 4, (8, 4, 1, 2), 1, 7, 8, 1, 4, 8, 4, 4, 
@@ -98,13 +178,49 @@ struct itemData
     raw = node;
 
     node_reader reader(node);
-    reader << iid;
-    auto kind = iid.kind();
+    reader >> iid;
+    auto kind = iid.uk.kind();
 
     // serial func at 0x128
     // ikind0 vtbl 0x143244E30 -> 0x143244F58
     // ikind1 vtbl 0x143244A20 -> 0x143244B48
     // ikind2 vtbl 0x143244C28 -> 0x143244D50
+
+    switch (kind)
+    {
+      case 0:
+        break;
+      case 1:
+        reader.read((char*)&uk1_0, 1);
+        reader.read((char*)&uk1_1, 4);
+        reader.read((char*)&uk1_2, 4);
+        break;
+      case 2:
+        reader.read((char*)&uk2_0, 1);
+        reader.read((char*)&uk2_1, 4);
+        reader >> uk2_2;
+        reader.read((char*)&uk2_3, 4);
+        reader.read((char*)&uk2_4, 4);
+        reader >> root2;
+
+        // 8:id (4, 1, 2):kindthing
+        // 1, 4, 
+        // 8:id, 4, 4
+        //  start of type A
+        //    8:id (4, 1, 2):kindthing
+        //    len-prefixed string 
+        //    8:id
+        //    packed int cnt
+        //    array[cnt] of A (recursive)
+        //    4
+        //    8:id, 4, 4
+
+
+        break;
+      default:
+        return false;
+    }
+
 
     // todo
     return true;
