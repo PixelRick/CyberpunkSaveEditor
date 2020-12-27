@@ -276,7 +276,7 @@ protected:
       m_take_focus = false;
     }
 
-    auto node = editor->node();
+    auto node = editor ? editor->node() : nullptr;
     if (!node)
     {
       m_opened = false;
