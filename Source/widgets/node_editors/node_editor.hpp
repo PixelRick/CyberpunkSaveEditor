@@ -82,16 +82,15 @@ protected:
 
   bool m_dirty = false;
   bool m_has_changes = false;
+  bool m_is_drawing = false; // to filter events
 
 protected:
-  void on_node_data_modified(const std::shared_ptr<const node_t>& node) override
+  void on_node_event(const std::shared_ptr<const node_t>& node, node_event_e evt) override
   {
-    m_dirty = true;
-  }
-
-  void on_node_children_modified(const std::shared_ptr<const node_t>& node) override
-  {
-    m_dirty = true;
+    if (m_is_drawing)
+      m_has_changes = true;
+    else
+      m_dirty = true;
   }
 
 public:
@@ -105,20 +104,14 @@ public:
     m_window_take_focus = true;
   }
 
-  bool has_focus() const
-  {
-    return m_window_has_focus;
-  }
+  bool has_focus() const { return m_window_has_focus; }
 
   void open_window()
   {
     m_window_opened = true;
   }
 
-  bool has_opened_window() const
-  {
-    return m_window_opened;
-  }
+  bool has_opened_window() const { return m_window_opened; }
 
   void draw_window()
   {
@@ -169,7 +162,7 @@ public:
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(0.f, 0.8f, 0.8f).Value);
 
         ImGui::SameLine();
-        if (ImGui::ButtonEx("reload", ImVec2(60, 0), ImGuiButtonFlags_PressedOnDoubleClick)) {
+        if (ImGui::Button("reload", ImVec2(60, 0))) {
           reload();
         }
         ImGui::SameLine();
@@ -195,17 +188,24 @@ public:
     {
       ImGui::Text("Unsaved changes, would you like to save ?");
 
+      float button_width = ImGui::GetContentRegionAvail().x * 0.25f;
       ImGui::Separator();
-      if (ImGui::ButtonEx("NO", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 0), ImGuiButtonFlags_PressedOnDoubleClick))
+      if (ImGui::Button("NO", ImVec2(button_width, 0)))
       {
         opened = false;
         ImGui::CloseCurrentPopup();
       }
       ImGui::SameLine();
-      if (ImGui::Button("YES", ImVec2(ImGui::GetContentRegionAvail().x * 0.5f, 0)))
+      if (ImGui::Button("YES", ImVec2(button_width, 0)))
       {
         if (commit())
           opened = false;
+        ImGui::CloseCurrentPopup();
+      }
+      ImGui::SameLine();
+      if (ImGui::Button("CANCEL", ImVec2(ImGui::GetContentRegionAvail().x, 0)))
+      {
+        opened = true;
         ImGui::CloseCurrentPopup();
       }
 
@@ -226,7 +226,9 @@ public:
     }
     else
     {
+      m_is_drawing = true;
       draw_impl(size);
+      m_is_drawing = false;
 
       if (ImGui::BeginPopupModal("Error##node_editor", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
       {

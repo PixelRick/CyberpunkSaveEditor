@@ -10,17 +10,25 @@
 
 class node_t;
 
+
+enum class node_event_e
+{
+  data_update,
+  children_update,
+  subtree_update,
+};
+
+
 struct node_listener_t
 {
   virtual ~node_listener_t() = default;
-
-  virtual void on_node_data_modified(const std::shared_ptr<const node_t>& node) = 0;
-  virtual void on_node_children_modified(const std::shared_ptr<const node_t>& node) = 0;
+  virtual void on_node_event(const std::shared_ptr<const node_t>& node, node_event_e evt) = 0;
 };
 
 
 class node_t
   : public std::enable_shared_from_this<const node_t>
+  , public node_listener_t
 {
 public:
   static const int32_t null_node_idx = -1;
@@ -28,10 +36,10 @@ public:
   static const int32_t blob_node_idx = -3;
 
 private:
-  int32_t m_idx;
+  int32_t           m_idx;
   const std::string m_name;
-  std::vector<std::shared_ptr<const node_t>> m_children;
   std::vector<char> m_data;
+  std::vector<std::shared_ptr<const node_t>> m_children;
 
 protected:
   explicit node_t(int32_t idx, std::string name)
@@ -42,8 +50,15 @@ protected:
     m_idx = idx;
   }
 
+  ~node_t()
+  {
+    for (auto& c : m_children)
+      c->remove_listener(this);
+  }
+
 public:
-  static std::shared_ptr<const node_t> create_shared(int32_t idx, std::string name)
+  static std::shared_ptr<const node_t>
+  create_shared(int32_t idx, std::string name)
   {
     struct make_shared_enabler : public node_t {
       make_shared_enabler(int32_t idx, std::string name) : node_t(idx, name) {}
@@ -52,7 +67,8 @@ public:
   }
 
   template <class Iter>
-  static std::shared_ptr<const node_t> create_shared_blob(Iter first, Iter last)
+  static std::shared_ptr<const node_t>
+  create_shared_blob(Iter first, Iter last)
   {
     auto node = node_t::create_shared(node_t::blob_node_idx, "datablob");
     node->nonconst().assign_data(first, last);
@@ -65,8 +81,8 @@ public:
   }
 
 public:
-  int32_t idx() const { return m_idx; }
-  void idx(int32_t idx) { m_idx = idx; }
+  int32_t idx() const       { return m_idx; }
+  void    idx(int32_t idx)  { m_idx = idx; }
 
   std::string name() const { return m_name; }
 
@@ -76,12 +92,12 @@ public:
   const std::vector<char>&
   data() const { return m_data; }
 
-  bool is_root() const { return m_idx == root_node_idx; }
-  bool is_blob() const { return m_idx == blob_node_idx; }
-  bool is_cnode() const { return m_idx >= 0; }
-  
   bool has_children() const { return !m_children.empty(); }
-  bool is_leaf() const { return !has_children(); }
+
+  bool is_root()  const { return m_idx == root_node_idx; }
+  bool is_blob()  const { return m_idx == blob_node_idx; }
+  bool is_cnode() const { return m_idx >= 0; }
+  bool is_leaf()  const { return !has_children(); }
 
 public:
   size_t calcsize() const
@@ -125,7 +141,7 @@ public:
   void assign_data(Iter first, Iter last)
   {
     m_data.assign(first, last);
-    notify_data_modified();
+    post_node_event(node_event_e::data_update);
   }
 
   void assign_data(const std::vector<char>& buf)
@@ -136,8 +152,12 @@ public:
   template <class Iter>
   void assign_children(Iter first, Iter last)
   {
+    for (auto& c : m_children)
+      c->remove_listener(this);
     m_children.assign(first, last);
-    notify_children_modified();
+    for (auto& c : m_children)
+      c->add_listener(this);
+    post_node_event(node_event_e::children_update);
   }
 
   void assign_children(const std::vector<std::shared_ptr<const node_t>>& children)
@@ -146,29 +166,27 @@ public:
   }
 
   template <class Iter>
-  void push_back_node(const std::shared_ptr<const node_t>& node)
+  void children_push_back(const std::shared_ptr<const node_t>& node)
   {
     m_children.push_back(node);
-    notify_children_modified();
+    node->add_listener(this);
+    post_node_event(node_event_e::children_update);
   }
 
 protected:
   std::set<node_listener_t*> m_listeners;
 
-  void notify_data_modified() const
+  void post_node_event(node_event_e evt) const
   {
     std::set<node_listener_t*> listeners = m_listeners;
     for (auto& l : listeners) {
-      l->on_node_data_modified(shared_from_this());
+      l->on_node_event(shared_from_this(), evt);
     }
   }
 
-  void notify_children_modified() const
+  void on_node_event(const std::shared_ptr<const node_t>& node, node_event_e evt) override
   {
-    std::set<node_listener_t*> listeners = m_listeners;
-    for (auto& l : listeners) {
-      l->on_node_children_modified(shared_from_this());
-    }
+    post_node_event(node_event_e::subtree_update);
   }
 
 public:
