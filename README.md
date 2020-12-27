@@ -4,9 +4,13 @@ A tool to edit Cyberpunk 2077 sav.dat files
 # What works
 1) load, save node tree
 2) mini hexeditor for nodes data (can change node data size)
-3) search tools (string, crc32 of string, u32, float double, from hexeditor clipboard)
+3) search tools (string, crc32(namehash) of string, u32, float double, from hexeditor clipboard)
 4) [experimental] copy/paste skin blob between saves
     (this can fail for unknown reasons yet between fresh save and high-level save)
+5) inventory editor (most fields are still obscure and some item names are not resolved)
+
+# Preview
+![](./preview.png)
 
 # Roadmap
 1) Copy/Paste of character blobs between saves. DONE.
