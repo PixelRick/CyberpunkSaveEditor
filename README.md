@@ -1,6 +1,10 @@
 # CyberpunkSaveEditor
 A tool to edit Cyberpunk 2077 sav.dat files
 
+Join the CP modding discord: https://discord.gg/cp77modding
+
+Take a look at the other save editor project: https://github.com/WolvenKit/CyberCAT
+
 # What works
 1) load, save node tree
 2) mini hexeditor for nodes data (can change node data size)
