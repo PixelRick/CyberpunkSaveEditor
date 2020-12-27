@@ -5,6 +5,8 @@
 #include <map>
 #include "utils.hpp"
 
+#pragma pack(push, 1)
+
 struct namehash
 {
   namehash() = default;
@@ -45,6 +47,8 @@ struct namehash
   std::string name() const;
   std::string shortname() const;
 };
+
+#pragma pack(pop)
 
 class cpnames
 {
