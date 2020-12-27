@@ -57,7 +57,7 @@ protected:
       ss << "inventory_" << std::hex << std::uppercase << std::setfill('0') << std::setw(16) << subinv.uid;
       if (ImGui::TreeNodeBehavior(row_id, ImGuiTreeNodeFlags_Framed, ss.str().c_str()))
       {
-        if (ImGui::Button("add dummy item (alcohol6)") && subinv.items.size() > 0)
+        if (ImGui::Button("add dummy item (alcohol6)"))
         {
           // todo: move that on the data side
           itemData item_data;
