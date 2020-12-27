@@ -41,6 +41,9 @@ struct namehash
     os.write((char*)&id.as_u64, 8);
     return os;
   }
+
+  std::string name() const;
+  std::string shortname() const;
 };
 
 class cpnames
@@ -102,4 +105,19 @@ public:
     return ss.str();
   }
 };
+
+std::string namehash::name() const
+{
+  auto& cpn = cpnames::get();
+  return cpn.get_name(*this);
+}
+
+std::string namehash::shortname() const
+{
+  auto& cpn = cpnames::get();
+  auto n = cpn.get_name(*this);
+  if (n.rfind("Items.", 0) == 0)
+    return n.substr(6);
+  return n;
+}
 

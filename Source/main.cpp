@@ -1,4 +1,4 @@
-#include "AppLib/IApp.h"
+#include "AppLib/IApp.hpp"
 
 #include <chrono>
 #include <iostream>

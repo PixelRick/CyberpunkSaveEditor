@@ -7,7 +7,7 @@
 #include <sstream>
 #include <iostream>
 
-#include "AppLib/IApp.h"
+#include "AppLib/IApp.hpp"
 #include "cserialization/node.hpp"
 
 #define NODE_EDITOR__DEFAULT_LEAF_EDITOR_NAME "<default_editor>"

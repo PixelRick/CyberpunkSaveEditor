@@ -9,7 +9,7 @@
 #include <filesystem>
 
 // imgui
-#include "AppLib/IApp.h"
+#include "AppLib/IApp.hpp"
 
 #include "utils.h"
 #include "cserialization/csav.hpp"

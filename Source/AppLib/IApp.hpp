@@ -25,6 +25,18 @@ template <> struct imgui_datatype_of< int64_t> { static constexpr ImGuiDataType 
 template <> struct imgui_datatype_of<   float> { static constexpr ImGuiDataType value = ImGuiDataType_::ImGuiDataType_Float; };
 template <> struct imgui_datatype_of<  double> { static constexpr ImGuiDataType value = ImGuiDataType_::ImGuiDataType_Double; };
 
+struct scoped_imgui_id {
+	scoped_imgui_id(const char* str_id) { ImGui::PushID(str_id); }
+	scoped_imgui_id(void* ptr_id) { ImGui::PushID(ptr_id); }
+	scoped_imgui_id(int int_id) { ImGui::PushID(int_id); }
+	~scoped_imgui_id() { ImGui::PopID(); }
+};
+
+struct scoped_imgui_text_color {
+	scoped_imgui_text_color(ImGuiCol idx, ImVec4 col) { ImGui::PushStyleColor(ImGuiCol_Text, col); }
+	~scoped_imgui_text_color() { ImGui::PopStyleColor(); }
+};
+
 #define WINDOW_STYLE WS_OVERLAPPEDWINDOW
 
 class AppImage

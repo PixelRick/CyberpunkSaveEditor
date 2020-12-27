@@ -40,10 +40,11 @@
     <ClInclude Include="Source\widgets\node_editors.hpp" />
     <ClInclude Include="Source\widgets\node_editors\hexedit.hpp" />
     <ClInclude Include="Source\widgets\node_editors\inventory.hpp" />
+    <ClInclude Include="Source\widgets\node_editors\itemData.hpp" />
     <ClInclude Include="Source\widgets\node_editors\node_editor.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\AppLib\IApp.h" />
+    <ClInclude Include="Source\AppLib\IApp.hpp" />
     <ClInclude Include="Source\AppLib\imgui\imgui\imconfig.h" />
     <ClInclude Include="Source\AppLib\imgui\imgui\imgui.h" />
     <ClInclude Include="Source\AppLib\imgui\imgui\imgui_internal.h" />

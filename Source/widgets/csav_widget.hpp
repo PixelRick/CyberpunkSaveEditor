@@ -11,7 +11,7 @@
 #include <vector>
 
 
-#include "AppLib/IApp.h"
+#include "AppLib/IApp.hpp"
 
 #include "utils.hpp"
 #include "cserialization/csav.hpp"
@@ -19,11 +19,6 @@
 #include "node_editors.hpp"
 
 void ImGui::ShowDemoWindow(bool* p_open);
-
-struct scoped_imgui_id {
-  scoped_imgui_id(void* p) { ImGui::PushID(p); }
-  ~scoped_imgui_id() { ImGui::PopID(); }
-};
 
 using loading_bar_job_fntype = bool (*)(float& progress);
 
@@ -81,6 +76,7 @@ protected:
 
   std::shared_ptr<csav> m_csav;
   std::shared_ptr<AppImage> m_img;
+  std::shared_ptr<node_editor_widget> m_inventory_editor;
 
   bool m_alive = true;
   bool m_opened = true;
@@ -108,6 +104,13 @@ public:
 
     save_dialog.SetTitle("Saving savefile");
     save_dialog.SetTypeFilters({ ".dat" });
+
+    if (m_csav)
+    {
+      auto inv_node = m_csav->search_node("inventory");
+      if (inv_node)
+        m_inventory_editor = node_editor_widget::create(inv_node);
+    }
   }
 
 public:
@@ -252,6 +255,15 @@ public:
 
   void draw_content()
   {
+    if (m_inventory_editor && ImGui::CollapsingHeader("Inventory", ImGuiTreeNodeFlags_None))
+    {
+      ImGui::Indent(5.f);
+
+      m_inventory_editor->draw_widget();
+
+      ImGui::Unindent(5.f);
+    }
+
     if (ImGui::CollapsingHeader("Original Node Descriptors", ImGuiTreeNodeFlags_None))
     {
       ImGui::Indent(5.f);
@@ -318,15 +330,19 @@ public:
       const bool text_search = ImGui::Button("search text", ImVec2(150, 0)); ImGui::SameLine();
       ImGui::PushItemWidth(slider_width);
       ImGui::InputText("input text", search_text, 256);
-      const bool crc32_search = ImGui::Button("search crc32", ImVec2(150, 0));
+      const bool crc32_search = ImGui::Button("search crc32", ImVec2(150, 0)); ImGui::SameLine();
+      namehash nhash(search_text);
+      std::stringstream ss;
+      for (size_t i = 0; i < sizeof(namehash); ++i)
+        ss << std::setfill('0') << std::setw(2) << std::hex << std::uppercase << (uint32_t)*((char*)&nhash.as_u64 + i);
+      ImGui::Text("namehash:%s (crc32 on 4 bytes, strlen on 1 byte, 3 zeroes) crc32=0x%08X",
+        ss.str().c_str(), nhash.crc);
+
       if (text_search) {
         search_pattern_in_nodes(search_text, "");
       }
       if (crc32_search) {
-        CRC32 crc;
-        crc.feed(search_text, strlen(search_text));
-        uint32_t crcval = crc.get();
-        search_pattern_in_nodes(std::string((char*)&crcval, (char*)&crcval + 4), "");
+        search_pattern_in_nodes(std::string((char*)&nhash.crc, (char*)&nhash.crc + 4), "");
       }
 
       static uint32_t u32_v;
@@ -335,7 +351,7 @@ public:
       ImGui::InputScalar("input u32 (dec)", ImGuiDataType_U32, &u32_v);
       ImGui::InvisibleButton("search u32##next", ImVec2(150, 1)); ImGui::SameLine();
       ImGui::PushItemWidth(slider_width);
-      ImGui::InputScalar("input u32 (hex)", ImGuiDataType_U32, &u32_v, 0, 0, "%08X");
+      ImGui::InputScalar("input u32 (hex)", ImGuiDataType_U32, &u32_v, 0, 0, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
       if (u32_search) {
         search_pattern_in_nodes(std::string((char*)&u32_v, (char*)&u32_v + 4), "");
       }

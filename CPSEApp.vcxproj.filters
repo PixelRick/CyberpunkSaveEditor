@@ -85,9 +85,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\AppLib\IApp.h">
-      <Filter>Source\AppLib</Filter>
-    </ClInclude>
     <ClInclude Include="Source\AppLib\imgui\imgui_impl_dx11.h">
       <Filter>Source\AppLib\imgui</Filter>
     </ClInclude>
@@ -171,6 +168,12 @@
     </ClInclude>
     <ClInclude Include="Source\cserialization\cpnames.hpp">
       <Filter>Source\cserialization</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\widgets\node_editors\itemData.hpp">
+      <Filter>Source\widgets\node_editors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AppLib\IApp.hpp">
+      <Filter>Source\AppLib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
