@@ -173,7 +173,7 @@ public:
         ImGui::PopStyleColor(3);
       }
 
-      draw_widget();
+      draw_content();
     }
     ImGui::End();
 
@@ -216,6 +216,12 @@ public:
   }
 
   void draw_widget(const ImVec2& size = ImVec2(0, 0))
+  {
+    draw_content(size);
+  }
+
+protected:
+  void draw_content(const ImVec2& size = ImVec2(0, 0))
   {
     ImGui::PushID((void*)this);
 
