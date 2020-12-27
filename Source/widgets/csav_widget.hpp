@@ -70,6 +70,9 @@ public:
   }
 };
 
+static inline bool s_use_ps4_weird_format = false;
+static inline bool s_dump_decompressed_data = false;
+
 class csav_collapsable_header
 {
 protected:
@@ -146,7 +149,7 @@ public:
     if (ImGui::ButtonEx("SAVE##SAVE", ImVec2(60, 60)))
     {
       save_job.start([this](float& progress) -> bool {
-        return m_csav->save_with_progress(m_csav->filepath, progress);
+        return m_csav->save_with_progress(m_csav->filepath, progress, s_dump_decompressed_data, s_use_ps4_weird_format);
       });
       ImGui::OpenPopup("Saving..##SAVE");
     }
@@ -599,6 +602,13 @@ public:
       ImGui::OpenPopup("Loading..##LOAD");
 
       open_dialog.ClearSelected();
+    }
+
+    if (ImGui::BeginMenu("Options"))
+    {
+      ImGui::Checkbox("use ps4wizard format", &s_use_ps4_weird_format);
+      ImGui::Checkbox("dump decompressed data", &s_dump_decompressed_data);
+      ImGui::EndMenu();
     }
 
     if (0 && ImGui::Button("open error"))

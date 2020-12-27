@@ -148,6 +148,8 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
   tmp.resize(XLZ4_CHUNK_SIZE);
   nodedata.clear();
   nodedata.resize(nodedata_size);
+
+  bool is_ps4 = false;
   for (int i = 0; i < chunk_descs.size(); ++i)
   {
     auto& cd = chunk_descs[i];
@@ -155,7 +157,13 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
     ifs.seekg(cd.offset, ifs.beg);
     ifs.read((char*)&magic, 4);
     if (magic != 'XLZ4')
-      return false;
+    {
+      if (i > 0)
+        return false;
+
+      is_ps4 = true;
+      break;
+    }
 
     uint32_t data_size = 0;
     ifs.read((char*)&data_size, 4);
@@ -172,6 +180,13 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
       return false;
 
     progress = 0.5f + 0.3f * i / (float)cd_cnt;
+  }
+
+  if (is_ps4)
+  {
+    size_t offset = chunk_descs[0].offset;
+    ifs.seekg(offset, ifs.beg);
+    ifs.read(nodedata.data() + offset, nodedata_size - offset);
   }
 
   if (ifs.fail())
@@ -206,7 +221,7 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
   return true;
 }
 
-bool csav::save_with_progress(std::filesystem::path path, float& progress)
+bool csav::save_with_progress(std::filesystem::path path, float& progress, bool dump_decompressed_data, bool ps4_weird_format)
 {
   if (!root_node)
     return false;
@@ -274,7 +289,7 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress)
   tmp.resize(XLZ4_CHUNK_SIZE);
 
   // allocate tbl
-  ofs.write(tmp.data(), chunktbl_maxsize);
+  ofs.write(tmp.data(), std::max(chunktbl_maxsize, 0xC21 - (size_t)chunkdescs_start));
   chunks_start = (uint32_t)ofs.tellp();
 
   // --------------------------------------------------------
@@ -326,15 +341,22 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress)
     if (csize < 0)
       return false;
 
+    if (!ps4_weird_format)
+    {
+      magic = 'XLZ4';
+      ofs.write((char*)&magic, 4);
+
+      uint32_t data_size = 0;
+      ofs.write((char*)&srcsize, 4);
+
+      ofs.write(ptmp, csize);
+    }
+    else
+    {
+      ofs.write(pcur, srcsize);
+    }
+
     pcur += srcsize;
-
-    magic = 'XLZ4';
-    ofs.write((char*)&magic, 4);
-
-    uint32_t data_size = 0;
-    ofs.write((char*)&srcsize, 4);
-
-    ofs.write(ptmp, csize);
 
     chunk_desc.size = csize+8;
     chunk_desc.data_size = srcsize;
@@ -408,11 +430,14 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress)
   //  save decompressed blob (request)
   // --------------------------------------------------------
 
-  auto dump_path = path;
-  dump_path.replace_filename(L"decompressed_blob.bin");
-  ofs.open(dump_path, ofs.binary | ofs.trunc);
-  ofs.write(nodedata.data(), nodedata.size());
-  ofs.close();
+  if (dump_decompressed_data)
+  {
+    auto dump_path = path;
+    dump_path.replace_filename(L"decompressed_blob.bin");
+    ofs.open(dump_path, ofs.binary | ofs.trunc);
+    ofs.write(nodedata.data(), nodedata.size());
+    ofs.close();
+  }
 
   progress = 1.f;
   return true;

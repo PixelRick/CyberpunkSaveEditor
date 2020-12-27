@@ -63,7 +63,7 @@ public:
 
 public:
   bool open_with_progress(std::filesystem::path path, float& progress);
-  bool save_with_progress(std::filesystem::path path, float& progress);
+  bool save_with_progress(std::filesystem::path path, float& progress, bool dump_decompressed_data=false, bool ps4_weird_format=false);
 
   std::shared_ptr<const node_t> search_node(const std::string name)
   {
