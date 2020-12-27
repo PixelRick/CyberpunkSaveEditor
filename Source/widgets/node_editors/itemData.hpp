@@ -1,4 +1,5 @@
 #pragma once
+#include "inttypes.h"
 #include "node_editor.hpp"
 #include "cserialization/cpnames.hpp"
 #include "cserialization/cnodes/itemData.hpp"
@@ -31,7 +32,7 @@ struct namehash_widget
 
     ImGui::InputScalar("crc32(name)",  ImGuiDataType_U32, &x.crc, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
     ImGui::InputScalar("length(name)", ImGuiDataType_U8,  &x.slen,  NULL, NULL, "%u");
-    ImGui::InputScalar("raw u64 hex",  ImGuiDataType_U64, &x.as_u64,  NULL, NULL, "%016X", ImGuiInputTextFlags_CharsHexadecimal);
+    ImGui::InputScalar("raw u64 hex",  ImGuiDataType_U64, &x.as_u64,  NULL, NULL, "%016llX", ImGuiInputTextFlags_CharsHexadecimal);
   }
 };
 
