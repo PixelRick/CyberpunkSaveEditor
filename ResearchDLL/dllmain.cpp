@@ -55,7 +55,7 @@ bool     csav_func70_seek_node_hook(csav* _this, uint64_t hash64, bool err_if_no
 {
   if (!g_log.is_open()) g_log.open("C:\\experiment_log.txt");
 
-  g_log << "\n node " << (uintptr_t)hash64 << " { \n";
+  g_log << "\n node " << (void*)hash64 << " { \n";
   return g_saved_tbl.csav_func70_seek_node(_this, hash64, err_if_not_fount);
 }
 
@@ -70,10 +70,13 @@ bool     csav_func78_close_node_hook(csav* _this)
 
 void init()
 {
-  g_log.open("C:\\experiment_log.txt");
-  
+  g_log.open("G:/SteamLibrary/steamapps/common/Cyberpunk 2077/bin/x64/plugins/experiment_log.txt");
+
   g_baseaddr = (uint64_t)GetModuleHandleA("Cyberpunk2077.exe");
   g_depth = 0;
+
+  // char err[256];
+  // strerror_s(err, errno);
 
   g_log << "HELLO";
 
@@ -108,8 +111,7 @@ void init()
 
     VirtualProtect((void*)g_vtbladdr, sizeof(csav_vtbl_t), oldRw, NULL);
   }
-
-
+  g_log.flush();
 }
 
 void shutdown()

@@ -6,10 +6,13 @@
 // to be used with itemData struct
 struct itemData_widget
 {
-  static inline void draw(itemData& item, bool* p_remove = nullptr)
+  static inline void draw(itemData& item, bool* p_remove = nullptr, bool* p_modified = nullptr)
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
-    bool treenode = ImGui::TreeNodeBehavior(window->GetID("itemData"), 0, item.name().c_str(), NULL);
+    ImGuiID id = window->GetID(&item);
+
+    ImGui::TreeNodeBehavior(id, ImGuiTreeNodeFlags_Leaf, item.name().c_str(), NULL);
+    bool treenode = ImGui::IsItemClicked();
 
     if (p_remove)
     {
@@ -19,30 +22,27 @@ struct itemData_widget
 
     if (treenode)
     {
-      auto e = node_editors_mgr::get().get_editor(item.raw);
-      e->draw_widget();
-      ImGui::TreePop();
+      auto e = node_editor_windows_mgr::get().open_window(item.raw, true);
+      //e->draw_widget();
     }
+    ImGui::TreePop();
   }
 };
 
 // to be used with itemData node
 class itemData_editor
-  : public node_editor
+  : public node_editor_widget
 {
   itemData item;
 
 public:
   itemData_editor(const std::shared_ptr<const node_t>& node)
-    : node_editor(node)
+    : node_editor_widget(node)
   {
     reload();
-    // todo, listen to child nodes..
   }
 
-  ~itemData_editor()
-  {
-  }
+  ~itemData_editor() {}
 
 public:
   bool commit_impl() override
@@ -66,27 +66,26 @@ public:
 protected:
   void draw_impl(const ImVec2& size) override
   {
-    itemData_widget::draw(item);
+    bool changes = false;
+    itemData_widget::draw(item, 0, &changes);
+    if (changes)
+      m_has_unsaved_changes = true;
   }
 };
 
 class inventory_editor
-  : public node_editor
+  : public node_editor_widget
 {
-  // attrs
   inventory inv;
 
 public:
   inventory_editor(const std::shared_ptr<const node_t>& node)
-    : node_editor(node)
+    : node_editor_widget(node)
   {
     reload();
-    // todo, listen to child nodes..
   }
 
-  ~inventory_editor()
-  {
-  }
+  ~inventory_editor() override {}
 
 public:
   bool commit_impl() override
@@ -99,6 +98,7 @@ public:
 
     curnode->assign_children(rebuilt->children());
     curnode->assign_data(rebuilt->data());
+    return true;
   }
 
   bool reload_impl() override
@@ -114,8 +114,6 @@ protected:
 
     ImGui::BeginChild("##inventory_editor",
       ImVec2(size.x > 0 ? size.x : 800, size.y > 0 ? size.y : 600));
-
-    
 
     for (size_t j = 0; j < inv.m_subinvs.size(); ++j)
     {

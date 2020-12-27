@@ -13,7 +13,7 @@
 #include "imgui_extras/imgui_memory_editor.hpp"
 
 class node_hexeditor
-  : public node_editor
+  : public node_editor_widget
 {
   static inline std::vector<char> m_clipboard;
   std::vector<char> editbuf;
@@ -21,7 +21,7 @@ class node_hexeditor
 
 public:
   node_hexeditor(const std::shared_ptr<const node_t>& node)
-    : node_editor(node)
+    : node_editor_widget(node)
   {
     me.ReadFn = read_fn;
     me.WriteFn = write_fn;
@@ -29,6 +29,8 @@ public:
     //me.OptShowOptions = false;
     reload();
   }
+
+  ~node_hexeditor() override {}
 
 public:
   static const std::vector<char>& clipboard() { return m_clipboard; }
@@ -56,7 +58,7 @@ protected:
     auto& buf = e->editbuf;
     if (off < buf.size())
       buf[off] = d;
-    e->m_has_changes = true;
+    e->m_has_unsaved_changes = true;
   }
 
   static inline bool highlight_fn(const ImU8* data, size_t off)
@@ -118,17 +120,17 @@ protected:
           {
             editbuf.erase(editbuf.begin() + seladdr_beg, editbuf.begin() + seladdr_end);
             editbuf.insert(editbuf.begin() + seladdr_beg, m_clipboard.begin(), m_clipboard.end());
-            m_has_changes = true;
+            m_has_unsaved_changes = true;
           }
           if (ImGui::Selectable("paste insert"))
           {
             editbuf.insert(editbuf.begin() + seladdr_beg, m_clipboard.begin(), m_clipboard.end());
-            m_has_changes = true;
+            m_has_unsaved_changes = true;
           }
           if (ImGui::Selectable("erase"))
           {
             editbuf.erase(editbuf.begin() + seladdr_beg, editbuf.begin() + seladdr_end);
-            m_has_changes = true;
+            m_has_unsaved_changes = true;
           }
           ImGui::Separator();
         }
@@ -145,7 +147,7 @@ protected:
         {
           std::vector<char> values((size_t)cnt, value);
           editbuf.insert(editbuf.begin() + seladdr_beg, values.begin(), values.end());
-          m_has_changes = true;
+          m_has_unsaved_changes = true;
         }
       }
 

@@ -106,8 +106,8 @@ protected:
 					ImGui::Separator();
 					ImGui::EndMenu();
 				}
-				if (ImGui::MenuItem("hexedit test", 0, false))
-					test_hexeditor = true;
+				//if (ImGui::MenuItem("hexedit test", 0, false))
+				//	test_hexeditor = true;
 				if (ImGui::MenuItem("imgui demo", 0, false))
 					imgui_demo = true;
 
@@ -121,18 +121,12 @@ protected:
 		}
 		ImGui::End();
 
-		static auto n = node_t::create_shared(123, "testnode");
-		static std::shared_ptr<node_editor> e;
+		auto& emgr = node_editor_windows_mgr::get();
+		emgr.draw_windows();
+
+		static auto testnode = node_t::create_shared(123, "testnode");
 		if (test_hexeditor)
-		{
-			if (!e) {
-				n->nonconst().assign_data((char*)this, (char*)this + 100);
-				e = node_editor::create(n);
-				e->open_window();
-			}
-			e->draw_window();
-			test_hexeditor = e->has_opened_window();
-		}
+			emgr.open_window(testnode);
 
 		if (imgui_demo)
 			ImGui::ShowDemoWindow(&imgui_demo);

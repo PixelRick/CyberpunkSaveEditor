@@ -52,9 +52,31 @@ struct itemData
   itemData 0x08 - 0x0B seems to be another hash and if it is equal 2 then the item is stackable. 0x14 - 0x17 is the quantity (int32) (or 0 if its not stackable)
   */
 
+
+  // (8, 4, 1, 2), 1, 4, 8, 4, 4, 8, 4, 1, 2, 1, 4, 8, 1, 8, 4, 1, 2, 1, 4, 8, 1, 4, 8, 4, 4, 8, 4, 1, 2, 1, 4, 8, 1, 4, 8, 4, 4, 8, 4, 1, 2, 1, 4, 8, 1, 4, 8, 4, 4, 4, 8, 4, 4, 
+  // (8, 4, 1, 2), 1, 4, 8, 4, 4, 8, 4, 1, 2, 1, 7, 8, 1, 4, 8, 4, 4, 
+
   bool from_node(const std::shared_ptr<const node_t>& node)
   {
+    if (!node)
+      return false;
     raw = node;
+
+    node_reader reader(node);
+
+    namehash id;
+    reader.read((char*)&id.as_u64, 8);
+
+    uint32_t uk4;
+    reader.read((char*)&uk4, 4);
+    
+    uint8_t uk1;
+    reader.read((char*)&uk1, 1);
+
+    uint16_t uk2;
+    reader.read((char*)&uk2, 2);
+
+
     // todo
     return true;
   }

@@ -30,6 +30,8 @@ class node_t
   : public std::enable_shared_from_this<const node_t>
   , public node_listener_t
 {
+  struct create_tag {};
+
 public:
   static const int32_t null_node_idx = -1;
   static const int32_t root_node_idx = -2;
@@ -41,8 +43,8 @@ private:
   std::vector<char> m_data;
   std::vector<std::shared_ptr<const node_t>> m_children;
 
-protected:
-  explicit node_t(int32_t idx, std::string name)
+public:
+  explicit node_t(create_tag&&, int32_t idx, std::string name)
     : m_name(name)
   {
     if (idx < blob_node_idx)
@@ -56,14 +58,10 @@ protected:
       c->remove_listener(this);
   }
 
-public:
   static std::shared_ptr<const node_t>
   create_shared(int32_t idx, std::string name)
   {
-    struct make_shared_enabler : public node_t {
-      make_shared_enabler(int32_t idx, std::string name) : node_t(idx, name) {}
-    };
-    return std::make_shared<const make_shared_enabler>(idx, name);
+    return std::make_shared<const node_t>(create_tag{}, idx, name);
   }
 
   template <class Iter>

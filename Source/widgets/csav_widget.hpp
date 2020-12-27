@@ -89,8 +89,8 @@ protected:
   static inline bool s_inited = false;
   static inline void register_editors()
   {
-    node_editor::factory_register_for_node_name<node_hexeditor>(NODE_EDITOR__DEFAULT_LEAF_EDITOR_NAME);
-    node_editor::factory_register_for_node_name<inventory_editor>("inventory");
+    node_editor_widget::factory_register_for_node_name<node_hexeditor>(NODE_EDITOR__DEFAULT_LEAF_EDITOR_NAME);
+    node_editor_widget::factory_register_for_node_name<inventory_editor>("inventory");
   }
 
 public:
@@ -438,10 +438,10 @@ protected:
       return;
     }
 
-    auto& emgr = node_editors_mgr::get();
-    auto editor = emgr.find_editor(node);
+    auto& emgr = node_editor_windows_mgr::get();
+    auto editor = emgr.find_window(node);
 
-    const bool selected = editor && editor->has_opened_window();
+    const bool selected = editor && editor->is_opened();
     const bool focused = editor && editor->has_focus();
 
     ImGuiTreeNodeFlags node_flags = selected ? ImGuiTreeNodeFlags_Selected : 0;
@@ -467,14 +467,11 @@ protected:
 
     if (ImGui::IsItemClicked())
     {
-      editor = emgr.get_editor(node);
+      if (ImGui::IsMouseDoubleClicked(0))
+        editor = emgr.open_window(node);
 
       if (editor)
-      {
-        if (ImGui::IsMouseDoubleClicked(0))
-          editor->open_window();
-        editor->focus_window();
-      }
+        editor->take_focus();
     }
 
     if (opened && node->has_children())
@@ -574,8 +571,6 @@ public:
   {
     for (auto& cs : m_list)
       cs.draw();
-
-    node_editors_mgr::get().draw_editors();
   }
 
   void draw_menu_item(IApp* owning_app)
