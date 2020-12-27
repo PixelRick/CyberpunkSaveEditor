@@ -11,21 +11,24 @@ struct itemData_widget
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     ImGuiID id = window->GetID(&item);
 
-    ImGui::TreeNodeBehavior(id, ImGuiTreeNodeFlags_Leaf, item.name().c_str(), NULL);
-    bool treenode = ImGui::IsItemClicked();
+    bool treenode = ImGui::TreeNode(&item, item.iid.name().c_str());
 
     if (p_remove)
     {
       ImGui::SameLine();
-      *p_remove = ImGui::Button("-", ImVec2(50, 0));
+      *p_remove = ImGui::Button("remove", ImVec2(70, 15));
     }
-
     if (treenode)
     {
-      auto e = node_editor_windows_mgr::get().open_window(item.raw, true);
+      if (ImGui::Button("click here to open the hex editor"))
+        auto e = node_editor_windows_mgr::get().open_window(item.raw, true);
+
+      std::stringstream ss;
+      ss << "ikind:" << (int)item.iid.kind();
+      ImGui::Text(ss.str().c_str());
       //e->draw_widget();
+      ImGui::TreePop();
     }
-    ImGui::TreePop();
   }
 };
 
@@ -123,7 +126,7 @@ protected:
       ss << "inventory_" << std::hex << std::uppercase << std::setfill('0') << std::setw(16) << subinv.uid;
       if (ImGui::CollapsingHeader(ss.str().c_str()))
       {
-        if (ImGui::Button("dupe first item row") && subinv.items.size() > 0)
+        if (ImGui::Button("dupe first row") && subinv.items.size() > 0)
         {
           // todo: move that on the data side
           auto& first_item = subinv.items.front();

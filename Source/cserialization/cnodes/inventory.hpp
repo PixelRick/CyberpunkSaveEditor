@@ -43,18 +43,53 @@ while 1
 
 */
 
+struct item_id
+{
+  namehash nameid;
+  uint32_t uk4;
+  uint8_t uk1;
+  uint16_t uk2;
+
+  friend node_reader& operator<<(node_reader& reader, item_id& iid)
+  {
+    reader.read((char*)&iid.nameid.as_u64, 8);
+    reader.read((char*)&iid.uk4, 4);
+    reader.read((char*)&iid.uk1, 1);
+    reader.read((char*)&iid.uk2, 2);
+    return reader;
+  }
+
+  friend node_writer& operator<<(node_writer& writer, item_id& iid)
+  {
+    writer.write((char*)&iid.nameid.as_u64, 8);
+    writer.write((char*)&iid.uk4, 4);
+    writer.write((char*)&iid.uk1, 1);
+    writer.write((char*)&iid.uk2, 2);
+    return writer;
+  }
+
+  uint8_t kind() const
+  {
+    if (uk1 == 1) return 2;
+    if (uk1 == 2) return 1;
+    if (uk1 == 3) return 0;
+    return uk4 != 2 ? 2 : 1;
+  }
+
+  std::string name() const
+  {
+    auto& cpn = cpnames::get();
+    return cpn.get_name(nameid);
+  }
+};
+
 struct itemData
 {
   std::shared_ptr<const node_t> raw;
+  item_id iid;
 
-  /*
-  Seberoth
-  itemData 0x08 - 0x0B seems to be another hash and if it is equal 2 then the item is stackable. 0x14 - 0x17 is the quantity (int32) (or 0 if its not stackable)
-  */
-
-
-  // (8, 4, 1, 2), 1, 4, 8, 4, 4, 8, 4, 1, 2, 1, 4, 8, 1, 8, 4, 1, 2, 1, 4, 8, 1, 4, 8, 4, 4, 8, 4, 1, 2, 1, 4, 8, 1, 4, 8, 4, 4, 8, 4, 1, 2, 1, 4, 8, 1, 4, 8, 4, 4, 4, 8, 4, 4, 
-  // (8, 4, 1, 2), 1, 4, 8, 4, 4, 8, 4, 1, 2, 1, 7, 8, 1, 4, 8, 4, 4, 
+  // (8, 4, 1, 2), 1, 4, 8, 4, 4, (8, 4, 1, 2), 1, 4, 8, 1, (8, 4, 1, 2), 1, 4, 8, 1, 4, 8, 4, 4, (8, 4, 1, 2), 1, 4, 8, 1, 4, 8, 4, 4, (8, 4, 1, 2), 1, 4, 8, 1, 4, 8, 4, 4, 4, 8, 4, 4, 
+  // (8, 4, 1, 2), 1, 4, 8, 4, 4, (8, 4, 1, 2), 1, 7, 8, 1, 4, 8, 4, 4, 
 
   bool from_node(const std::shared_ptr<const node_t>& node)
   {
@@ -63,19 +98,13 @@ struct itemData
     raw = node;
 
     node_reader reader(node);
+    reader << iid;
+    auto kind = iid.kind();
 
-    namehash id;
-    reader.read((char*)&id.as_u64, 8);
-
-    uint32_t uk4;
-    reader.read((char*)&uk4, 4);
-    
-    uint8_t uk1;
-    reader.read((char*)&uk1, 1);
-
-    uint16_t uk2;
-    reader.read((char*)&uk2, 2);
-
+    // serial func at 0x128
+    // ikind0 vtbl 0x143244E30 -> 0x143244F58
+    // ikind1 vtbl 0x143244A20 -> 0x143244B48
+    // ikind2 vtbl 0x143244C28 -> 0x143244D50
 
     // todo
     return true;
@@ -89,15 +118,7 @@ struct itemData
 
   std::string name()
   {
-    auto& buf = raw->data();
-    if (buf.size() < 7)
-      return "invalid: no namehash in item data";
-    namehash id = *(namehash*)buf.data();
-    id._pad = 0;
-    if (id.uk[0] || id.uk[1])
-      return "invalid: namehash is malformed";
-    auto& cpn = cpnames::get();
-    return cpn.get_name(id);
+    iid.name();
   }
 };
 

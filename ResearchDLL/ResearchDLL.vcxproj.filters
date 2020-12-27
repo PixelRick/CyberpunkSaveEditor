@@ -23,5 +23,8 @@
     <ClInclude Include="cpstructs.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="function_hooks.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,7 +4,7 @@
 #include <fstream>
 #include <filesystem>
 #include "cpstructs.h"
-
+#include "function_hooks.h"
 
 uint64_t g_baseaddr = 0;
 uint64_t g_vtbladdr = 0;
@@ -67,6 +67,17 @@ bool     csav_func78_close_node_hook(csav* _this)
   return g_saved_tbl.csav_func78_close_node(_this);
 }
 
+uint64_t g_minihash = 0;
+
+// Function that is called when hooked function is called
+void minihash_hook(fn_hooks::Registers regs)
+{
+  namehash* nameid = (namehash*)regs.RCX;
+  char* str = (char*)regs.RDX;
+  if (!g_log.is_open()) g_log.open("C:\\experiment_log.txt");
+
+  g_log << "\n minihash called on " << str << "\n";
+}
 
 void init()
 {
@@ -88,6 +99,7 @@ void init()
   const uint64_t ida_baseaddr = 0x140000000;
   const uint64_t sig_addr     = 0x14345CAE8 - ida_baseaddr + g_baseaddr;
                  g_vtbladdr   = 0x14345CB10 - ida_baseaddr + g_baseaddr;
+                 g_minihash   = 0x142A91CB0 - ida_baseaddr + g_baseaddr;
 
   if (0 != strcmp("%02ld:%02ld:%02ld, %ld.%02ld.%ld", (char*)sig_addr)) {
     g_log << "sig mismatch";
@@ -111,6 +123,12 @@ void init()
 
     VirtualProtect((void*)g_vtbladdr, sizeof(csav_vtbl_t), oldRw, NULL);
   }
+
+  fn_hooks::InlineHook(g_minihash, minihash_hook, 0xF);
+
+  // To unhook
+  
+
   g_log.flush();
 }
 
@@ -119,13 +137,14 @@ void shutdown()
   g_log.close();
 
   DWORD oldRw;
-  if (VirtualProtect((void*)g_vtbladdr, sizeof(csav_vtbl_t), PAGE_EXECUTE_READWRITE, &oldRw))
+  if (g_vtbladdr && VirtualProtect((void*)g_vtbladdr, sizeof(csav_vtbl_t), PAGE_EXECUTE_READWRITE, &oldRw))
   {
     memcpy((char*)g_vtbladdr, &g_saved_tbl, sizeof(g_saved_tbl));
     g_log << "vtbl methods are unhooked";
     VirtualProtect((void*)g_vtbladdr, sizeof(csav_vtbl_t), oldRw, NULL);
   }
-  
+  if (g_minihash)
+    fn_hooks::Unhook(g_minihash);
 }
 
 

@@ -1,12 +1,17 @@
 #pragma once
 #include <stdint.h>
 
+#pragma pack(push, 1)
+
 struct namehash
 {
   uint32_t crc;
   uint8_t slen;
-  uint8_t uk0[2];
+  uint16_t uk0;
+  uint8_t pad;
 };
+
+#pragma pack(pop)
 
 struct chunk_desc
 {
