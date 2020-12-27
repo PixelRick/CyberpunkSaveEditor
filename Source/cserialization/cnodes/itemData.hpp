@@ -10,9 +10,9 @@
 
 struct uk_thing
 {
-  uint32_t uk4;
-  uint8_t uk1;
-  uint16_t uk2;
+  uint32_t uk4 = 0;
+  uint8_t  uk1 = 0;
+  uint16_t uk2 = 0;
 
   template <typename IStream>
   friend IStream& operator>>(IStream& reader, uk_thing& kt)
@@ -45,6 +45,9 @@ struct item_id
 {
   namehash nameid;
   uk_thing uk;
+
+  item_id()
+    : nameid(), uk() {}
 
   template <typename IStream>
   friend IStream& operator>>(IStream& reader, item_id& iid)
@@ -81,10 +84,16 @@ struct item_mod // for itemData kind 0, 2
   char uk0[256];
   namehash uk1;
   std::vector<item_mod> subs;
-  uint32_t uk2;
+  uint32_t uk2 = 0;
   namehash uk3;
-  uint32_t uk4;
-  uint32_t uk5;
+  uint32_t uk4 = 0;
+  uint32_t uk5 = 0;
+
+  item_mod()
+    : iid(), uk1(), uk3()
+  {
+    std::fill(uk0, uk0 + sizeof(uk0), 0);
+  }
 
   template <typename IStream>
   friend IStream& operator>>(IStream& reader, item_mod& d2)
@@ -131,16 +140,16 @@ struct itemData
 
   item_id iid;
 
-  uint8_t  uk0_012;
-  uint32_t uk1_012;
+  uint8_t  uk0_012 = 0;
+  uint32_t uk1_012 = 0;
 
   // kind 0,1 stuff
-  uint32_t uk2_01;
+  uint32_t uk2_01 = 0;
 
   // kind 0,2 stuff
   namehash uk3_02;
-  uint32_t uk4_02;
-  uint32_t uk5_02;
+  uint32_t uk4_02 = 0;
+  uint32_t uk5_02 = 0;
   item_mod root2;
 
   bool from_node(const std::shared_ptr<const node_t>& node)
