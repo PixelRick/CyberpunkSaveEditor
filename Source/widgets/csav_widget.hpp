@@ -334,7 +334,7 @@ public:
       namehash nhash(search_text);
       std::stringstream ss;
       for (size_t i = 0; i < sizeof(namehash); ++i)
-        ss << std::setfill('0') << std::setw(2) << std::hex << std::uppercase << (uint32_t)*((char*)&nhash.as_u64 + i);
+        ss << std::setfill('0') << std::setw(2) << std::hex << std::uppercase << (uint32_t)*((uint8_t*)&nhash.as_u64 + i);
       ImGui::Text("namehash:%s (crc32 on 4 bytes, strlen on 1 byte, 3 zeroes) crc32=0x%08X",
         ss.str().c_str(), nhash.crc);
 
