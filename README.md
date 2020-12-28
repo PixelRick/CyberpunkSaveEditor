@@ -12,6 +12,7 @@ Take a look at the other save editor project: https://github.com/WolvenKit/Cyber
 4) [experimental] copy/paste skin blob between saves
     (this can fail for unknown reasons yet between fresh save and high-level save)
 5) inventory editor (most fields are still obscure and some item names are not resolved)
+6) can unflag all quest items to make them normal items
 
 # Preview
 ![](./preview.png)
