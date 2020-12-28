@@ -57,7 +57,7 @@ protected:
       ss << "inventory_" << std::hex << std::uppercase << std::setfill('0') << std::setw(16) << subinv.uid;
       if (ImGui::TreeNodeBehavior(row_id, ImGuiTreeNodeFlags_Framed, ss.str().c_str()))
       {
-        if (ImGui::Button("add dummy item (alcohol6)"))
+        if (ImGui::Button("Add dummy item (alcohol6)"))
         {
           // todo: move that on the data side
           itemData item_data;
@@ -66,6 +66,12 @@ protected:
           item_data.uk1_012 = 0x213ACD;
           item_data.uk2_01 = 1; // quantity
           subinv.items.insert(subinv.items.begin(), 1, item_data);
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Unflag all Quest items (makes them normal items)"))
+        {
+          for (auto& item : subinv.items)
+            item.uk0_012 &= 0xFE;
         }
 
         for (auto it = subinv.items.begin(); it != subinv.items.end();)
