@@ -79,6 +79,14 @@ struct item_id_widget
     {
       modified |= namehash_widget::draw(x.nameid, "item name");
 
+      unsigned kind = x.uk.kind();
+      switch (kind) {
+        case 0: ImGui::Text("resolved kind: special item"); break;
+        case 1: ImGui::Text("resolved kind: simple item"); break;
+        case 2: ImGui::Text("resolved kind: modable item"); break;
+        default: ImGui::Text("resolved kind: invalid"); break;
+      }
+
       if (ImGui::TreeNode("kind struct"))
       {
         modified |= uk_thing_widget::draw(x.uk);
@@ -195,16 +203,10 @@ struct itemData_widget
     {
       modified |= item_id_widget::draw(item.iid);
 
-      unsigned kind = item.iid.uk.kind();
-      switch (kind) {
-        case 0: ImGui::Text("resolved kind: special item"); break;
-        case 1: ImGui::Text("resolved kind: simple item"); break;
-        case 2: ImGui::Text("resolved kind: modable item"); break;
-        default: ImGui::Text("resolved kind: invalid"); break;
-      }
-
       modified |= ImGui::InputScalar("field u8  (hex) (1 for quest items)##uk0",   ImGuiDataType_U8 , &item.uk0_012, NULL, NULL, "%02X", ImGuiInputTextFlags_CharsHexadecimal);
       modified |= ImGui::InputScalar("field u32 (hex)##uk1",   ImGuiDataType_U32, &item.uk1_012, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+
+      unsigned kind = item.iid.uk.kind();
 
       if (kind != 2)
       {
