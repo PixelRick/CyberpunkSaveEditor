@@ -8,6 +8,8 @@
 // to be used with inventory struct
 struct inventory_widget
 {
+  //static itemData copied_item = ;
+
   // returns true if content has been edited
   [[nodiscard]] static inline bool draw(inventory& inv, bool* p_remove = nullptr)
   {
@@ -48,6 +50,8 @@ struct inventory_widget
         {
           scoped_imgui_id _sii(&*it);
           bool torem = false;
+
+
           modified |= itemData_widget::draw(*it, &torem);
           if (torem) {
             it = subinv.items.erase(it);

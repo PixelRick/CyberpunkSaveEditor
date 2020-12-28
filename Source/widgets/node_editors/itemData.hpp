@@ -23,24 +23,47 @@ struct uk_thing_widget
 struct namehash_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(namehash& x)
+  [[nodiscard]] static inline bool draw(namehash& x, const char* label)
   {
-    scoped_imgui_id _sii(&x);
+    scoped_imgui_id _sii(label);
     bool modified = false;
 
-    ImGui::Text("resolved name: %s", x.name().c_str());
-    
+    // tricky ;)
+    int item_current = 0;
+    ImGui::Combo(label, &item_current, &ItemGetter, (void*)x.name().c_str(), (int)cpnames::get().namelist().size()+1);
+    if (item_current != 0)
+    {
+      x = namehash(cpnames::get().namelist()[item_current-1]);
+      modified = true;
+    }
+
+    bool namehash_opened = ImGui::TreeNode("> namehash");
+
     {
       scoped_imgui_style_color _stc(ImGuiCol_Text, ImColor::HSV(0.f, 1.f, 0.7f, 1.f).Value);
       ImGui::SameLine();
       ImGui::Text("(item names db is not complete yet !)"); // you can enter its hash manually too meanwhile
     }
 
-    modified |= ImGui::InputScalar("crc32(name)",  ImGuiDataType_U32, &x.crc, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
-    modified |= ImGui::InputScalar("length(name)", ImGuiDataType_U8,  &x.slen,  NULL, NULL, "%u");
-    modified |= ImGui::InputScalar("raw u64 hex",  ImGuiDataType_U64, &x.as_u64,  NULL, NULL, "%016llX", ImGuiInputTextFlags_CharsHexadecimal);
+    if (namehash_opened)
+    {
+      modified |= ImGui::InputScalar("crc32(name)",  ImGuiDataType_U32, &x.crc, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+      modified |= ImGui::InputScalar("length(name)", ImGuiDataType_U8,  &x.slen,  NULL, NULL, "%u");
+      modified |= ImGui::InputScalar("raw u64 hex",  ImGuiDataType_U64, &x.as_u64,  NULL, NULL, "%016llX", ImGuiInputTextFlags_CharsHexadecimal);
+      ImGui::Text("resolved name: %s", x.name().c_str());
+      ImGui::TreePop();
+    }
   
     return modified;
+  }
+
+  static inline bool ItemGetter(void* data, int n, const char** out_str)
+  { 
+    if (n == 0)
+      *out_str = (const char*)data;
+    else
+      *out_str = cpnames::get().namelist()[n-1].c_str();
+    return true;
   }
 };
 
@@ -54,11 +77,8 @@ struct item_id_widget
 
     if (ImGui::TreeNode("item_id", "item_id: %s", x.shortname().c_str()))
     {
-      if (ImGui::TreeNode("namehash"))
-      {
-        modified |= namehash_widget::draw(x.nameid);
-        ImGui::TreePop();
-      }
+      modified |= namehash_widget::draw(x.nameid, "item name");
+
       if (ImGui::TreeNode("kind struct"))
       {
         modified |= uk_thing_widget::draw(x.uk);
@@ -100,11 +120,8 @@ struct item_mod_widget
       }
 
       ImGui::InputText("unknown string", item.uk0, sizeof(item.uk0));
-      if (ImGui::TreeNode("uk1", "uk1: %s", item.uk1.shortname().c_str()))
-      {
-        modified |= namehash_widget::draw(item.uk1);
-        ImGui::TreePop();
-      }
+
+      modified |= namehash_widget::draw(item.uk1, "uk1 name");
 
       ImGui::Text("--------mods-tree---------");
 
@@ -127,11 +144,7 @@ struct item_mod_widget
 
       modified |= ImGui::InputScalar("field u32 (hex)##uk2",   ImGuiDataType_U32, &item.uk2, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
 
-      if (ImGui::TreeNode("uk3", "uk3: %s", item.uk3.shortname().c_str()))
-      {
-        modified |= namehash_widget::draw(item.uk3);
-        ImGui::TreePop();
-      }
+      modified |= namehash_widget::draw(item.uk3, "uk3 name");
 
       modified |= ImGui::InputScalar("field u32 (hex)##uk4",   ImGuiDataType_U32, &item.uk4, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
       modified |= ImGui::InputScalar("field u32 (hex)##uk5",   ImGuiDataType_U32, &item.uk5, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
@@ -202,11 +215,8 @@ struct itemData_widget
       if (kind != 1)
       {
         ImGui::Text("-------special/mods-------");
-        if (ImGui::TreeNode("namehash##uk3"))
-        {
-          modified |= namehash_widget::draw(item.uk3_02);
-          ImGui::TreePop();
-        }
+
+        modified |= namehash_widget::draw(item.uk3_02, "uk3 name");
         modified |= ImGui::InputScalar("field u32 (hex)##uk4", ImGuiDataType_U32, &item.uk4_02, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
         modified |= ImGui::InputScalar("field u32 (hex)##uk5", ImGuiDataType_U32, &item.uk5_02, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
 

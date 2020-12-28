@@ -108,6 +108,8 @@ public:
     ss << "unknown_name_" << crc;
     return ss.str();
   }
+
+  const std::vector<std::string>& namelist() const { return m_namelist; }
 };
 
 std::string namehash::name() const

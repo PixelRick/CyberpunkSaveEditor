@@ -608,8 +608,6 @@ public:
     open_dialog.SetTitle("Opening savefile");
     open_dialog.SetTypeFilters({ ".dat" });
   }
-
-  
   
   void update()
   {
