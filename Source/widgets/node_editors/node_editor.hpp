@@ -105,13 +105,19 @@ public:
     }
     else
     {
-      if (with_save_buttons)
+      if (with_save_buttons && m_has_unsaved_changes)
       {
-        if (ImGui::Button("save##node_editor", ImVec2(ImGui::GetContentRegionAvail().x * 0.6f, 0)))
-          commit();
+        {
+          scoped_imgui_button_hue _sibh(0.2f);
+          if (ImGui::Button("save##node_editor", ImVec2(140, 26)))
+            commit();
+        }
         ImGui::SameLine();
-        if (ImGui::Button("discard and reload##node_editor", ImVec2(ImGui::GetContentRegionAvail().x, 0)))
-          reload();
+        {
+          scoped_imgui_button_hue _sibh(0.0f);
+          if (ImGui::Button("discard and reload##node_editor", ImVec2(160, 26)))
+            reload();
+        }
       }
 
       draw_content(size);
@@ -344,7 +350,7 @@ protected:
 
     if (ImGui::BeginPopupModal("Unsaved changes##node_editor", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
     {
-      ImGui::Text("Unsaved changes, would you like to save ?");
+      ImGui::Text("Unsaved changes in %s, would you like to save ?", m_window_title.c_str());
 
       float button_width = ImGui::GetContentRegionAvail().x * 0.25f;
       ImGui::Separator();

@@ -4,47 +4,15 @@
 #include "cserialization/cnodes/inventory.hpp"
 #include "itemData.hpp"
 
-class inventory_editor
-  : public node_editor_widget
+
+// to be used with inventory struct
+struct inventory_widget
 {
-  inventory inv;
-
-public:
-  inventory_editor(const std::shared_ptr<const node_t>& node)
-    : node_editor_widget(node)
+  // returns true if content has been edited
+  [[nodiscard]] static inline bool draw(inventory& inv, bool* p_remove = nullptr)
   {
-    reload();
-  }
-
-  ~inventory_editor() override {}
-
-public:
-  bool commit_impl() override
-  {
-    auto rebuilt = inv.to_node();
-    auto curnode = ncnode();
-
-    if (!rebuilt)
-      return false;
-
-    curnode->assign_children(rebuilt->children());
-    curnode->assign_data(rebuilt->data());
-    return true;
-  }
-
-  bool reload_impl() override
-  {
-    bool success = inv.from_node(node());
-    return success;
-  }
-
-protected:
-  void draw_impl(const ImVec2& size) override
-  {
-    auto& cpn = cpnames::get();
-
     scoped_imgui_id _sii("##inventory_editor");
-
+    bool modified = false;
 
     for (auto inv_it = inv.m_subinvs.begin(); inv_it != inv.m_subinvs.end(); ++inv_it)
     {
@@ -66,21 +34,25 @@ protected:
           item_data.uk1_012 = 0x213ACD;
           item_data.uk2_01 = 1; // quantity
           subinv.items.insert(subinv.items.begin(), 1, item_data);
+          modified = true;
         }
         ImGui::SameLine();
         if (ImGui::Button("Unflag all Quest items (makes them normal items)"))
         {
           for (auto& item : subinv.items)
             item.uk0_012 &= 0xFE;
+          modified = true;
         }
 
         for (auto it = subinv.items.begin(); it != subinv.items.end();)
         {
           scoped_imgui_id _sii(&*it);
           bool torem = false;
-          itemData_widget::draw(*it, &torem, 0);
-          if (torem)
+          modified |= itemData_widget::draw(*it, &torem);
+          if (torem) {
             it = subinv.items.erase(it);
+            modified = true;
+          }
           else
             ++it;
         }
@@ -88,6 +60,54 @@ protected:
         ImGui::TreePop();
       }
     }
+
+    return modified;
+  }
+};
+
+
+class inventory_editor
+  : public node_editor_widget
+{
+  inventory m_inv;
+
+public:
+  inventory_editor(const std::shared_ptr<const node_t>& node)
+    : node_editor_widget(node)
+  {
+    reload();
+  }
+
+  ~inventory_editor() override {}
+
+public:
+  bool commit_impl() override
+  {
+    auto rebuilt = m_inv.to_node();
+    auto curnode = ncnode();
+
+    if (!rebuilt)
+      return false;
+
+    curnode->assign_children(rebuilt->children());
+    curnode->assign_data(rebuilt->data());
+    return true;
+  }
+
+  bool reload_impl() override
+  {
+    bool success = m_inv.from_node(node());
+    return success;
+  }
+
+protected:
+  void draw_impl(const ImVec2& size) override
+  {
+    scoped_imgui_id _sii(this);
+
+    bool changes = inventory_widget::draw(m_inv, 0);
+    if (changes)
+      m_has_unsaved_changes = true;
   }
 };
 

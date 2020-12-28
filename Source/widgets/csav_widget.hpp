@@ -113,6 +113,15 @@ public:
     }
   }
 
+protected:
+  void do_save()
+  {
+    save_job.start([this](float& progress) -> bool {
+      return m_csav->save_with_progress(m_csav->filepath, progress, s_dump_decompressed_data, s_use_ps4_weird_format);
+    });
+    ImGui::OpenPopup("Saving..##SAVE");
+  }
+
 public:
   bool is_alive() const { return m_alive; }
 
@@ -127,6 +136,7 @@ public:
   void draw()
   {
     scoped_imgui_id sii {this};
+    ImVec2 center(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.5f);
 
     std::string label = m_csav->filepath.u8string();
 
@@ -148,14 +158,48 @@ public:
       ImGui::PopStyleColor();
     }
 
+    bool save_requested = false;
     ImGui::SameLine();
     if (ImGui::ButtonEx("SAVE##SAVE", ImVec2(60, 60)))
     {
-      save_job.start([this](float& progress) -> bool {
-        return m_csav->save_with_progress(m_csav->filepath, progress, s_dump_decompressed_data, s_use_ps4_weird_format);
-      });
-      ImGui::OpenPopup("Saving..##SAVE");
+      if (m_inventory_editor && m_inventory_editor->has_changes())
+        ImGui::OpenPopup("Unsaved changes##csav_editor");
+      else
+        save_requested = true;
     }
+
+    // Always center this window when appearing
+    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+    if (ImGui::BeginPopupModal("Unsaved changes##csav_editor", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
+    {
+      ImGui::Text("Unsaved changes in inventory!!\nWould you like to save them first ?");
+
+      float button_width = ImGui::GetContentRegionAvail().x * 0.25f;
+      ImGui::Separator();
+      if (ImGui::Button("NO", ImVec2(button_width, 0)))
+      {
+        save_requested = true;
+        ImGui::CloseCurrentPopup();
+      }
+      ImGui::SameLine();
+      if (ImGui::Button("YES", ImVec2(button_width, 0)))
+      {
+        if (m_inventory_editor)
+          m_inventory_editor->commit();
+        save_requested = true;
+        ImGui::CloseCurrentPopup();
+      }
+      ImGui::SameLine();
+      if (ImGui::Button("CANCEL", ImVec2(ImGui::GetContentRegionAvail().x, 0)))
+      {
+        ImGui::CloseCurrentPopup();
+      }
+
+      ImGui::EndPopup();
+    }
+
+    if (save_requested)
+      do_save();
 
     ImGui::SameLine();
     if (ImGui::ButtonEx("COPY SKIN##SAVE", ImVec2(100, 60)))
@@ -182,6 +226,8 @@ public:
       }
     }
 
+    // Always center this window when appearing
+    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
     if (ImGui::BeginPopupModal("Error##TRANSFER", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove))
     {
       ImGui::Text(" saves' version mismatch ");
@@ -193,16 +239,14 @@ public:
       ImGui::EndPopup();
     }
 
-    // Always center this window when appearing
-    ImVec2 center(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.5f);
-    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-
     bool pushed_stylecol = false;
     if (save_job.failed) {
       ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, (ImVec4)ImColor::HSV(0.f, 1.f, 0.6f, 0.35f));
       pushed_stylecol = true;
     }
 
+    // Always center this window when appearing
+    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
     if (ImGui::BeginPopupModal("Saving..##SAVE", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove))
     {
       ImGui::Text("path: %s", m_csav->filepath.string().c_str());

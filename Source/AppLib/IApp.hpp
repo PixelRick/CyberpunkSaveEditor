@@ -32,10 +32,19 @@ struct scoped_imgui_id {
 	~scoped_imgui_id() { ImGui::PopID(); }
 };
 
-struct scoped_imgui_text_color {
-	scoped_imgui_text_color(ImGuiCol idx, ImVec4 col) { ImGui::PushStyleColor(ImGuiCol_Text, col); }
-	~scoped_imgui_text_color() { ImGui::PopStyleColor(); }
+struct scoped_imgui_style_color {
+	scoped_imgui_style_color(ImGuiCol idx, ImVec4 col) { ImGui::PushStyleColor(ImGuiCol_Text, col); }
+	~scoped_imgui_style_color() { ImGui::PopStyleColor(); }
 };
+
+struct scoped_imgui_button_hue {
+	scoped_imgui_button_hue(float hue) {
+		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(hue, 0.6f, 0.6f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(hue, 0.7f, 0.7f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(hue, 0.8f, 0.8f)); }
+	~scoped_imgui_button_hue() { ImGui::PopStyleColor(3); }
+};
+
 
 #define WINDOW_STYLE WS_OVERLAPPEDWINDOW
 

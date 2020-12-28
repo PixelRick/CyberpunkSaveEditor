@@ -6,66 +6,79 @@
 
 struct uk_thing_widget
 {
-  static inline void draw(uk_thing& x, bool* p_modified = nullptr)
+  // returns true if content has been edited
+  [[nodiscard]] static inline bool draw(uk_thing& x)
   {
     scoped_imgui_id _sii(&x);
+    bool modified = false;
 
-    ImGui::InputScalar("u32 hash (or 2)##uk4",   ImGuiDataType_U32, &x.uk4, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
-    ImGui::InputScalar("unknown u8  field##uk1", ImGuiDataType_U8,  &x.uk1,  NULL, NULL, "%u");
-    ImGui::InputScalar("unknown u16 field##uk2", ImGuiDataType_U16, &x.uk2,  NULL, NULL, "%u");
+    modified |= ImGui::InputScalar("u32 hash (or 2)##uk4",   ImGuiDataType_U32, &x.uk4, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+    modified |= ImGui::InputScalar("unknown u8  field##uk1", ImGuiDataType_U8,  &x.uk1,  NULL, NULL, "%u");
+    modified |= ImGui::InputScalar("unknown u16 field##uk2", ImGuiDataType_U16, &x.uk2,  NULL, NULL, "%u");
+
+    return modified;
   }
 };
 
 struct namehash_widget
 {
-  static inline void draw(namehash& x, bool* p_modified = nullptr)
+  // returns true if content has been edited
+  [[nodiscard]] static inline bool draw(namehash& x)
   {
     scoped_imgui_id _sii(&x);
+    bool modified = false;
 
     ImGui::Text("resolved name: %s", x.name().c_str());
     
     {
-      scoped_imgui_text_color _stc(ImGuiCol_Text, ImColor::HSV(0.f, 1.f, 0.7f, 1.f).Value);
+      scoped_imgui_style_color _stc(ImGuiCol_Text, ImColor::HSV(0.f, 1.f, 0.7f, 1.f).Value);
       ImGui::SameLine();
       ImGui::Text("(item names db is not complete yet !)"); // you can enter its hash manually too meanwhile
     }
 
-    ImGui::InputScalar("crc32(name)",  ImGuiDataType_U32, &x.crc, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
-    ImGui::InputScalar("length(name)", ImGuiDataType_U8,  &x.slen,  NULL, NULL, "%u");
-    ImGui::InputScalar("raw u64 hex",  ImGuiDataType_U64, &x.as_u64,  NULL, NULL, "%016llX", ImGuiInputTextFlags_CharsHexadecimal);
+    modified |= ImGui::InputScalar("crc32(name)",  ImGuiDataType_U32, &x.crc, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+    modified |= ImGui::InputScalar("length(name)", ImGuiDataType_U8,  &x.slen,  NULL, NULL, "%u");
+    modified |= ImGui::InputScalar("raw u64 hex",  ImGuiDataType_U64, &x.as_u64,  NULL, NULL, "%016llX", ImGuiInputTextFlags_CharsHexadecimal);
+  
+    return modified;
   }
 };
 
 struct item_id_widget
 {
-  static inline void draw(item_id& x, bool* p_modified = nullptr)
+  // returns true if content has been edited
+  [[nodiscard]] static inline bool draw(item_id& x)
   {
     scoped_imgui_id _sii(&x);
+    bool modified = false;
+
     if (ImGui::TreeNode("item_id", "item_id: %s", x.shortname().c_str()))
     {
       if (ImGui::TreeNode("namehash"))
       {
-        namehash_widget::draw(x.nameid, p_modified);
+        modified |= namehash_widget::draw(x.nameid);
         ImGui::TreePop();
       }
       if (ImGui::TreeNode("kind struct"))
       {
-        uk_thing_widget::draw(x.uk, p_modified);
+        modified |= uk_thing_widget::draw(x.uk);
         ImGui::TreePop();
       }
 
       ImGui::TreePop();
     }
+
+    return modified;
   }
 };
 
 struct item_mod_widget
 {
-  static inline void draw(item_mod& item, bool* p_remove = nullptr, bool* p_modified = nullptr)
+  // returns true if content has been edited
+  [[nodiscard]] static inline bool draw(item_mod& item, bool* p_remove = nullptr)
   {
     scoped_imgui_id _sii(&item);
-
-    bool closable_group = true;
+    bool modified = false;
 
     bool treenode = ImGui::TreeNode("item_mod", "item_mod: %s", item.iid.shortname().c_str());
     
@@ -77,7 +90,7 @@ struct item_mod_widget
 
     if (treenode)
     {
-      item_id_widget::draw(item.iid);
+      modified |= item_id_widget::draw(item.iid);
 
       unsigned kind = item.iid.uk.kind();
       switch (kind) {
@@ -89,7 +102,7 @@ struct item_mod_widget
       ImGui::InputText("unknown string", item.uk0, sizeof(item.uk0));
       if (ImGui::TreeNode("uk1", "uk1: %s", item.uk1.shortname().c_str()))
       {
-        namehash_widget::draw(item.uk1);
+        modified |= namehash_widget::draw(item.uk1);
         ImGui::TreePop();
       }
 
@@ -101,29 +114,33 @@ struct item_mod_widget
       for (auto it = item.subs.begin(); it < item.subs.end();)
       {
         bool torem = false;
-        item_mod_widget::draw(*it, &torem, p_modified);
-        if (torem)
+        modified |= item_mod_widget::draw(*it, &torem);
+        if (torem) {
           it = item.subs.erase(it);
+          modified = true;
+        }
         else
           ++it;
       }
 
       ImGui::Text("--------------------------");
 
-      ImGui::InputScalar("field u32 (hex)##uk2",   ImGuiDataType_U32, &item.uk2, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+      modified |= ImGui::InputScalar("field u32 (hex)##uk2",   ImGuiDataType_U32, &item.uk2, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
 
       if (ImGui::TreeNode("uk3", "uk3: %s", item.uk3.shortname().c_str()))
       {
-        namehash_widget::draw(item.uk3);
+        modified |= namehash_widget::draw(item.uk3);
         ImGui::TreePop();
       }
 
-      ImGui::InputScalar("field u32 (hex)##uk4",   ImGuiDataType_U32, &item.uk4, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
-      ImGui::InputScalar("field u32 (hex)##uk5",   ImGuiDataType_U32, &item.uk5, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+      modified |= ImGui::InputScalar("field u32 (hex)##uk4",   ImGuiDataType_U32, &item.uk4, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+      modified |= ImGui::InputScalar("field u32 (hex)##uk5",   ImGuiDataType_U32, &item.uk5, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
 
       //e->draw_widget();
       ImGui::TreePop();
     }
+
+    return modified;
   }
 };
 
@@ -132,10 +149,13 @@ struct item_mod_widget
 // to be used with itemData struct
 struct itemData_widget
 {
-  static inline void draw(itemData& item, bool* p_remove = nullptr, bool* p_modified = nullptr)
+  // returns true if content has been edited
+  [[nodiscard]] static inline bool draw(itemData& item, bool* p_remove = nullptr)
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     ImGuiID id = window->GetID("itemData");
+
+    bool modified = false;
 
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Framed;
     if (p_remove)
@@ -160,7 +180,7 @@ struct itemData_widget
     }
     if (treenode)
     {
-      item_id_widget::draw(item.iid);
+      modified |= item_id_widget::draw(item.iid);
 
       unsigned kind = item.iid.uk.kind();
       switch (kind) {
@@ -170,13 +190,13 @@ struct itemData_widget
         default: ImGui::Text("resolved kind: invalid"); break;
       }
 
-      ImGui::InputScalar("field u8  (hex) (1 for quest items)##uk0",   ImGuiDataType_U8 , &item.uk0_012, NULL, NULL, "%02X", ImGuiInputTextFlags_CharsHexadecimal);
-      ImGui::InputScalar("field u32 (hex)##uk1",   ImGuiDataType_U32, &item.uk1_012, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+      modified |= ImGui::InputScalar("field u8  (hex) (1 for quest items)##uk0",   ImGuiDataType_U8 , &item.uk0_012, NULL, NULL, "%02X", ImGuiInputTextFlags_CharsHexadecimal);
+      modified |= ImGui::InputScalar("field u32 (hex)##uk1",   ImGuiDataType_U32, &item.uk1_012, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
 
       if (kind != 2)
       {
         ImGui::Text("------special/simple------ (often quantity value)");
-        ImGui::InputScalar("field u32 (hex)##uk2", ImGuiDataType_U32, &item.uk2_01, NULL, NULL, "%02X", ImGuiInputTextFlags_CharsHexadecimal);
+        modified |= ImGui::InputScalar("field u32 (hex)##uk2", ImGuiDataType_U32, &item.uk2_01, NULL, NULL, "%02X", ImGuiInputTextFlags_CharsHexadecimal);
       }
 
       if (kind != 1)
@@ -184,20 +204,24 @@ struct itemData_widget
         ImGui::Text("-------special/mods-------");
         if (ImGui::TreeNode("namehash##uk3"))
         {
-          namehash_widget::draw(item.uk3_02, p_modified);
+          modified |= namehash_widget::draw(item.uk3_02);
           ImGui::TreePop();
         }
-        ImGui::InputScalar("field u32 (hex)##uk4", ImGuiDataType_U32, &item.uk4_02, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
-        ImGui::InputScalar("field u32 (hex)##uk5", ImGuiDataType_U32, &item.uk5_02, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+        modified |= ImGui::InputScalar("field u32 (hex)##uk4", ImGuiDataType_U32, &item.uk4_02, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+        modified |= ImGui::InputScalar("field u32 (hex)##uk5", ImGuiDataType_U32, &item.uk5_02, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
 
         bool torem = false;
-        item_mod_widget::draw(item.root2, &torem, p_modified);
-        if (torem)
+        modified |= item_mod_widget::draw(item.root2, &torem);
+        if (torem) {
           item.root2 = item_mod();
+          modified = true;
+        }
       }
 
       ImGui::TreePop();
     }
+
+    return modified;
   }
 };
 
@@ -240,8 +264,7 @@ protected:
   {
     scoped_imgui_id _sii(this);
 
-    bool changes = false;
-    itemData_widget::draw(item, 0, &changes);
+    bool changes = itemData_widget::draw(item, 0);
     if (changes)
       m_has_unsaved_changes = true;
   }
