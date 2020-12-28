@@ -170,7 +170,7 @@ struct itemData_widget
         default: ImGui::Text("resolved kind: invalid"); break;
       }
 
-      ImGui::InputScalar("field u8  (hex)##uk0",   ImGuiDataType_U8 , &item.uk0_012, NULL, NULL, "%02X", ImGuiInputTextFlags_CharsHexadecimal);
+      ImGui::InputScalar("field u8  (hex) (1 for quest items)##uk0",   ImGuiDataType_U8 , &item.uk0_012, NULL, NULL, "%02X", ImGuiInputTextFlags_CharsHexadecimal);
       ImGui::InputScalar("field u32 (hex)##uk1",   ImGuiDataType_U32, &item.uk1_012, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
 
       if (kind != 2)
