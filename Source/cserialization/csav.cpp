@@ -333,33 +333,39 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
   while (pcur < pend)
   {
     auto& chunk_desc = chunk_descs.emplace_back();
+
     chunk_desc.data_offset = (uint32_t)(pcur - prealbeg);
     chunk_desc.offset = (uint32_t)ofs.tellp();
 
     int srcsize = (int)(pend - pcur);
-    int csize = LZ4_compress_destSize(pcur, ptmp, &srcsize, XLZ4_CHUNK_SIZE);
-    if (csize < 0)
-      return false;
 
-    if (!ps4_weird_format)
+    if (ps4_weird_format)
     {
-      magic = 'XLZ4';
-      ofs.write((char*)&magic, 4);
-
-      uint32_t data_size = 0;
-      ofs.write((char*)&srcsize, 4);
-
-      ofs.write(ptmp, csize);
+      srcsize = std::min(srcsize, XLZ4_CHUNK_SIZE);
+      // write decompressed chunk
+      ofs.write(pcur, srcsize);
+      chunk_desc.size = srcsize;
     }
     else
     {
-      ofs.write(pcur, srcsize);
+      int csize = LZ4_compress_destSize(pcur, ptmp, &srcsize, XLZ4_CHUNK_SIZE);
+      if (csize < 0)
+        return false;
+
+      // write magic
+      magic = 'XLZ4';
+      ofs.write((char*)&magic, 4);
+      // write decompressed size
+      uint32_t data_size = 0;
+      ofs.write((char*)&srcsize, 4);
+      // write compressed chunk
+      ofs.write(ptmp, csize);
+
+      chunk_desc.size = csize+8;
     }
 
-    pcur += srcsize;
-
-    chunk_desc.size = csize+8;
     chunk_desc.data_size = srcsize;
+    pcur += srcsize;
 
     progress = 0.35f + ((float)i / max_chunkcnt) * 0.4f;
   }
