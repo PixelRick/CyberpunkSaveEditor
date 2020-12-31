@@ -54,6 +54,7 @@
     <ClInclude Include="Source\widgets\node_editors\inventory.hpp" />
     <ClInclude Include="Source\widgets\node_editors\itemData.hpp" />
     <ClInclude Include="Source\widgets\node_editors\node_editor.hpp" />
+    <ClInclude Include="Source\widgets\hexeditor_windows_mgr.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\AppLib\IApp.hpp" />

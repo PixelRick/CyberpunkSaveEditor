@@ -192,7 +192,7 @@ protected:
 		}
 		ImGui::End();
 
-		auto& emgr = node_editor_windows_mgr::get();
+		auto& emgr = hexeditor_windows_mgr::get();
 		emgr.draw_windows();
 
 		static auto testnode = node_t::create_shared(123, "testnode");

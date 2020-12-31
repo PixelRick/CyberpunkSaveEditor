@@ -91,6 +91,14 @@ public:
   bool has_changes() const { return m_has_unsaved_changes; }
   bool is_dirty() const { return m_dirty; }
 
+  bool alive() const { return !!node(); }
+  std::string node_name() const
+  {
+    auto n = node();
+    if (n) return n->name();
+    return "dead_node";
+  }
+
   std::shared_ptr<const node_t> node() const { return m_weaknode.lock(); }
   std::shared_ptr<node_t> ncnode() { return std::const_pointer_cast<node_t>(m_weaknode.lock()); }
 
@@ -229,8 +237,7 @@ protected:
 // onlyn ode_editor_windows_mgr can instantiate these
 class node_editor_window
 {
-  friend class node_editor_windows_mgr;
-  struct create_tag {};
+  friend class hexeditor_windows_mgr;
 
 private:
   std::shared_ptr<node_editor_widget> editor;
@@ -241,20 +248,23 @@ private:
   bool m_dirty_aknowledged = false;
 
 public:
-  node_editor_window(create_tag&&, const std::shared_ptr<const node_t> node)
+  node_editor_window(const std::shared_ptr<node_editor_widget>& editor_widget)
+    : editor(editor_widget)
   {
-    std::stringstream ss;
-    ss << "node:" << node->name();
-    if (node->is_cnode())
-      ss << " idx:" << node->idx();
-    ss << "##node_editor_window_" << (uint64_t)node.get();
-    m_window_title = ss.str();
-    editor = node_editor_widget::create(node);
-  }
-
-  static std::shared_ptr<node_editor_window> create(const std::shared_ptr<const node_t> node)
-  {
-    return std::make_shared<node_editor_window>(create_tag{}, node);
+    m_window_title = "dead node";
+    if (editor)
+    {
+      auto node = editor->node();
+      if (node)
+      {
+        std::ostringstream ss;
+        ss << "node:" << node->name();
+        if (node->is_cnode())
+          ss << " idx:" << node->idx();
+        ss << "##node_editor_window_" << (uint64_t)node.get();
+        m_window_title = ss.str();
+      }
+    }
   }
 
 public:
@@ -301,7 +311,7 @@ protected:
     ss << "##" << nid;
     m_window_title = ss.str();
 
-    if (ImGui::Begin(m_window_title.c_str(), &m_opened, ImGuiWindowFlags_AlwaysAutoResize))
+    if (ImGui::Begin(m_window_title.c_str(), &m_opened))
     {
       m_has_focus = ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows);
 
@@ -374,79 +384,6 @@ protected:
       }
 
       ImGui::EndPopup();
-    }
-  }
-};
-
-
-class node_editor_windows_mgr
-{
-public:
-  static node_editor_windows_mgr& get()
-  {
-    static node_editor_windows_mgr s;
-    return s;
-  }
-
-  node_editor_windows_mgr(const node_editor_windows_mgr&) = delete;
-  node_editor_windows_mgr& operator=(const node_editor_windows_mgr&) = delete;
-
-private:
-  node_editor_windows_mgr() = default;
-  ~node_editor_windows_mgr() = default;
-
-private:
-  std::map<
-    std::weak_ptr<const node_t>,
-    std::shared_ptr<node_editor_window>,
-    std::owner_less<std::weak_ptr<const node_t>>
-  > m_windows;
-
-public:
-  node_editor_window* find_window(const std::shared_ptr<const node_t>& node) const
-  {
-    auto it = m_windows.find(node);
-    if (it != m_windows.end())
-        return it->second.get();
-    return nullptr;
-  }
-
-  node_editor_window* open_window(const std::shared_ptr<const node_t>& node, bool take_focus = false)
-  {
-    if (!node)
-      return nullptr;
-
-    auto it = m_windows.find(node);
-    if (it != m_windows.end())
-    {
-      auto window = it->second;
-      window->open();
-      if (take_focus)
-        window->take_focus();
-      return window.get();
-    }
-
-    auto window = node_editor_window::create(node);
-    if (window)
-    {
-      window->open();
-      m_windows[node] = window;
-    }
-
-    return window.get();
-  }
-
-  void draw_windows()
-  {
-    uint64_t id = (uint64_t)this;
-    for (auto it = m_windows.begin(); it != m_windows.end();)
-    {
-      auto n = it->first.lock();
-      if (!n || !it->second) {
-        m_windows.erase(it++);
-      } else {
-        (it++)->second->draw();
-      }
     }
   }
 };

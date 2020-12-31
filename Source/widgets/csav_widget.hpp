@@ -16,6 +16,7 @@
 #include "utils.hpp"
 #include "cserialization/csav.hpp"
 #include "cpinternals/cpnames.hpp"
+#include "hexeditor_windows_mgr.hpp"
 #include "node_editors.hpp"
 
 void ImGui::ShowDemoWindow(bool* p_open);
@@ -501,7 +502,7 @@ protected:
       return;
     }
 
-    auto& emgr = node_editor_windows_mgr::get();
+    auto& emgr = hexeditor_windows_mgr::get();
     auto editor = emgr.find_window(node);
 
     const bool selected = editor && editor->is_opened();
