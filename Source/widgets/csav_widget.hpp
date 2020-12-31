@@ -9,6 +9,7 @@
 #include <filesystem>
 #include <map>
 #include <vector>
+#include <memory>
 
 
 #include "AppLib/IApp.hpp"
@@ -358,7 +359,7 @@ public:
 
       if (m_csav->root_node)
         for (const auto& n : m_csav->root_node->children())
-          draw_node(n);
+          draw_tree_node(n);
 
       ImGui::Unindent(5.f);
     }
@@ -493,7 +494,7 @@ public:
   }
 
 protected:
-  void draw_node(const std::shared_ptr<const node_t>& node)
+  void draw_tree_node(const std::shared_ptr<const node_t>& node)
   {
     if (!node)
     {
@@ -540,7 +541,7 @@ protected:
     if (opened && node->has_children())
     {
       for (auto& child : node->children())
-        draw_node(child);
+        draw_tree_node(child);
 
       ImGui::TreePop();
     }

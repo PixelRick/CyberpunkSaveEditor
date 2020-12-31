@@ -7,6 +7,7 @@
 #include <sstream>
 #include <iomanip>
 #include <vector>
+#include "fmt/format.h"
 
 void replace_all_in_str(std::string& s, const std::string& from, const std::string& to)
 {
@@ -24,6 +25,17 @@ std::string u64_to_cpp(uint64_t val)
     << std::hex << std::uppercase << val;
   return ss.str();
 }
+
+std::string bytes_to_hex(const void* buf, size_t len)
+{
+  const uint8_t* const u8buf = (uint8_t*)buf;
+  std::stringstream ss;
+  ss << std::hex << std::uppercase;
+  for (size_t i = 0; i < len; ++i)
+    ss << std::setfill('0') << std::setw(2) << (uint32_t)u8buf[i];
+  return ss.str();
+}
+
 
 template <typename T, std::enable_if_t<sizeof(T) <= 4, int> = 0>
 inline unsigned ctz(const T value)

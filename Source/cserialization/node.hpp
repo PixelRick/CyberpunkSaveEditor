@@ -7,9 +7,9 @@
 #include <numeric>
 #include <sstream>
 #include <set>
+#include "utils.hpp"
 
 class node_t;
-
 
 enum class node_event_e
 {
@@ -18,13 +18,11 @@ enum class node_event_e
   subtree_update,
 };
 
-
 struct node_listener_t
 {
   virtual ~node_listener_t() = default;
   virtual void on_node_event(const std::shared_ptr<const node_t>& node, node_event_e evt) = 0;
 };
-
 
 class node_t
   : public std::enable_shared_from_this<const node_t>
@@ -74,7 +72,8 @@ public:
   }
 
   static std::shared_ptr<const node_t>
-  create_shared_blob(const char* nodedata, uint32_t start_offset, uint32_t end_offset) {
+  create_shared_blob(const char* nodedata, uint32_t start_offset, uint32_t end_offset)
+  {
     return create_shared_blob(nodedata + start_offset, nodedata + end_offset);
   }
 
@@ -82,7 +81,13 @@ public:
   int32_t idx() const       { return m_idx; }
   void    idx(int32_t idx)  { m_idx = idx; }
 
-  std::string name() const { return m_name; }
+  // works on null pointers
+  std::string name() const
+  {
+    if (!this)
+      return "nullptr";
+    return m_name;
+  }
 
   const std::vector<std::shared_ptr<const node_t>>&
   children() const { return m_children; }
