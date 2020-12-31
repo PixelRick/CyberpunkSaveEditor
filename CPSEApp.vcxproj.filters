@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Source">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
@@ -41,6 +37,10 @@
     </Filter>
     <Filter Include="Source\widgets\node_editors">
       <UniqueIdentifier>{2229f702-6812-40b2-87f4-f8eac67cff6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>json;rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Source\external\fmt">
       <UniqueIdentifier>{c7990d27-362c-4853-947c-e569eca68605}</UniqueIdentifier>
@@ -222,8 +222,17 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Source\cserialization\names.inl">
-      <Filter>Source\cserialization</Filter>
+    <Text Include="Source\cserialization\names.inl"> 
+      <Filter>Source\cserialization</Filter> 
     </Text>
+    <CopyFileToFolders Include="Resources\CNames.json">
+      <Filter>Resources</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Resources\scriptables.json">
+      <Filter>Resources</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Resources\TweakDBIDs.json">
+      <Filter>Resources</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

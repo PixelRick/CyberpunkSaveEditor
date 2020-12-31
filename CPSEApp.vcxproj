@@ -78,6 +78,17 @@
     <ClCompile Include="Source\main.cpp" />
     <ClInclude Include="Source\utils.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="Resources\CNames.json">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Resources\scriptables.json">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Resources\TweakDBIDs.json">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <RootNamespace>CPSEApp</RootNamespace>
@@ -166,6 +177,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
+    <CopyFileToFolders>
+      <DestinationFolders>$(OutDir)/db</DestinationFolders>
+    </CopyFileToFolders>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">
     <ClCompile>
@@ -188,6 +202,9 @@
       </IgnoreSpecificDefaultLibraries>
       <SubSystem>Windows</SubSystem>
     </Link>
+    <CopyFileToFolders>
+      <DestinationFolders>$(OutDir)/db</DestinationFolders>
+    </CopyFileToFolders>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -206,6 +223,9 @@
       <AdditionalDependencies>dcomp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
     </Link>
+    <CopyFileToFolders>
+      <DestinationFolders>$(OutDir)/db</DestinationFolders>
+    </CopyFileToFolders>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
