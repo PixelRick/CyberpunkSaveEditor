@@ -77,41 +77,49 @@ protected:
 
   std::shared_ptr<csav> m_csav;
   std::shared_ptr<AppImage> m_img;
-  std::shared_ptr<node_editor_widget> m_inventory_editor;
+  std::string m_pretty_name;
 
-  bool m_alive = true;
-  bool m_opened = true;
+  std::vector<std::shared_ptr<node_editor_widget>> m_collapsible_editors;
+
+  bool m_closed = false;
+  bool m_closing = false;
+  bool m_saving = false;
+
   //std::vector<ScanEntryWidget> scan_entries;
   //using scan_entry_it = decltype(scan_entries)::iterator;
   std::array<char, 24 * 3 + 1> search_needle = {};
   std::array<char, 24     + 1> search_mask = {};
 
-  static inline bool s_inited = false;
-  static inline void register_editors()
-  {
-    node_editor_widget::factory_register_for_node_name<node_hexeditor>(NODE_EDITOR__DEFAULT_LEAF_EDITOR_NAME);
-    node_editor_widget::factory_register_for_node_name<inventory_editor>("inventory");
-  }
-
 public:
-  csav_collapsable_header(const std::shared_ptr<csav>& csav, const std::shared_ptr<AppImage>& img)
+  csav_collapsable_header(const std::shared_ptr<csav>& csav, const std::shared_ptr<AppImage>& img, std::string_view name = "")
     : save_dialog(ImGuiFileBrowserFlags_EnterNewFilename | ImGuiFileBrowserFlags_CreateNewDir)
     , m_csav(csav), m_img(img)
   {
-    if (!s_inited) {
-      s_inited = true;
-      register_editors();
+    if (name.empty())
+    {
+      if (csav)
+        m_pretty_name = (csav->filepath.parent_path().filename().string() / csav->filepath.filename()).string();
+      else
+        m_pretty_name = "dead";
     }
+    else
+      m_pretty_name = name;
 
     save_dialog.SetTitle("Saving savefile");
     save_dialog.SetTypeFilters({ ".dat" });
 
     if (m_csav)
     {
-      auto inv_node = m_csav->search_node("inventory");
-      if (inv_node)
-        m_inventory_editor = node_editor_widget::create(inv_node);
+      add_collapsible_editor<inventory_editor>("inventory");
     }
+  }
+
+  template <typename EditorType>
+  void add_collapsible_editor(std::string_view node_name)
+  {
+    auto node = m_csav->search_node(node_name);
+    if (node)
+      m_collapsible_editors.push_back(std::make_shared<EditorType>(node));
   }
 
 protected:
@@ -124,11 +132,24 @@ protected:
   }
 
 public:
-  bool is_alive() const { return m_alive; }
+  void close()
+  {
+    m_closing = false;
+  }
+
+  bool is_closed() const
+  {
+    return m_closed;
+  }
 
   void update()
   {
     save_job.update();
+  }
+
+  const std::string& pretty_name() 
+  {
+    return m_pretty_name;
   }
 
   static inline std::shared_ptr<const node_t> appearance_src;
@@ -144,8 +165,11 @@ public:
     ImGuiStyle& style = ImGui::GetStyle();
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, style.ItemSpacing.y));
 
-    if (ImGui::ArrowButtonEx("expanded", m_opened ? ImGuiDir_Down : ImGuiDir_Right, ImVec2(20, 60)))
-      m_opened = !m_opened;
+    //-------------------------------------------------------------------------------
+
+    ImGui::ButtonEx("", ImVec2(20, 60), ImGuiButtonFlags_Disabled);
+
+    //-------------------------------------------------------------------------------
 
     ImGui::SameLine();
     float post_arrow_x = ImGui::GetCursorPosX();
@@ -159,14 +183,34 @@ public:
       ImGui::PopStyleColor();
     }
 
-    bool save_requested = false;
+    //-------------------------------------------------------------------------------
+
     ImGui::SameLine();
-    if (ImGui::ButtonEx("SAVE##SAVE", ImVec2(60, 60)))
+    ImGui::ButtonEx("", ImVec2(20, 60), ImGuiButtonFlags_Disabled);
+
+    //-------------------------------------------------------------------------------
+
+    bool save_requested = false;
+
     {
-      if (m_inventory_editor && m_inventory_editor->has_changes())
-        ImGui::OpenPopup("Unsaved changes##csav_editor");
-      else
-        save_requested = true;
+      scoped_imgui_button_hue _sibh(0.2f);
+      ImGui::SameLine();
+      if ((ImGui::ButtonEx("SAVE##SAVE", ImVec2(120, 60)) || m_closing) && !m_saving)
+      {
+        bool changes = false;
+        for (auto& ce : m_collapsible_editors)
+        {
+          if (ce->has_changes()) {
+            changes = true;
+            break;
+          }
+        }
+        if (changes)
+          ImGui::OpenPopup("Unsaved changes##csav_editor");
+        else
+          save_requested = true;
+        m_saving = true;
+      }
     }
 
     // Always center this window when appearing
@@ -185,14 +229,18 @@ public:
       ImGui::SameLine();
       if (ImGui::Button("YES", ImVec2(button_width, 0)))
       {
-        if (m_inventory_editor)
-          m_inventory_editor->commit();
+        for (auto& ce : m_collapsible_editors)
+        {
+          if (ce->has_changes())
+            ce->commit();
+        }
         save_requested = true;
         ImGui::CloseCurrentPopup();
       }
       ImGui::SameLine();
       if (ImGui::Button("CANCEL", ImVec2(ImGui::GetContentRegionAvail().x, 0)))
       {
+        m_saving = false;
         ImGui::CloseCurrentPopup();
       }
 
@@ -200,44 +248,12 @@ public:
     }
 
     if (save_requested)
+    {
       do_save();
-
-    ImGui::SameLine();
-    if (ImGui::ButtonEx("COPY SKIN##SAVE", ImVec2(100, 60)))
-    {
-      appearance_src = m_csav->search_node("CharacetrCustomization_Appearances");
-      appearance_version = m_csav->v2;
-    }
-
-    ImGui::SameLine();
-    if (ImGui::ButtonEx("PASTE SKIN##SAVE", ImVec2(100, 60)))
-    {
-      auto appearance_node = m_csav->search_node("CharacetrCustomization_Appearances");
-      if (appearance_src && appearance_src != appearance_node)
-      {
-        if (appearance_version != m_csav->v2)
-        {
-          ImGui::OpenPopup("Error##TRANSFER");
-        }
-        else
-        {
-          auto& src_buf = appearance_src->data();
-          appearance_node->nonconst().assign_data(src_buf.begin(), src_buf.end());
-        }
-      }
-    }
-
-    // Always center this window when appearing
-    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-    if (ImGui::BeginPopupModal("Error##TRANSFER", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove))
-    {
-      ImGui::Text(" saves' version mismatch ");
-      ImGui::Text(" -> update your saves ingame first ");
-      ImGui::Separator();
-      if (ImGui::Button("OK", ImVec2(ImGui::GetContentRegionAvail().x, 0)))
-        ImGui::CloseCurrentPopup();
-
-      ImGui::EndPopup();
+      m_saving = false;
+      if (m_closing)
+        m_closed = true;
+      m_closing = false;
     }
 
     bool pushed_stylecol = false;
@@ -275,39 +291,83 @@ public:
 
     // todo: save as.. (dialog)
 
-    ImGui::SameLine();
-    ImGui::ButtonEx(label.c_str(), ImVec2(ImGui::GetContentRegionAvail().x - 30, 60), ImGuiButtonFlags_Disabled);
+    //-------------------------------------------------------------------------------
 
     ImGui::SameLine();
-    m_alive &= !ImGui::ButtonEx("X##CLOSE", ImVec2(30, 60));
+    if (ImGui::ButtonEx("COPY SKIN##SAVE", ImVec2(100, 60)))
+    {
+      appearance_src = m_csav->search_node("CharacetrCustomization_Appearances");
+      appearance_version = m_csav->v2;
+    }
+
+    //-------------------------------------------------------------------------------
+
+    ImGui::SameLine();
+    if (ImGui::ButtonEx("PASTE SKIN##SAVE", ImVec2(100, 60)))
+    {
+      auto appearance_node = m_csav->search_node("CharacetrCustomization_Appearances");
+      if (appearance_src && appearance_src != appearance_node)
+      {
+        if (appearance_version != m_csav->v2)
+        {
+          ImGui::OpenPopup("Error##TRANSFER");
+        }
+        else
+        {
+          auto& src_buf = appearance_src->data();
+          appearance_node->nonconst().assign_data(src_buf.begin(), src_buf.end());
+        }
+      }
+    }
+
+    // Always center this window when appearing
+    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+    if (ImGui::BeginPopupModal("Error##TRANSFER", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove))
+    {
+      ImGui::Text(" saves' version mismatch ");
+      ImGui::Text(" -> update your saves ingame first ");
+      ImGui::Separator();
+      if (ImGui::Button("OK", ImVec2(ImGui::GetContentRegionAvail().x, 0)))
+        ImGui::CloseCurrentPopup();
+
+      ImGui::EndPopup();
+    }
+
+    //-------------------------------------------------------------------------------
+
+    ImGui::SameLine();
+    ImGui::ButtonEx(label.c_str(), ImVec2(ImGui::GetContentRegionAvail().x, 60), ImGuiButtonFlags_Disabled);
+
+    //-------------------------------------------------------------------------------
 
     ImGui::PopStyleVar();
 
-    if (!m_opened)
-      return;
-
     const float indent = 12.f;
-
-    ImGui::Indent(indent);
 
     //const ImGuiID id = ImGui::GetCurrentWindow()->GetID((void*)this);
     //ImGui::BeginChild(id);
+    ImGui::BeginChild(ImGui::GetID("csav_frame"), ImVec2(0, 0), false);
     draw_content();
+    ImGui::EndChild();
     //ImGui::EndChild();
-
-    ImGui::Unindent(indent);
   }
 
   void draw_content()
   {
-    if (m_inventory_editor && ImGui::CollapsingHeader("Inventory", ImGuiTreeNodeFlags_None))
+    for (auto& ce : m_collapsible_editors)
     {
-      ImGui::Indent(5.f);
+      scoped_imgui_id _sii((void*)&ce);
 
-      m_inventory_editor->draw_widget();
-
-      ImGui::Unindent(5.f);
+      if (ce && ImGui::CollapsingHeader(ce->node_name().c_str(), ImGuiTreeNodeFlags_None))
+      {
+        ImGui::Indent(5.f);
+        ce->draw_widget();
+        ImGui::Unindent(5.f);
+      }
     }
+
+    ImGui::Separator();
+    ImGui::Text("for devs:");
 
     if (ImGui::CollapsingHeader("Original Node Descriptors", ImGuiTreeNodeFlags_None))
     {
@@ -621,7 +681,7 @@ public:
     }
 
     m_list.erase(
-      std::remove_if(m_list.begin(), m_list.end(), [](auto& a){ return !a.is_alive(); }),
+      std::remove_if(m_list.begin(), m_list.end(), [](auto& a){ return a.is_closed(); }),
       m_list.end()
     );
 
@@ -631,8 +691,37 @@ public:
 
   void draw_list()
   {
-    for (auto& cs : m_list)
-      cs.draw();
+    // todo: remove that when error popup is app-wide
+    node_editor_widget::draw_popups();
+
+    // Expose a couple of the available flags. In most cases you may just call BeginTabBar() with no flags (0).
+    static ImGuiTabBarFlags tab_bar_flags =
+      ImGuiTabBarFlags_Reorderable |
+      ImGuiTabBarFlags_AutoSelectNewTabs |
+      ImGuiTabBarFlags_FittingPolicyResizeDown;
+
+    // Passing a bool* to BeginTabItem() is similar to passing one to Begin():
+    // the underlying bool will be set to false when the tab is closed.
+    if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags))
+    {
+      if (ImGui::TabItemButton("  +  ", ImGuiTabItemFlags_Leading | ImGuiTabItemFlags_NoTooltip) && !open_job.is_running())
+        open_dialog.Open();
+
+      size_t i = 0;
+      for (auto it = m_list.begin(); it != m_list.end(); ++it)
+      {
+        //scoped_imgui_id _sii(&*it);
+        bool opened = true;
+        if (ImGui::BeginTabItem(it->pretty_name().c_str(), &opened, ImGuiTabItemFlags_None))
+        {
+          it->draw();
+          ImGui::EndTabItem();
+        }
+        if (!opened)
+          it->close();
+      }
+      ImGui::EndTabBar();
+    }
   }
 
   void draw_menu_item(IApp* owning_app)

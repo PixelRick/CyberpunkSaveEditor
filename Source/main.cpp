@@ -153,6 +153,7 @@ protected:
 	{
 		static bool test_hexeditor = false;
 		static bool imgui_demo = false;
+		static bool imgui_style_editor = false;
 
 		ImGui::SetNextWindowPos(ImVec2(0, 0));
 		ImGui::SetNextWindowSize(ImVec2((float)m_display_width, (float)m_display_height));
@@ -165,22 +166,36 @@ protected:
 			//| ImGuiWindowFlags_NoBackground
 			| ImGuiWindowFlags_NoBringToFrontOnFocus))
 		{
-			
-
 			if (ImGui::BeginMainMenuBar())
 			{
 				csav_list.draw_menu_item(this);
+
+				if (ImGui::BeginMenu("Options"))
+				{
+					imgui_style_editor |= ImGui::MenuItem("ui style editor", 0, false);
+					ImGui::EndMenu();
+				}
+
+				if (ImGui::BeginMenu("Dev"))
+				{
+					if (ImGui::MenuItem("imgui demo", 0, false))
+						imgui_demo = true;
+					ImGui::EndMenu(); 
+				}
+
 				if (ImGui::BeginMenu("About"))
 				{
 					ImGui::Separator();
 					ImGui::Text(credits.c_str());
 					ImGui::Separator();
+					ImGui::Text("Contributors:");
+					ImGui::Text("  Skiller");
+					ImGui::Text("  Seberoth");
+					ImGui::Text("  SirBitesalot");
+					ImGui::Text("  khuong");
+					ImGui::Text("  gibbed");
 					ImGui::EndMenu();
 				}
-				//if (ImGui::MenuItem("hexedit test", 0, false))
-				//	test_hexeditor = true;
-				if (ImGui::MenuItem("imgui demo", 0, false))
-					imgui_demo = true;
 
 				// mini-dma
 				if (credits_hash != 0xa8140380a724d4a2)
@@ -201,6 +216,13 @@ protected:
 
 		if (imgui_demo)
 			ImGui::ShowDemoWindow(&imgui_demo);
+
+		if (imgui_style_editor)
+		{
+			ImGui::Begin("ImGui Style Editor", &imgui_style_editor);
+			ImGui::ShowStyleEditor();
+			ImGui::End();
+		}
 	}
 
 	void on_resized() override

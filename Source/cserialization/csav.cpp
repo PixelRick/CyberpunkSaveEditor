@@ -242,11 +242,12 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
 
   progress = 0.05f;
 
+  // make a backup (when there isn't one, oldest wins for safety reasons)
   if (std::filesystem::exists(path))
   {
-    auto oldpath = path;
+    std::filesystem::path oldpath = path;
     oldpath.replace_extension(L".old");
-    if (!std::filesystem::exists(oldpath)) // only make one when there isn't one, oldest wins for safety reasons
+    if (!std::filesystem::exists(oldpath)) 
       std::filesystem::copy(path, oldpath);
   }
 

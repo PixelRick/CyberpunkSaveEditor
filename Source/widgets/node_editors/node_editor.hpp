@@ -9,6 +9,7 @@
 
 #include "AppLib/IApp.hpp"
 #include "cserialization/node.hpp"
+#include "fmt/format.h"
 
 #define NODE_EDITOR__DEFAULT_LEAF_EDITOR_NAME "<default_editor>"
 
@@ -21,41 +22,6 @@ class node_editor_widget
   : public node_listener_t
 {
   friend class node_editor_window;
-
-  // inlined factory -start-
-
-  template <class Derived, std::enable_if_t<std::is_base_of_v<node_editor_widget, Derived>, int> = 0>
-  static inline std::shared_ptr<node_editor_widget> create(const std::shared_ptr<const node_t>& node)
-  {
-    return std::dynamic_pointer_cast<node_editor_widget>(std::make_shared<Derived>(node));
-  }
-
-  using bound_create_t = decltype(std::bind(&create<node_editor_widget>, std::placeholders::_1));
-  using factory_map_t = std::map<std::string, 
-    std::function<std::shared_ptr<node_editor_widget>(const std::shared_ptr<const node_t>&)>>;
-
-  static inline factory_map_t s_factory_map;
-
-public:
-  template <class Derived, std::enable_if_t<std::is_base_of_v<node_editor_widget, Derived>, int> = 0>
-  static inline void
-  factory_register_for_node_name(const std::string& node_name)
-  {
-    s_factory_map[node_name] = std::bind(&create<Derived>, std::placeholders::_1);
-  }
-
-  static inline std::shared_ptr<node_editor_widget>
-  create(const std::shared_ptr<const node_t>& node)
-  {
-    auto it = s_factory_map.find(node->name());
-    if (it == s_factory_map.end() && node->is_leaf())
-      it = s_factory_map.find(NODE_EDITOR__DEFAULT_LEAF_EDITOR_NAME);
-    if (it != s_factory_map.end())
-      return it->second(node);
-    return nullptr;
-  }
-
-  // inlined factory -end-
 
 private:
   std::weak_ptr<const node_t> m_weaknode;
@@ -117,7 +83,7 @@ public:
       {
         {
           scoped_imgui_button_hue _sibh(0.2f);
-          if (ImGui::Button("save##node_editor", ImVec2(140, 26)))
+          if (ImGui::Button("apply changes##node_editor", ImVec2(140, 26)))
             commit();
         }
         ImGui::SameLine();
@@ -129,24 +95,36 @@ public:
       }
 
       draw_content(size);
-
-      if (ImGui::BeginPopupModal("Error##node_editor", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
-      {
-        ImGui::Text("%s", s_error.c_str());
-
-        ImGui::Separator();
-        if (ImGui::Button("OK", ImVec2(ImGui::GetContentRegionAvail().x, 0)))
-        {
-          ImGui::CloseCurrentPopup();
-          s_error = "";
-        }
-
-        ImGui::EndPopup();
-      }
     }
 
     ImGui::PopID();
   }
+
+  // todo: centralize the error popups of the whole app somewhere
+  static void draw_popups()
+  {
+    if (s_errors.size())
+      ImGui::OpenPopup("Error##node_editor");
+
+    // Always center this window when appearing
+    ImVec2 center(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.5f);
+    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+    if (ImGui::BeginPopupModal("Error##node_editor", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove))
+    {
+      for (auto& l : s_errors)
+      ImGui::Text("%s", l.c_str());
+
+      ImGui::Separator();
+      if (ImGui::Button("OK", ImVec2(ImGui::GetContentRegionAvail().x, 0)))
+      {
+        ImGui::CloseCurrentPopup();
+        s_errors.clear();
+      }
+
+      ImGui::EndPopup();
+    }
+  };
 
 protected:
   void draw_content(const ImVec2& size = ImVec2(0, 0))
@@ -157,13 +135,12 @@ protected:
   }
 
 private:
-  static inline std::string s_error;
+  static inline std::vector<std::string> s_errors;
 
 protected:
-  static void error(std::string_view msg)
+  void error(std::string_view msg)
   {
-    s_error = msg;
-    ImGui::OpenPopup("Error##node_editor");
+    s_errors.push_back(fmt::format("node {} : {}", m_weaknode.lock()->name(), msg));
   }
 
 public:
@@ -171,7 +148,7 @@ public:
   {
     if (!commit_impl())
     {
-      error(s_error.empty() ? "commit failed" : s_error);
+      error("commit failed");
       return false;
     }
     m_has_unsaved_changes = false;
@@ -183,7 +160,7 @@ public:
   {
     if (!reload_impl())
     {
-      error(s_error.empty() ? "reload failed" : s_error);
+      error("reload failed");
       return false;
     }
     m_has_unsaved_changes = false;
