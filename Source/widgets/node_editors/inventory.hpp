@@ -27,7 +27,7 @@ struct inventory_widget
       ss << "inventory_" << std::hex << std::uppercase << std::setfill('0') << std::setw(16) << subinv.uid;
       if (ImGui::TreeNodeBehavior(row_id, ImGuiTreeNodeFlags_Framed, ss.str().c_str()))
       {
-        if (ImGui::Button("Add dummy item (alcohol6)"))
+        if (ImGui::Button("Add dummy item (alcohol6)", ImVec2(0, 30)))
         {
           // todo: move that on the data side
           CItemData item_data;
@@ -39,7 +39,7 @@ struct inventory_widget
           modified = true;
         }
         ImGui::SameLine();
-        if (ImGui::Button("Unflag all Quest items (makes them normal items)"))
+        if (ImGui::Button("Unflag all Quest items (makes them normal items)", ImVec2(0, 30)))
         {
           for (auto& item : subinv.items)
             item.uk0_012 &= 0xFE;
