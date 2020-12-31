@@ -88,11 +88,83 @@ constexpr uint64_t FNV1a(std::string_view str)
 
 
 template<typename CharT, typename TraitsT = std::char_traits<CharT> >
-class vector_streambuf : public std::basic_streambuf<CharT, TraitsT> {
+class span_istreambuf : public std::basic_streambuf<CharT, TraitsT>
+{
+	CharT* seekhigh = 0;
+	using bsb_t = std::basic_streambuf<CharT, TraitsT>;
+
 public:
-	vector_streambuf(std::vector<CharT> &vec) {
-		this->setg(vec.data(), vec.data(), vec.data() + vec.size());
+	span_istreambuf() = default;
+	span_istreambuf(const std::span<CharT>& span)
+		: span_istreambuf(span.begin(), span.end()) {}
+
+	span_istreambuf(const CharT* begin, const CharT* end)
+	{
+		auto ncbegin = const_cast<std::remove_const_t<CharT>*>(begin);
+		auto ncend = const_cast<std::remove_const_t<CharT>*>(end);
+		this->setg(ncbegin, ncbegin, ncend);
+		seekhigh = ncend;
 	}
+
+	typename bsb_t::pos_type seekoff(typename bsb_t::off_type off, typename std::ios_base::seekdir way, typename std::ios_base::openmode mode = std::ios_base::in) override
+	{
+		// MS stringbuf impl without the out part
+		if (mode & std::ios_base::out)
+			return bsb_t::pos_type(bsb_t::off_type(-1));
+
+		const auto gptr_old = this->gptr();
+		const auto seeklow  = this->eback();
+		const auto seekdist = seekhigh - seeklow;
+		typename bsb_t::off_type new_off;
+		switch (way) {
+			case std::ios_base::beg:
+				new_off = 0;
+				break;
+			case std::ios_base::end:
+				new_off = (int64_t)seekhigh;
+				break;
+			case std::ios_base::cur: {
+				if (mode & std::ios_base::in) {
+					if (gptr_old || !seeklow) {
+						new_off = gptr_old - seeklow;
+						break;
+					}
+				}
+			}
+			// fallthrough
+			default:
+				return bsb_t::pos_type(bsb_t::off_type(-1));
+		}
+
+		if (static_cast<unsigned long long>(off) + new_off > static_cast<unsigned long long>(seekdist)) {
+			return bsb_t::pos_type(bsb_t::off_type(-1));
+		}
+
+		off += new_off;
+		if (off != 0 && (((mode & std::ios_base::in) && !gptr_old))) {
+			return bsb_t::pos_type(bsb_t::off_type(-1));
+		}
+
+		const auto new_ptr = seeklow + off;
+		if ((mode & std::ios_base::in) && gptr_old) {
+			this->setg(seeklow, new_ptr, seekhigh);
+		}
+
+		return bsb_t::pos_type(off);
+	}
+
+};
+
+template<typename CharT, typename TraitsT = std::char_traits<CharT> >
+class vector_istreambuf : public span_istreambuf<CharT, TraitsT>
+{
+public:
+	vector_istreambuf() = default;
+	vector_istreambuf(const std::vector<CharT>& vec)
+		: vector_istreambuf(vec.begin(), vec.end()) {}
+
+	vector_istreambuf(typename std::vector<CharT>::const_iterator begin, typename std::vector<CharT>::const_iterator end)
+		: span_istreambuf<CharT, TraitsT>(&*begin, &*begin + std::distance(begin, end)) {}
 };
 
 

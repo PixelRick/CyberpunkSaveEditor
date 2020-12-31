@@ -1,15 +1,7 @@
 #pragma once
 
 #include "node_editor.hpp"
-
-#if __has_include(<span>) && (!defined(_HAS_CXX20) or _HAS_CXX20)
-  #include <span>
-#else
-  #include "span.hpp"
-  namespace std { using tcb::span; }
-#endif
-
-// #include "gap_buffer.hpp", find better impl or code it myself..
+#include "utils.hpp"
 #include "imgui_extras/imgui_memory_editor.hpp"
 
 class node_hexeditor
