@@ -1,4 +1,6 @@
 #include "csav.hpp"
+#include <inttypes.h>
+#include "serializers.hpp"
 
 bool csav::open_with_progress(std::filesystem::path path, float& progress)
 {
@@ -26,26 +28,27 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
   //  HEADER (magic, version..)
   // --------------------------------------------------------
 
-  ifs.read((char*)&magic, 4);
+  ifs >> bytes_ref(magic);
   if (magic != 'CSAV' && magic != 'SAVE')
     return false;
 
   progress = 0.1f;
 
-  ifs.read((char*)&v1, 4);
-  ifs.read((char*)&v2, 4);
+  ifs >> bytes_ref(v1);
+  ifs >> bytes_ref(v2);
 
   // DISABLED VERSION TEST
   //if (v1 > 193 or v2 > 9 or v1 < 125)
   //  return false;
 
-  suk = read_str(ifs);
+  ifs >> cp_plstring_ref(suk);
+
   // there is a weird if v1 >= 5 check, but previous if already ensured it
-  ifs.read((char*)&uk0, 4);
-  ifs.read((char*)&uk1, 4);
+  ifs >> bytes_ref(uk0);
+  ifs >> bytes_ref(uk1);
+
   if (v1 <= 168 and v2 == 4)
     return false;
-
   v3 = 192;
   if (v1 >= 83)
   {
@@ -53,6 +56,7 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
     if (v1 > 195)
       return false;
   }
+
   chunkdescs_start = (uint32_t)ifs.tellg();
 
   progress = 0.15f;
@@ -64,8 +68,8 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
   // end stuff
   ifs.seekg(-8, ifs.end);
   uint64_t footer_start = (uint64_t)ifs.tellg();
-  ifs.read((char*)&nodedescs_start, 4);
-  ifs.read((char*)&magic, 4);
+  ifs >> bytes_ref(nodedescs_start);
+  ifs >> bytes_ref(magic);
   if (magic != 'DONE')
     return false;
 
@@ -75,21 +79,22 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
 
   // check node start tag
   ifs.seekg(nodedescs_start);
-  ifs.read((char*)&magic, 4);
+  ifs >> bytes_ref(magic);
   if (magic != 'NODE')
     return false;
 
   progress = 0.2f;
 
   // now read node descs
-  uint32_t nd_cnt = (uint32_t)read_packed_int(ifs);
+  size_t nd_cnt = 0;
+  ifs >> cp_packedint_ref((int64_t&)nd_cnt);
   node_descs.resize(nd_cnt);
-  for (uint32_t i = 0; i < nd_cnt; ++i)
+  for (size_t i = 0; i < nd_cnt; ++i)
   {
     ifs >> node_descs[i];
     progress = 0.2f + 0.1f * i / (float)nd_cnt;
   }
-  if ((uint32_t)ifs.tellg() != footer_start)
+  if ((size_t)ifs.tellg() != footer_start)
     return false;
 
   progress = 0.3f;
@@ -101,10 +106,10 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
   // descriptors (padded with 0 until actual first chunk)
 
   ifs.seekg(chunkdescs_start, ifs.beg);
-  magic = 0;
-  ifs.read((char*)&magic, 4);
+  ifs >> bytes_ref(magic);
   if (magic != 'CLZF')
     return false;
+
   uint32_t cd_cnt = 0;
   ifs.read((char*)&cd_cnt, 4);
   chunk_descs.resize(cd_cnt);
@@ -155,7 +160,7 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
     auto& cd = chunk_descs[i];
 
     ifs.seekg(cd.offset, ifs.beg);
-    ifs.read((char*)&magic, 4);
+    ifs >> bytes_ref(magic);
     if (magic != 'XLZ4')
     {
       if (i > 0)
@@ -166,7 +171,7 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
     }
 
     uint32_t data_size = 0;
-    ifs.read((char*)&data_size, 4);
+    ifs >> bytes_ref(data_size);
     if (data_size != cd.data_size)
       return false;
 
@@ -260,18 +265,18 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
   // --------------------------------------------------------
 
   magic = 'CSAV';
-  ofs.write((char*)&magic, 4);
+  ofs << bytes_ref(magic);
 
   progress = 0.1f;
 
-  ofs.write((char*)&v1, 4);
-  ofs.write((char*)&v2, 4);
-  write_str(ofs, suk);
-  ofs.write((char*)&uk0, 4);
-  ofs.write((char*)&uk1, 4);
+  ofs << bytes_ref(v1);
+  ofs << bytes_ref(v2);
+  ofs << cp_plstring_ref(suk);
+  ofs << bytes_ref(uk0);
+  ofs << bytes_ref(uk1);
 
   if (v1 >= 83)
-    ofs.write((char*)&v3, 4);
+    ofs << bytes_ref(v3);
 
   progress = 0.15f;
 
@@ -354,10 +359,10 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
 
       // write magic
       magic = 'XLZ4';
-      ofs.write((char*)&magic, 4);
+      ofs << bytes_ref(magic);
       // write decompressed size
       uint32_t data_size = 0;
-      ofs.write((char*)&srcsize, 4);
+      ofs << bytes_ref(srcsize);
       // write compressed chunk
       ofs.write(ptmp, csize);
 
@@ -381,9 +386,9 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
   ofs.seekp(chunkdescs_start);
 
   magic = 'CLZF';
-  ofs.write((char*)&magic, 4);
+  ofs << bytes_ref(magic);
   uint32_t cd_cnt = (uint32_t)chunk_descs.size();
-  ofs.write((char*)&cd_cnt, 4);
+  ofs << bytes_ref(cd_cnt);
 
   for (uint32_t i = 0; i < cd_cnt; ++i)
   {
@@ -407,10 +412,11 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
 
 
   magic = 'NODE';
-  ofs.write((char*)&magic, 4);
+  ofs << bytes_ref(magic);
 
   // now write node descs
-  write_packed_int(ofs, (int64_t)node_cnt);
+  int64_t node_cnt_i64 = (int64_t)node_cnt;
+  ofs << cp_packedint_ref(node_cnt_i64);
   for (uint32_t i = 0; i < node_cnt; ++i)
   {
     ofs << node_descs[i];
@@ -424,9 +430,9 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
   // --------------------------------------------------------
 
   // end stuff
-  ofs.write((char*)&nodedescs_start, 4);
+  ofs << bytes_ref(nodedescs_start);
   magic = 'DONE';
-  ofs.write((char*)&magic, 4);
+  ofs << bytes_ref(magic);
 
   if (ofs.fail())
     return false;

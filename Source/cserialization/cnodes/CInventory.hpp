@@ -2,9 +2,9 @@
 #include <iostream>
 #include <list>
 
+#include "cserialization/serializers.hpp"
 #include "cserialization/node.hpp"
 #include "cpinternals/cpnames.hpp"
-#include "cserialization/packing.hpp"
 #include "utils.hpp"
 #include "CItemData.hpp"
 
@@ -27,32 +27,39 @@ struct CInventory
 
     node_reader reader(node);
 
-    uint32_t inventory_cnt;
-    reader.read((char*)&inventory_cnt, 4);
-    m_subinvs.resize(inventory_cnt);
-
-    for (auto& subinv : m_subinvs)
+    try
     {
-      reader.read((char*)&subinv.uid, 8);
+      uint32_t inventory_cnt = 0;
+      reader >> bytes_ref(inventory_cnt);
+      m_subinvs.resize(inventory_cnt);
 
-      uint32_t items_cnt;
-      reader.read((char*)&items_cnt, 4);
-
-      subinv.items.resize(items_cnt);
-      for (auto& entry : subinv.items)
+      for (auto& subinv : m_subinvs)
       {
+        reader.read((char*)&subinv.uid, 8);
+
+        uint32_t items_cnt;
+        reader.read((char*)&items_cnt, 4);
+
+        subinv.items.resize(items_cnt);
+        for (auto& entry : subinv.items)
+        {
           TweakDBID id;
         reader.read((char*)&id, 7);
-        uint64_t uk;
-        reader.read((char*)&uk, 8);
+          uint64_t uk;
+          reader.read((char*)&uk, 8);
 
-        auto item_node = reader.read_child("itemData");
-        if (!item_node)
-          return false; // todo: don't leave this in this state
+          auto item_node = reader.read_child("itemData");
+          if (!item_node)
+            return false; // todo: don't leave this in this state
 
-        if (!entry.from_node(item_node))
-          return false;
+          if (!entry.from_node(item_node))
+            return false;
+        }
       }
+    }
+    catch (std::ios::failure&)
+    {
+      return false;
     }
 
     return reader.at_end();

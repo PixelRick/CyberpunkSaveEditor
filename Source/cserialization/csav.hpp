@@ -5,7 +5,7 @@
 #include <numeric>
 #include <cassert>
 #include "xlz4/lz4.h"
-#include "packing.hpp"
+#include "serializers.hpp"
 #include "node.hpp"
 
 #define XLZ4_CHUNK_SIZE 0x40000
@@ -18,15 +18,17 @@ struct node_desc
 
   friend std::istream& operator>>(std::istream& is, node_desc& ed)
   {
-    ed.name = read_str(is);
-    is.read((char*)&ed.next_idx, 16);
+    is >> cp_plstring_ref(ed.name);
+    is >> bytes_ref(ed.next_idx   ) >> bytes_ref(ed.child_idx);
+    is >> bytes_ref(ed.data_offset) >> bytes_ref(ed.data_size);
     return is;
   }
 
   friend std::ostream& operator<<(std::ostream& os, const node_desc& ed)
   {
-    write_str(os, ed.name);
-    os.write((char*)&ed.next_idx, 16);
+    os << cp_plstring_ref(ed.name);
+    os << bytes_ref(ed.next_idx   ) << bytes_ref(ed.child_idx);
+    os << bytes_ref(ed.data_offset) << bytes_ref(ed.data_size);
     return os;
   }
 };
@@ -40,14 +42,14 @@ struct compressed_chunk_desc
 
   friend std::istream& operator>>(std::istream& is, compressed_chunk_desc& cd)
   {
-    is.read((char*)&cd.offset, 12);
+    is >> bytes_ref(cd.offset) >> bytes_ref(cd.size) >> bytes_ref(cd.data_size);
     cd.data_offset = 0;
     return is;
   }
 
   friend std::ostream& operator<<(std::ostream& os, const compressed_chunk_desc& cd)
   {
-    os.write((char*)&cd.offset, 12);
+    os << bytes_ref(cd.offset) << bytes_ref(cd.size) << bytes_ref(cd.data_size);
     return os;
   }
 };

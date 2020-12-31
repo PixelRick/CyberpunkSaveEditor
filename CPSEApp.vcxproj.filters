@@ -80,9 +80,6 @@
     <ClCompile Include="Source\main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\cserialization\packing.cpp">
-      <Filter>Source\cserialization</Filter>
-    </ClCompile>
     <ClCompile Include="Source\external\xlz4\lz4.c">
       <Filter>Source\external\xlz4</Filter>
     </ClCompile>
@@ -134,9 +131,6 @@
       <Filter>Source\AppLib</Filter>
     </ClInclude>
     <ClInclude Include="Source\cserialization\node.hpp">
-      <Filter>Source\cserialization</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\cserialization\packing.hpp">
       <Filter>Source\cserialization</Filter>
     </ClInclude>
     <ClInclude Include="Source\external\nlohmann\json.hpp">

@@ -3,8 +3,9 @@
 #include <stdint.h>
 
 #include "cpinternals/cpnames.hpp"
+#include "cserialization/serializers.hpp"
 #include "cserialization/node.hpp"
-#include "cserialization/packing.hpp"
+
 
 #pragma pack(push, 1)
 
@@ -14,21 +15,19 @@ struct uk_thing
   uint8_t  uk1 = 0;
   uint16_t uk2 = 0;
 
-  template <typename IStream>
-  friend IStream& operator>>(IStream& reader, uk_thing& kt)
+  friend std::istream& operator>>(std::istream& reader, uk_thing& kt)
   {
-    reader.read((char*)&kt.uk4, 4);
-    reader.read((char*)&kt.uk1, 1);
-    reader.read((char*)&kt.uk2, 2);
+    reader >> bytes_ref(kt.uk4);
+    reader >> bytes_ref(kt.uk1);
+    reader >> bytes_ref(kt.uk2);
     return reader;
   }
 
-  template <typename OStream>
-  friend OStream& operator<<(OStream& writer, uk_thing& kt)
+  friend std::ostream& operator<<(std::ostream& writer, uk_thing& kt)
   {
-    writer.write((char*)&kt.uk4, 4);
-    writer.write((char*)&kt.uk1, 1);
-    writer.write((char*)&kt.uk2, 2);
+    writer << bytes_ref(kt.uk4);
+    writer << bytes_ref(kt.uk1);
+    writer << bytes_ref(kt.uk2);
     return writer;
   }
 
@@ -49,18 +48,16 @@ struct CItemID
   CItemID()
     : nameid(), uk() {}
 
-  template <typename IStream>
-  friend IStream& operator>>(IStream& reader, CItemID& iid)
+  friend std::istream& operator>>(std::istream& reader, CItemID& iid)
   {
-    reader.read((char*)&iid.nameid.as_u64, 8);
+    reader >> bytes_ref(iid.nameid.as_u64);
     reader >> iid.uk;
     return reader;
   }
 
-  template <typename OStream>
-  friend OStream& operator<<(OStream& writer, CItemID& iid)
+  friend std::ostream& operator<<(std::ostream& writer, CItemID& iid)
   {
-    writer.write((char*)&iid.nameid.as_u64, 8);
+    writer << bytes_ref(iid.nameid.as_u64);
     writer << iid.uk;
     return writer;
   }
@@ -96,37 +93,46 @@ struct CItemMod // for CItemData kind 0, 2
     std::fill(uk0, uk0 + sizeof(uk0), 0);
   }
 
-  template <typename IStream>
-  friend IStream& operator>>(IStream& reader, CItemMod& d2)
+  friend std::istream& operator>>(std::istream& reader, CItemMod& d2)
   {
     reader >> d2.iid;
-    auto s = read_str(reader);
+
+    std::string s;
+    reader >> cp_plstring_ref(s);
     strcpy(d2.uk0, s.c_str());
     reader >> d2.uk1;
-    const size_t cnt = read_packed_int(reader);
+
+    size_t cnt = 0;
+    reader >> cp_packedint_ref((int64_t&)cnt);
     d2.subs.resize(cnt);
     for (auto& sub : d2.subs)
       reader >> sub;
-    reader.read((char*)&d2.uk2, 4);
+
+    reader >> bytes_ref(d2.uk2);
     reader >> d2.uk3;
-    reader.read((char*)&d2.uk4, 4);
-    reader.read((char*)&d2.uk5, 4);
+    reader >> bytes_ref(d2.uk4);
+    reader >> bytes_ref(d2.uk5);
     return reader;
   }
 
-  template <typename OStream>
-  friend OStream& operator<<(OStream& writer, CItemMod& d2)
+  friend std::ostream& operator<<(std::ostream& writer, CItemMod& d2)
   {
     writer << d2.iid;
-    write_str(writer, d2.uk0);
+
+    std::string s = d2.uk0;
+    writer << cp_plstring_ref(s);
     writer << d2.uk1;
-    write_packed_int(writer, d2.subs.size());
+
+    const size_t cnt = d2.subs.size();
+    writer << cp_packedint_ref((int64_t&)cnt);
     for (auto& sub : d2.subs)
       writer << sub;
-    writer.write((char*)&d2.uk2, 4);
+
+    writer << bytes_ref(d2.uk2);
     writer << d2.uk3;
-    writer.write((char*)&d2.uk4, 4);
-    writer.write((char*)&d2.uk5, 4);
+    writer << bytes_ref(d2.uk4);
+    writer << bytes_ref(d2.uk5);
+
     return writer;
   }
 };
@@ -163,17 +169,17 @@ struct CItemData
     reader >> iid;
     auto kind = iid.uk.kind();
 
-    reader.read((char*)&uk0_012, 1);
-    reader.read((char*)&uk1_012, 4);
+    reader >> bytes_ref(uk0_012);
+    reader >> bytes_ref(uk1_012);
 
     if (kind != 2)
-      reader.read((char*)&uk2_01, 4);
+      reader >> bytes_ref(uk2_01);
 
     if (kind != 1)
     {
       reader >> uk3_02;
-      reader.read((char*)&uk4_02, 4);
-      reader.read((char*)&uk5_02, 4);
+      reader >> bytes_ref(uk4_02);
+      reader >> bytes_ref(uk5_02);
       reader >> root2;
     }
 
@@ -186,17 +192,17 @@ struct CItemData
     writer << iid;
     auto kind = iid.uk.kind();
 
-    writer.write((char*)&uk0_012, 1);
-    writer.write((char*)&uk1_012, 4);
+    writer << bytes_ref(uk0_012);
+    writer << bytes_ref(uk1_012);
 
     if (kind != 2)
-      writer.write((char*)&uk2_01, 4);
+      writer << bytes_ref(uk2_01);
 
     if (kind != 1)
     {
       writer << uk3_02;
-      writer.write((char*)&uk4_02, 4);
-      writer.write((char*)&uk5_02, 4);
+      writer << bytes_ref(uk4_02);
+      writer << bytes_ref(uk5_02);
       writer << root2;
     }
 

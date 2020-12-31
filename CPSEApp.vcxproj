@@ -27,7 +27,6 @@
     <ClCompile Include="Source\cpinternals\cpnames.cpp" />
     <ClInclude Include="Source\cpinternals\cpnames.hpp" />
     <ClCompile Include="Source\cserialization\csav.cpp" />
-    <ClCompile Include="Source\cserialization\packing.cpp" />
     <ClInclude Include="Source\cserialization\serializers.hpp" />
     <ClInclude Include="Source\external\fmt\chrono.h" />
     <ClInclude Include="Source\external\fmt\color.h" />
@@ -69,7 +68,6 @@
     <ClInclude Include="Source\AppLib\pch.h" />
     <ClInclude Include="Source\cserialization\csav.hpp" />
     <ClInclude Include="Source\cserialization\node.hpp" />
-    <ClInclude Include="Source\cserialization\packing.hpp" />
     <ClInclude Include="Source\external\nlohmann\json.hpp" />
     <ClInclude Include="Source\external\xlz4\lz4.h" />
     <ClInclude Include="Source\imgui_extras\imgui_filebrowser.hpp" />
