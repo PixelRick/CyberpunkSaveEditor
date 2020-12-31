@@ -1,4 +1,7 @@
 #pragma once
+#if __has_include("stdafx.h") && __has_include(<stdafx.h>)
+#include "stdafx.h"
+#endif
 
 #include "pch.h"
 
