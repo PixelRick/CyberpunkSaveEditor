@@ -49,8 +49,8 @@ struct namehash_widget
 
     if (namehash_opened)
     {
-      modified |= ImGui::InputScalar("crc32(name)",  ImGuiDataType_U32, &x.crc, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
-      modified |= ImGui::InputScalar("length(name)", ImGuiDataType_U8,  &x.slen,  NULL, NULL, "%u");
+      modified |= ImGui::InputScalar("crc32(name) hex",  ImGuiDataType_U32, &x.crc, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+      modified |= ImGui::InputScalar("length(name) hex", ImGuiDataType_U8,  &x.slen,  NULL, NULL, "%02X");
       modified |= ImGui::InputScalar("raw u64 hex",  ImGuiDataType_U64, &x.as_u64,  NULL, NULL, "%016llX", ImGuiInputTextFlags_CharsHexadecimal);
       ImGui::Text("resolved name: %s", x.name().c_str());
       ImGui::TreePop();
@@ -214,7 +214,7 @@ struct itemData_widget
       if (kind != 2)
       {
         ImGui::Text("------special/simple------ (often quantity value)");
-        modified |= ImGui::InputScalar("field u32 (hex)##uk2", ImGuiDataType_U32, &item.uk2_01, NULL, NULL, "%02X", ImGuiInputTextFlags_CharsHexadecimal);
+        modified |= ImGui::InputScalar("field u32 (hex)##uk2", ImGuiDataType_U32, &item.uk2_01, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
       }
 
       if (kind != 1)
@@ -266,6 +266,7 @@ public:
 
     curnode->assign_children(rebuilt->children());
     curnode->assign_data(rebuilt->data());
+    return true;
   }
 
   bool reload_impl() override
