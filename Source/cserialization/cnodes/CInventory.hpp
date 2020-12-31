@@ -35,18 +35,19 @@ struct CInventory
 
       for (auto& subinv : m_subinvs)
       {
-        reader.read((char*)&subinv.uid, 8);
+        reader >> bytes_ref(subinv.uid);
 
         uint32_t items_cnt;
-        reader.read((char*)&items_cnt, 4);
+        reader >> bytes_ref(items_cnt);
 
         subinv.items.resize(items_cnt);
         for (auto& entry : subinv.items)
         {
           TweakDBID id;
-        reader.read((char*)&id, 7);
+          reader.read((char*)&id, 7);
+
           uint64_t uk;
-          reader.read((char*)&uk, 8);
+          reader>> bytes_ref(uk);
 
           auto item_node = reader.read_child("itemData");
           if (!item_node)
