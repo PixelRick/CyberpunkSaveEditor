@@ -208,23 +208,35 @@ public:
   }
 };
 
-
 // only to read at node level
+// buffer and position in the istream is only relevant between child nodes
 class node_reader
+  : public std::istream
 {
   std::shared_ptr<const node_t> m_node;
+  vector_istreambuf<char> m_sbuf;
   size_t m_cur_idx;
   bool m_missed_data = false;
 
-  size_t m_data_offset = 0;
-
 public:
   explicit node_reader(const std::shared_ptr<const node_t>& root)
-    : m_node(root), m_data_offset(0), m_cur_idx(0) {}
+    : m_node(root), m_cur_idx(0), std::istream(&m_sbuf)
+  {
+    this->exceptions(std::ios::failbit | std::ios::badbit);
+    auto blob = current_blob();
+    if (blob)
+      m_sbuf = vector_istreambuf<char>(blob->data());
+  }
 
   virtual ~node_reader() = default;
 
   bool has_missed_data() { return m_missed_data; }
+
+  void clear(std::ios::iostate state = std::ios::goodbit)
+  {
+    std::istream::clear(state);
+    m_missed_data = false;
+  }
 
 protected:
   std::shared_ptr<const node_t> current_blob()
@@ -249,92 +261,68 @@ protected:
     if (!blob)
       return;
 
-    if (m_data_offset < blob->data().size())
+    size_t pos = tellg();
+    if (pos != blob->data().size())
       m_missed_data = true;
 
-    m_data_offset = 0;
+    m_sbuf = {};
     m_cur_idx++;
   }
 
 public:
-  std::shared_ptr<const node_t> read_child(const std::string& name)
+  std::shared_ptr<const node_t> read_child(std::string_view name)
   {
     seek_past_current_blob_if_any();
 
     if (m_cur_idx >= m_node->children().size())
       return nullptr;
 
-    const auto& cur_node = m_node->children()[m_cur_idx];
-    if (cur_node->name() != name)
+    const auto& child_node = m_node->children()[m_cur_idx];
+    if (child_node->name() != name)
       return nullptr;
-
     m_cur_idx++;
-    return cur_node;
+
+    const auto& blob = current_blob();
+    if (blob)
+      m_sbuf = vector_istreambuf<char>(blob->data());
+
+    return child_node;
   }
 
-  bool read(char* buf, size_t len)
+  void skip(size_t len)
   {
     const auto& blob = current_blob();
-    if (!blob)
-      return false;
-
-    const auto& data = blob->data();
-
-    if (m_data_offset + len > data.size()) // overread
-    {
-      std::fill(buf, buf + len, 0);
-      return false;
-    }
-
-    std::copy(
-      data.begin() + m_data_offset,
-      data.begin() + m_data_offset + len,
-      buf);
-
-    m_data_offset += len;
-    return true;
-  }
-
-  bool skip(size_t len)
-  {
-    const auto& blob = current_blob();
-    if (!blob)
-      return false;
-
-    const auto& data = blob->data();
-
-    if (m_data_offset + len > data.size())
-      return false;
-
-    m_data_offset += len;
-    return true;
+    if (blob)
+      seekg(len, std::ios::cur);
   }
 
   bool at_end()
   {
     if (m_node->is_leaf())
-      return m_data_offset == m_node->data().size() || m_cur_idx > 0;
+      return m_cur_idx > 0 || (tellg() == m_node->data().size());
 
+    const size_t childcnt = m_node->children().size();
     const auto& blob = current_blob();
-    if (blob && m_data_offset < blob->data().size())
-      return false;
-    // !!blob == (m_data_offset == blob-data().size())
-
-    size_t childcnt = m_node->children().size();
-    if (blob && m_cur_idx == childcnt - 1)
-      return true;
+    if (blob)
+    {
+      if (tellg() != blob->data().size())
+        return false;
+      
+      if (m_cur_idx == childcnt - 1)
+        return true;
+    }
 
     return m_cur_idx >= childcnt;
   }
 };
 
-
 // only to write at node level
 // does not actually modify input node until finalize() is called
+// buffer and position in the ostringstream is only relevant between child nodes
 class node_writer
+  : public std::ostringstream
 {
   std::vector<std::shared_ptr<const node_t>> m_new_children;
-  std::stringstream m_ss;
 
 public:
   node_writer() = default;
@@ -343,14 +331,13 @@ public:
 protected:
   void blobize_pending_data_if_any()
   {
-    auto data = m_ss.str();
-    // todo: add ss error check
+    auto data = str();
     if (data.size())
     {
       m_new_children.push_back(
         node_t::create_shared_blob(data.begin(), data.end()));
     }
-    std::stringstream().swap(m_ss);
+    str("");
   }
   
 public:
@@ -360,14 +347,9 @@ public:
     m_new_children.push_back(node);
   }
 
-  void write(const char* buf, size_t len)
-  {
-    m_ss.write(buf, len);
-  }
-
   void pad(size_t len)
   {
-    m_ss << std::string(len, 0);
+    *this << std::string(len, 0);
   }
 
   std::shared_ptr<const node_t> finalize(std::string name)
@@ -381,8 +363,8 @@ public:
   {
     if (m_new_children.size())
       blobize_pending_data_if_any();
-
-    auto data = m_ss.str();
+    // there is still pending data only if there are no children
+    auto data = str();
     node.assign_data(data.begin(), data.end());
     node.assign_children(m_new_children.begin(), m_new_children.end());
   }
