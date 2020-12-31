@@ -8,12 +8,25 @@
 
 #include "imgui_extras/imgui_filebrowser.hpp"
 #include "nlohmann/json.hpp"
+#include "fmt/format.h"
 
 #include "widgets/csav_widget.hpp"
 #include "widgets/node_editors/hexedit.hpp"
 
 using namespace std::chrono_literals;
 
+void to_json(nlohmann::json& j, const ImVec4& p)
+{
+	j = {{"x", p.x}, {"y", p.y}, {"z", p.z}, {"w", p.w}};
+}
+
+void from_json(const nlohmann::json& j, ImVec4& p)
+{
+	j.at("x").get_to(p.x);
+	j.at("y").get_to(p.y);
+	j.at("z").get_to(p.z);
+	j.at("w").get_to(p.w);
+}
 
 class CPSEApp
 	: public IApp
@@ -49,8 +62,7 @@ protected:
 		io.IniFilename = "imgui_settings.ini";
 
 		// Setup Dear ImGui style
-		ImGui::StyleColorsDark();
-		//ImGui::StyleColorsClassic();
+		load_style();
 
 		// Load Fonts
 		// - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them.
@@ -68,8 +80,67 @@ protected:
 		//IM_ASSERT(font != NULL);
 	}
 
+	bool load_style()
+	{
+		// default first
+		ImGui::StyleColorsDark();
+
+		try
+		{
+			nlohmann::json jstyle;
+
+			std::ifstream style_file;
+			style_file.open("style.json");
+			style_file >> jstyle;
+			style_file.close();
+
+			ImVec4* colors = ImGui::GetStyle().Colors;
+			for (size_t i = 0; i < (size_t)ImGuiCol_COUNT; ++i)
+			{
+				auto colkey = fmt::format("col{:02d}", i);
+				if (jstyle.contains(colkey))
+					colors[ImGuiCol(i)] = jstyle.at(colkey).get<ImVec4>();
+			}
+
+			return true;
+		}
+		catch (std::exception&)
+		{
+		}
+
+		return false;
+	}
+
+	bool store_style()
+	{
+		try
+		{
+			nlohmann::json jstyle;
+
+			ImVec4* colors = ImGui::GetStyle().Colors;
+			for (size_t i = 0; i < (size_t)ImGuiCol_COUNT; ++i)
+			{
+				auto colkey = fmt::format("col{:02d}", i);
+				jstyle[colkey] = colors[ImGuiCol(i)];
+			}
+
+			std::ofstream style_file;
+			style_file.open("style.json");
+			style_file << jstyle;
+			style_file.close();
+
+			return true;
+		}
+		catch (std::exception&)
+		{
+		}
+
+		return false;
+	}
+
 	void cleanup() override
 	{
+		store_style();
 	}
 
 	void update() override
