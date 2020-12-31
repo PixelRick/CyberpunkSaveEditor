@@ -1,7 +1,7 @@
 #pragma once
 #include "node_editor.hpp"
 #include "cserialization/cpnames.hpp"
-#include "cserialization/cnodes/inventory.hpp"
+#include "cserialization/cnodes/CInventory.hpp"
 #include "itemData.hpp"
 
 

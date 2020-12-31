@@ -2,7 +2,7 @@
 #include "inttypes.h"
 #include "node_editor.hpp"
 #include "cserialization/cpnames.hpp"
-#include "cserialization/cnodes/itemData.hpp"
+#include "cserialization/cnodes/CItemData.hpp"
 
 struct uk_thing_widget
 {

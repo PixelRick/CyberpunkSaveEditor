@@ -145,10 +145,10 @@
     <ClInclude Include="Source\widgets\csav_widget.hpp">
       <Filter>Source\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="Source\cserialization\cnodes\inventory.hpp">
+    <ClInclude Include="Source\cserialization\cnodes\CInventory.hpp">
       <Filter>Source\cserialization\cnodes</Filter>
     </ClInclude>
-    <ClInclude Include="Source\cserialization\cnodes\itemData.hpp">
+    <ClInclude Include="Source\cserialization\cnodes\CItemData.hpp">
       <Filter>Source\cserialization\cnodes</Filter>
     </ClInclude>
     <ClInclude Include="Source\widgets\csav_experimental.hpp">
@@ -222,8 +222,8 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Source\cserialization\names.inl"> 
-      <Filter>Source\cserialization</Filter> 
+    <Text Include="Source\cserialization\names.inl">
+      <Filter>Source\cserialization</Filter>
     </Text>
     <CopyFileToFolders Include="Resources\CNames.json">
       <Filter>Resources</Filter>

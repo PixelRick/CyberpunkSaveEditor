@@ -45,8 +45,8 @@
     <ClCompile Include="Source\external\fmt\os.cc" />
     <ClCompile Include="Source\external\xlz4\lz4.c" />
     <ClCompile Include="Source\utils.cpp" />
-    <ClInclude Include="Source\cserialization\cnodes\inventory.hpp" />
-    <ClInclude Include="Source\cserialization\cnodes\itemData.hpp" />
+    <ClInclude Include="Source\cserialization\cnodes\CInventory.hpp" />
+    <ClInclude Include="Source\cserialization\cnodes\CItemData.hpp" />
     <ClInclude Include="Source\cserialization\cpnames.hpp" />
     <ClInclude Include="Source\external\span.hpp" />
     <ClInclude Include="Source\widgets\csav_experimental.hpp" />

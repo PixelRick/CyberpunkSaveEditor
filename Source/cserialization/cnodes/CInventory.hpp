@@ -6,7 +6,7 @@
 #include "cserialization/cpnames.hpp"
 #include "cserialization/packing.hpp"
 #include "utils.hpp"
-#include "itemData.hpp"
+#include "CItemData.hpp"
 
 
 struct sub_inventory_t
