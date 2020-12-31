@@ -117,11 +117,11 @@ int IApp::run()
 
 		if (running)
 		{
-			update();
-
 			ImGui_ImplDX11_NewFrame();
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
+
+			update();
 
 			draw_imgui();
 
