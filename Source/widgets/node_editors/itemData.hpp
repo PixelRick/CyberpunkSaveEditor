@@ -70,7 +70,7 @@ struct namehash_widget
 struct item_id_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(item_id& x)
+  [[nodiscard]] static inline bool draw(CItemID& x)
   {
     scoped_imgui_id _sii(&x);
     bool modified = false;
@@ -103,7 +103,7 @@ struct item_id_widget
 struct item_mod_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(item_mod& item, bool* p_remove = nullptr)
+  [[nodiscard]] static inline bool draw(CItemMod& item, bool* p_remove = nullptr)
   {
     scoped_imgui_id _sii(&item);
     bool modified = false;
@@ -167,11 +167,11 @@ struct item_mod_widget
 
 
 
-// to be used with itemData struct
+// to be used with CItemData struct
 struct itemData_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(itemData& item, bool* p_remove = nullptr)
+  [[nodiscard]] static inline bool draw(CItemData& item, bool* p_remove = nullptr)
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     ImGuiID id = window->GetID("itemData");
@@ -225,7 +225,7 @@ struct itemData_widget
         bool torem = false;
         modified |= item_mod_widget::draw(item.root2, &torem);
         if (torem) {
-          item.root2 = item_mod();
+          item.root2 = CItemMod();
           modified = true;
         }
       }
@@ -237,11 +237,11 @@ struct itemData_widget
   }
 };
 
-// to be used with itemData node
+// to be used with CItemData node
 class itemData_editor
   : public node_editor_widget
 {
-  itemData item;
+  CItemData item;
 
 public:
   itemData_editor(const std::shared_ptr<const node_t>& node)

@@ -12,11 +12,11 @@
 struct sub_inventory_t
 {
   uint64_t uid = 0;
-  std::list<itemData> items;
+  std::list<CItemData> items;
 };
 
 
-struct inventory
+struct CInventory
 {
   std::list<sub_inventory_t> m_subinvs;
 

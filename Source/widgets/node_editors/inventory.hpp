@@ -5,13 +5,13 @@
 #include "itemData.hpp"
 
 
-// to be used with inventory struct
+// to be used with CInventory struct
 struct inventory_widget
 {
-  //static itemData copied_item = ;
+  //static CItemData copied_item = ;
 
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(inventory& inv, bool* p_remove = nullptr)
+  [[nodiscard]] static inline bool draw(CInventory& inv, bool* p_remove = nullptr)
   {
     scoped_imgui_id _sii("##inventory_editor");
     bool modified = false;
@@ -30,7 +30,7 @@ struct inventory_widget
         if (ImGui::Button("Add dummy item (alcohol6)"))
         {
           // todo: move that on the data side
-          itemData item_data;
+          CItemData item_data;
           item_data.iid.nameid.as_u64 = 0x1859EA0850; // Alcohol6
           item_data.iid.uk.uk4 = 2;
           item_data.uk1_012 = 0x213ACD;
@@ -50,7 +50,6 @@ struct inventory_widget
         {
           scoped_imgui_id _sii(&*it);
           bool torem = false;
-
 
           modified |= itemData_widget::draw(*it, &torem);
           if (torem) {
@@ -73,7 +72,7 @@ struct inventory_widget
 class inventory_editor
   : public node_editor_widget
 {
-  inventory m_inv;
+  CInventory m_inv;
 
 public:
   inventory_editor(const std::shared_ptr<const node_t>& node)

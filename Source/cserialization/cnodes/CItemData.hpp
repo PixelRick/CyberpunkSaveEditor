@@ -41,16 +41,16 @@ struct uk_thing
   }
 };
 
-struct item_id
+struct CItemID
 {
   namehash nameid;
   uk_thing uk;
 
-  item_id()
+  CItemID()
     : nameid(), uk() {}
 
   template <typename IStream>
-  friend IStream& operator>>(IStream& reader, item_id& iid)
+  friend IStream& operator>>(IStream& reader, CItemID& iid)
   {
     reader.read((char*)&iid.nameid.as_u64, 8);
     reader >> iid.uk;
@@ -58,7 +58,7 @@ struct item_id
   }
 
   template <typename OStream>
-  friend OStream& operator<<(OStream& writer, item_id& iid)
+  friend OStream& operator<<(OStream& writer, CItemID& iid)
   {
     writer.write((char*)&iid.nameid.as_u64, 8);
     writer << iid.uk;
@@ -78,25 +78,25 @@ struct item_id
 
 #pragma pack(pop)
 
-struct item_mod // for itemData kind 0, 2
+struct CItemMod // for CItemData kind 0, 2
 {
-  item_id iid;
+  CItemID iid;
   char uk0[256];
   namehash uk1;
-  std::vector<item_mod> subs;
+  std::vector<CItemMod> subs;
   uint32_t uk2 = 0;
   namehash uk3;
   uint32_t uk4 = 0;
   uint32_t uk5 = 0;
 
-  item_mod()
+  CItemMod()
     : iid(), uk1(), uk3()
   {
     std::fill(uk0, uk0 + sizeof(uk0), 0);
   }
 
   template <typename IStream>
-  friend IStream& operator>>(IStream& reader, item_mod& d2)
+  friend IStream& operator>>(IStream& reader, CItemMod& d2)
   {
     reader >> d2.iid;
     auto s = read_str(reader);
@@ -114,7 +114,7 @@ struct item_mod // for itemData kind 0, 2
   }
 
   template <typename OStream>
-  friend OStream& operator<<(OStream& writer, item_mod& d2)
+  friend OStream& operator<<(OStream& writer, CItemMod& d2)
   {
     writer << d2.iid;
     write_str(writer, d2.uk0);
@@ -130,7 +130,7 @@ struct item_mod // for itemData kind 0, 2
   }
 };
 
-struct itemData
+struct CItemData
 {
   // CP 1.06
   // serial func at vtbl+0x128
@@ -138,7 +138,7 @@ struct itemData
   // ikind1 vtbl 0x143244A20 -> 0x143244B48
   // ikind2 vtbl 0x143244C28 -> 0x143244D50
 
-  item_id iid;
+  CItemID iid;
 
   uint8_t  uk0_012 = 0;
   uint32_t uk1_012 = 0;
@@ -150,7 +150,8 @@ struct itemData
   namehash uk3_02;
   uint32_t uk4_02 = 0;
   uint32_t uk5_02 = 0;
-  item_mod root2;
+
+  CItemMod root2;
 
   bool from_node(const std::shared_ptr<const node_t>& node)
   {
