@@ -299,6 +299,8 @@ public:
       appearance_src = m_csav->search_node("CharacetrCustomization_Appearances");
       appearance_version = m_csav->v2;
     }
+    if (ImGui::IsItemHovered())
+      ImGui::SetTooltip("Copy skin in app clipboard.");
 
     //-------------------------------------------------------------------------------
 
@@ -319,6 +321,8 @@ public:
         }
       }
     }
+    if (ImGui::IsItemHovered())
+      ImGui::SetTooltip("Paste skin from app clipboard.\nDon't forget to SAVE afterwards!");
 
     // Always center this window when appearing
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
