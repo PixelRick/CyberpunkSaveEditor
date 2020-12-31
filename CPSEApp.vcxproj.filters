@@ -181,6 +181,9 @@
     <ClInclude Include="Source\utils.hpp">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="Source\cserialization\serializers.hpp">
+      <Filter>Source\cserialization</Filter>
+    </ClInclude>
     <ClInclude Include="Source\external\fmt\chrono.h">
       <Filter>Source\external\fmt</Filter>
     </ClInclude>
