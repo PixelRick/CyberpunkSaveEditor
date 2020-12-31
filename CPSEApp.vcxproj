@@ -29,6 +29,20 @@
       <FileType>Document</FileType>
     </Text>
     <ClCompile Include="Source\cserialization\packing.cpp" />
+    <ClInclude Include="Source\external\fmt\chrono.h" />
+    <ClInclude Include="Source\external\fmt\color.h" />
+    <ClInclude Include="Source\external\fmt\compile.h" />
+    <ClInclude Include="Source\external\fmt\core.h" />
+    <ClInclude Include="Source\external\fmt\format-inl.h" />
+    <ClInclude Include="Source\external\fmt\format.h" />
+    <ClInclude Include="Source\external\fmt\locale.h" />
+    <ClInclude Include="Source\external\fmt\os.h" />
+    <ClInclude Include="Source\external\fmt\ostream.h" />
+    <ClInclude Include="Source\external\fmt\posix.h" />
+    <ClInclude Include="Source\external\fmt\printf.h" />
+    <ClInclude Include="Source\external\fmt\ranges.h" />
+    <ClCompile Include="Source\external\fmt\format.cc" />
+    <ClCompile Include="Source\external\fmt\os.cc" />
     <ClCompile Include="Source\external\xlz4\lz4.c" />
     <ClCompile Include="Source\utils.cpp" />
     <ClInclude Include="Source\cserialization\cnodes\inventory.hpp" />

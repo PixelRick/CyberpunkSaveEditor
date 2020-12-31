@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -42,6 +42,9 @@
     <Filter Include="Source\widgets\node_editors">
       <UniqueIdentifier>{2229f702-6812-40b2-87f4-f8eac67cff6a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\external\fmt">
+      <UniqueIdentifier>{c7990d27-362c-4853-947c-e569eca68605}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AppLib\IApp.cpp">
@@ -82,6 +85,12 @@
     </ClCompile>
     <ClCompile Include="Source\cserialization\csav.cpp">
       <Filter>Source\cserialization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\external\fmt\format.cc">
+      <Filter>Source\external\fmt</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\external\fmt\os.cc">
+      <Filter>Source\external\fmt</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +174,42 @@
     </ClInclude>
     <ClInclude Include="Source\utils.hpp">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\external\fmt\chrono.h">
+      <Filter>Source\external\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\external\fmt\color.h">
+      <Filter>Source\external\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\external\fmt\compile.h">
+      <Filter>Source\external\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\external\fmt\core.h">
+      <Filter>Source\external\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\external\fmt\format.h">
+      <Filter>Source\external\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\external\fmt\format-inl.h">
+      <Filter>Source\external\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\external\fmt\locale.h">
+      <Filter>Source\external\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\external\fmt\os.h">
+      <Filter>Source\external\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\external\fmt\ostream.h">
+      <Filter>Source\external\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\external\fmt\posix.h">
+      <Filter>Source\external\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\external\fmt\printf.h">
+      <Filter>Source\external\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\external\fmt\ranges.h">
+      <Filter>Source\external\fmt</Filter>
     </ClInclude>
     <ClInclude Include="Source\cserialization\cpnames.hpp">
       <Filter>Source\cserialization</Filter>
