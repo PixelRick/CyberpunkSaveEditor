@@ -2,7 +2,7 @@
 #include <iostream>
 #include <stdint.h>
 
-#include "cserialization/cpnames.hpp"
+#include "cpinternals/cpnames.hpp"
 #include "cserialization/node.hpp"
 #include "cserialization/packing.hpp"
 
@@ -43,7 +43,7 @@ struct uk_thing
 
 struct CItemID
 {
-  namehash nameid;
+  TweakDBID nameid;
   uk_thing uk;
 
   CItemID()
@@ -72,7 +72,7 @@ struct CItemID
 
   std::string shortname() const
   {
-    return nameid.shortname();
+    return nameid.name();
   }
 };
 
@@ -82,12 +82,13 @@ struct CItemMod // for CItemData kind 0, 2
 {
   CItemID iid;
   char uk0[256];
-  namehash uk1;
+  TweakDBID uk1;
   std::vector<CItemMod> subs;
   uint32_t uk2 = 0;
-  namehash uk3;
-  uint32_t uk4 = 0;
-  uint32_t uk5 = 0;
+
+  TweakDBID uk3;     //
+  uint32_t uk4 = 0; // is read as a whole
+  uint32_t uk5 = 0; //
 
   CItemMod()
     : iid(), uk1(), uk3()
@@ -147,9 +148,9 @@ struct CItemData
   uint32_t uk2_01 = 0;
 
   // kind 0,2 stuff
-  namehash uk3_02;
-  uint32_t uk4_02 = 0;
-  uint32_t uk5_02 = 0;
+  TweakDBID uk3_02;    //
+  uint32_t uk4_02 = 0; // is read as a whole
+  uint32_t uk5_02 = 0; //
 
   CItemMod root2;
 

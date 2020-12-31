@@ -24,10 +24,9 @@
     <ClCompile Include="Source\AppLib\imgui\imgui_impl_dx11.cpp" />
     <ClCompile Include="Source\AppLib\imgui\imgui_impl_win32.cpp" />
     <ClInclude Include="Source\AppLib\stb_image.h" />
+    <ClCompile Include="Source\cpinternals\cpnames.cpp" />
+    <ClInclude Include="Source\cpinternals\cpnames.hpp" />
     <ClCompile Include="Source\cserialization\csav.cpp" />
-    <Text Include="Source\cserialization\names.inl">
-      <FileType>Document</FileType>
-    </Text>
     <ClCompile Include="Source\cserialization\packing.cpp" />
     <ClInclude Include="Source\external\fmt\chrono.h" />
     <ClInclude Include="Source\external\fmt\color.h" />
@@ -47,7 +46,6 @@
     <ClCompile Include="Source\utils.cpp" />
     <ClInclude Include="Source\cserialization\cnodes\CInventory.hpp" />
     <ClInclude Include="Source\cserialization\cnodes\CItemData.hpp" />
-    <ClInclude Include="Source\cserialization\cpnames.hpp" />
     <ClInclude Include="Source\external\span.hpp" />
     <ClInclude Include="Source\widgets\csav_experimental.hpp" />
     <ClInclude Include="Source\widgets\csav_widget.hpp" />

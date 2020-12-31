@@ -38,6 +38,9 @@
     <Filter Include="Source\widgets\node_editors">
       <UniqueIdentifier>{2229f702-6812-40b2-87f4-f8eac67cff6a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\cpinternals">
+      <UniqueIdentifier>{09b1fce1-30a3-4684-b834-7bac9fa99a4c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Resources">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>json;rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -85,6 +88,9 @@
     </ClCompile>
     <ClCompile Include="Source\cserialization\csav.cpp">
       <Filter>Source\cserialization</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\cpinternals\cpnames.cpp">
+      <Filter>Source\cpinternals</Filter>
     </ClCompile>
     <ClCompile Include="Source\external\fmt\format.cc">
       <Filter>Source\external\fmt</Filter>
@@ -211,8 +217,8 @@
     <ClInclude Include="Source\external\fmt\ranges.h">
       <Filter>Source\external\fmt</Filter>
     </ClInclude>
-    <ClInclude Include="Source\cserialization\cpnames.hpp">
-      <Filter>Source\cserialization</Filter>
+    <ClInclude Include="Source\cpinternals\cpnames.hpp">
+      <Filter>Source\cpinternals</Filter>
     </ClInclude>
     <ClInclude Include="Source\widgets\node_editors\itemData.hpp">
       <Filter>Source\widgets\node_editors</Filter>
@@ -222,9 +228,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Source\cserialization\names.inl">
-      <Filter>Source\cserialization</Filter>
-    </Text>
     <CopyFileToFolders Include="Resources\CNames.json">
       <Filter>Resources</Filter>
     </CopyFileToFolders>

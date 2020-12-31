@@ -1,7 +1,7 @@
 #pragma once
 #include "inttypes.h"
 #include "node_editor.hpp"
-#include "cserialization/cpnames.hpp"
+#include "cpinternals/cpnames.hpp"
 #include "cserialization/cnodes/CItemData.hpp"
 
 struct uk_thing_widget
@@ -23,17 +23,19 @@ struct uk_thing_widget
 struct namehash_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(namehash& x, const char* label)
+  [[nodiscard]] static inline bool draw(TweakDBID& x, const char* label)
   {
     scoped_imgui_id _sii(label);
     bool modified = false;
 
+    auto& namelist = TweakDBIDResolver::get().sorted_names();
+
     // tricky ;)
     int item_current = 0;
-    ImGui::Combo(label, &item_current, &ItemGetter, (void*)x.name().c_str(), (int)cpnames::get().namelist().size()+1);
+    ImGui::Combo(label, &item_current, &ItemGetter, (void*)x.name().c_str(), (int)namelist.size()+1);
     if (item_current != 0)
     {
-      x = namehash(cpnames::get().namelist()[item_current-1]);
+      x = TweakDBID(namelist[item_current-1]);
       modified = true;
     }
 
@@ -59,10 +61,11 @@ struct namehash_widget
 
   static inline bool ItemGetter(void* data, int n, const char** out_str)
   { 
+    auto& namelist = TweakDBIDResolver::get().sorted_names();
     if (n == 0)
       *out_str = (const char*)data;
     else
-      *out_str = cpnames::get().namelist()[n-1].c_str();
+      *out_str = namelist[n-1].c_str();
     return true;
   }
 };

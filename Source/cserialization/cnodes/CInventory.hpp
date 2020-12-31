@@ -3,7 +3,7 @@
 #include <list>
 
 #include "cserialization/node.hpp"
-#include "cserialization/cpnames.hpp"
+#include "cpinternals/cpnames.hpp"
 #include "cserialization/packing.hpp"
 #include "utils.hpp"
 #include "CItemData.hpp"
@@ -41,7 +41,7 @@ struct CInventory
       subinv.items.resize(items_cnt);
       for (auto& entry : subinv.items)
       {
-        namehash id;
+          TweakDBID id;
         reader.read((char*)&id, 7);
         uint64_t uk;
         reader.read((char*)&uk, 8);

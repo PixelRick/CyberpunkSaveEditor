@@ -11,12 +11,11 @@
 #include <vector>
 #include <memory>
 
-
 #include "AppLib/IApp.hpp"
 
 #include "utils.hpp"
 #include "cserialization/csav.hpp"
-#include "cserialization/cpnames.hpp"
+#include "cpinternals/cpnames.hpp"
 #include "node_editors.hpp"
 
 void ImGui::ShowDemoWindow(bool* p_open);
@@ -376,9 +375,9 @@ public:
       ImGui::PushItemWidth(slider_width);
       ImGui::InputText("input text", search_text, 256);
       const bool crc32_search = ImGui::Button("search crc32", ImVec2(150, 0)); ImGui::SameLine();
-      namehash nhash(search_text);
+      TweakDBID nhash(search_text);
       std::stringstream ss;
-      for (size_t i = 0; i < sizeof(namehash); ++i)
+      for (size_t i = 0; i < sizeof(TweakDBID); ++i)
         ss << std::setfill('0') << std::setw(2) << std::hex << std::uppercase << (uint32_t)*((uint8_t*)&nhash.as_u64 + i);
       ImGui::Text("namehash:%s (crc32 on 4 bytes, strlen on 1 byte, 3 zeroes) crc32=0x%08X",
         ss.str().c_str(), nhash.crc);
