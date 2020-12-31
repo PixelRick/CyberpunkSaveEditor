@@ -20,7 +20,7 @@ struct uk_thing_widget
   }
 };
 
-struct namehash_widget
+struct TweakDBID_widget
 {
   // returns true if content has been edited
   [[nodiscard]] static inline bool draw(TweakDBID& x, const char* label)
@@ -70,7 +70,7 @@ struct namehash_widget
   }
 };
 
-struct item_id_widget
+struct CItemID_widget
 {
   // returns true if content has been edited
   [[nodiscard]] static inline bool draw(CItemID& x)
@@ -80,7 +80,7 @@ struct item_id_widget
 
     if (ImGui::TreeNode("item_id", "item_id: %s", x.shortname().c_str()))
     {
-      modified |= namehash_widget::draw(x.nameid, "item name");
+      modified |= TweakDBID_widget::draw(x.nameid, "item name");
 
       unsigned kind = x.uk.kind();
       switch (kind) {
@@ -103,7 +103,7 @@ struct item_id_widget
   }
 };
 
-struct item_mod_widget
+struct CItemMod_widget
 {
   // returns true if content has been edited
   [[nodiscard]] static inline bool draw(CItemMod& item, bool* p_remove = nullptr)
@@ -121,7 +121,7 @@ struct item_mod_widget
 
     if (treenode)
     {
-      modified |= item_id_widget::draw(item.iid);
+      modified |= CItemID_widget::draw(item.iid);
 
       unsigned kind = item.iid.uk.kind();
       switch (kind) {
@@ -132,7 +132,7 @@ struct item_mod_widget
 
       ImGui::InputText("unknown string", item.uk0, sizeof(item.uk0));
 
-      modified |= namehash_widget::draw(item.uk1, "uk1 name");
+      modified |= TweakDBID_widget::draw(item.uk1, "uk1 name");
 
       ImGui::Text("--------mods-tree---------");
 
@@ -142,7 +142,7 @@ struct item_mod_widget
       for (auto it = item.subs.begin(); it < item.subs.end();)
       {
         bool torem = false;
-        modified |= item_mod_widget::draw(*it, &torem);
+        modified |= CItemMod_widget::draw(*it, &torem);
         if (torem) {
           it = item.subs.erase(it);
           modified = true;
@@ -155,7 +155,7 @@ struct item_mod_widget
 
       modified |= ImGui::InputScalar("field u32 (hex)##uk2",   ImGuiDataType_U32, &item.uk2, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
 
-      modified |= namehash_widget::draw(item.uk3, "uk3 name");
+      modified |= TweakDBID_widget::draw(item.uk3, "uk3 name");
 
       modified |= ImGui::InputScalar("field u32 (hex)##uk4",   ImGuiDataType_U32, &item.uk4, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
       modified |= ImGui::InputScalar("field u32 (hex)##uk5",   ImGuiDataType_U32, &item.uk5, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
@@ -169,9 +169,8 @@ struct item_mod_widget
 };
 
 
-
 // to be used with CItemData struct
-struct itemData_widget
+struct CItemData_widget
 {
   // returns true if content has been edited
   [[nodiscard]] static inline bool draw(CItemData& item, bool* p_remove = nullptr)
@@ -204,7 +203,7 @@ struct itemData_widget
     }
     if (treenode)
     {
-      modified |= item_id_widget::draw(item.iid);
+      modified |= CItemID_widget::draw(item.iid);
 
       modified |= ImGui::InputScalar("field u8  (hex) (1 for quest items)##uk0",   ImGuiDataType_U8 , &item.uk0_012, NULL, NULL, "%02X", ImGuiInputTextFlags_CharsHexadecimal);
       modified |= ImGui::InputScalar("field u32 (hex)##uk1",   ImGuiDataType_U32, &item.uk1_012, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
@@ -221,12 +220,12 @@ struct itemData_widget
       {
         ImGui::Text("-------special/mods-------");
 
-        modified |= namehash_widget::draw(item.uk3_02, "uk3 name");
+        modified |= TweakDBID_widget::draw(item.uk3_02, "uk3 name");
         modified |= ImGui::InputScalar("field u32 (hex)##uk4", ImGuiDataType_U32, &item.uk4_02, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
         modified |= ImGui::InputScalar("field u32 (hex)##uk5", ImGuiDataType_U32, &item.uk5_02, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
 
         bool torem = false;
-        modified |= item_mod_widget::draw(item.root2, &torem);
+        modified |= CItemMod_widget::draw(item.root2, &torem);
         if (torem) {
           item.root2 = CItemMod();
           modified = true;
@@ -280,7 +279,7 @@ protected:
   {
     scoped_imgui_id _sii(this);
 
-    bool changes = itemData_widget::draw(item, 0);
+    bool changes = CItemData_widget::draw(item, 0);
     if (changes)
       m_has_unsaved_changes = true;
   }
