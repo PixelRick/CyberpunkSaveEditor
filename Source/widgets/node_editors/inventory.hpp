@@ -6,7 +6,7 @@
 
 
 // to be used with CInventory struct
-struct inventory_widget
+struct CInventory_widget
 {
   //static CItemData copied_item = ;
 
@@ -51,7 +51,7 @@ struct inventory_widget
           scoped_imgui_id _sii(&*it);
           bool torem = false;
 
-          modified |= itemData_widget::draw(*it, &torem);
+          modified |= CItemData_widget::draw(*it, &torem);
           if (torem) {
             it = subinv.items.erase(it);
             modified = true;
@@ -108,7 +108,7 @@ protected:
   {
     scoped_imgui_id _sii(this);
 
-    bool changes = inventory_widget::draw(m_inv, 0);
+    bool changes = CInventory_widget::draw(m_inv, 0);
     if (changes)
       m_has_unsaved_changes = true;
   }

@@ -6,30 +6,30 @@
 #include <codecvt>
 
 // because
-// os << bytes_ref<T>(obj) << ...
+// os << cbytes_ref<T>(obj) << ...
 // looks better than
 // os.read((char*)&obj, sizeof(obj)).read(...
 
 
 template <typename T>
-class bytes_ref
+class cbytes_ref
 {
   T& ref = 0;
 
 public:
-  constexpr explicit bytes_ref(T& val)
+  constexpr explicit cbytes_ref(T& val)
     : ref(val) {}
 
-  bytes_ref(const bytes_ref&) = delete;
-  bytes_ref& operator=(const bytes_ref&) = delete;
+  cbytes_ref(const cbytes_ref&) = delete;
+  cbytes_ref& operator=(const cbytes_ref&) = delete;
 
-  friend std::ostream& operator<<(std::ostream& os, bytes_ref<T>&& v)
+  friend std::ostream& operator<<(std::ostream& os, cbytes_ref<T>&& v)
   {
     return os.write((char*)&v.ref, sizeof(T));
   }
 
   template <typename U = T, std::enable_if_t<std::is_same_v<U, T> && !std::is_const_v<T>, int> = 0>
-  friend std::istream& operator>>(std::istream& is, bytes_ref<T>&& v)
+  friend std::istream& operator>>(std::istream& is, cbytes_ref<T>&& v)
   {
     return is.read((char*)&v.ref, sizeof(T));
   }

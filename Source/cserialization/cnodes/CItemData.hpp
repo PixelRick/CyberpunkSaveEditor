@@ -17,17 +17,17 @@ struct uk_thing
 
   friend std::istream& operator>>(std::istream& reader, uk_thing& kt)
   {
-    reader >> bytes_ref(kt.uk4);
-    reader >> bytes_ref(kt.uk1);
-    reader >> bytes_ref(kt.uk2);
+    reader >> cbytes_ref(kt.uk4);
+    reader >> cbytes_ref(kt.uk1);
+    reader >> cbytes_ref(kt.uk2);
     return reader;
   }
 
   friend std::ostream& operator<<(std::ostream& writer, uk_thing& kt)
   {
-    writer << bytes_ref(kt.uk4);
-    writer << bytes_ref(kt.uk1);
-    writer << bytes_ref(kt.uk2);
+    writer << cbytes_ref(kt.uk4);
+    writer << cbytes_ref(kt.uk1);
+    writer << cbytes_ref(kt.uk2);
     return writer;
   }
 
@@ -50,14 +50,14 @@ struct CItemID
 
   friend std::istream& operator>>(std::istream& reader, CItemID& iid)
   {
-    reader >> bytes_ref(iid.nameid.as_u64);
+    reader >> cbytes_ref(iid.nameid.as_u64);
     reader >> iid.uk;
     return reader;
   }
 
   friend std::ostream& operator<<(std::ostream& writer, CItemID& iid)
   {
-    writer << bytes_ref(iid.nameid.as_u64);
+    writer << cbytes_ref(iid.nameid.as_u64);
     writer << iid.uk;
     return writer;
   }
@@ -108,10 +108,10 @@ struct CItemMod // for CItemData kind 0, 2
     for (auto& sub : d2.subs)
       reader >> sub;
 
-    reader >> bytes_ref(d2.uk2);
+    reader >> cbytes_ref(d2.uk2);
     reader >> d2.uk3;
-    reader >> bytes_ref(d2.uk4);
-    reader >> bytes_ref(d2.uk5);
+    reader >> cbytes_ref(d2.uk4);
+    reader >> cbytes_ref(d2.uk5);
     return reader;
   }
 
@@ -128,10 +128,10 @@ struct CItemMod // for CItemData kind 0, 2
     for (auto& sub : d2.subs)
       writer << sub;
 
-    writer << bytes_ref(d2.uk2);
+    writer << cbytes_ref(d2.uk2);
     writer << d2.uk3;
-    writer << bytes_ref(d2.uk4);
-    writer << bytes_ref(d2.uk5);
+    writer << cbytes_ref(d2.uk4);
+    writer << cbytes_ref(d2.uk5);
 
     return writer;
   }
@@ -169,17 +169,17 @@ struct CItemData
     reader >> iid;
     auto kind = iid.uk.kind();
 
-    reader >> bytes_ref(uk0_012);
-    reader >> bytes_ref(uk1_012);
+    reader >> cbytes_ref(uk0_012);
+    reader >> cbytes_ref(uk1_012);
 
     if (kind != 2)
-      reader >> bytes_ref(uk2_01);
+      reader >> cbytes_ref(uk2_01);
 
     if (kind != 1)
     {
       reader >> uk3_02;
-      reader >> bytes_ref(uk4_02);
-      reader >> bytes_ref(uk5_02);
+      reader >> cbytes_ref(uk4_02);
+      reader >> cbytes_ref(uk5_02);
       reader >> root2;
     }
 
@@ -192,17 +192,17 @@ struct CItemData
     writer << iid;
     auto kind = iid.uk.kind();
 
-    writer << bytes_ref(uk0_012);
-    writer << bytes_ref(uk1_012);
+    writer << cbytes_ref(uk0_012);
+    writer << cbytes_ref(uk1_012);
 
     if (kind != 2)
-      writer << bytes_ref(uk2_01);
+      writer << cbytes_ref(uk2_01);
 
     if (kind != 1)
     {
       writer << uk3_02;
-      writer << bytes_ref(uk4_02);
-      writer << bytes_ref(uk5_02);
+      writer << cbytes_ref(uk4_02);
+      writer << cbytes_ref(uk5_02);
       writer << root2;
     }
 

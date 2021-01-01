@@ -30,15 +30,15 @@ struct CInventory
     try
     {
       uint32_t inventory_cnt = 0;
-      reader >> bytes_ref(inventory_cnt);
+      reader >> cbytes_ref(inventory_cnt);
       m_subinvs.resize(inventory_cnt);
 
       for (auto& subinv : m_subinvs)
       {
-        reader >> bytes_ref(subinv.uid);
+        reader >> cbytes_ref(subinv.uid);
 
         uint32_t items_cnt;
-        reader >> bytes_ref(items_cnt);
+        reader >> cbytes_ref(items_cnt);
 
         subinv.items.resize(items_cnt);
         for (auto& entry : subinv.items)
@@ -47,7 +47,7 @@ struct CInventory
           reader.read((char*)&id, 7);
 
           uint64_t uk;
-          reader>> bytes_ref(uk);
+          reader>> cbytes_ref(uk);
 
           auto item_node = reader.read_child("itemData");
           if (!item_node)

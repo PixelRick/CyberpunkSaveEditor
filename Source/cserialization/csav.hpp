@@ -19,16 +19,16 @@ struct node_desc
   friend std::istream& operator>>(std::istream& is, node_desc& ed)
   {
     is >> cp_plstring_ref(ed.name);
-    is >> bytes_ref(ed.next_idx   ) >> bytes_ref(ed.child_idx);
-    is >> bytes_ref(ed.data_offset) >> bytes_ref(ed.data_size);
+    is >> cbytes_ref(ed.next_idx   ) >> cbytes_ref(ed.child_idx);
+    is >> cbytes_ref(ed.data_offset) >> cbytes_ref(ed.data_size);
     return is;
   }
 
   friend std::ostream& operator<<(std::ostream& os, const node_desc& ed)
   {
     os << cp_plstring_ref(ed.name);
-    os << bytes_ref(ed.next_idx   ) << bytes_ref(ed.child_idx);
-    os << bytes_ref(ed.data_offset) << bytes_ref(ed.data_size);
+    os << cbytes_ref(ed.next_idx   ) << cbytes_ref(ed.child_idx);
+    os << cbytes_ref(ed.data_offset) << cbytes_ref(ed.data_size);
     return os;
   }
 };
@@ -42,14 +42,14 @@ struct compressed_chunk_desc
 
   friend std::istream& operator>>(std::istream& is, compressed_chunk_desc& cd)
   {
-    is >> bytes_ref(cd.offset) >> bytes_ref(cd.size) >> bytes_ref(cd.data_size);
+    is >> cbytes_ref(cd.offset) >> cbytes_ref(cd.size) >> cbytes_ref(cd.data_size);
     cd.data_offset = 0;
     return is;
   }
 
   friend std::ostream& operator<<(std::ostream& os, const compressed_chunk_desc& cd)
   {
-    os << bytes_ref(cd.offset) << bytes_ref(cd.size) << bytes_ref(cd.data_size);
+    os << cbytes_ref(cd.offset) << cbytes_ref(cd.size) << cbytes_ref(cd.data_size);
     return os;
   }
 };

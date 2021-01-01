@@ -28,14 +28,14 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
   //  HEADER (magic, version..)
   // --------------------------------------------------------
 
-  ifs >> bytes_ref(magic);
+  ifs >> cbytes_ref(magic);
   if (magic != 'CSAV' && magic != 'SAVE')
     return false;
 
   progress = 0.1f;
 
-  ifs >> bytes_ref(v1);
-  ifs >> bytes_ref(v2);
+  ifs >> cbytes_ref(v1);
+  ifs >> cbytes_ref(v2);
 
   // DISABLED VERSION TEST
   //if (v1 > 193 or v2 > 9 or v1 < 125)
@@ -44,8 +44,8 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
   ifs >> cp_plstring_ref(suk);
 
   // there is a weird if v1 >= 5 check, but previous if already ensured it
-  ifs >> bytes_ref(uk0);
-  ifs >> bytes_ref(uk1);
+  ifs >> cbytes_ref(uk0);
+  ifs >> cbytes_ref(uk1);
 
   if (v1 <= 168 and v2 == 4)
     return false;
@@ -68,8 +68,8 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
   // end stuff
   ifs.seekg(-8, ifs.end);
   uint64_t footer_start = (uint64_t)ifs.tellg();
-  ifs >> bytes_ref(nodedescs_start);
-  ifs >> bytes_ref(magic);
+  ifs >> cbytes_ref(nodedescs_start);
+  ifs >> cbytes_ref(magic);
   if (magic != 'DONE')
     return false;
 
@@ -79,7 +79,7 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
 
   // check node start tag
   ifs.seekg(nodedescs_start);
-  ifs >> bytes_ref(magic);
+  ifs >> cbytes_ref(magic);
   if (magic != 'NODE')
     return false;
 
@@ -106,7 +106,7 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
   // descriptors (padded with 0 until actual first chunk)
 
   ifs.seekg(chunkdescs_start, ifs.beg);
-  ifs >> bytes_ref(magic);
+  ifs >> cbytes_ref(magic);
   if (magic != 'CLZF')
     return false;
 
@@ -160,7 +160,7 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
     auto& cd = chunk_descs[i];
 
     ifs.seekg(cd.offset, ifs.beg);
-    ifs >> bytes_ref(magic);
+    ifs >> cbytes_ref(magic);
     if (magic != 'XLZ4')
     {
       if (i > 0)
@@ -171,7 +171,7 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
     }
 
     uint32_t data_size = 0;
-    ifs >> bytes_ref(data_size);
+    ifs >> cbytes_ref(data_size);
     if (data_size != cd.data_size)
       return false;
 
@@ -266,18 +266,18 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
   // --------------------------------------------------------
 
   magic = 'CSAV';
-  ofs << bytes_ref(magic);
+  ofs << cbytes_ref(magic);
 
   progress = 0.1f;
 
-  ofs << bytes_ref(v1);
-  ofs << bytes_ref(v2);
+  ofs << cbytes_ref(v1);
+  ofs << cbytes_ref(v2);
   ofs << cp_plstring_ref(suk);
-  ofs << bytes_ref(uk0);
-  ofs << bytes_ref(uk1);
+  ofs << cbytes_ref(uk0);
+  ofs << cbytes_ref(uk1);
 
   if (v1 >= 83)
-    ofs << bytes_ref(v3);
+    ofs << cbytes_ref(v3);
 
   progress = 0.15f;
 
@@ -360,10 +360,10 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
 
       // write magic
       magic = 'XLZ4';
-      ofs << bytes_ref(magic);
+      ofs << cbytes_ref(magic);
       // write decompressed size
       uint32_t data_size = 0;
-      ofs << bytes_ref(srcsize);
+      ofs << cbytes_ref(srcsize);
       // write compressed chunk
       ofs.write(ptmp, csize);
 
@@ -387,9 +387,9 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
   ofs.seekp(chunkdescs_start);
 
   magic = 'CLZF';
-  ofs << bytes_ref(magic);
+  ofs << cbytes_ref(magic);
   uint32_t cd_cnt = (uint32_t)chunk_descs.size();
-  ofs << bytes_ref(cd_cnt);
+  ofs << cbytes_ref(cd_cnt);
 
   for (uint32_t i = 0; i < cd_cnt; ++i)
   {
@@ -413,7 +413,7 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
 
 
   magic = 'NODE';
-  ofs << bytes_ref(magic);
+  ofs << cbytes_ref(magic);
 
   // now write node descs
   int64_t node_cnt_i64 = (int64_t)node_cnt;
@@ -431,9 +431,9 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
   // --------------------------------------------------------
 
   // end stuff
-  ofs << bytes_ref(nodedescs_start);
+  ofs << cbytes_ref(nodedescs_start);
   magic = 'DONE';
-  ofs << bytes_ref(magic);
+  ofs << cbytes_ref(magic);
 
   if (ofs.fail())
     return false;
