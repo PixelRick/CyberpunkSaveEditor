@@ -688,6 +688,21 @@ public:
   {
     open_dialog.SetTitle("Opening savefile");
     open_dialog.SetTypeFilters({ ".dat" });
+
+    // todo: should be a static json loaded on startup and saved on cleanup
+    try
+    {
+      nlohmann::json jpsconfig;
+      std::ifstream ifile;
+      ifile.open("persistent.json");
+      ifile >> jpsconfig;
+      ifile.close();
+      if (jpsconfig.find("open_path") != jpsconfig.end())
+        open_dialog.SetPwd(jpsconfig.at("open_path").get<std::string>());
+    }
+    catch (std::exception&)
+    {
+    }
   }
   
   void update()
@@ -754,6 +769,28 @@ public:
     if (open_dialog.HasSelected())
     {
       open_filepath = std::filesystem::absolute(open_dialog.GetSelected().wstring());
+
+      // todo: should be a static json loaded on startup and saved on cleanup
+      try
+      {
+        nlohmann::json jpsconfig;
+        std::ifstream ifile;
+        ifile.open("persistent.json");
+        if (ifile.is_open())
+        {
+          ifile >> jpsconfig;
+          ifile.close();
+        }
+        std::ofstream ofile;
+        ofile.open("persistent.json");
+        std::filesystem::path dirpath = open_filepath;
+        jpsconfig["open_path"] = dirpath.remove_filename().string();
+        ofile << jpsconfig.dump(4);
+        ofile.close();
+      }
+      catch (std::exception&)
+      {
+      }
 
       auto screenshot_path = open_filepath;
       screenshot_path.replace_filename(L"screenshot.png");
