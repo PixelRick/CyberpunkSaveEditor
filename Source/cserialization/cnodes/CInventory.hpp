@@ -56,12 +56,17 @@ struct CInventory
           if (!entry.from_node(item_node))
             return false;
         }
+
+        subinv.items.sort([](const CItemData& a, const CItemData& b){
+          return a.name() < b.name();
+        });
       }
     }
     catch (std::ios::failure&)
     {
       return false;
     }
+
 
     return reader.at_end();
   }
