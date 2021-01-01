@@ -209,9 +209,9 @@ struct CItemData
     return writer.finalize("itemData");
   }
 
-  std::string name()
+  std::string name() const
   {
-    iid.name();
+    return iid.name();
   }
 };
 
