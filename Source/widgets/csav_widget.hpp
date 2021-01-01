@@ -73,7 +73,7 @@ class csav_collapsable_header
 {
 protected:
   ImGui::FileBrowser save_dialog;
-  loading_bar_job_widget save_job;
+  static inline loading_bar_job_widget save_job; // only one save job
 
   std::shared_ptr<csav> m_csav;
   std::shared_ptr<AppImage> m_img;
@@ -81,9 +81,8 @@ protected:
 
   std::vector<std::shared_ptr<node_editor_widget>> m_collapsible_editors;
 
-  bool m_closed = false;
-  bool m_closing = false;
-  bool m_saving = false;
+  bool m_closed = false; // can be destroyed
+  bool m_closing = false; // close button clicked
 
   //std::vector<ScanEntryWidget> scan_entries;
   //using scan_entry_it = decltype(scan_entries)::iterator;
@@ -114,6 +113,13 @@ public:
     }
   }
 
+  ~csav_collapsable_header()
+  {
+    // fail-safe, not the best
+    while (save_job.is_running())
+      Sleep(1);
+  }
+
   template <typename EditorType>
   void add_collapsible_editor(std::string_view node_name)
   {
@@ -125,10 +131,12 @@ public:
 protected:
   void do_save()
   {
-    save_job.start([this](float& progress) -> bool {
-      return m_csav->save_with_progress(m_csav->filepath, progress, s_dump_decompressed_data, s_use_ps4_weird_format);
+    std::weak_ptr<csav> weak_csav = m_csav;
+    save_job.start([weak_csav](float& progress) -> bool {
+      auto csav = weak_csav.lock();
+      return csav->save_with_progress(csav->filepath, progress, s_dump_decompressed_data, s_use_ps4_weird_format);
     });
-    ImGui::OpenPopup("Saving..##SAVE");
+    ImGui::OpenPopup("Saving..##SAVE"); // should be in parent class
   }
 
 public:
@@ -191,40 +199,48 @@ public:
 
     //-------------------------------------------------------------------------------
 
-    bool save_requested = false;
+    bool should_do_save = false;
 
     {
       scoped_imgui_button_hue _sibh(0.2f);
       ImGui::SameLine();
-      if ((ImGui::ButtonEx("SAVE##SAVE", ImVec2(120, 60)) || m_closing) && !m_saving)
+      bool save_clicked = ImGui::ButtonEx("SAVE##SAVE", ImVec2(120, 60));
+      if (!save_job.is_running() && !m_closed && save_clicked)
       {
-        bool changes = false;
+        bool has_unsaved_changes = false;
         for (auto& ce : m_collapsible_editors)
         {
-          if (ce->has_changes()) {
-            changes = true;
+          if (ce->has_changes())
+          {
+            has_unsaved_changes = true;
             break;
           }
         }
-        if (changes)
+        if (has_unsaved_changes)
+        {
           ImGui::OpenPopup("Unsaved changes##csav_editor");
-        else
-          save_requested = true;
-        m_saving = true;
+        }
+        else if (save_clicked)
+        {
+          should_do_save = true;
+        }
       }
     }
+
+    bool is_being_warned = false;
 
     // Always center this window when appearing
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
     if (ImGui::BeginPopupModal("Unsaved changes##csav_editor", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
     {
+      is_being_warned = true;
       ImGui::Text("Unsaved changes in inventory!!\nWould you like to save them first ?");
 
       float button_width = ImGui::GetContentRegionAvail().x * 0.25f;
       ImGui::Separator();
       if (ImGui::Button("NO", ImVec2(button_width, 0)))
       {
-        save_requested = true;
+        should_do_save = true;
         ImGui::CloseCurrentPopup();
       }
       ImGui::SameLine();
@@ -235,26 +251,25 @@ public:
           if (ce->has_changes())
             ce->commit();
         }
-        save_requested = true;
+        should_do_save = true;
         ImGui::CloseCurrentPopup();
       }
       ImGui::SameLine();
       if (ImGui::Button("CANCEL", ImVec2(ImGui::GetContentRegionAvail().x, 0)))
       {
-        m_saving = false;
         ImGui::CloseCurrentPopup();
       }
 
       ImGui::EndPopup();
     }
 
-    if (save_requested)
-    {
+    if (should_do_save)
       do_save();
-      m_saving = false;
+
+    if (!save_job.is_running())
+    {
       if (m_closing)
         m_closed = true;
-      m_closing = false;
     }
 
     bool pushed_stylecol = false;
