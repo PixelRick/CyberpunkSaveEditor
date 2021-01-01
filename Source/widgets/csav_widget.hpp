@@ -160,7 +160,8 @@ public:
     scoped_imgui_id sii {this};
     ImVec2 center(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.5f);
 
-    std::string label = m_csav->filepath.u8string();
+    std::string label = fmt::format("{} (csav v{}-{}.{})",
+      m_csav->filepath.u8string(), m_csav->v1,  m_csav->v3, m_csav->v2);
 
     ImGuiStyle& style = ImGui::GetStyle();
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, style.ItemSpacing.y));
