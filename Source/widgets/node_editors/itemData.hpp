@@ -1,8 +1,9 @@
 #pragma once
 #include "inttypes.h"
-#include "node_editor.hpp"
+#include "imgui_extras/imgui_better_combo.hpp"
 #include "cpinternals/cpnames.hpp"
 #include "cserialization/cnodes/CItemData.hpp"
+#include "node_editor.hpp"
 
 struct uk_thing_widget
 {
@@ -32,7 +33,8 @@ struct TweakDBID_widget
 
     // tricky ;)
     int item_current = 0;
-    ImGui::Combo(label, &item_current, &ItemGetter, (void*)x.name().c_str(), (int)namelist.size()+1);
+    static char preview_text[100] = {};
+    ImGui::BetterCombo(label, preview_text, &item_current, &ItemGetter, (void*)x.name().c_str(), (int)namelist.size()+1, 0);
     if (item_current != 0)
     {
       x = TweakDBID(namelist[item_current-1]);

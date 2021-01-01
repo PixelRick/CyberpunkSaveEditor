@@ -43,10 +43,12 @@
     <ClCompile Include="Source\external\fmt\format.cc" />
     <ClCompile Include="Source\external\fmt\os.cc" />
     <ClCompile Include="Source\external\xlz4\lz4.c" />
+    <ClCompile Include="Source\imgui_extras\imgui_better_combo.cpp" />
     <ClCompile Include="Source\utils.cpp" />
     <ClInclude Include="Source\cserialization\cnodes\CInventory.hpp" />
     <ClInclude Include="Source\cserialization\cnodes\CItemData.hpp" />
     <ClInclude Include="Source\external\span.hpp" />
+    <ClInclude Include="Source\imgui_extras\imgui_better_combo.hpp" />
     <ClInclude Include="Source\widgets\csav_experimental.hpp" />
     <ClInclude Include="Source\widgets\csav_widget.hpp" />
     <ClInclude Include="Source\widgets\node_editors.hpp" />

@@ -95,6 +95,9 @@
     <ClCompile Include="Source\external\fmt\os.cc">
       <Filter>Source\external\fmt</Filter>
     </ClCompile>
+    <ClCompile Include="Source\imgui_extras\imgui_better_combo.cpp">
+      <Filter>Source\imgui_extras</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\AppLib\imgui\imgui_impl_dx11.h">
@@ -225,6 +228,9 @@
     </ClInclude>
     <ClInclude Include="Source\AppLib\IApp.hpp">
       <Filter>Source\AppLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\imgui_extras\imgui_better_combo.hpp">
+      <Filter>Source\imgui_extras</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
