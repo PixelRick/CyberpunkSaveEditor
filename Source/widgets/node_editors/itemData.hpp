@@ -33,8 +33,10 @@ struct TweakDBID_widget
 
     // tricky ;)
     int item_current = 0;
-    static char preview_text[100] = {};
-    ImGui::BetterCombo(label, preview_text, &item_current, &ItemGetter, (void*)x.name().c_str(), (int)namelist.size()+1, 0);
+
+    const auto& curname = x.name();
+    ImGui::BetterCombo(label, &item_current, &ItemGetter, (void*)curname.c_str(), (int)namelist.size()+1, 0);
+
     if (item_current != 0)
     {
       x = TweakDBID(namelist[item_current-1]);

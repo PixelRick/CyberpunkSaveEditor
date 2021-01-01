@@ -7,15 +7,16 @@
 namespace ImGui {
 
 	bool BetterCombo(
-		const char* label, const char* preview_text, int* current_item,
+		const char* label, int* current_item,
 		bool(*items_getter)(void*, int, const char**), 
 		void* data, int items_count, int)
 	{
 		ImGuiContext& g = *ImGui::GetCurrentContext();
-		const float word_building_delay = 1.5f; // after this many seconds, typing will make a new search
+		const float word_building_delay = 1.0f; // after this many seconds, typing will make a new search
 	
+		const char* preview_value = NULL;
 		if (*current_item >= 0 && *current_item < items_count) {
-			items_getter(data, *current_item, &preview_text);
+			items_getter(data, *current_item, &preview_value);
 		}
 	
 		// this is actually shared between all combos. It's kinda ok because there is
@@ -24,18 +25,32 @@ namespace ImGui {
 		// keyboard_selected will stay as-is when re-opening the combo, or even others.
 		static int keyboard_selected = -1;
 	
-		if (!BeginCombo(label, preview_text)) {
+		if (!BeginCombo(label, preview_value)) {
 			return false;
 		}
 	
 		GetIO().WantTextInput = true;
 		static char word[64] = "";
+
+		if (word[0] != '\0')
+			SetTooltip(word);
+
+
 		static float time_since_last_update = 0.0f;
 		time_since_last_update += g.IO.DeltaTime;
 		bool update_keyboard_match = false;
+
+		if (IsKeyPressed(GetKeyIndex(ImGuiKey_Backspace)))
+		{
+			const size_t i = strnlen(word, 64);
+			word[i-1] = '\0';
+			time_since_last_update = 0.0f;
+			update_keyboard_match = true;
+		}
+
 		for (int n = 0; n < g.IO.InputQueueCharacters.size() && g.IO.InputQueueCharacters[n]; n++) {
 			if (unsigned int c = (unsigned int)g.IO.InputQueueCharacters[n]) {
-				if (c == ' '
+				if (c == ' ' || c == '.' || c == '_'
 					|| (c >= '0' && c <= '9')
 					|| (c >= 'A' && c <= 'Z')
 					|| (c >= 'a' && c <= 'z')) {
@@ -56,7 +71,7 @@ namespace ImGui {
 				}
 			}
 		}
-	
+
 		// find best keyboard match
 		int best = -1;
 		bool keyboard_selected_now = false;
@@ -75,22 +90,6 @@ namespace ImGui {
 					}
 				}
 			}
-		}
-	
-		if (IsKeyPressed(ImGuiKey_Delete) && keyboard_selected >= 0) {
-			*current_item = keyboard_selected;
-			keyboard_selected = -1;
-			CloseCurrentPopup();
-			EndCombo();
-			return true;
-		}
-		if (IsKeyPressed(ImGuiKey_UpArrow) && keyboard_selected > 0) {
-			--keyboard_selected;
-			keyboard_selected_now = true;
-		}
-		if (IsKeyPressed(ImGuiKey_DownArrow) && keyboard_selected < items_count - 1) {
-			++keyboard_selected;
-			keyboard_selected_now = true;
 		}
 	
 		// Display items
