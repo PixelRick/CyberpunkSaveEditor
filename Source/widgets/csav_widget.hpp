@@ -134,7 +134,7 @@ protected:
 public:
   void close()
   {
-    m_closing = false;
+    m_closing = true;
   }
 
   bool is_closed() const
