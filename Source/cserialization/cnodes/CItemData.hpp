@@ -160,12 +160,14 @@ struct CItemData
 
   CItemMod root2;
 
-  bool from_node(const std::shared_ptr<const node_t>& node)
+  csav_version ver;
+
+  bool from_node(const std::shared_ptr<const node_t>& node, const csav_version& version)
   {
     if (!node)
       return false;
 
-    node_reader reader(node);
+    node_reader reader(node, version);
     reader >> iid;
     auto kind = iid.uk.kind();
 
@@ -186,9 +188,9 @@ struct CItemData
     return true;
   }
 
-  std::shared_ptr<const node_t> to_node()
+  std::shared_ptr<const node_t> to_node(const csav_version& version)
   {
-    node_writer writer;
+    node_writer writer(version);
     writer << iid;
     auto kind = iid.uk.kind();
 

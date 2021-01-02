@@ -8,6 +8,7 @@
 #include <sstream>
 #include <set>
 #include "utils.hpp"
+#include "csav_version.hpp"
 
 class node_t;
 
@@ -78,6 +79,7 @@ public:
   }
 
 public:
+
   int32_t idx() const       { return m_idx; }
   void    idx(int32_t idx)  { m_idx = idx; }
 
@@ -216,11 +218,12 @@ class node_reader
   std::shared_ptr<const node_t> m_node;
   vector_istreambuf<char> m_sbuf;
   size_t m_cur_idx;
+  csav_version m_ver;
   bool m_missed_data = false;
 
 public:
-  explicit node_reader(const std::shared_ptr<const node_t>& root)
-    : m_node(root), m_cur_idx(0), std::istream(&m_sbuf)
+  explicit node_reader(const std::shared_ptr<const node_t>& root, const csav_version& version)
+    : m_node(root), m_ver(version), m_cur_idx(0), std::istream(&m_sbuf)
   {
     this->exceptions(std::ios::failbit | std::ios::badbit);
     auto blob = current_blob();
@@ -229,6 +232,8 @@ public:
   }
 
   virtual ~node_reader() = default;
+
+  const csav_version& version() const { return m_ver; }
 
   bool has_missed_data() { return m_missed_data; }
 
@@ -323,10 +328,15 @@ class node_writer
   : public std::ostringstream
 {
   std::vector<std::shared_ptr<const node_t>> m_new_children;
+  csav_version m_ver;
 
 public:
-  node_writer() = default;
+  explicit node_writer(const csav_version& ver)
+    : m_ver(ver) {}
+
   virtual ~node_writer() = default;
+
+  const csav_version& version() const { return m_ver; }
 
 protected:
   void blobize_pending_data_if_any()

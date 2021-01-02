@@ -20,12 +20,12 @@ struct CInventory
 {
   std::list<sub_inventory_t> m_subinvs;
 
-  bool from_node(const std::shared_ptr<const node_t>& node)
+  bool from_node(const std::shared_ptr<const node_t>& node, const csav_version& version)
   {
     if (!node)
       return false;
 
-    node_reader reader(node);
+    node_reader reader(node, version);
 
     try
     {
@@ -53,7 +53,7 @@ struct CInventory
           if (!item_node)
             return false; // todo: don't leave this in this state
 
-          if (!entry.from_node(item_node))
+          if (!entry.from_node(item_node, version))
             return false;
         }
 
@@ -71,9 +71,9 @@ struct CInventory
     return reader.at_end();
   }
 
-  std::shared_ptr<const node_t> to_node()
+  std::shared_ptr<const node_t> to_node(const csav_version& version)
   {
-    node_writer writer;
+    node_writer writer(version);
 
     uint32_t inventory_cnt = (uint32_t)m_subinvs.size();
     writer.write((char*)&inventory_cnt, 4);
@@ -87,7 +87,7 @@ struct CInventory
 
       for (auto& entry : subinv.items)
       {
-        auto item_node = entry.to_node();
+        auto item_node = entry.to_node(version);
         if (!item_node)
           return nullptr; // todo: don't leave this in this state
 

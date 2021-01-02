@@ -32,6 +32,7 @@ struct scoped_imgui_id {
 	scoped_imgui_id(const char* str_id) { ImGui::PushID(str_id); }
 	scoped_imgui_id(void* ptr_id) { ImGui::PushID(ptr_id); }
 	scoped_imgui_id(int int_id) { ImGui::PushID(int_id); }
+
 	~scoped_imgui_id() { ImGui::PopID(); }
 };
 

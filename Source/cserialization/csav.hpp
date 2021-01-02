@@ -7,6 +7,7 @@
 #include "xlz4/lz4.h"
 #include "serializers.hpp"
 #include "node.hpp"
+#include "csav_version.hpp"
 
 #define XLZ4_CHUNK_SIZE 0x40000
 
@@ -58,7 +59,8 @@ class csav
 {
 public:
   std::filesystem::path filepath;
-  uint32_t v1, v2, v3, uk0, uk1;
+  csav_version ver;
+  uint32_t uk0, uk1;
   std::string suk;
   std::vector<node_desc> node_descs;
   std::shared_ptr<const node_t> root_node;

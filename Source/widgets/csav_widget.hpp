@@ -125,7 +125,7 @@ public:
   {
     auto node = m_csav->search_node(node_name);
     if (node)
-      m_collapsible_editors.push_back(std::make_shared<EditorType>(node));
+      m_collapsible_editors.push_back(std::make_shared<EditorType>(node, m_csav->ver));
   }
 
 protected:
@@ -161,15 +161,15 @@ public:
   }
 
   static inline std::shared_ptr<const node_t> appearance_src;
-  static inline uint32_t appearance_version = 0;
+  static inline csav_version appearance_version {};
 
   void draw()
   {
     scoped_imgui_id sii {this};
     ImVec2 center(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.5f);
 
-    std::string label = fmt::format("{} (csav v{}-{}.{})",
-      m_csav->filepath.u8string(), m_csav->v1,  m_csav->v3, m_csav->v2);
+    std::string label = fmt::format("{} (csav {})",
+      m_csav->filepath.u8string(), m_csav->ver.string());
 
     ImGuiStyle& style = ImGui::GetStyle();
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, style.ItemSpacing.y));
@@ -313,7 +313,7 @@ public:
     if (ImGui::ButtonEx("COPY SKIN##SAVE", ImVec2(100, 60)))
     {
       appearance_src = m_csav->search_node("CharacetrCustomization_Appearances");
-      appearance_version = m_csav->v2;
+      appearance_version = m_csav->ver;
     }
     if (ImGui::IsItemHovered())
       ImGui::SetTooltip("Copy skin in app clipboard.");
@@ -326,7 +326,7 @@ public:
       auto appearance_node = m_csav->search_node("CharacetrCustomization_Appearances");
       if (appearance_src && appearance_src != appearance_node)
       {
-        if (appearance_version != m_csav->v2)
+        if (appearance_version != m_csav->ver)
         {
           ImGui::OpenPopup("Error##TRANSFER");
         }

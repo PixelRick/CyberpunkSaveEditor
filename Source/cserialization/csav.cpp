@@ -34,8 +34,8 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
 
   progress = 0.1f;
 
-  ifs >> cbytes_ref(v1);
-  ifs >> cbytes_ref(v2);
+  ifs >> cbytes_ref(ver.v1);
+  ifs >> cbytes_ref(ver.v2);
 
   // DISABLED VERSION TEST
   //if (v1 > 193 or v2 > 9 or v1 < 125)
@@ -47,13 +47,13 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
   ifs >> cbytes_ref(uk0);
   ifs >> cbytes_ref(uk1);
 
-  if (v1 <= 168 and v2 == 4)
+  if (ver.v1 <= 168 and ver.v2 == 4)
     return false;
-  v3 = 192;
-  if (v1 >= 83)
+  ver.v3 = 192;
+  if (ver.v1 >= 83)
   {
-    ifs.read((char*)&v3, 4);
-    if (v1 > 195)
+    ifs.read((char*)&ver.v3, 4);
+    if (ver.v3 > 195) // will change soon i guess
       return false;
   }
 
@@ -270,14 +270,14 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
 
   progress = 0.1f;
 
-  ofs << cbytes_ref(v1);
-  ofs << cbytes_ref(v2);
+  ofs << cbytes_ref(ver.v1);
+  ofs << cbytes_ref(ver.v2);
   ofs << cp_plstring_ref(suk);
   ofs << cbytes_ref(uk0);
   ofs << cbytes_ref(uk1);
 
-  if (v1 >= 83)
-    ofs << cbytes_ref(v3);
+  if (ver.v1 >= 83)
+    ofs << cbytes_ref(ver.v3);
 
   progress = 0.15f;
 

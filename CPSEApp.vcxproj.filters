@@ -235,6 +235,9 @@
     <ClInclude Include="Source\imgui_extras\imgui_better_combo.hpp">
       <Filter>Source\imgui_extras</Filter>
     </ClInclude>
+    <ClInclude Include="Source\cserialization\csav_version.hpp">
+      <Filter>Source\cserialization</Filter>
+    </ClInclude>
     <ClInclude Include="Source\imgui_extras\imgui_stdlib.h">
       <Filter>Source\imgui_extras</Filter>
     </ClInclude>

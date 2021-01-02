@@ -157,9 +157,9 @@ struct CItemMod_widget
 
       ImGui::Text("--------------------------");
 
-      modified |= ImGui::InputScalar("field u32 (hex)##uk2",   ImGuiDataType_U32, &item.uk2, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+    modified |= ImGui::InputScalar("field u32 (hex)##uk2",   ImGuiDataType_U32, &item.uk2, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
 
-      modified |= TweakDBID_widget::draw(item.uk3, "uk3 name");
+    modified |= TweakDBID_widget::draw(item.uk3, "uk3 name");
 
       modified |= ImGui::InputScalar("field u32 (hex)##uk4",   ImGuiDataType_U32, &item.uk4, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
       modified |= ImGui::InputScalar("field u32 (hex)##uk5",   ImGuiDataType_U32, &item.uk5, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
@@ -218,14 +218,14 @@ struct CItemData_widget
       {
         ImGui::Text("------special/simple------ (often quantity value)");
         modified |= ImGui::InputScalar("field u32 (hex)##uk2", ImGuiDataType_U32, &item.uk2_01, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
-      }
+    }
 
-      if (kind != 1)
-      {
-        ImGui::Text("-------special/mods-------");
+    if (kind != 1)
+    {
+      ImGui::Text("-------special/mods-------");
 
-        modified |= TweakDBID_widget::draw(item.uk3_02, "uk3 name");
-        modified |= ImGui::InputScalar("field u32 (hex)##uk4", ImGuiDataType_U32, &item.uk4_02, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+      modified |= TweakDBID_widget::draw(item.uk3_02, "uk3 name");
+      modified |= ImGui::InputScalar("field u32 (hex)##uk4", ImGuiDataType_U32, &item.uk4_02, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
         modified |= ImGui::InputScalar("field u32 (hex)##uk5", ImGuiDataType_U32, &item.uk5_02, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
 
         bool torem = false;
@@ -250,8 +250,8 @@ class itemData_editor
   CItemData item;
 
 public:
-  itemData_editor(const std::shared_ptr<const node_t>& node)
-    : node_editor_widget(node)
+  itemData_editor(const std::shared_ptr<const node_t>& node, const csav_version& version)
+    : node_editor_widget(node, version)
   {
     reload();
   }
@@ -261,7 +261,7 @@ public:
 public:
   bool commit_impl() override
   {
-    auto rebuilt = item.to_node();
+    auto rebuilt = item.to_node(version());
     auto curnode = ncnode();
 
     if (!rebuilt)
@@ -274,7 +274,7 @@ public:
 
   bool reload_impl() override
   {
-    bool success = item.from_node(node());
+    bool success = item.from_node(node(), version());
     return success;
   }
 

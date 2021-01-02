@@ -9,6 +9,7 @@
 
 #include "AppLib/IApp.hpp"
 #include "cserialization/node.hpp"
+#include "cserialization/csav_version.hpp"
 #include "fmt/format.h"
 
 #define NODE_EDITOR__DEFAULT_LEAF_EDITOR_NAME "<default_editor>"
@@ -25,10 +26,11 @@ class node_editor_widget
 
 private:
   std::weak_ptr<const node_t> m_weaknode;
+  csav_version m_version;
 
 public:
-  node_editor_widget(const std::shared_ptr<const node_t>& node)
-    : m_weaknode(node)
+  node_editor_widget(const std::shared_ptr<const node_t>& node, const csav_version& version)
+    : m_weaknode(node), m_version(version)
   {
     node->add_listener(this);
   }
@@ -40,11 +42,13 @@ public:
       node->remove_listener(this);
   };
 
-protected:
+  const csav_version& version() const { return m_version; }
+
+  bool m_is_drawing = false; // to filter events
   bool m_dirty = false;
   bool m_has_unsaved_changes = false;
-  bool m_is_drawing = false; // to filter events
 
+protected:
   void on_node_event(const std::shared_ptr<const node_t>& node, node_event_e evt) override
   {
     if (m_is_drawing)
@@ -58,6 +62,7 @@ public:
   bool is_dirty() const { return m_dirty; }
 
   bool alive() const { return !!node(); }
+
   std::string node_name() const
   {
     auto n = node();

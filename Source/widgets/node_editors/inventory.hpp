@@ -75,8 +75,8 @@ class inventory_editor
   CInventory m_inv;
 
 public:
-  inventory_editor(const std::shared_ptr<const node_t>& node)
-    : node_editor_widget(node)
+  inventory_editor(const std::shared_ptr<const node_t>& node, const csav_version& version)
+    : node_editor_widget(node, version)
   {
     reload();
   }
@@ -86,7 +86,7 @@ public:
 public:
   bool commit_impl() override
   {
-    auto rebuilt = m_inv.to_node();
+    auto rebuilt = m_inv.to_node(version());
     auto curnode = ncnode();
 
     if (!rebuilt)
@@ -99,7 +99,7 @@ public:
 
   bool reload_impl() override
   {
-    bool success = m_inv.from_node(node());
+    bool success = m_inv.from_node(node(), version());
     return success;
   }
 

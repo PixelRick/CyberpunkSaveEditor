@@ -27,6 +27,7 @@
     <ClCompile Include="Source\cpinternals\cpnames.cpp" />
     <ClInclude Include="Source\cpinternals\cpnames.hpp" />
     <ClCompile Include="Source\cserialization\csav.cpp" />
+    <ClInclude Include="Source\cserialization\csav_version.hpp" />
     <ClInclude Include="Source\cserialization\serializers.hpp" />
     <ClInclude Include="Source\external\fmt\chrono.h" />
     <ClInclude Include="Source\external\fmt\color.h" />
