@@ -61,7 +61,7 @@ public:
     if (is_running()) {
       std::stringstream ss;
       ss << std::fixed << std::setprecision(1) << (progress * 100) << "%";
-      ImGui::ProgressBar(progress, ImVec2(0.f, 0.f), ss.str().c_str());
+      ImGui::ProgressBar(progress, ImVec2(ImGui::GetContentRegionAvailWidth(), 0.f), ss.str().c_str());
     }
   }
 };
@@ -745,7 +745,7 @@ public:
       size_t i = 0;
       for (auto it = m_list.begin(); it != m_list.end(); ++it)
       {
-        //scoped_imgui_id _sii(&*it);
+        scoped_imgui_id _sii(&*it);
         bool opened = true;
         if (ImGui::BeginTabItem(it->pretty_name().c_str(), &opened, ImGuiTabItemFlags_None))
         {

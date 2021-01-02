@@ -10,6 +10,7 @@ class node_hexeditor
   static inline std::vector<char> m_clipboard;
   std::vector<char> editbuf;
   MemoryEditor me;
+  bool m_write_event = false;
 
 public:
   node_hexeditor(const std::shared_ptr<const node_t>& node)
@@ -48,9 +49,11 @@ protected:
   {
     node_hexeditor* e = (node_hexeditor*)data;
     auto& buf = e->editbuf;
-    if (off < buf.size())
+    if (off < buf.size() && buf[off] != d)
+    {
       buf[off] = d;
-    e->m_has_unsaved_changes = true;
+      e->m_write_event = true;
+    }
   }
 
   static inline bool highlight_fn(const ImU8* data, size_t off)
@@ -63,8 +66,10 @@ protected:
     return false;
   }
 
-  void draw_impl(const ImVec2& size) override
+  bool draw_impl(const ImVec2& size) override
   {
+    bool modified = false;
+
     const ImGuiID id = ImGui::GetCurrentWindow()->GetID((void*)node().get()); // MemoryEditor uses this ID too
     ImVec2 c1 = ImGui::GetCursorScreenPos();
 
@@ -112,17 +117,17 @@ protected:
           {
             editbuf.erase(editbuf.begin() + seladdr_beg, editbuf.begin() + seladdr_end);
             editbuf.insert(editbuf.begin() + seladdr_beg, m_clipboard.begin(), m_clipboard.end());
-            m_has_unsaved_changes = true;
+            modified = true;
           }
           if (ImGui::Selectable("paste insert"))
           {
             editbuf.insert(editbuf.begin() + seladdr_beg, m_clipboard.begin(), m_clipboard.end());
-            m_has_unsaved_changes = true;
+            modified = true;
           }
           if (ImGui::Selectable("erase"))
           {
             editbuf.erase(editbuf.begin() + seladdr_beg, editbuf.begin() + seladdr_end);
-            m_has_unsaved_changes = true;
+            modified = true;
           }
           ImGui::Separator();
         }
@@ -139,12 +144,20 @@ protected:
         {
           std::vector<char> values((size_t)cnt, value);
           editbuf.insert(editbuf.begin() + seladdr_beg, values.begin(), values.end());
-          m_has_unsaved_changes = true;
+          modified = true;
         }
       }
 
       ImGui::EndPopup();
     }
+
+    if (m_write_event)
+    {
+      m_write_event = false;
+      modified = true;
+    }
+
+    return modified;
   }
 
   bool commit_impl() override

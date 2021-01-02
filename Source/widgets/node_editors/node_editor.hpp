@@ -44,6 +44,7 @@ public:
 
   const csav_version& version() const { return m_version; }
 
+private:
   bool m_is_drawing = false; // to filter events
   bool m_dirty = false;
   bool m_has_unsaved_changes = false;
@@ -135,7 +136,7 @@ protected:
   void draw_content(const ImVec2& size = ImVec2(0, 0))
   {
     m_is_drawing = true;
-    draw_impl(size);
+    m_has_unsaved_changes |= draw_impl(size);
     m_is_drawing = false;
   }
 
@@ -175,7 +176,7 @@ public:
 
 private:
   // should return true if data has been modified
-  virtual void draw_impl(const ImVec2& size) = 0;
+  virtual bool draw_impl(const ImVec2& size) = 0;
   virtual bool commit_impl() = 0;
   virtual bool reload_impl() = 0;
 };

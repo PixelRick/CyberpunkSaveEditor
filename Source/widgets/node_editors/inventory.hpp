@@ -46,19 +46,8 @@ struct CInventory_widget
           modified = true;
         }
 
-        for (auto it = subinv.items.begin(); it != subinv.items.end();)
-        {
-          scoped_imgui_id _sii(&*it);
-          bool torem = false;
-
-          modified |= CItemData_widget::draw(*it, &torem);
-          if (torem) {
-            it = subinv.items.erase(it);
-            modified = true;
-          }
-          else
-            ++it;
-        }
+        static auto name_fn = [](const CItemData& item) { return item.iid.shortname(); };
+        modified |= imgui_list_tree_widget(subinv.items, name_fn, &CItemData_widget::draw, 0, true, false);
 
         ImGui::TreePop();
       }
@@ -104,13 +93,10 @@ public:
   }
 
 protected:
-  void draw_impl(const ImVec2& size) override
+  bool draw_impl(const ImVec2& size) override
   {
     scoped_imgui_id _sii(this);
-
-    bool changes = CInventory_widget::draw(m_inv, 0);
-    if (changes)
-      m_has_unsaved_changes = true;
+    return CInventory_widget::draw(m_inv, 0);
   }
 };
 

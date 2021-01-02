@@ -1,10 +1,10 @@
 #pragma once
+#include <inttypes.h>
 #include <iostream>
-#include <stdint.h>
 
-#include "cpinternals/cpnames.hpp"
-#include "cserialization/serializers.hpp"
-#include "cserialization/node.hpp"
+#include <cpinternals/cpnames.hpp>
+#include <cserialization/node.hpp>
+#include <cserialization/serializers.hpp>
 
 
 #pragma pack(push, 1)
@@ -80,12 +80,12 @@ struct CItemMod // for CItemData kind 0, 2
   CItemID iid;
   char uk0[256];
   TweakDBID uk1;
-  std::vector<CItemMod> subs;
+  std::list<CItemMod> subs;
   uint32_t uk2 = 0;
 
   TweakDBID uk3;     //
   uint32_t uk4 = 0; // is read as a whole
-  uint32_t uk5 = 0; //
+  uint32_t uk5 = 0x7F7FFFFF; //
 
   CItemMod()
     : iid(), uk1(), uk3()

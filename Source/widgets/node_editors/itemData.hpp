@@ -1,8 +1,9 @@
 #pragma once
-#include "inttypes.h"
-#include "imgui_extras/imgui_better_combo.hpp"
-#include "cpinternals/cpnames.hpp"
-#include "cserialization/cnodes/CItemData.hpp"
+#include <inttypes.h>
+#include <AppLib/IApp.hpp>
+#include <cserialization/cnodes/CItemData.hpp>
+#include <widgets/list_widget.hpp>
+#include <widgets/cnames_widget.hpp>
 #include "node_editor.hpp"
 
 struct uk_thing_widget
@@ -21,80 +22,27 @@ struct uk_thing_widget
   }
 };
 
-struct TweakDBID_widget
-{
-  // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(TweakDBID& x, const char* label)
-  {
-    scoped_imgui_id _sii(label);
-    bool modified = false;
-
-    auto& namelist = TweakDBIDResolver::get().sorted_names();
-
-    // tricky ;)
-    int item_current = 0;
-
-    const auto& curname = x.name();
-    ImGui::BetterCombo(label, &item_current, &ItemGetter, (void*)curname.c_str(), (int)namelist.size()+1, 0);
-
-    if (item_current != 0)
-    {
-      x = TweakDBID(namelist[item_current-1]);
-      modified = true;
-    }
-
-    bool namehash_opened = ImGui::TreeNode("> namehash");
-
-    {
-      scoped_imgui_style_color _stc(ImGuiCol_Text, ImColor::HSV(0.f, 1.f, 0.7f, 1.f).Value);
-      ImGui::SameLine();
-      ImGui::Text("(item names db is not complete yet !)"); // you can enter its hash manually too meanwhile
-    }
-
-    if (namehash_opened)
-    {
-      modified |= ImGui::InputScalar("crc32(name) hex",  ImGuiDataType_U32, &x.crc, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
-      modified |= ImGui::InputScalar("length(name) hex", ImGuiDataType_U8,  &x.slen,  NULL, NULL, "%02X");
-      modified |= ImGui::InputScalar("raw u64 hex",  ImGuiDataType_U64, &x.as_u64,  NULL, NULL, "%016llX", ImGuiInputTextFlags_CharsHexadecimal);
-      ImGui::Text("resolved name: %s", x.name().c_str());
-      ImGui::TreePop();
-    }
-  
-    return modified;
-  }
-
-  static inline bool ItemGetter(void* data, int n, const char** out_str)
-  { 
-    auto& namelist = TweakDBIDResolver::get().sorted_names();
-    if (n == 0)
-      *out_str = (const char*)data;
-    else
-      *out_str = namelist[n-1].c_str();
-    return true;
-  }
-};
-
 struct CItemID_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(CItemID& x)
+  [[nodiscard]] static inline bool draw(CItemID& x, bool is_mod)
   {
     scoped_imgui_id _sii(&x);
     bool modified = false;
 
     if (ImGui::TreeNode("item_id", "item_id: %s", x.shortname().c_str()))
     {
-      modified |= TweakDBID_widget::draw(x.nameid, "item name");
+      modified |= TweakDBID_widget::draw(x.nameid, "item name", TweakDBIDCategory::Item);
 
       unsigned kind = x.uk.kind();
       switch (kind) {
         case 0: ImGui::Text("resolved kind: special item"); break;
         case 1: ImGui::Text("resolved kind: simple item"); break;
-        case 2: ImGui::Text("resolved kind: modable item"); break;
+        case 2: ImGui::Text("resolved kind: mod/modable item"); break;
         default: ImGui::Text("resolved kind: invalid"); break;
       }
 
-      if (ImGui::TreeNode("kind struct"))
+      if (ImGui::TreeNode("unique identifier"))
       {
         modified |= uk_thing_widget::draw(x.uk);
         ImGui::TreePop();
@@ -110,63 +58,39 @@ struct CItemID_widget
 struct CItemMod_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(CItemMod& item, bool* p_remove = nullptr)
+  [[nodiscard]] static inline bool draw(CItemMod& item)
   {
     scoped_imgui_id _sii(&item);
     bool modified = false;
 
-    bool treenode = ImGui::TreeNode("item_mod", "item_mod: %s", item.iid.shortname().c_str());
-    
-    if (p_remove)
-    {
-      ImGui::SameLine();
-      *p_remove = ImGui::Button("remove", ImVec2(70, 15));
+    modified |= CItemID_widget::draw(item.iid, true);
+
+    ImGui::Separator();
+
+    unsigned kind = item.iid.uk.kind();
+    switch (kind) {
+      case 0: ImGui::Text("special kind"); break;
+      case 1: ImGui::Text("simple kind"); break;
+      default: break;
     }
 
-    if (treenode)
-    {
-      modified |= CItemID_widget::draw(item.iid);
+    ImGui::InputText("unknown string", item.uk0, sizeof(item.uk0));
 
-      unsigned kind = item.iid.uk.kind();
-      switch (kind) {
-        case 0: ImGui::Text("special kind"); break;
-        case 1: ImGui::Text("simple kind"); break;
-        default: break;
-      }
+    modified |= TweakDBID_widget::draw(item.uk1, "attachment slot name", TweakDBIDCategory::Attachment);
 
-      ImGui::InputText("unknown string", item.uk0, sizeof(item.uk0));
+    ImGui::Text("--------slots/modifiers---------");
 
-      modified |= TweakDBID_widget::draw(item.uk1, "uk1 name");
+    static auto name_fn = [](const CItemMod& mod) { return fmt::format("mod: {}", mod.iid.shortname()); };
+    modified |= imgui_list_tree_widget(item.subs, name_fn, &CItemMod_widget::draw, 0, true);
 
-      ImGui::Text("--------mods-tree---------");
-
-      if (item.subs.empty())
-        ImGui::Text(" empty");
-
-      for (auto it = item.subs.begin(); it < item.subs.end();)
-      {
-        bool torem = false;
-        modified |= CItemMod_widget::draw(*it, &torem);
-        if (torem) {
-          it = item.subs.erase(it);
-          modified = true;
-        }
-        else
-          ++it;
-      }
-
-      ImGui::Text("--------------------------");
+    ImGui::Text("--------------------------------");
 
     modified |= ImGui::InputScalar("field u32 (hex)##uk2",   ImGuiDataType_U32, &item.uk2, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
 
     modified |= TweakDBID_widget::draw(item.uk3, "uk3 name");
 
-      modified |= ImGui::InputScalar("field u32 (hex)##uk4",   ImGuiDataType_U32, &item.uk4, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
-      modified |= ImGui::InputScalar("field u32 (hex)##uk5",   ImGuiDataType_U32, &item.uk5, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
-
-      //e->draw_widget();
-      ImGui::TreePop();
-    }
+    modified |= ImGui::InputScalar("field u32 (hex)##uk4",   ImGuiDataType_U32, &item.uk4, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+    modified |= ImGui::InputScalar("field u32 (hex)##uk5",   ImGuiDataType_U32, &item.uk5, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
 
     return modified;
   }
@@ -177,47 +101,24 @@ struct CItemMod_widget
 struct CItemData_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(CItemData& item, bool* p_remove = nullptr)
+  [[nodiscard]] static inline bool draw(CItemData& item)
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     ImGuiID id = window->GetID("itemData");
 
     bool modified = false;
 
-    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_Framed;
-    if (p_remove)
-      flags |= ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_ClipLabelForTrailingButton;
+    modified |= CItemID_widget::draw(item.iid, false);
 
-    bool treenode = ImGui::TreeNodeBehavior(id, flags, item.iid.shortname().c_str());
-    if (p_remove)
+    modified |= ImGui::InputScalar("field u8  (hex) (1 for quest items)##uk0",   ImGuiDataType_U8 , &item.uk0_012, NULL, NULL, "%02X", ImGuiInputTextFlags_CharsHexadecimal);
+    modified |= ImGui::InputScalar("field u32 (hex)##uk1",   ImGuiDataType_U32, &item.uk1_012, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+
+    unsigned kind = item.iid.uk.kind();
+
+    if (kind != 2)
     {
-      // copied from CollapsingHeader impl
-      ImGuiContext& g = *GImGui;
-      ImGuiLastItemDataBackup last_item_backup;
-      float button_size = g.FontSize;
-      float button_x = ImMax(window->DC.LastItemRect.Min.x, window->DC.LastItemRect.Max.x - g.Style.FramePadding.x * 2.0f - button_size);
-      float button_y = window->DC.LastItemRect.Min.y;
-      ImGuiID close_button_id = ImGui::GetIDWithSeed("#CLOSE", NULL, id);
-      if (ImGui::CloseButton(close_button_id, ImVec2(button_x, button_y)))
-        *p_remove = true;
-      last_item_backup.Restore();
-
-      //ImGui::SameLine();
-      //*p_remove = ImGui::Button("remove", ImVec2(70, 15));
-    }
-    if (treenode)
-    {
-      modified |= CItemID_widget::draw(item.iid);
-
-      modified |= ImGui::InputScalar("field u8  (hex) (1 for quest items)##uk0",   ImGuiDataType_U8 , &item.uk0_012, NULL, NULL, "%02X", ImGuiInputTextFlags_CharsHexadecimal);
-      modified |= ImGui::InputScalar("field u32 (hex)##uk1",   ImGuiDataType_U32, &item.uk1_012, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
-
-      unsigned kind = item.iid.uk.kind();
-
-      if (kind != 2)
-      {
-        ImGui::Text("------special/simple------ (often quantity value)");
-        modified |= ImGui::InputScalar("field u32 (hex)##uk2", ImGuiDataType_U32, &item.uk2_01, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+      ImGui::Text("------special/simple------ (often quantity value)");
+      modified |= ImGui::InputScalar("field u32 (hex)##uk2", ImGuiDataType_U32, &item.uk2_01, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
     }
 
     if (kind != 1)
@@ -226,17 +127,19 @@ struct CItemData_widget
 
       modified |= TweakDBID_widget::draw(item.uk3_02, "uk3 name");
       modified |= ImGui::InputScalar("field u32 (hex)##uk4", ImGuiDataType_U32, &item.uk4_02, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
-        modified |= ImGui::InputScalar("field u32 (hex)##uk5", ImGuiDataType_U32, &item.uk5_02, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+      modified |= ImGui::InputScalar("field u32 (hex)##uk5", ImGuiDataType_U32, &item.uk5_02, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
 
-        bool torem = false;
-        modified |= CItemMod_widget::draw(item.root2, &torem);
-        if (torem) {
-          item.root2 = CItemMod();
-          modified = true;
-        }
+      if (ImGui::SmallButton("clear mods"))
+      {
+        modified = true;
+        item.root2 = CItemMod();
       }
 
-      ImGui::TreePop();
+      if (ImGui::TreeNode("mods_root##CItemData", "MODS"))
+      {
+        modified |= CItemMod_widget::draw(item.root2);
+        ImGui::TreePop();
+      }
     }
 
     return modified;
@@ -279,12 +182,9 @@ public:
   }
 
 protected:
-  void draw_impl(const ImVec2& size) override
+  bool draw_impl(const ImVec2& size) override
   {
     scoped_imgui_id _sii(this);
-
-    bool changes = CItemData_widget::draw(item, 0);
-    if (changes)
-      m_has_unsaved_changes = true;
+    return CItemData_widget::draw(item);
   }
 };

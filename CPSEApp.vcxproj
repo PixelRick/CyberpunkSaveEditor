@@ -42,6 +42,8 @@
     <ClInclude Include="Source\external\fmt\printf.h" />
     <ClInclude Include="Source\external\fmt\ranges.h" />
     <ClInclude Include="Source\imgui_extras\imgui_stdlib.h" />
+    <ClInclude Include="Source\widgets\cnames_widget.hpp" />
+    <ClInclude Include="Source\widgets\list_widget.hpp" />
     <ClCompile Include="Source\external\fmt\format.cc" />
     <ClCompile Include="Source\external\fmt\os.cc" />
     <ClCompile Include="Source\external\xlz4\lz4.c" />
