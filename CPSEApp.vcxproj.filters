@@ -98,6 +98,9 @@
     <ClCompile Include="Source\imgui_extras\imgui_better_combo.cpp">
       <Filter>Source\imgui_extras</Filter>
     </ClCompile>
+    <ClCompile Include="Source\imgui_extras\imgui_stdlib.cpp">
+      <Filter>Source\imgui_extras</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\AppLib\imgui\imgui_impl_dx11.h">
@@ -230,6 +233,9 @@
       <Filter>Source\AppLib</Filter>
     </ClInclude>
     <ClInclude Include="Source\imgui_extras\imgui_better_combo.hpp">
+      <Filter>Source\imgui_extras</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\imgui_extras\imgui_stdlib.h">
       <Filter>Source\imgui_extras</Filter>
     </ClInclude>
   </ItemGroup>

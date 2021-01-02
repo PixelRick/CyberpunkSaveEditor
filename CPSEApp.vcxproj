@@ -40,10 +40,12 @@
     <ClInclude Include="Source\external\fmt\posix.h" />
     <ClInclude Include="Source\external\fmt\printf.h" />
     <ClInclude Include="Source\external\fmt\ranges.h" />
+    <ClInclude Include="Source\imgui_extras\imgui_stdlib.h" />
     <ClCompile Include="Source\external\fmt\format.cc" />
     <ClCompile Include="Source\external\fmt\os.cc" />
     <ClCompile Include="Source\external\xlz4\lz4.c" />
     <ClCompile Include="Source\imgui_extras\imgui_better_combo.cpp" />
+    <ClCompile Include="Source\imgui_extras\imgui_stdlib.cpp" />
     <ClCompile Include="Source\utils.cpp" />
     <ClInclude Include="Source\cserialization\cnodes\CInventory.hpp" />
     <ClInclude Include="Source\cserialization\cnodes\CItemData.hpp" />
@@ -161,7 +163,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\Source;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Source\AppLib\imgui\imgui;$(ProjectDir)\Source;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_UNICODE;UNICODE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat>None</DebugInformationFormat>
@@ -189,7 +191,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\Source;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Source\AppLib\imgui\imgui;$(ProjectDir)\Source;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -212,7 +214,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\Source;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Source\AppLib\imgui\imgui;$(ProjectDir)\Source;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_UNICODE;UNICODE;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
