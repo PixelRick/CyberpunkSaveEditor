@@ -5,7 +5,10 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "utils.hpp"
+#include <algorithm>
+#include <cserialization/serializers.hpp>
+#include <fmt/format.h>
+#include <utils.hpp>
 
 /////////////////////////////////////////
 // TweakDBID
@@ -15,6 +18,8 @@
 
 struct TweakDBID
 {
+  // public for its widget
+
   union {
     struct {
       uint32_t crc;
@@ -34,42 +39,44 @@ struct TweakDBID
     slen = (uint8_t)name.size();
   }
 
-  template <typename IStream>
-  friend IStream& operator>>(IStream& is, TweakDBID& id)
-  {
-    is.read((char*)&id.as_u64, 8);
-    return is;
-  }
-
-  template <typename OStream>
-  friend OStream& operator<<(OStream& os, const TweakDBID& id)
-  {
-    os.write((char*)&id.as_u64, 8);
-    return os;
-  }
-
   friend std::istream& operator>>(std::istream& is, TweakDBID& id)
   {
-    is.read((char*)&id.as_u64, 8);
+    is >> cbytes_ref(id.as_u64);
     return is;
   }
 
   friend std::ostream& operator<<(std::ostream& os, const TweakDBID& id)
   {
-    os.write((char*)&id.as_u64, 8);
+    os << cbytes_ref(id.as_u64);
     return os;
   }
 
   std::string name() const;
 };
 
+
+enum class TweakDBIDCategory
+{
+  All,
+  Item,
+  Attachment,
+  Unknown,
+};
+
+
 #pragma pack(pop)
 
 class TweakDBIDResolver
 {
-  std::vector<std::string> s_namelist;
+  std::vector<std::string> s_full_list;
   std::map<uint64_t, std::string> s_tdbid_invmap;
   std::map<uint32_t, std::string> s_crc32_invmap;
+
+  // filtered lists
+
+  std::vector<std::string> s_item_list;
+  std::vector<std::string> s_attachment_list;
+  std::vector<std::string> s_unknown_list;
 
   TweakDBIDResolver();
   ~TweakDBIDResolver() = default;
@@ -77,7 +84,7 @@ class TweakDBIDResolver
 public:
   static TweakDBIDResolver& get()
   {
-    static TweakDBIDResolver s;
+    static TweakDBIDResolver s = {};
     return s;
   }
 
@@ -85,12 +92,12 @@ public:
   TweakDBIDResolver& operator=(const TweakDBIDResolver&) = delete;
 
 public:
-  bool is_known(std::string_view name) const
+  bool is_registered(std::string_view name) const
   {
-    return is_known(TweakDBID(name));
+    return is_registered(TweakDBID(name));
   }
 
-  bool is_known(const TweakDBID& id) const
+  bool is_registered(const TweakDBID& id) const
   {
     return s_tdbid_invmap.find(id.as_u64) != s_tdbid_invmap.end();
   }
@@ -100,12 +107,20 @@ public:
     auto it = s_tdbid_invmap.find(id.as_u64);
     if (it != s_tdbid_invmap.end())
       return it->second;
-    std::stringstream ss;
-    ss << "<tdbid:" << std::hex << std::setw(16) << std::setfill('0') << std::uppercase << id.as_u64 << ">";
-    return ss.str();
+    return fmt::format("<tdbid:{:016X}>", id.as_u64);
   }
 
-  const std::vector<std::string>& sorted_names() const { return s_namelist; }
+  const std::vector<std::string>& sorted_names(TweakDBIDCategory cat = TweakDBIDCategory::All) const
+  {
+    switch (cat)
+    {
+      case TweakDBIDCategory::All:          return s_full_list;
+      case TweakDBIDCategory::Item:         return s_item_list;
+      case TweakDBIDCategory::Attachment:   return s_attachment_list;
+      default: break;
+    }
+    return s_unknown_list;
+  }
 };
 
 
@@ -128,20 +143,19 @@ struct CName
 
   CName() = default;
 
-  explicit CName(std::string_view name)
-  {
-    as_u64 = FNV1a(name);
-  }
+  explicit CName(std::string_view name);
+
+  explicit CName(uint64_t u64);
 
   friend std::istream& operator>>(std::istream& is, CName& id)
   {
-    is.read((char*)&id.as_u64, 8);
+    is >> cbytes_ref(id.as_u64);
     return is;
   }
 
   friend std::ostream& operator<<(std::ostream& os, const CName& id)
   {
-    os.write((char*)&id.as_u64, 8);
+    os << cbytes_ref(id.as_u64);
     return os;
   }
 
@@ -152,7 +166,7 @@ struct CName
 
 class CNameResolver
 {
-  std::vector<std::string> s_namelist;
+  std::vector<std::string> s_full_list;
   std::map<uint64_t, std::string> s_cname_invmap;
 
   CNameResolver();
@@ -161,7 +175,7 @@ class CNameResolver
 public:
   static CNameResolver& get()
   {
-    static CNameResolver s;
+    static CNameResolver s = {};
     return s;
   }
 
@@ -169,27 +183,47 @@ public:
   CNameResolver& operator=(const CNameResolver&) = delete;
 
 public:
-  bool is_known(std::string_view name) const
+  void register_name(std::string_view name)
   {
-    return is_known(CName(name));
+    uint64_t id = FNV1a(name);
+    if (s_cname_invmap.find(id) == s_cname_invmap.end())
+    {
+      s_cname_invmap[id] = name;
+      s_full_list.push_back(std::string(name));
+      std::sort(s_full_list.begin(), s_full_list.end());
+    }
   }
 
-  bool is_known(const CName& id) const
+  bool is_registered(const CName& cn) const
   {
-    return s_cname_invmap.find(id.as_u64) != s_cname_invmap.end();
+    return is_registered(cn.as_u64);
+  }
+
+  bool is_registered(std::string_view name) const
+  {
+    uint64_t hash = FNV1a(name);
+    return is_registered(hash);
+  }
+
+  bool is_registered(uint64_t hash) const
+  {
+    return s_cname_invmap.find(hash) != s_cname_invmap.end();
   }
 
   std::string resolve(const CName& id) const
   {
-    auto it = s_cname_invmap.find(id.as_u64);
-    if (it != s_cname_invmap.end())
-      return it->second;
-    std::stringstream ss;
-    ss << "<cname:" << std::hex << std::setw(16) << std::setfill('0') << std::uppercase << id.as_u64 << ">";
-    return ss.str();
+    return resolve(id.as_u64);
   }
 
-  const std::vector<std::string>& sorted_names() const { return s_namelist; }
+  std::string resolve(uint64_t hash) const
+  {
+    auto it = s_cname_invmap.find(hash);
+    if (it != s_cname_invmap.end())
+      return it->second;
+    return fmt::format("<cname:{:016X}>", hash);
+  }
+
+  const std::vector<std::string>& sorted_names() const { return s_full_list; }
 };
 
 inline std::string CName::name() const
