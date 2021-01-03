@@ -14,6 +14,7 @@
 #include "AppLib/IApp.hpp"
 
 #include "utils.hpp"
+#include <ps_storage.hpp>
 #include "cserialization/csav.hpp"
 #include "cpinternals/cpnames.hpp"
 #include "hexeditor_windows_mgr.hpp"
@@ -689,20 +690,13 @@ public:
     open_dialog.SetTitle("Opening savefile");
     open_dialog.SetTypeFilters({ ".dat" });
 
-    // todo: should be a static json loaded on startup and saved on cleanup
     try
     {
-      nlohmann::json jpsconfig;
-      std::ifstream ifile;
-      ifile.open("persistent.json");
-      ifile >> jpsconfig;
-      ifile.close();
-      if (jpsconfig.find("open_path") != jpsconfig.end())
-        open_dialog.SetPwd(jpsconfig.at("open_path").get<std::string>());
+      auto& jroot = ps_storage::jroot();
+      if (jroot.find("open_path") != jroot.end())
+        open_dialog.SetPwd(jroot.at("open_path").get<std::string>());
     }
-    catch (std::exception&)
-    {
-    }
+    catch (std::exception&) {}
   }
   
   void update()
@@ -770,27 +764,13 @@ public:
     {
       open_filepath = std::filesystem::absolute(open_dialog.GetSelected().wstring());
 
-      // todo: should be a static json loaded on startup and saved on cleanup
       try
       {
-        nlohmann::json jpsconfig;
-        std::ifstream ifile;
-        ifile.open("persistent.json");
-        if (ifile.is_open())
-        {
-          ifile >> jpsconfig;
-          ifile.close();
-        }
-        std::ofstream ofile;
-        ofile.open("persistent.json");
         std::filesystem::path dirpath = open_filepath;
-        jpsconfig["open_path"] = dirpath.remove_filename().string();
-        ofile << jpsconfig.dump(4);
-        ofile.close();
+        auto& jroot = ps_storage::jroot();
+        jroot["open_path"] = dirpath.remove_filename().string();
       }
-      catch (std::exception&)
-      {
-      }
+      catch (std::exception&) {}
 
       auto screenshot_path = open_filepath;
       screenshot_path.replace_filename(L"screenshot.png");

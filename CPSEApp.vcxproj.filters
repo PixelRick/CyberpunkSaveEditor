@@ -247,6 +247,9 @@
     <ClInclude Include="Source\widgets\cnames_widget.hpp">
       <Filter>Source\widgets</Filter>
     </ClInclude>
+    <ClInclude Include="Source\ps_storage.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Resources\CNames.json">

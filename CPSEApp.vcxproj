@@ -25,6 +25,7 @@
     <ClCompile Include="Source\AppLib\imgui\imgui_impl_win32.cpp" />
     <ClInclude Include="Source\AppLib\stb_image.h" />
     <ClCompile Include="Source\cpinternals\cpnames.cpp" />
+    <ClInclude Include="Source\ps_storage.hpp" />
     <ClInclude Include="Source\cpinternals\cpnames.hpp" />
     <ClCompile Include="Source\cserialization\csav.cpp" />
     <ClInclude Include="Source\cserialization\csav_version.hpp" />
