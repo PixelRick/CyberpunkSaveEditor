@@ -107,7 +107,7 @@ public:
     auto it = s_tdbid_invmap.find(id.as_u64);
     if (it != s_tdbid_invmap.end())
       return it->second;
-    return fmt::format("<tdbid:{:016X}>", id.as_u64);
+    return fmt::format("<tdbid:{:08X}:{:02X}>", id.crc, id.slen);
   }
 
   const std::vector<std::string>& sorted_names(TweakDBIDCategory cat = TweakDBIDCategory::All) const
