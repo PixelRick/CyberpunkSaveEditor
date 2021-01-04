@@ -255,10 +255,10 @@
     <CopyFileToFolders Include="Resources\CNames.json">
       <Filter>Resources</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Resources\scriptables.json">
+    <CopyFileToFolders Include="Resources\TweakDBIDs.json">
       <Filter>Resources</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Resources\TweakDBIDs.json">
+    <CopyFileToFolders Include="Resources\CEnums.json">
       <Filter>Resources</Filter>
     </CopyFileToFolders>
   </ItemGroup>

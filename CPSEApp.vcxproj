@@ -88,7 +88,7 @@
     <CopyFileToFolders Include="Resources\CNames.json">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Resources\scriptables.json">
+    <CopyFileToFolders Include="Resources\CEnums.json">
       <FileType>Document</FileType>
     </CopyFileToFolders>
     <CopyFileToFolders Include="Resources\TweakDBIDs.json">
