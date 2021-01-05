@@ -125,11 +125,6 @@ public:
       add_collapsible_editor<System_editor>("MovingPlatformSystem", true);
       add_collapsible_editor<System_editor>("scanningController", true);
       add_collapsible_editor<System_editor>("tierSystem", true);
-      
-      
-
-      //add_collapsible_editor<System_editor>("CharacterCustomizationSystem_Components_v2");
-      //add_collapsible_editor<System_editor>("ShaderCacheReadOnly");
     }
   }
 

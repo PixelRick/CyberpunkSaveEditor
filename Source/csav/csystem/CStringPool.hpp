@@ -46,13 +46,9 @@ public:
   uint32_t as_u32() const { return m_offsetlen; }
 };
 
+
 class CStringPool
 {
-public:
-  // just got this idea.. never saw it but should work
-  struct Friend {};
-  friend struct Friend;
-
 protected:
   std::vector<CRangeDesc> m_descs;
   std::vector<char> m_buffer;

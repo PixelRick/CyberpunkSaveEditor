@@ -31,20 +31,6 @@ enum class ECSystemKind : uint8_t
   DataTrackingSystem,
 };
 
-/*
-RenderGameplayEffectsManagerSystem, 
-PSData,
-godModeSystem,
-MovingPlatformSystem,
-scanningController,
-ScriptableSystemsContainer,
-StatPoolsSystem,
-StatsSystem,
-tierSystem,
-(maybeCharacetrCustomization_Appearances,
-but the function is weird to read, there is also CharacterCustomizationSystem_Components_v2 in it, maybe old stuff),
-(staticshader_final.cache, ShaderCacheReadOnly)
-*/
 
 struct CSystemObject
 {
@@ -56,6 +42,7 @@ struct CSystemObject
   std::string name;
   CObjectSPtr obj;
 };
+
 
 class CSystem
 {
