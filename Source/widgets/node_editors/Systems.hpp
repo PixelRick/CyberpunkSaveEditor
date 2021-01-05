@@ -234,13 +234,29 @@ public:
 protected:
   int selected_obj = -1;
   int selected_prop = -1;
+  int selected_dummy = -1;
+
+  static bool trailing_name_string_getter(void* data, int idx, const char** out)
+  {
+    const auto& tn = *(std::vector<CName>*)data;
+    if (idx < 0 || idx >= tn.size())
+      return false;
+    static std::string dummy_str;
+    dummy_str = tn[idx].str();
+    *out = dummy_str.c_str();
+    return true;
+  }
 
   bool draw_impl(const ImVec2& size) override
   {
     scoped_imgui_id _sii(this);
 
     //ImGui::Text("PSData");
-    return CSystem_widget::draw(m_data.system(), &selected_obj, &selected_prop);
+    bool modified = CSystem_widget::draw(m_data.system(), &selected_obj, &selected_prop);
+
+    ImGui::ListBox("trailing names", &selected_dummy, &trailing_name_string_getter, (void*)&m_data.trailing_names, (int)m_data.trailing_names.size());
+
+    return modified;
   }
 };
 
