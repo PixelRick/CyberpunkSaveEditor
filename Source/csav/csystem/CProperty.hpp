@@ -10,11 +10,11 @@
 #include <utils.hpp>
 #include <cpinternals/cpnames.hpp>
 #include <cpinternals/cpenums.hpp>
-#include <cserialization/serializers.hpp>
-#include <cserialization/csystem/CStringPool.hpp>
-#include <cserialization/csystem/CPropertyBase.hpp>
-#include <cserialization/csystem/CPropertyFactory.hpp>
-#include <cserialization/csystem/CObject.hpp>
+#include <csav/serializers.hpp>
+#include <csav/csystem/CStringPool.hpp>
+#include <csav/csystem/CPropertyBase.hpp>
+#include <csav/csystem/CPropertyFactory.hpp>
+#include <csav/csystem/CObject.hpp>
 #include <widgets/cnames_widget.hpp>
 
 //------------------------------------------------------------------------------

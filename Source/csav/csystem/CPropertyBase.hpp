@@ -9,8 +9,8 @@
 
 #include <utils.hpp>
 #include <cpinternals/cpnames.hpp>
-#include <cserialization/serializers.hpp>
-#include <cserialization/csystem/CStringPool.hpp>
+#include <csav/serializers.hpp>
+#include <csav/csystem/CStringPool.hpp>
 
 #ifndef DISABLE_CP_IMGUI_WIDGETS
 #include <widgets/list_widget.hpp>

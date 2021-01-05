@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <cserialization/csystem/CPropertyBase.hpp>
+#include <csav/csystem/CPropertyBase.hpp>
 
 class CPropertyFactory
 {

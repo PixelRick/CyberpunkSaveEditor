@@ -16,29 +16,41 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AppLib\IApp.cpp" />
-    <ClCompile Include="Source\AppLib\imgui\imgui\imgui.cpp" />
-    <ClCompile Include="Source\AppLib\imgui\imgui\imgui_demo.cpp" />
-    <ClCompile Include="Source\AppLib\imgui\imgui\imgui_draw.cpp" />
-    <ClCompile Include="Source\AppLib\imgui\imgui\imgui_tables.cpp" />
-    <ClCompile Include="Source\AppLib\imgui\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="Source\AppLib\imgui\imgui_impl_dx11.cpp" />
-    <ClCompile Include="Source\AppLib\imgui\imgui_impl_win32.cpp" />
+    <ClInclude Include="Source\AppLib\imgui\imconfig.h" />
+    <ClInclude Include="Source\AppLib\imgui\imgui.h" />
+    <ClInclude Include="Source\AppLib\imgui\imgui_internal.h" />
+    <ClInclude Include="Source\AppLib\imgui\imstb_rectpack.h" />
+    <ClInclude Include="Source\AppLib\imgui\imstb_textedit.h" />
+    <ClInclude Include="Source\AppLib\imgui\imstb_truetype.h" />
+    <ClInclude Include="Source\AppLib\imgui_impl_dx11.h" />
+    <ClInclude Include="Source\AppLib\imgui_impl_win32.h" />
     <ClInclude Include="Source\AppLib\stb_image.h" />
+    <ClCompile Include="Source\AppLib\imgui\imgui.cpp" />
+    <ClCompile Include="Source\AppLib\imgui\imgui_demo.cpp" />
+    <ClCompile Include="Source\AppLib\imgui\imgui_draw.cpp" />
+    <ClCompile Include="Source\AppLib\imgui\imgui_tables.cpp" />
+    <ClCompile Include="Source\AppLib\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Source\AppLib\imgui_impl_dx11.cpp" />
+    <ClCompile Include="Source\AppLib\imgui_impl_win32.cpp" />
     <ClCompile Include="Source\cpinternals\cpenums.cpp" />
     <ClCompile Include="Source\cpinternals\cpnames.cpp" />
     <ClInclude Include="Source\cpinternals\cpenums.hpp" />
-    <ClInclude Include="Source\cserialization\csystem\CPropertyFactory.hpp" />
+    <ClInclude Include="Source\csav\cnodes\CCharacterCustomization.hpp" />
+    <ClInclude Include="Source\csav\cnodes\CInventory.hpp" />
+    <ClInclude Include="Source\csav\cnodes\CItemData.hpp" />
+    <ClInclude Include="Source\csav\cnodes\CSystems.hpp" />
+    <ClInclude Include="Source\csav\csav.hpp" />
+    <ClInclude Include="Source\csav\csav_version.hpp" />
+    <ClInclude Include="Source\csav\csystem\CObject.hpp" />
+    <ClInclude Include="Source\csav\csystem\CProperty.hpp" />
+    <ClInclude Include="Source\csav\csystem\CPropertyBase.hpp" />
+    <ClInclude Include="Source\csav\csystem\CPropertyFactory.hpp" />
+    <ClInclude Include="Source\csav\csystem\CStringPool.hpp" />
+    <ClInclude Include="Source\csav\csystem\CSystem.hpp" />
+    <ClInclude Include="Source\csav\node.hpp" />
+    <ClInclude Include="Source\csav\serializers.hpp" />
     <ClInclude Include="Source\ps_storage.hpp" />
     <ClInclude Include="Source\cpinternals\cpnames.hpp" />
-    <ClCompile Include="Source\cserialization\csav.cpp" />
-    <ClInclude Include="Source\cserialization\cnodes\CCharacterCustomization.hpp" />
-    <ClInclude Include="Source\cserialization\cnodes\CSystems.hpp" />
-    <ClInclude Include="Source\cserialization\csav_version.hpp" />
-    <ClInclude Include="Source\cserialization\csystem\CObject.hpp" />
-    <ClInclude Include="Source\cserialization\csystem\CProperty.hpp" />
-    <ClInclude Include="Source\cserialization\csystem\CStringPool.hpp" />
-    <ClInclude Include="Source\cserialization\csystem\CSystem.hpp" />
-    <ClInclude Include="Source\cserialization\serializers.hpp" />
     <ClInclude Include="Source\external\fmt\chrono.h" />
     <ClInclude Include="Source\external\fmt\color.h" />
     <ClInclude Include="Source\external\fmt\compile.h" />
@@ -59,8 +71,9 @@
     <ClInclude Include="Source\widgets\node_editors\StatsSystem.hpp" />
     <ClInclude Include="Source\widgets\node_editors\Systems.hpp" />
     <ClInclude Include="Source\cserialization\csystem\CPropertyBase.hpp" />
-    <ClCompile Include="Source\cserialization\csystem\CObject.cpp" />
-    <ClCompile Include="Source\cserialization\csystem\CPropertyFactory.cpp" />
+    <ClCompile Include="Source\csav\csav.cpp" />
+    <ClCompile Include="Source\csav\csystem\CObject.cpp" />
+    <ClCompile Include="Source\csav\csystem\CPropertyFactory.cpp" />
     <ClCompile Include="Source\external\fmt\format.cc" />
     <ClCompile Include="Source\external\fmt\os.cc" />
     <ClCompile Include="Source\external\xlz4\lz4.c" />
@@ -68,8 +81,6 @@
     <ClCompile Include="Source\imgui_extras\imgui_better_combo.cpp" />
     <ClCompile Include="Source\imgui_extras\imgui_stdlib.cpp" />
     <ClCompile Include="Source\utils.cpp" />
-    <ClInclude Include="Source\cserialization\cnodes\CInventory.hpp" />
-    <ClInclude Include="Source\cserialization\cnodes\CItemData.hpp" />
     <ClInclude Include="Source\external\span.hpp" />
     <ClInclude Include="Source\imgui_extras\imgui_better_combo.hpp" />
     <ClInclude Include="Source\widgets\csav_experimental.hpp" />
@@ -83,17 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\AppLib\IApp.hpp" />
-    <ClInclude Include="Source\AppLib\imgui\imgui\imconfig.h" />
-    <ClInclude Include="Source\AppLib\imgui\imgui\imgui.h" />
-    <ClInclude Include="Source\AppLib\imgui\imgui\imgui_internal.h" />
-    <ClInclude Include="Source\AppLib\imgui\imgui\imstb_rectpack.h" />
-    <ClInclude Include="Source\AppLib\imgui\imgui\imstb_textedit.h" />
-    <ClInclude Include="Source\AppLib\imgui\imgui\imstb_truetype.h" />
-    <ClInclude Include="Source\AppLib\imgui\imgui_impl_dx11.h" />
-    <ClInclude Include="Source\AppLib\imgui\imgui_impl_win32.h" />
     <ClInclude Include="Source\AppLib\pch.h" />
-    <ClInclude Include="Source\cserialization\csav.hpp" />
-    <ClInclude Include="Source\cserialization\node.hpp" />
     <ClInclude Include="Source\external\nlohmann\json.hpp" />
     <ClInclude Include="Source\external\xlz4\lz4.h" />
     <ClInclude Include="Source\imgui_extras\imgui_filebrowser.hpp" />
@@ -189,7 +190,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\Source\AppLib\imgui\imgui;$(ProjectDir)\Source;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Source\AppLib\imgui;$(ProjectDir)\Source;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_UNICODE;UNICODE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat>None</DebugInformationFormat>
@@ -217,7 +218,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\Source\AppLib\imgui\imgui;$(ProjectDir)\Source;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Source\AppLib\imgui;$(ProjectDir)\Source;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -240,7 +241,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\Source\AppLib\imgui\imgui;$(ProjectDir)\Source;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Source\AppLib\imgui;$(ProjectDir)\Source;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_UNICODE;UNICODE;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>

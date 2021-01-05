@@ -11,20 +11,11 @@
     <Filter Include="Source\AppLib\imgui">
       <UniqueIdentifier>{40b65cf4-c0c5-4c22-8287-0ccce19133bc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\AppLib\imgui\imgui">
-      <UniqueIdentifier>{c4d38a95-72f6-4972-b95c-5017a8b21ae3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\imgui_extras">
       <UniqueIdentifier>{ce933798-dbe5-4392-8de2-c5e49012149c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\cserialization">
-      <UniqueIdentifier>{88d91336-c576-4e5c-9fa2-ef2440c28e1a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\widgets">
       <UniqueIdentifier>{5dd5b1e8-7255-4981-8e35-c8166bf50ae7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\cserialization\cnodes">
-      <UniqueIdentifier>{5afc6430-c459-4483-815c-e6a6adfebb5c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\external">
       <UniqueIdentifier>{145ed9b9-b2de-4237-a01c-ea74307ab50d}</UniqueIdentifier>
@@ -48,49 +39,31 @@
     <Filter Include="Source\external\fmt">
       <UniqueIdentifier>{c7990d27-362c-4853-947c-e569eca68605}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\cserialization\csystem">
-      <UniqueIdentifier>{a41e872c-3931-47be-b4ba-9fac8bdd344f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\widgets\cproperties">
       <UniqueIdentifier>{70425ada-529b-4a5e-bb93-3f9394e16a9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\csav">
+      <UniqueIdentifier>{88d91336-c576-4e5c-9fa2-ef2440c28e1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\csav\cnodes">
+      <UniqueIdentifier>{5afc6430-c459-4483-815c-e6a6adfebb5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\csav\csystem">
+      <UniqueIdentifier>{a41e872c-3931-47be-b4ba-9fac8bdd344f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AppLib\IApp.cpp">
       <Filter>Source\AppLib</Filter>
     </ClCompile>
-    <ClCompile Include="Source\AppLib\imgui\imgui_impl_dx11.cpp">
-      <Filter>Source\AppLib\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AppLib\imgui\imgui_impl_win32.cpp">
-      <Filter>Source\AppLib\imgui</Filter>
-    </ClCompile>
     <ClCompile Include="Source\utils.cpp">
       <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AppLib\imgui\imgui\imgui.cpp">
-      <Filter>Source\AppLib\imgui\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AppLib\imgui\imgui\imgui_demo.cpp">
-      <Filter>Source\AppLib\imgui\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AppLib\imgui\imgui\imgui_draw.cpp">
-      <Filter>Source\AppLib\imgui\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AppLib\imgui\imgui\imgui_tables.cpp">
-      <Filter>Source\AppLib\imgui\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\AppLib\imgui\imgui\imgui_widgets.cpp">
-      <Filter>Source\AppLib\imgui\imgui</Filter>
     </ClCompile>
     <ClCompile Include="Source\main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Source\external\xlz4\lz4.c">
       <Filter>Source\external\xlz4</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\cserialization\csav.cpp">
-      <Filter>Source\cserialization</Filter>
     </ClCompile>
     <ClCompile Include="Source\cpinternals\cpnames.cpp">
       <Filter>Source\cpinternals</Filter>
@@ -110,52 +83,49 @@
     <ClCompile Include="Source\imgui_extras\cpp_imgui.cpp">
       <Filter>Source\imgui_extras</Filter>
     </ClCompile>
-    <ClCompile Include="Source\cserialization\csystem\CObject.cpp">
-      <Filter>Source\cserialization\csystem</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\cserialization\csystem\CPropertyFactory.cpp">
-      <Filter>Source\cserialization\csystem</Filter>
-    </ClCompile>
     <ClCompile Include="Source\cpinternals\cpenums.cpp">
       <Filter>Source\cpinternals</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AppLib\imgui_impl_dx11.cpp">
+      <Filter>Source\AppLib</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AppLib\imgui_impl_win32.cpp">
+      <Filter>Source\AppLib</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AppLib\imgui\imgui.cpp">
+      <Filter>Source\AppLib\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AppLib\imgui\imgui_demo.cpp">
+      <Filter>Source\AppLib\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AppLib\imgui\imgui_draw.cpp">
+      <Filter>Source\AppLib\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AppLib\imgui\imgui_tables.cpp">
+      <Filter>Source\AppLib\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AppLib\imgui\imgui_widgets.cpp">
+      <Filter>Source\AppLib\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\csav\csav.cpp">
+      <Filter>Source\csav</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\csav\csystem\CObject.cpp">
+      <Filter>Source\csav\csystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\csav\csystem\CPropertyFactory.cpp">
+      <Filter>Source\csav\csystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\AppLib\imgui\imgui_impl_dx11.h">
-      <Filter>Source\AppLib\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AppLib\imgui\imgui_impl_win32.h">
-      <Filter>Source\AppLib\imgui</Filter>
-    </ClInclude>
     <ClInclude Include="Source\AppLib\pch.h">
       <Filter>Source\AppLib</Filter>
     </ClInclude>
     <ClInclude Include="Source\imgui_extras\imgui_filebrowser.hpp">
       <Filter>Source\imgui_extras</Filter>
     </ClInclude>
-    <ClInclude Include="Source\AppLib\imgui\imgui\imconfig.h">
-      <Filter>Source\AppLib\imgui\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AppLib\imgui\imgui\imgui.h">
-      <Filter>Source\AppLib\imgui\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AppLib\imgui\imgui\imgui_internal.h">
-      <Filter>Source\AppLib\imgui\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AppLib\imgui\imgui\imstb_rectpack.h">
-      <Filter>Source\AppLib\imgui\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AppLib\imgui\imgui\imstb_textedit.h">
-      <Filter>Source\AppLib\imgui\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\AppLib\imgui\imgui\imstb_truetype.h">
-      <Filter>Source\AppLib\imgui\imgui</Filter>
-    </ClInclude>
     <ClInclude Include="Source\AppLib\stb_image.h">
       <Filter>Source\AppLib</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\cserialization\node.hpp">
-      <Filter>Source\cserialization</Filter>
     </ClInclude>
     <ClInclude Include="Source\external\nlohmann\json.hpp">
       <Filter>Source\external\nlohmann</Filter>
@@ -163,17 +133,8 @@
     <ClInclude Include="Source\external\xlz4\lz4.h">
       <Filter>Source\external\xlz4</Filter>
     </ClInclude>
-    <ClInclude Include="Source\cserialization\csav.hpp">
-      <Filter>Source\cserialization</Filter>
-    </ClInclude>
     <ClInclude Include="Source\widgets\csav_widget.hpp">
       <Filter>Source\widgets</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\cserialization\cnodes\CInventory.hpp">
-      <Filter>Source\cserialization\cnodes</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\cserialization\cnodes\CItemData.hpp">
-      <Filter>Source\cserialization\cnodes</Filter>
     </ClInclude>
     <ClInclude Include="Source\widgets\csav_experimental.hpp">
       <Filter>Source\widgets</Filter>
@@ -204,9 +165,6 @@
     </ClInclude>
     <ClInclude Include="Source\widgets\hexeditor_windows_mgr.hpp">
       <Filter>Source\widgets</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\cserialization\serializers.hpp">
-      <Filter>Source\cserialization</Filter>
     </ClInclude>
     <ClInclude Include="Source\external\fmt\chrono.h">
       <Filter>Source\external\fmt</Filter>
@@ -256,14 +214,8 @@
     <ClInclude Include="Source\imgui_extras\imgui_better_combo.hpp">
       <Filter>Source\imgui_extras</Filter>
     </ClInclude>
-    <ClInclude Include="Source\cserialization\cnodes\CCharacterCustomization.hpp">
-      <Filter>Source\cserialization\cnodes</Filter>
-    </ClInclude>
     <ClInclude Include="Source\widgets\node_editors\CharacetrCustomization_Appearances.hpp">
       <Filter>Source\widgets\node_editors</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\cserialization\csav_version.hpp">
-      <Filter>Source\cserialization</Filter>
     </ClInclude>
     <ClInclude Include="Source\imgui_extras\cpp_imgui.hpp">
       <Filter>Source\imgui_extras</Filter>
@@ -280,30 +232,78 @@
     <ClInclude Include="Source\ps_storage.hpp">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\cserialization\csystem\CProperty.hpp">
-      <Filter>Source\cserialization\csystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\cserialization\csystem\CStringPool.hpp">
-      <Filter>Source\cserialization\csystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\cserialization\csystem\CObject.hpp">
-      <Filter>Source\cserialization\csystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\cserialization\csystem\CSystem.hpp">
-      <Filter>Source\cserialization\csystem</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\cserialization\cnodes\CSystems.hpp">
-      <Filter>Source\cserialization\cnodes</Filter>
-    </ClInclude>
     <ClInclude Include="Source\widgets\node_editors\Systems.hpp">
       <Filter>Source\widgets\node_editors</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\cserialization\csystem\CPropertyFactory.hpp">
-      <Filter>Source\cserialization\csystem</Filter>
     </ClInclude>
     <ClInclude Include="Source\cserialization\csystem\CPropertyBase.hpp" />
     <ClInclude Include="Source\cpinternals\cpenums.hpp">
       <Filter>Source\cpinternals</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AppLib\imgui_impl_dx11.h">
+      <Filter>Source\AppLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AppLib\imgui_impl_win32.h">
+      <Filter>Source\AppLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AppLib\imgui\imconfig.h">
+      <Filter>Source\AppLib\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AppLib\imgui\imgui.h">
+      <Filter>Source\AppLib\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AppLib\imgui\imgui_internal.h">
+      <Filter>Source\AppLib\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AppLib\imgui\imstb_rectpack.h">
+      <Filter>Source\AppLib\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AppLib\imgui\imstb_textedit.h">
+      <Filter>Source\AppLib\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AppLib\imgui\imstb_truetype.h">
+      <Filter>Source\AppLib\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\csav.hpp">
+      <Filter>Source\csav</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\csav_version.hpp">
+      <Filter>Source\csav</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\node.hpp">
+      <Filter>Source\csav</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\serializers.hpp">
+      <Filter>Source\csav</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\csystem\CObject.hpp">
+      <Filter>Source\csav\csystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\csystem\CProperty.hpp">
+      <Filter>Source\csav\csystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\csystem\CPropertyBase.hpp">
+      <Filter>Source\csav\csystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\csystem\CPropertyFactory.hpp">
+      <Filter>Source\csav\csystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\csystem\CStringPool.hpp">
+      <Filter>Source\csav\csystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\csystem\CSystem.hpp">
+      <Filter>Source\csav\csystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\cnodes\CCharacterCustomization.hpp">
+      <Filter>Source\csav\cnodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\cnodes\CInventory.hpp">
+      <Filter>Source\csav\cnodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\cnodes\CItemData.hpp">
+      <Filter>Source\csav\cnodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\cnodes\CSystems.hpp">
+      <Filter>Source\csav\cnodes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,7 @@
 #include "CPropertyFactory.hpp"
 #include <string>
 #include <cpinternals/cpenums.hpp>
-#include <cserialization/csystem/CProperty.hpp>
+#include <csav/csystem/CProperty.hpp>
 
 
 CPropertySPtr CPropertyFactory::create(std::string_view ctypename)
