@@ -18,6 +18,8 @@
   "EShouldChangeAttitude": [],
   "ESwitchAction": [],
   "EWindowBlindersStates": [],
+  "EActionContext": [],
+  "EForcedElevatorArrowsState": [],
 
   "AIArgumentType": [ "Bool", "Int", "Uint64", "Enum", "Float", "CName", "TreeRef", "Vector", "Object", "NodeRef", "GlobalNodeId", "PuppetRef", "Serializable", "TweakDBID" ],
   "AICombatSectorType": [ "ToBackLeft", "ToBackMid", "ToBackRight", "ToLeft", "ToMid", "ToRight", "FromLeft", "FromMid", "FromRight", "FromBackLeft", "FromBackMid", "FromBackRight", "BeyondToLeft", "BeyondToRight", "BeyondFromLeft", "BeyondFromRight", "Unknown" ],
