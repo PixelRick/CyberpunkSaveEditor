@@ -317,4 +317,9 @@
       <Filter>Resources</Filter>
     </CopyFileToFolders>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CClasses.json">
+      <Filter>Resources</Filter>
+    </None>
+  </ItemGroup>
 </Project>
