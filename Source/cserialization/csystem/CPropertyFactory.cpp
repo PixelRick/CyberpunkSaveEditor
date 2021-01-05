@@ -6,7 +6,24 @@
 
 CPropertySPtr CPropertyFactory::create(std::string_view ctypename)
 {
-  if (ctypename.rfind("array:", 0) == 0)
+  if (ctypename.size() && ctypename[0] == '[')
+  {
+    auto pos = ctypename.find(']');
+    if (pos != std::string::npos)
+    {
+      try
+      {
+        size_t array_size = std::stoul(std::string(ctypename.substr(1, pos - 1)));
+        return std::make_shared<CArrayProperty>(ctypename.substr(pos + 1), array_size);
+      }
+      catch (std::exception&)
+      {
+        // pass
+      }
+    }
+    return std::make_shared<CUnknownProperty>(ctypename);
+  }
+  else if (ctypename.rfind("array:", 0) == 0)
   {
     auto sub_ctypename = ctypename.substr(sizeof("array:") - 1);
     return std::make_shared<CDynArrayProperty>(sub_ctypename);
@@ -31,7 +48,10 @@ CPropertySPtr CPropertyFactory::create(std::string_view ctypename)
   else if (ctypename == "Float")      { return std::make_shared<CFloatProperty>(); }
   else if (ctypename == "TweakDBID")  { return std::make_shared<CTweakDBIDProperty>(); }
   else if (ctypename == "CName")      { return std::make_shared<CNameProperty>(); }
-  else if (ctypename == "NodeRef")    { return std::make_shared<CNodeRefProperty>(); }
+  else if (ctypename == "NodeRef")
+  {
+    return std::make_shared<CNodeRefProperty>();
+  }
   else if (CEnumList::get().is_registered(ctypename))
   {
     return std::make_shared<CEnumProperty>(std::string(ctypename));
@@ -41,6 +61,9 @@ CPropertySPtr CPropertyFactory::create(std::string_view ctypename)
     return std::make_shared<CObjectProperty>(ctypename);
   }
 
-  return std::make_shared<CObjectProperty>(ctypename);
+  if (ctypename.find(':') == std::string::npos)
+    return std::make_shared<CObjectProperty>(ctypename);
+
+  return std::make_shared<CUnknownProperty>(ctypename);
 }
 

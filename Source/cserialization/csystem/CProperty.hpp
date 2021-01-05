@@ -255,6 +255,125 @@ public:
 #endif
 };
 
+
+//------------------------------------------------------------------------------
+// ARRAY (fixed len)
+//------------------------------------------------------------------------------
+
+class CArrayProperty
+  : public CProperty
+{
+public:
+  using container_type = std::vector<CPropertySPtr>;
+  using iterator = container_type::iterator;
+  using const_iterator = container_type::const_iterator;
+
+protected:
+  container_type m_elts;
+
+protected:
+  // with a pointer to System in CProperty we could use
+  // CName ids too.. but that's for later
+  std::string m_elt_ctypename;
+  std::string m_typename;
+
+public:
+  CArrayProperty(std::string_view elt_ctypename, size_t size)
+    : CProperty(EPropertyKind::DynArray), m_elt_ctypename(elt_ctypename)
+  {
+    m_typename = fmt::format("[{}]{}", size, m_elt_ctypename);
+    m_elts.resize(size);
+  }
+
+  ~CArrayProperty() override = default;
+
+public:
+  const container_type& elts() const { return m_elts; }
+
+  const_iterator cbegin() const { return m_elts.cbegin(); }
+  const_iterator cend() const { return m_elts.cend(); }
+
+  const_iterator begin() const { return cbegin(); }
+  const_iterator end() const { return cend(); }
+
+  iterator begin() { return m_elts.begin(); }
+  iterator end() { return m_elts.end(); }
+
+  // overrides
+
+  std::string_view ctypename() const override { return m_typename; };
+
+  bool serialize_in(std::istream& is, CStringPool& strpool) override
+  {
+    auto& factory = CPropertyFactory::get();
+    
+    for (auto& elt : m_elts)
+    {
+      // todo: use clone on first instance..
+      elt = factory.create(m_elt_ctypename);
+      if (elt->kind() == EPropertyKind::Unknown)
+        return false;
+      if (!elt->serialize_in(is, strpool))
+        return false;
+    }
+
+    return is.good();
+  }
+
+  virtual bool serialize_out(std::ostream& os, CStringPool& strpool) const
+  {
+    for (auto& elt : m_elts)
+    {
+      if (!elt->serialize_out(os, strpool))
+        return false;
+    }
+
+    return true;
+  }
+
+#ifndef DISABLE_CP_IMGUI_WIDGETS
+
+  [[nodiscard]] bool imgui_widget(const char* label, bool editable) override
+  {
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    if (window->SkipItems)
+      return false;
+
+    bool modified = false;
+
+    static ImGuiTableFlags tbl_flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV;
+
+    ImVec2 size = ImVec2(-FLT_MIN, std::min(400.f, ImGui::GetContentRegionAvail().y));
+    if (ImGui::BeginTable(label, 2, tbl_flags, size))
+    {
+      ImGui::TableSetupScrollFreeze(0, 1);
+      ImGui::TableSetupColumn("idx", ImGuiTableColumnFlags_WidthFixed, 30.f);
+      ImGui::TableSetupColumn("value", ImGuiTableColumnFlags_WidthStretch);
+      ImGui::TableHeadersRow();
+
+      size_t idx = 0;
+      for (auto& elt : m_elts)
+      {
+        auto lbl = fmt::format("{:03d}", idx);
+
+        ImGui::TableNextRow();
+        ImGui::TableNextColumn();
+        ImGui::Text(lbl.c_str());
+        ImGui::TableNextColumn();
+        modified |= elt->imgui_widget(lbl.c_str(), editable);
+
+        ++idx;
+      }
+
+      ImGui::EndTable();
+    }
+
+    return modified;
+  }
+
+#endif
+};
+
 //------------------------------------------------------------------------------
 // DYN ARRAY
 //------------------------------------------------------------------------------
@@ -683,14 +802,16 @@ public:
 // NODEREF
 //------------------------------------------------------------------------------
 
+// this is 0x2d-0xa long
+
 class CNodeRefProperty
   : public CProperty
 {
   static inline std::string s_ctypename = "NodeRef";
 
 protected:
-  uint64_t m_value;
- 
+  std::string m_str;
+
 public:
   CNodeRefProperty()
     : CProperty(EPropertyKind::NodeRef)
@@ -706,13 +827,19 @@ public:
 
   bool serialize_in(std::istream& is, CStringPool& strpool) override
   {
-    is >> cbytes_ref(m_value);
+    uint16_t cnt = 0;
+    is >> cbytes_ref(cnt);
+    m_str.clear();
+    m_str.resize(cnt, '\0');
+    is.read(m_str.data(), cnt);
     return is.good();
   }
 
   virtual bool serialize_out(std::ostream& os, CStringPool& strpool) const
   {
-    os << cbytes_ref(m_value);
+    uint16_t cnt = m_str.size();
+    os.write(m_str.data(), cnt);
+    os << cbytes_ref(cnt);
     return true;
   }
 
@@ -720,7 +847,7 @@ public:
 
   [[nodiscard]] bool imgui_widget(const char* label, bool editable) override
   {
-    ImGui::Text("noderef: %08X", m_value);
+    ImGui::Text("noderef: %s", m_str.c_str());
     return false;
   }
 
