@@ -27,6 +27,13 @@ struct CInventory_widget
       ss << "inventory_" << std::hex << std::uppercase << std::setfill('0') << std::setw(16) << subinv.uid;
       if (ImGui::TreeNodeBehavior(row_id, ImGuiTreeNodeFlags_Framed, ss.str().c_str()))
       {
+        if (ImGui::Button("Sort (alpha)", ImVec2(0, 30)))
+        {
+          subinv.items.sort([](const CItemData& a, const CItemData& b){
+            return a.name() < b.name();
+          });
+        }
+        ImGui::SameLine();
         if (ImGui::Button("Add dummy item (alcohol6)", ImVec2(0, 30)))
         {
           // todo: move that on the data side

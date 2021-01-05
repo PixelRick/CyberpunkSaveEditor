@@ -386,7 +386,7 @@ void ImDrawListSharedData::SetCircleSegmentMaxError(float max_error)
 // Initialize before use in a new frame. We always have a command ready in the buffer.
 void ImDrawList::_ResetForNewFrame()
 {
-    // Verify that the ImDrawCmd fields we want to memcmp() are contiguous in memory.
+    // Verify that the ImDrawCmd m_fields we want to memcmp() are contiguous in memory.
     // (those should be IM_STATIC_ASSERT() in theory but with our pre C++11 setup the whole check doesn't compile with GCC)
     IM_ASSERT(IM_OFFSETOF(ImDrawCmd, ClipRect) == 0);
     IM_ASSERT(IM_OFFSETOF(ImDrawCmd, TextureId) == sizeof(ImVec4));
@@ -1601,7 +1601,7 @@ void ImDrawData::ScaleClipRects(const ImVec2& fb_scale)
 // [SECTION] Helpers ShadeVertsXXX functions
 //-----------------------------------------------------------------------------
 
-// Generic linear color gradient, write to RGB fields, leave A untouched.
+// Generic linear color gradient, write to RGB m_fields, leave A untouched.
 void ImGui::ShadeVertsLinearColorGradientKeepAlpha(ImDrawList* draw_list, int vert_start_idx, int vert_end_idx, ImVec2 gradient_p0, ImVec2 gradient_p1, ImU32 col0, ImU32 col1)
 {
     ImVec2 gradient_extent = gradient_p1 - gradient_p0;

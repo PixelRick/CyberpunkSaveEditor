@@ -85,18 +85,25 @@ public:
     }
     else
     {
-      if (with_save_buttons && m_has_unsaved_changes)
+      if (with_save_buttons)
       {
+        if (m_has_unsaved_changes)
         {
-          scoped_imgui_button_hue _sibh(0.2f);
-          if (ImGui::Button("apply changes##node_editor", ImVec2(140, 26)))
-            commit();
+          { scoped_imgui_button_hue _sibh(0.2f);
+            if (ImGui::Button("commit changes##node_editor", ImVec2(160, 22)))
+              commit();
+          }
+          ImGui::SameLine();
+          { scoped_imgui_button_hue _sibh(0.0f);
+            if (ImGui::Button("revert changes##node_editor", ImVec2(160, 22)))
+              reload();
+          }
         }
-        ImGui::SameLine();
+        else
         {
-          scoped_imgui_button_hue _sibh(0.0f);
-          if (ImGui::Button("discard and reload##node_editor", ImVec2(160, 26)))
-            reload();
+          ImGui::ButtonEx("commit changes##node_editor", ImVec2(160, 22), ImGuiButtonFlags_Disabled);
+          ImGui::SameLine();
+          ImGui::ButtonEx("revert changes##node_editor", ImVec2(160, 22), ImGuiButtonFlags_Disabled);
         }
       }
 

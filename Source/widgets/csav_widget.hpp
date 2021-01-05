@@ -81,6 +81,8 @@ protected:
   std::string m_pretty_name;
 
   std::vector<std::shared_ptr<node_editor_widget>> m_collapsible_editors;
+  std::vector<std::shared_ptr<node_editor_widget>> m_advanced_collapsible_editors;
+
 
   bool m_closed = false; // can be destroyed
   bool m_closing = false; // close button clicked
@@ -111,6 +113,23 @@ public:
     if (m_csav)
     {
       add_collapsible_editor<inventory_editor>("inventory");
+      add_collapsible_editor<CharacetrCustomization_Appearances_editor>("CharacetrCustomization_Appearances");
+
+      add_collapsible_editor<System_editor>("StatsSystem", true);
+      add_collapsible_editor<System_editor>("StatPoolsSystem", true);
+      add_collapsible_editor<System_editor>("ScriptableSystemsContainer", true);
+      add_collapsible_editor<PSData_editor>("PSData", true);
+
+      add_collapsible_editor<System_editor>("RenderGameplayEffectsManagerSystem", true);
+      add_collapsible_editor<System_editor>("godModeSystem", true);
+      add_collapsible_editor<System_editor>("MovingPlatformSystem", true);
+      add_collapsible_editor<System_editor>("scanningController", true);
+      add_collapsible_editor<System_editor>("tierSystem", true);
+      
+      
+
+      //add_collapsible_editor<System_editor>("CharacterCustomizationSystem_Components_v2");
+      //add_collapsible_editor<System_editor>("ShaderCacheReadOnly");
     }
   }
 
@@ -122,11 +141,16 @@ public:
   }
 
   template <typename EditorType>
-  void add_collapsible_editor(std::string_view node_name)
+  void add_collapsible_editor(std::string_view node_name, bool advanced = false)
   {
     auto node = m_csav->search_node(node_name);
     if (node)
-      m_collapsible_editors.push_back(std::make_shared<EditorType>(node, m_csav->ver));
+    {
+      if (advanced)
+        m_advanced_collapsible_editors.push_back(std::make_shared<EditorType>(node, m_csav->ver));
+      else
+        m_collapsible_editors.push_back(std::make_shared<EditorType>(node, m_csav->ver));
+    }
   }
 
 protected:
@@ -217,6 +241,14 @@ public:
             break;
           }
         }
+        for (auto& ce : m_advanced_collapsible_editors)
+        {
+          if (ce->has_changes())
+          {
+            has_unsaved_changes = true;
+            break;
+          }
+        }
         if (has_unsaved_changes)
         {
           ImGui::OpenPopup("Unsaved changes##csav_editor");
@@ -248,6 +280,11 @@ public:
       if (ImGui::Button("YES", ImVec2(button_width, 0)))
       {
         for (auto& ce : m_collapsible_editors)
+        {
+          if (ce->has_changes())
+            ce->commit();
+        }
+        for (auto& ce : m_advanced_collapsible_editors)
         {
           if (ce->has_changes())
             ce->commit();
@@ -376,6 +413,21 @@ public:
   void draw_content()
   {
     for (auto& ce : m_collapsible_editors)
+    {
+      scoped_imgui_id _sii((void*)&ce);
+
+      if (ce && ImGui::CollapsingHeader(ce->node_name().c_str(), ImGuiTreeNodeFlags_None))
+      {
+        ImGui::Indent(5.f);
+        ce->draw_widget();
+        ImGui::Unindent(5.f);
+      }
+    }
+
+    ImGui::Separator();
+    ImGui::Text("for advanced users:");
+
+    for (auto& ce : m_advanced_collapsible_editors)
     {
       scoped_imgui_id _sii((void*)&ce);
 

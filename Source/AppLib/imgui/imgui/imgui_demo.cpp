@@ -3336,7 +3336,7 @@ struct MyItem
 const ImGuiTableSortSpecs* MyItem::s_current_sort_specs = NULL;
 }
 
-// Make the UI compact because there are so many fields
+// Make the UI compact because there are so many m_fields
 static void PushStyleCompact()
 {
     ImGuiStyle& style = ImGui::GetStyle();
@@ -4705,7 +4705,7 @@ static void ShowDemoWindowTables()
         //ImGui::SetNextItemOpen(true, ImGuiCond_Once); // FIXME-TABLE: Enabling this results in initial clipped first pass on table which tend to affects column sizing
         if (ImGui::TreeNode("Options"))
         {
-            // Make the UI compact because there are so many fields
+            // Make the UI compact because there are so many m_fields
             PushStyleCompact();
             ImGui::PushItemWidth(TEXT_BASE_WIDTH * 28.0f);
 

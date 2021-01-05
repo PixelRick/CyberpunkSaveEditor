@@ -83,9 +83,9 @@ struct CItemMod // for CItemData kind 0, 2
   std::list<CItemMod> subs;
   uint32_t uk2 = 0;
 
-  TweakDBID uk3;     //
-  uint32_t uk4 = 0; // is read as a whole
-  uint32_t uk5 = 0x7F7FFFFF; //
+  TweakDBID uk3;       //
+  uint32_t uk4 = 0;    // is read as a whole
+  float uk5 = FLT_MAX; //
 
   CItemMod()
     : iid(), uk1(), uk3()
@@ -156,7 +156,7 @@ struct CItemData
   // kind 0,2 stuff
   TweakDBID uk3_02;    //
   uint32_t uk4_02 = 0; // is read as a whole
-  uint32_t uk5_02 = 0; //
+  float uk5_02 = 0; //
 
   CItemMod root2;
 

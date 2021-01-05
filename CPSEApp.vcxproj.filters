@@ -48,6 +48,12 @@
     <Filter Include="Source\external\fmt">
       <UniqueIdentifier>{c7990d27-362c-4853-947c-e569eca68605}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\cserialization\csystem">
+      <UniqueIdentifier>{a41e872c-3931-47be-b4ba-9fac8bdd344f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\widgets\cproperties">
+      <UniqueIdentifier>{70425ada-529b-4a5e-bb93-3f9394e16a9e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AppLib\IApp.cpp">
@@ -100,6 +106,18 @@
     </ClCompile>
     <ClCompile Include="Source\imgui_extras\imgui_stdlib.cpp">
       <Filter>Source\imgui_extras</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\imgui_extras\cpp_imgui.cpp">
+      <Filter>Source\imgui_extras</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\cserialization\csystem\CObject.cpp">
+      <Filter>Source\cserialization\csystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\cserialization\csystem\CPropertyFactory.cpp">
+      <Filter>Source\cserialization\csystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\cpinternals\cpenums.cpp">
+      <Filter>Source\cpinternals</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +199,9 @@
     <ClInclude Include="Source\utils.hpp">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="Source\widgets\node_editors\StatsSystem.hpp">
+      <Filter>Source\widgets\node_editors</Filter>
+    </ClInclude>
     <ClInclude Include="Source\widgets\hexeditor_windows_mgr.hpp">
       <Filter>Source\widgets</Filter>
     </ClInclude>
@@ -235,8 +256,17 @@
     <ClInclude Include="Source\imgui_extras\imgui_better_combo.hpp">
       <Filter>Source\imgui_extras</Filter>
     </ClInclude>
+    <ClInclude Include="Source\cserialization\cnodes\CCharacterCustomization.hpp">
+      <Filter>Source\cserialization\cnodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\widgets\node_editors\CharacetrCustomization_Appearances.hpp">
+      <Filter>Source\widgets\node_editors</Filter>
+    </ClInclude>
     <ClInclude Include="Source\cserialization\csav_version.hpp">
       <Filter>Source\cserialization</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\imgui_extras\cpp_imgui.hpp">
+      <Filter>Source\imgui_extras</Filter>
     </ClInclude>
     <ClInclude Include="Source\imgui_extras\imgui_stdlib.h">
       <Filter>Source\imgui_extras</Filter>
@@ -249,6 +279,31 @@
     </ClInclude>
     <ClInclude Include="Source\ps_storage.hpp">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cserialization\csystem\CProperty.hpp">
+      <Filter>Source\cserialization\csystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cserialization\csystem\CStringPool.hpp">
+      <Filter>Source\cserialization\csystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cserialization\csystem\CObject.hpp">
+      <Filter>Source\cserialization\csystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cserialization\csystem\CSystem.hpp">
+      <Filter>Source\cserialization\csystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cserialization\cnodes\CSystems.hpp">
+      <Filter>Source\cserialization\cnodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\widgets\node_editors\Systems.hpp">
+      <Filter>Source\widgets\node_editors</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cserialization\csystem\CPropertyFactory.hpp">
+      <Filter>Source\cserialization\csystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cserialization\csystem\CPropertyBase.hpp" />
+    <ClInclude Include="Source\cpinternals\cpenums.hpp">
+      <Filter>Source\cpinternals</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -32,7 +32,7 @@ struct TweakDBID_widget
       modified = true;
     }
 
-    bool namehash_opened = ImGui::TreeNode("> tdbid hash");
+    bool namehash_opened = ImGui::TreeNode("> edit tdbid by value");
 
     {
       scoped_imgui_style_color _stc(ImGuiCol_Text, ImColor::HSV(0.f, 1.f, 0.7f, 1.f).Value);
@@ -45,7 +45,7 @@ struct TweakDBID_widget
       modified |= ImGui::InputScalar("crc32(name) hex",  ImGuiDataType_U32, &x.crc, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
       modified |= ImGui::InputScalar("length(name) hex", ImGuiDataType_U8,  &x.slen,  NULL, NULL, "%02X");
       modified |= ImGui::InputScalar("raw u64 hex",  ImGuiDataType_U64, &x.as_u64,  NULL, NULL, "%016llX", ImGuiInputTextFlags_CharsHexadecimal);
-      ImGui::Text("resolved name: %s", x.name().c_str());
+      //ImGui::Text("resolved name: %s", x.name().c_str());
       ImGui::TreePop();
     }
 

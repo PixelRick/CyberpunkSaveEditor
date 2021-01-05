@@ -2,10 +2,10 @@
 #include <iostream>
 #include <list>
 
-#include "cserialization/serializers.hpp"
-#include "cserialization/node.hpp"
-#include "cpinternals/cpnames.hpp"
-#include "utils.hpp"
+#include <utils.hpp>
+#include <cpinternals/cpnames.hpp>
+#include <cserialization/node.hpp>
+#include <cserialization/serializers.hpp>
 #include "CItemData.hpp"
 
 
@@ -56,10 +56,6 @@ struct CInventory
           if (!entry.from_node(item_node, version))
             return false;
         }
-
-        subinv.items.sort([](const CItemData& a, const CItemData& b){
-          return a.name() < b.name();
-        });
       }
     }
     catch (std::ios::failure&)

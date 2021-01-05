@@ -1169,7 +1169,7 @@ template <typename Char> struct fill_t {
 };
 }  // namespace detail
 
-// We cannot use enum classes as bit fields because of a gcc bug
+// We cannot use enum classes as bit m_fields because of a gcc bug
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=61414.
 namespace align {
 enum type { none, left, right, center, numeric };
@@ -2431,7 +2431,7 @@ template <typename ErrorHandler> class precision_checker {
   ErrorHandler& handler_;
 };
 
-// A format specifier handler that sets fields in basic_format_specs.
+// A format specifier handler that sets m_fields in basic_format_specs.
 template <typename Char> class specs_setter {
  public:
   explicit FMT_CONSTEXPR specs_setter(basic_format_specs<Char>& specs)

@@ -1082,7 +1082,7 @@ STBIDEF void stbi_set_flip_vertically_on_load_thread(int flag_true_if_should_fli
 
 static void *stbi__load_main(stbi__context *s, int *x, int *y, int *comp, int req_comp, stbi__result_info *ri, int bpc)
 {
-   memset(ri, 0, sizeof(*ri)); // make sure it's initialized if we add new fields
+   memset(ri, 0, sizeof(*ri)); // make sure it's initialized if we add new m_fields
    ri->bits_per_channel = 8; // default is 8 so most paths don't have to be changed
    ri->channel_order = STBI_ORDER_RGB; // all current input & output are this, but this is here so we can add BGR order
    ri->num_channels = 0;
@@ -7615,7 +7615,7 @@ STBIDEF int stbi_is_16_bit_from_callbacks(stbi_io_callbacks const *c, void *user
       1.39  (2014-06-15)
               fix to TGA optimization when req_comp != number of components in TGA;
               fix to GIF loading because BMP wasn't rewinding (whoops, no GIFs in my test suite)
-              add support for BMP version 5 (more ignored fields)
+              add support for BMP version 5 (more ignored m_fields)
       1.38  (2014-06-06)
               suppress MSVC warnings on integer casts truncating values
               fix accidental rename of 'skip' field of I/O
@@ -7673,7 +7673,7 @@ STBIDEF int stbi_is_16_bit_from_callbacks(stbi_io_callbacks const *c, void *user
               fix a threading bug (local mutable static)
       1.17    support interlaced PNG
       1.16    major bugfix - stbi__convert_format converted one too many pixels
-      1.15    initialize some fields for thread safety
+      1.15    initialize some m_fields for thread safety
       1.14    fix threadsafe conversion bug
               header-file-only version (#define STBI_HEADER_FILE_ONLY before including)
       1.13    threadsafe

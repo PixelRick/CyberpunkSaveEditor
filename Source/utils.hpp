@@ -87,84 +87,183 @@ constexpr uint64_t FNV1a(std::string_view str)
 }
 
 
-template<typename CharT, typename TraitsT = std::char_traits<CharT> >
-class span_istreambuf : public std::basic_streambuf<CharT, TraitsT>
+class span_istreambuf
+	: public std::streambuf
 {
-	CharT* seekhigh = 0;
-	using bsb_t = std::basic_streambuf<CharT, TraitsT>;
+	char* seekhigh = 0;
 
 public:
 	span_istreambuf() = default;
-	span_istreambuf(const std::span<CharT>& span)
+	span_istreambuf(const std::span<char>& span)
 		: span_istreambuf(span.begin(), span.end()) {}
 
-	span_istreambuf(const CharT* begin, const CharT* end)
+	span_istreambuf(const char* begin, const char* end)
 	{
-		auto ncbegin = const_cast<std::remove_const_t<CharT>*>(begin);
-		auto ncend = const_cast<std::remove_const_t<CharT>*>(end);
+		auto ncbegin = const_cast<char*>(begin);
+		auto ncend = const_cast<char*>(end);
 		this->setg(ncbegin, ncbegin, ncend);
 		seekhigh = ncend;
 	}
 
-	typename bsb_t::pos_type seekoff(typename bsb_t::off_type off, typename std::ios_base::seekdir way, typename std::ios_base::openmode mode = std::ios_base::in) override
+	// Positioning 
+
+	std::streampos seekoff(
+		std::streamoff off,
+		std::ios_base::seekdir way,
+		std::ios_base::openmode mode = std::ios_base::in) override
 	{
 		// MS stringbuf impl without the out part
-		if (mode & std::ios_base::out)
-			return bsb_t::pos_type(bsb_t::off_type(-1));
 
 		const auto gptr_old = this->gptr();
 		const auto seeklow  = this->eback();
 		const auto seekdist = seekhigh - seeklow;
-		typename bsb_t::off_type new_off;
-		switch (way) {
+
+		switch (way)
+		{
 			case std::ios_base::beg:
-				new_off = 0;
 				break;
 			case std::ios_base::end:
-				new_off = (int64_t)seekhigh;
+				off += seekhigh - seeklow;
 				break;
-			case std::ios_base::cur: {
-				if (mode & std::ios_base::in) {
-					if (gptr_old || !seeklow) {
-						new_off = gptr_old - seeklow;
-						break;
-					}
+			case std::ios_base::cur:
+				if (mode & std::ios_base::in && (gptr_old || !seeklow))
+				{
+					off += gptr_old - seeklow;
+					break;
 				}
-			}
-			// fallthrough
+				// fallthrough
 			default:
-				return bsb_t::pos_type(bsb_t::off_type(-1));
+				return std::streampos(-1);
 		}
 
-		if (static_cast<unsigned long long>(off) + new_off > static_cast<unsigned long long>(seekdist)) {
-			return bsb_t::pos_type(bsb_t::off_type(-1));
-		}
+		if (off > seekdist)
+			return std::streampos(-1);
 
-		off += new_off;
-		if (off != 0 && (((mode & std::ios_base::in) && !gptr_old))) {
-			return bsb_t::pos_type(bsb_t::off_type(-1));
-		}
+		if (off != 0 && (mode & std::ios_base::in) && !gptr_old)
+			return std::streampos(-1);
 
 		const auto new_ptr = seeklow + off;
-		if ((mode & std::ios_base::in) && gptr_old) {
-			this->setg(seeklow, new_ptr, seekhigh);
-		}
+		if ((mode & std::ios_base::in) && gptr_old)
+			setg(seeklow, new_ptr, seekhigh);
 
-		return bsb_t::pos_type(off);
+		return std::streampos(off);
 	}
 
+	std::streampos seekpos(
+		std::streampos streampos,
+		std::ios_base::openmode mode = std::ios_base::in) override
+	{
+		return seekoff(streampos, std::ios_base::beg, mode);
+	}
 };
 
-template<typename CharT, typename TraitsT = std::char_traits<CharT> >
-class vector_istreambuf : public span_istreambuf<CharT, TraitsT>
+
+class vector_istreambuf
+	: public span_istreambuf
 {
 public:
 	vector_istreambuf() = default;
-	vector_istreambuf(const std::vector<CharT>& vec)
+	vector_istreambuf(const std::vector<char>& vec)
 		: vector_istreambuf(vec.begin(), vec.end()) {}
 
-	vector_istreambuf(typename std::vector<CharT>::const_iterator begin, typename std::vector<CharT>::const_iterator end)
-		: span_istreambuf<CharT, TraitsT>(&*begin, &*begin + std::distance(begin, end)) {}
+	vector_istreambuf(typename std::vector<char>::const_iterator begin, typename std::vector<char>::const_iterator end)
+		: span_istreambuf(&*begin, &*begin + std::distance(begin, end)) {}
+};
+
+
+// does update the parent stream read position
+class isubstreambuf
+	: public std::streambuf
+{
+	std::streambuf* m_sbuf;
+	std::streampos	m_pos;
+	std::streamsize m_len;
+
+public:
+	explicit isubstreambuf(std::streambuf* sbuf, std::streampos pos, std::streampos len) :
+		m_sbuf(sbuf), m_pos(pos), m_len(len)
+	{
+		m_sbuf->pubseekpos(pos);
+		setbuf(nullptr, 0);
+	}
+
+protected:
+	// Helpers
+
+	std::streampos parent_gpos() const
+	{
+		return m_sbuf->pubseekoff(0, std::ios_base::cur, std::ios_base::in);
+	}
+
+	// Positioning 
+
+	std::streampos seekoff(
+		std::streamoff off,
+		std::ios_base::seekdir way,
+		std::ios_base::openmode mode = std::ios_base::in) override
+	{
+		const std::streampos spos = m_sbuf->pubseekoff(0, std::ios_base::cur, mode);
+
+		switch (way)
+		{
+			case std::ios_base::beg: { off += m_pos;         break; }
+			case std::ios_base::cur: { off += spos;          break; }
+			case std::ios_base::end: { off += m_pos + m_len; break; }
+			default:
+				return std::streampos(-1);
+		}
+
+		return m_sbuf->pubseekpos(off, mode) - m_pos;
+	}
+
+	std::streampos seekpos(
+		std::streampos streampos,
+		std::ios_base::openmode mode = std::ios_base::in) override
+	{
+		streampos += m_pos;
+
+		if (streampos > m_pos + m_len)
+			return -1;
+
+		return m_sbuf->pubseekpos(streampos, mode) - m_pos;
+	}
+
+	// Get area
+
+	std::streamsize showmanyc() override
+	{
+		const std::streamoff off = parent_gpos() - m_pos;
+		if (off < 0 || off >= m_len)
+			return 0;
+		return std::min(m_sbuf->in_avail(), m_len - off);
+	}
+
+	int underflow() override
+	{
+		const std::streamoff off = parent_gpos() - m_pos;
+		if (off >= m_len)
+			return traits_type::eof();
+
+		return m_sbuf->sgetc();
+	}
+
+	int uflow() override
+	{
+		const std::streamoff off = parent_gpos() - m_pos;
+		if (off >= m_len)
+			return traits_type::eof();
+
+		return m_sbuf->sbumpc();
+	}
+
+	std::streamsize xsgetn(char* s, std::streamsize count) override
+	{
+		const std::streamoff off = parent_gpos() - m_pos;
+		if (count > m_len - off)
+			count = m_len - off;
+
+		return m_sbuf->sgetn(s, count);
+	}
 };
 
 

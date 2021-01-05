@@ -216,7 +216,7 @@ class node_reader
   : public std::istream
 {
   std::shared_ptr<const node_t> m_node;
-  vector_istreambuf<char> m_sbuf;
+  vector_istreambuf m_sbuf;
   size_t m_cur_idx;
   csav_version m_ver;
   bool m_missed_data = false;
@@ -228,7 +228,7 @@ public:
     this->exceptions(std::ios::failbit | std::ios::badbit);
     auto blob = current_blob();
     if (blob)
-      m_sbuf = vector_istreambuf<char>(blob->data());
+      m_sbuf = vector_istreambuf(blob->data());
   }
 
   virtual ~node_reader() = default;
@@ -289,7 +289,7 @@ public:
 
     const auto& blob = current_blob();
     if (blob)
-      m_sbuf = vector_istreambuf<char>(blob->data());
+      m_sbuf = vector_istreambuf(blob->data());
 
     return child_node;
   }

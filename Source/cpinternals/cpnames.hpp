@@ -159,7 +159,9 @@ struct CName
     return os;
   }
 
-  std::string name() const;
+  std::string name() const { return str(); }
+
+  std::string str() const;
 };
 
 #pragma pack(pop)
@@ -226,7 +228,7 @@ public:
   const std::vector<std::string>& sorted_names() const { return s_full_list; }
 };
 
-inline std::string CName::name() const
+inline std::string CName::str() const
 {
   auto& cname_resolver = CNameResolver::get();
   return cname_resolver.resolve(*this);

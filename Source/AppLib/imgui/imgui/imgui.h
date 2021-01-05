@@ -1264,7 +1264,7 @@ enum ImGuiKey_
     ImGuiKey_COUNT
 };
 
-// To test io.KeyMods (which is a combination of individual fields io.KeyCtrl, io.KeyShift, io.KeyAlt set by user/backend)
+// To test io.KeyMods (which is a combination of individual m_fields io.KeyCtrl, io.KeyShift, io.KeyAlt set by user/backend)
 enum ImGuiKeyModFlags_
 {
     ImGuiKeyModFlags_None       = 0,
@@ -1276,7 +1276,7 @@ enum ImGuiKeyModFlags_
 
 // Gamepad/Keyboard navigation
 // Keyboard: Set io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard to enable. NewFrame() will automatically fill io.NavInputs[] based on your io.KeysDown[] + io.KeyMap[] arrays.
-// Gamepad:  Set io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad to enable. Backend: set ImGuiBackendFlags_HasGamepad and fill the io.NavInputs[] fields before calling NewFrame(). Note that io.NavInputs[] is cleared by EndFrame().
+// Gamepad:  Set io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad to enable. Backend: set ImGuiBackendFlags_HasGamepad and fill the io.NavInputs[] m_fields before calling NewFrame(). Note that io.NavInputs[] is cleared by EndFrame().
 // Read instructions in imgui.cpp for more details. Download PNG/PSD at http://goo.gl/9LgVZW.
 enum ImGuiNavInput_
 {
@@ -1400,7 +1400,7 @@ enum ImGuiCol_
 };
 
 // Enumeration for PushStyleVar() / PopStyleVar() to temporarily modify the ImGuiStyle structure.
-// - The enum only refers to fields of ImGuiStyle which makes sense to be pushed/popped inside UI code.
+// - The enum only refers to m_fields of ImGuiStyle which makes sense to be pushed/popped inside UI code.
 //   During initialization or between frames, feel free to just poke into ImGuiStyle directly.
 // - Tip: Use your programming IDE navigation facilities on the names in the _second column_ below to find the actual members and their description.
 //   In Visual Studio IDE: CTRL+comma ("Edit.NavigateTo") can follow symbols in comments, whereas CTRL+F12 ("Edit.GoToImplementation") cannot.
@@ -1798,7 +1798,7 @@ struct ImGuiIO
     ImVec2      MouseDelta;                     // Mouse delta. Note that this is zero if either current or previous position are invalid (-FLT_MAX,-FLT_MAX), so a disappearing/reappearing mouse won't have a huge delta.
 
     //------------------------------------------------------------------
-    // [Internal] Dear ImGui will maintain those fields. Forward compatibility not guaranteed!
+    // [Internal] Dear ImGui will maintain those m_fields. Forward compatibility not guaranteed!
     //------------------------------------------------------------------
 
     ImGuiKeyModFlags KeyMods;                   // Key mods flags (same as io.KeyCtrl/KeyShift/KeyAlt/KeySuper but merged into flags), updated by NewFrame()
@@ -2122,7 +2122,7 @@ struct ImGuiListClipper
     // items_height: Use -1.0f to be calculated automatically on first step. Otherwise pass in the distance between your items, typically GetTextLineHeightWithSpacing() or GetFrameHeightWithSpacing().
     IMGUI_API void Begin(int items_count, float items_height = -1.0f);  // Automatically called by constructor if you passed 'items_count' or by Step() in Step 1.
     IMGUI_API void End();                                               // Automatically called on the last call of Step() that returns false.
-    IMGUI_API bool Step();                                              // Call until it returns false. The DisplayStart/DisplayEnd fields will be set and you can process/draw those items.
+    IMGUI_API bool Step();                                              // Call until it returns false. The DisplayStart/DisplayEnd m_fields will be set and you can process/draw those items.
 
 #ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
     inline ImGuiListClipper(int items_count, float items_height = -1.0f) { memset(this, 0, sizeof(*this)); ItemsCount = -1; Begin(items_count, items_height); } // [removed in 1.79]
@@ -2198,9 +2198,9 @@ typedef void (*ImDrawCallback)(const ImDrawList* parent_list, const ImDrawCmd* c
 
 // Typically, 1 command = 1 GPU draw call (unless command is a callback)
 // - VtxOffset/IdxOffset: When 'io.BackendFlags & ImGuiBackendFlags_RendererHasVtxOffset' is enabled,
-//   those fields allow us to render meshes larger than 64K vertices while keeping 16-bit indices.
-//   Pre-1.71 backends will typically ignore the VtxOffset/IdxOffset fields.
-// - The ClipRect/TextureId/VtxOffset fields must be contiguous as we memcmp() them together (this is asserted for).
+//   those m_fields allow us to render meshes larger than 64K vertices while keeping 16-bit indices.
+//   Pre-1.71 backends will typically ignore the VtxOffset/IdxOffset m_fields.
+// - The ClipRect/TextureId/VtxOffset m_fields must be contiguous as we memcmp() them together (this is asserted for).
 struct ImDrawCmd
 {
     ImVec4          ClipRect;           // 4*4  // Clipping rectangle (x1, y1, x2, y2). Subtract ImDrawData->DisplayPos to get clipping rectangle in "viewport" coordinates
@@ -2211,7 +2211,7 @@ struct ImDrawCmd
     ImDrawCallback  UserCallback;       // 4-8  // If != NULL, call the function instead of rendering the vertices. clip_rect and texture_id will be set normally.
     void*           UserCallbackData;   // 4-8  // The draw callback code can access this.
 
-    ImDrawCmd() { memset(this, 0, sizeof(*this)); } // Also ensure our padding fields are zeroed
+    ImDrawCmd() { memset(this, 0, sizeof(*this)); } // Also ensure our padding m_fields are zeroed
 };
 
 // Vertex index, default to 16-bit
@@ -2231,7 +2231,7 @@ struct ImDrawVert
 };
 #else
 // You can override the vertex format layout by defining IMGUI_OVERRIDE_DRAWVERT_STRUCT_LAYOUT in imconfig.h
-// The code expect ImVec2 pos (8 bytes), ImVec2 uv (8 bytes), ImU32 col (4 bytes), but you can re-order them or add other fields as needed to simplify integration in your engine.
+// The code expect ImVec2 pos (8 bytes), ImVec2 uv (8 bytes), ImU32 col (4 bytes), but you can re-order them or add other m_fields as needed to simplify integration in your engine.
 // The type has to be described within the macro (you can either declare the struct or use a typedef). This is because ImVec2/ImU32 are likely not declared a the time you'd want to set your type up.
 // NOTE: IMGUI DOESN'T CLEAR THE STRUCTURE AND DOESN'T CALL A CONSTRUCTOR SO ANY CUSTOM FIELD WILL BE UNINITIALIZED. IF YOU ADD EXTRA FIELDS (SUCH AS A 'Z' COORDINATES) YOU WILL NEED TO CLEAR THEM DURING RENDER OR TO IGNORE THEM.
 IMGUI_OVERRIDE_DRAWVERT_STRUCT_LAYOUT;
