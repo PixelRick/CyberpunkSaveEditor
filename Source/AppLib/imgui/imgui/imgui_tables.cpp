@@ -878,7 +878,7 @@ void ImGui::TableUpdateLayout(ImGuiTable* table)
 
         if ((table->EnabledMaskByDisplayOrder & ((ImU64)1 << order_n)) == 0)
         {
-            // Hidden column: clear a few m_fields and we are done with it for the remainder of the function.
+            // Hidden column: clear a few fields and we are done with it for the remainder of the function.
             // We set a zero-width clip rect but set Min.y/Max.y properly to not interfere with the clipper.
             column->MinX = column->MaxX = column->WorkMinX = column->ClipRect.Min.x = column->ClipRect.Max.x = offset_x;
             column->WidthGiven = 0.0f;
@@ -2510,7 +2510,7 @@ void ImGui::TableSortSpecsSanitize(ImGuiTable* table)
         ImU64 fixed_mask = 0x00;
         for (int sort_n = 0; sort_n < sort_order_count; sort_n++)
         {
-            // Fix: Rewrite sort order m_fields if needed so they have no gap or duplicate.
+            // Fix: Rewrite sort order fields if needed so they have no gap or duplicate.
             // (e.g. SortOrder 0 disappeared, SortOrder 1..2 exists --> rewrite then as SortOrder 0..1)
             int column_with_smallest_sort_order = -1;
             for (int column_n = 0; column_n < table->ColumnsCount; column_n++)
