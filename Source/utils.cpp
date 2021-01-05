@@ -1,6 +1,7 @@
 #include "utils.hpp"
 
 #include <windows.h>
+#include <ShlObj.h>
 #include <intrin.h>
 #include <cassert>
 #include <string>
@@ -161,3 +162,17 @@ std::vector<uintptr_t> sse2_strstr(const unsigned char* s, size_t m, const unsig
   return ret;
 }
 
+
+std::optional<std::filesystem::path> find_user_saved_games() {
+  PWSTR out_ptr{};
+  HRESULT hr = SHGetKnownFolderPath(FOLDERID_SavedGames, KF_FLAG_DEFAULT, nullptr, &out_ptr);
+  if (SUCCEEDED(hr)) {
+    std::shared_ptr<void> free_guard(out_ptr, CoTaskMemFree);
+    auto subdir = std::filesystem::path(out_ptr) / "CD Projekt Red" / "Cyberpunk 2077";
+    std::error_code ec;
+    if (exists(subdir, ec) && !ec && is_directory(subdir, ec) && !ec) {
+      return subdir;
+    }
+  }
+  return {};
+}

@@ -745,8 +745,20 @@ public:
     try
     {
       auto& jroot = ps_storage::jroot();
-      if (jroot.find("open_path") != jroot.end())
-        open_dialog.SetPwd(jroot.at("open_path").get<std::string>());
+      std::error_code ec;
+      std::optional<std::filesystem::path> pwd;
+      if (jroot.find("open_path") != jroot.end()) {
+        std::filesystem::path dir = jroot.at("open_path").get<std::string>();
+        if (exists(dir, ec) && !ec) {
+            pwd = dir;
+        }
+      }
+      if (auto dir = find_user_saved_games()) {
+        pwd = *dir;
+      }
+      if (pwd) {
+        open_dialog.SetPwd(*pwd);
+      }
     }
     catch (std::exception&) {}
   }

@@ -1,4 +1,6 @@
 #pragma once
+#include <filesystem>
+#include <optional>
 #include <stdint.h>
 #include <string>
 #include <vector>
@@ -286,3 +288,4 @@ std::string bytes_to_hex(const void* buf, size_t len);
 std::vector<uintptr_t> sse2_strstr_masked(const unsigned char* s, size_t m, const unsigned char* needle, size_t n, const char* mask, size_t maxcnt = 0);
 std::vector<uintptr_t> sse2_strstr(const unsigned char* s, size_t m, const unsigned char* needle, size_t n, size_t maxcnt = 0);
 
+std::optional<std::filesystem::path> find_user_saved_games();
