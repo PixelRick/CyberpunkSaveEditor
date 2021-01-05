@@ -58,7 +58,10 @@ protected:
   std::vector<char> m_buffer;
 
 public:
-  CStringPool() = default;
+  CStringPool()
+  {
+    m_buffer.reserve(0x1000);
+  }
 
   bool has_string(std::string_view s) const
   {
@@ -79,7 +82,6 @@ public:
 
     idx = (uint32_t)m_descs.size();
     m_descs.emplace_back((uint32_t)m_buffer.size(), (uint32_t)ssize);
-    m_buffer.reserve(m_buffer.size() + ssize);
     m_buffer.insert(m_buffer.end(), s.begin(), s.end());
     m_buffer.push_back('\0');
 
