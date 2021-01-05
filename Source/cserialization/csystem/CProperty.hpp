@@ -449,7 +449,7 @@ protected:
   CEnumList::enum_members_sptr m_p_enum_members;
 
 public:
-  CEnumProperty(std::string_view enum_name)
+  CEnumProperty(std::string enum_name)
     : CProperty(EPropertyKind::Combo), m_enum_name(enum_name)
   {
     m_p_enum_members = CEnumList::get().get_enum(enum_name);

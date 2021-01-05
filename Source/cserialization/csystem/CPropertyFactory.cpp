@@ -34,7 +34,7 @@ CPropertySPtr CPropertyFactory::create(std::string_view ctypename)
   else if (ctypename == "NodeRef")    { return std::make_shared<CNodeRefProperty>(); }
   else if (CEnumList::get().is_registered(ctypename))
   {
-    return std::make_shared<CEnumProperty>(ctypename);
+    return std::make_shared<CEnumProperty>(std::string(ctypename));
   }
   else if (ctypename == "gameSavedStatsData")
   {

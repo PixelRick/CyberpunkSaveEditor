@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <algorithm>
 #include <cserialization/serializers.hpp>
 #include <fmt/format.h>
@@ -17,7 +17,7 @@ public:
   using enum_members_sptr = std::shared_ptr<enum_members_t>;
 
 private:
-  std::map<std::string, enum_members_sptr, std::less<>> s_list;
+  std::unordered_map<std::string, enum_members_sptr> s_list;
 
   // filtered lists
 
@@ -37,10 +37,10 @@ public:
 public:
   bool is_registered(std::string_view enum_name) const
   {
-    return s_list.find(enum_name) != s_list.end();
+    return s_list.find(std::string(enum_name)) != s_list.end();
   }
 
-  enum_members_sptr get_enum(std::string_view enum_name) const
+  enum_members_sptr get_enum(std::string enum_name) const
   {
     auto it = s_list.find(enum_name);
     if (it != s_list.end())
