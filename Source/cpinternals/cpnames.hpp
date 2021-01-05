@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <algorithm>
 #include <cserialization/serializers.hpp>
 #include <fmt/format.h>
@@ -69,8 +70,8 @@ enum class TweakDBIDCategory
 class TweakDBIDResolver
 {
   std::vector<std::string> s_full_list;
-  std::map<uint64_t, std::string> s_tdbid_invmap;
-  std::map<uint32_t, std::string> s_crc32_invmap;
+  std::unordered_map<uint64_t, std::string> s_tdbid_invmap;
+  std::unordered_map<uint32_t, std::string> s_crc32_invmap;
 
   // filtered lists
 
@@ -169,7 +170,7 @@ struct CName
 class CNameResolver
 {
   std::vector<std::string> s_full_list;
-  std::map<uint64_t, std::string> s_cname_invmap;
+  std::unordered_map<uint64_t, std::string> s_cname_invmap;
 
   CNameResolver();
   ~CNameResolver() = default;
@@ -191,8 +192,7 @@ public:
     if (s_cname_invmap.find(id) == s_cname_invmap.end())
     {
       s_cname_invmap[id] = name;
-      s_full_list.push_back(std::string(name));
-      std::sort(s_full_list.begin(), s_full_list.end());
+      insert_sorted(s_full_list, std::string(name));
     }
   }
 

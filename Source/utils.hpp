@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 #if __has_include(<span>) && (!defined(_HAS_CXX20) or _HAS_CXX20)
 #include <span>
@@ -265,6 +266,15 @@ protected:
 		return m_sbuf->sgetn(s, count);
 	}
 };
+
+template <typename T>
+typename std::vector<T>::iterator 
+insert_sorted(std::vector<T>& vec, const T& item)
+{
+	return vec.insert( 
+		std::upper_bound(vec.begin(), vec.end(), item),
+		item);
+}
 
 
 void replace_all_in_str(std::string& s, const std::string& from, const std::string& to);
