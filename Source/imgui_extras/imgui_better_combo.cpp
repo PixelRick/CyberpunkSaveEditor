@@ -1,5 +1,5 @@
-#include "AppLib/imgui/imgui/imgui.h"
-#include "AppLib/imgui/imgui/imgui_internal.h"
+#include "AppLib/imgui/imgui.h"
+#include "AppLib/imgui/imgui_internal.h"
 #include <cctype>
 	
 // https://github.com/HasKha/GWToolboxpp
