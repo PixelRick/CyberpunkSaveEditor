@@ -170,7 +170,6 @@ public:
     assign_children(children.begin(), children.end());
   }
 
-  template <class Iter>
   void children_push_back(const std::shared_ptr<const node_t>& node)
   {
     m_children.push_back(node);

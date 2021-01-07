@@ -68,7 +68,7 @@ public:
     try_load_node_data_struct(inventory,  "inventory"                           , test_reserialization); progress = 0.3f;
     try_load_node_data_struct(chtrcustom, "CharacetrCustomization_Appearances"  , test_reserialization); progress = 0.4f;
     //try_load_node_data_struct(psdata,     "PSData"                            , test_reserialization); progress = 0.7f;
-    try_load_node_data_struct(stats,      "StatsSystem"                         , test_reserialization); progress = 0.8f;
+    //try_load_node_data_struct(stats,      "StatsSystem"                         , test_reserialization); progress = 0.8f;
     try_load_node_data_struct(statspool,  "StatPoolsSystem"                     , test_reserialization); progress = 1.0f;
     
     return true;
@@ -81,7 +81,7 @@ public:
     try_save_node_data_struct(inventory,  "inventory");                           progress = 0.1f;
     try_save_node_data_struct(chtrcustom, "CharacetrCustomization_Appearances");  progress = 0.2f;
     //try_save_node_data_struct(psdata,     "PSData");                              progress = 0.5f;
-    try_save_node_data_struct(stats,      "StatsSystem");                         progress = 0.6f;
+    //try_save_node_data_struct(stats,      "StatsSystem");                         progress = 0.6f;
     try_save_node_data_struct(statspool,  "StatPoolsSystem");                     progress = 0.8f;
     
     if (!save_stree(path, dump_decompressed_data, ps4_weird_format))
@@ -105,10 +105,18 @@ protected:
       if (!new_node)
         return false;
 
-      serial_tree stree1;
-      stree1.from_node(node, 4);
-      serial_tree stree2;
-      stree2.from_node(new_node, 4);
+      serial_tree stree1, stree2;
+
+      {
+        auto root = node_t::create_shared(node_t::root_node_idx, "root");
+        root->nonconst().children_push_back(node);
+        stree1.from_node(root, 4);
+      }
+      {
+        auto root = node_t::create_shared(node_t::root_node_idx, "root");
+        root->nonconst().children_push_back(new_node);
+        stree2.from_node(root, 4);
+      }
 
       if (stree1.nodedata.size() != stree2.nodedata.size()
         || std::memcmp(stree1.nodedata.data(), stree2.nodedata.data(), stree1.nodedata.size()))

@@ -295,7 +295,6 @@ public:
       fields_cnt++;
     }
 
-
     os << cbytes_ref(fields_cnt);
 
     // record current cursor position, since we'll rewrite descriptors
