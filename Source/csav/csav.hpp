@@ -69,7 +69,7 @@ public:
     try_load_node_data_struct(chtrcustom, "CharacetrCustomization_Appearances"  , test_reserialization); progress = 0.4f;
     //try_load_node_data_struct(psdata,     "PSData"                            , test_reserialization); progress = 0.7f;
     try_load_node_data_struct(stats,      "StatsSystem"                         , test_reserialization); progress = 0.8f;
-    try_load_node_data_struct(statspool,  "StatsPoolSystem"                     , test_reserialization); progress = 1.0f;
+    try_load_node_data_struct(statspool,  "StatPoolsSystem"                     , test_reserialization); progress = 1.0f;
     
     return true;
   }
@@ -82,7 +82,7 @@ public:
     try_save_node_data_struct(chtrcustom, "CharacetrCustomization_Appearances");  progress = 0.2f;
     //try_save_node_data_struct(psdata,     "PSData");                              progress = 0.5f;
     try_save_node_data_struct(stats,      "StatsSystem");                         progress = 0.6f;
-    try_save_node_data_struct(statspool,  "StatsPoolSystem");                     progress = 0.8f;
+    try_save_node_data_struct(statspool,  "StatPoolsSystem");                     progress = 0.8f;
     
     if (!save_stree(path, dump_decompressed_data, ps4_weird_format))
       return false;
