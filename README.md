@@ -13,10 +13,12 @@ Take a look at the other save editor project: https://github.com/WolvenKit/Cyber
     (this can fail for unknown reasons yet between fresh save and high-level save)
 5) inventory editor (most fields are still obscure and some item names are not resolved)
 6) can unflag all quest items to make them normal items
+7) can add stat modifiers to items!
+8) can edit the scriptables data in system nodes.
 
 # Preview
 ![](./preview.png)
 
 # Roadmap
-1) Copy/Paste of character blobs between saves. DONE.
-2) Some node-specific editor windows to replace the hex editor: inventory+itemData, appearance... 
+1) Code cleaning
+2) Work on github issues
