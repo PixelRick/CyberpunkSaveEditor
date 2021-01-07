@@ -527,7 +527,10 @@ public:
   ~CDynArrayProperty() override
   {
     for (auto& elt : m_elts)
-      elt->remove_listener(this);
+    {
+      if (elt)
+        elt->remove_listener(this);
+    }
   }
 
 public:
@@ -570,11 +573,11 @@ public:
     for (auto& elt : m_elts)
     {
       elt = m_elt_creator();
+      elt->add_listener(this);
       if (elt->kind() == EPropertyKind::Unknown)
         return false;
       if (!elt->serialize_in(is, serctx))
         return false;
-      elt->add_listener(this);
     }
 
     return is.good();
@@ -666,7 +669,9 @@ public:
 
       if (to_rem >= 0)
       {
-        m_elts.erase(m_elts.begin() + to_rem);
+        auto remit = m_elts.begin() + to_rem;
+        m_elts.erase(remit);
+        (*remit)->remove_listener(this);
         modified = true;
       }
     }
@@ -974,6 +979,7 @@ public:
     , m_base_ctypename(sub_ctypename)
     , m_ctypename(std::string("handle:") + m_base_ctypename.str())
   {
+    // dangerous, could infinite loop.. but also dangerous to have a nullptr here atm
     m_obj = std::make_shared<CObject>(m_base_ctypename);
   }
 

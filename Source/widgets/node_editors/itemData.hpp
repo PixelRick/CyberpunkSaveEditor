@@ -69,7 +69,7 @@ struct CItemMod_widget
     bool modified = false;
 
 
-    static ImGuiTableFlags tbl_flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV;
+    static ImGuiTableFlags tbl_flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_Resizable;
 
     if (ImGui::BeginTable("itemData", 2, tbl_flags))
     {
@@ -134,7 +134,7 @@ struct CItemData_widget
     if (ImGui::BeginTable("itemData", 2, tbl_flags))
     {
       ImGui::TableSetupScrollFreeze(0, 1);
-      ImGui::TableSetupColumn("item data", ImGuiTableColumnFlags_WidthFixed, 400.f);
+      ImGui::TableSetupColumn("item data", ImGuiTableColumnFlags_WidthFixed, 450.f);
       ImGui::TableSetupColumn("mods data", ImGuiTableColumnFlags_WidthStretch);
       ImGui::TableHeadersRow();
 

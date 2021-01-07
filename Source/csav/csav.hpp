@@ -129,7 +129,8 @@ protected:
         ofs.write(stree2.nodedata.data(), stree2.nodedata.size());
         ofs.close();
 
-        throw std::runtime_error(fmt::format("reserialized {} differs from original", nodename));
+        MessageBoxA(0, "reserialized {} differs from original", "test error",0);
+        return false;
       }
     }
     return true;
