@@ -1,9 +1,11 @@
 # CyberpunkSaveEditor
-A tool to edit Cyberpunk 2077 sav.dat files
+A tool to edit Cyberpunk 2077 sav.dat files (join the CP modding discord: https://discord.gg/cp77modding)
 
-Join the CP modding discord: https://discord.gg/cp77modding
+Take a look at the other save editor project here: https://github.com/WolvenKit/CyberCAT
 
-Take a look at the other save editor project: https://github.com/WolvenKit/CyberCAT
+To download CPSE as an executable, please click on Releases in the right pane as shown in this screenshot:
+
+![](./tuto_github.png)
 
 # What works
 1) load, save node tree
