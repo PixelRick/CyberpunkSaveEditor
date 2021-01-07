@@ -11,7 +11,7 @@
 #include <csav/csystem/CStringPool.hpp>
 #include <csav/csystem/CObject.hpp>
 
-enum class ECSystemKind : uint8_t
+enum class ESystemKind : uint8_t
 {
   DropPointSystem,
   GameplaySettingsSystem,
@@ -31,17 +31,6 @@ enum class ECSystemKind : uint8_t
   DataTrackingSystem,
 };
 
-
-struct CSystemObject
-{
-  CSystemObject() = default;
-
-  CSystemObject(std::string_view name, const CObjectSPtr& obj)
-    : name(name), obj(obj) {}
-
-  std::string name;
-  CObjectSPtr obj;
-};
 
 
 class CSystem
@@ -70,23 +59,31 @@ private:
     uint32_t data_offset  = 0;// relative to the end of the header in stream
   };
 
+private:
   header_t m_header;
   std::vector<CName> m_subsys_names;
-  std::vector<CSystemObject> m_objects;
+
+  // those are root objects, not all the serialized ones
+  std::vector<CObjectSPtr> m_objects;
+  // these are backed-up handle-objects for reserialization
+  std::vector<CObjectSPtr> m_handle_objects;
+
+  // for now let's not rebuild the strpool from scratch
+  // since we don't handle all types..
+  CSystemSerCtx m_serctx;
 
 public:
   CSystem() = default;
+  ~CSystem() = default;
 
-
+public:
   const std::vector<CName>& subsys_names() const { return m_subsys_names; }
         std::vector<CName>& subsys_names()       { return m_subsys_names; }
 
-  const std::vector<CSystemObject>& objects() const { return m_objects; }
-        std::vector<CSystemObject>& objects()       { return m_objects; }
+  const std::vector<CObjectSPtr>& objects() const { return m_objects; }
+        std::vector<CObjectSPtr>& objects()       { return m_objects; }
 
-  // for now let's not rebuild it from scratch since we don't handle all types..
-  CStringPool m_strpool;
-
+public:
   bool serialize_in(std::istream& reader)
   {
     m_subsys_names.clear();
@@ -130,7 +127,7 @@ public:
     const uint32_t strpool_data_size = m_header.obj_descs_offset - strpool_descs_size;
 
     //CStringPool strpool;
-    CStringPool& strpool = m_strpool;
+    CStringPool& strpool = m_serctx.strpool;
     if (!strpool.serialize_in(reader, strpool_descs_size, strpool_data_size))
       return false;
 
@@ -164,32 +161,45 @@ public:
     if (blob_size != (reader.tellg() - blob_spos))
       return false;
 
-    // here the offsets relative to base_offset are converted to offsets relative to objdata
-    
-    size_t next_obj_offset = objdata_size;
-    for (auto it = obj_descs.rbegin(); it != obj_descs.rend(); ++it)
+    // prepare default initialized objects
+    m_serctx.m_objects.reserve(obj_descs.size());
+    for (auto it = obj_descs.begin(); it != obj_descs.end(); ++it)
     {
       const auto& desc = *it;
-      auto obj_name = strpool.from_idx(desc.name_idx);
 
-      auto new_obj = std::make_shared<CObject>();
-
+      // check desc is valid
       if (desc.data_offset < m_header.objdata_offset)
         return false;
+
+      auto obj_ctypename = CSysName(strpool.from_idx(desc.name_idx));
+      auto new_obj = std::make_shared<CObject>(obj_ctypename); // todo: static create method
+      m_serctx.m_objects.push_back(new_obj);
+    }
+
+    // here the offsets relative to base_offset are converted to offsets relative to objdata
+    size_t next_obj_offset = objdata_size;
+    auto obj_it = m_serctx.m_objects.rbegin();
+    for (auto it = obj_descs.rbegin(); it != obj_descs.rend(); ++it, ++obj_it)
+    {
+      const auto& desc = *it;
 
       const size_t offset = desc.data_offset - m_header.objdata_offset;
       if (offset > next_obj_offset)
         throw std::logic_error("CSystem: false assumption #2. please open an issue.");
 
       std::span<char> objblob((char*)objdata.data() + offset, next_obj_offset - offset);
-      if (!new_obj->serialize_in(objblob, strpool))
+      if (!(*obj_it)->serialize_in(objblob, m_serctx))
         return false;
-
-      m_objects.emplace_back(obj_name, new_obj);
 
       next_obj_offset = offset;
     }
-    std::reverse(m_objects.begin(), m_objects.end());
+
+    const auto& serobjs = m_serctx.m_objects;
+    size_t root_obj_cnt = m_subsys_names.size();
+    if (root_obj_cnt == 0)
+      root_obj_cnt = 1;
+    m_objects.assign(serobjs.begin(), serobjs.begin() + root_obj_cnt);
+    m_handle_objects.assign(serobjs.begin() + root_obj_cnt, serobjs.end()); // backup handle-objects
 
     return true;
   }
@@ -222,22 +232,29 @@ public:
     // to do that, but it is also not leaned at all.
 
     //CStringPool strpool;
-    CStringPool& strpool = const_cast<CStringPool&>(m_strpool);
+    CSystemSerCtx& serctx = const_cast<CSystemSerCtx&>(m_serctx);
+    // here we can't really remove handle-objects because there might be hidden handles in unsupported types
+    serctx.m_objects.assign(m_objects.begin(), m_objects.end());
+    serctx.m_objects.insert(serctx.m_objects.end(), m_handle_objects.begin(), m_handle_objects.end());
+
     std::ostringstream ss;
     std::vector<obj_desc_t> obj_descs;
-    obj_descs.reserve(m_objects.size());
+    obj_descs.reserve(m_objects.size()); // ends up higher in the presence of handles
 
-    for (auto& obj : m_objects)
+    // serctx.m_objects is extended during object serialization (handles)
+    for (size_t i = 0; i < serctx.m_objects.size(); ++i)
     {
+      auto& obj = serctx.m_objects[i];
       const uint32_t tmp_offset = (uint32_t)ss.tellp();
-      obj_descs.emplace_back(strpool.to_idx(obj.name), tmp_offset);
-      if (!obj.obj->serialize_out(ss, strpool))
+      const uint16_t name_idx = serctx.strpool.to_idx(obj->ctypename().str());
+      obj_descs.emplace_back(name_idx, tmp_offset);
+      if (!obj->serialize_out(ss, serctx))
         return false;
     }
 
     // time to write strpool
     uint32_t strpool_pool_size = 0;
-    if (!strpool.serialize_out(writer, new_header.strpool_data_offset, strpool_pool_size))
+    if (!serctx.strpool.serialize_out(writer, new_header.strpool_data_offset, strpool_pool_size))
       return false;
 
     new_header.obj_descs_offset = new_header.strpool_data_offset + strpool_pool_size;

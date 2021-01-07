@@ -13,7 +13,7 @@ namespace ImGui
   // returns true if data has been modified
   template <typename T, typename ItemNameGetFnT,
     std::enable_if_t<
-      std::is_convertible_v<ItemNameGetFnT&&, std::function<std::string_view(const T&)>>
+      std::is_convertible_v<ItemNameGetFnT&&, std::function<std::string(const T&)>>
     , int> = 0
   >
   bool ErasableListBox(
@@ -41,11 +41,11 @@ namespace ImGui
       for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
       {
         const bool item_selected = (i == *current_item);
-        std::string_view item_name = std::forward<ItemNameGetFnT>(item_name_getter)(items[i]);
+        std::string item_name = std::forward<ItemNameGetFnT>(item_name_getter)(items[i]);
         if (item_name.empty())
           item_name = "*Unknown item*";
 
-        std::string row_label = std::string(item_name);
+        std::string row_label = item_name;
         if (numbered_labels)
           row_label = fmt::format("{:>3d} {}", i, row_label);
 

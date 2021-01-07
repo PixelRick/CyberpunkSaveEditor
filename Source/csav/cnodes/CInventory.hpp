@@ -15,12 +15,14 @@ struct sub_inventory_t
   std::list<CItemData> items;
 };
 
-
 struct CInventory
+  : public node_serializable
 {
   std::list<sub_inventory_t> m_subinvs;
 
-  bool from_node(const std::shared_ptr<const node_t>& node, const csav_version& version)
+  std::string node_name() const override { return "inventory"; }
+
+  bool from_node_impl(const std::shared_ptr<const node_t>& node, const csav_version& version) override
   {
     if (!node)
       return false;
@@ -67,7 +69,7 @@ struct CInventory
     return reader.at_end();
   }
 
-  std::shared_ptr<const node_t> to_node(const csav_version& version)
+  std::shared_ptr<const node_t> to_node_impl(const csav_version& version) const override
   {
     node_writer writer(version);
 
@@ -81,7 +83,7 @@ struct CInventory
       uint32_t items_cnt = (uint32_t)subinv.items.size();
       writer.write((char*)&items_cnt, 4);
 
-      for (auto& entry : subinv.items)
+      for (const auto& entry : subinv.items)
       {
         auto item_node = entry.to_node(version);
         if (!item_node)
@@ -92,7 +94,7 @@ struct CInventory
       }
     }
 
-    return writer.finalize("inventory");
+    return writer.finalize(node_name());
   }
 };
 

@@ -380,3 +380,22 @@ public:
   }
 };
 
+struct node_serializable
+{
+  virtual std::string node_name() const = 0;
+
+  bool from_node(const std::shared_ptr<const node_t>& node, const csav_version& version)
+  {
+    return from_node_impl(node, version);
+  }
+
+  std::shared_ptr<const node_t> to_node(const csav_version& version) const
+  {
+    return to_node_impl(version);
+  }
+
+private:
+  virtual bool from_node_impl(const std::shared_ptr<const node_t>& node, const csav_version& version) = 0;
+  virtual std::shared_ptr<const node_t> to_node_impl(const csav_version& version) const = 0;
+};
+

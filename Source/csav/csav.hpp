@@ -9,30 +9,10 @@
 #include "node.hpp"
 #include "csav_version.hpp"
 
+#include <csav/cnodes.hpp>
+#include <csav/serial_tree.hpp>
+
 #define XLZ4_CHUNK_SIZE 0x40000
-
-struct node_desc
-{
-  std::string name;
-  int32_t next_idx, child_idx;
-  uint32_t data_offset, data_size;
-
-  friend std::istream& operator>>(std::istream& is, node_desc& ed)
-  {
-    is >> cp_plstring_ref(ed.name);
-    is >> cbytes_ref(ed.next_idx   ) >> cbytes_ref(ed.child_idx);
-    is >> cbytes_ref(ed.data_offset) >> cbytes_ref(ed.data_size);
-    return is;
-  }
-
-  friend std::ostream& operator<<(std::ostream& os, const node_desc& ed)
-  {
-    os << cp_plstring_ref(ed.name);
-    os << cbytes_ref(ed.next_idx   ) << cbytes_ref(ed.child_idx);
-    os << cbytes_ref(ed.data_offset) << cbytes_ref(ed.data_size);
-    return os;
-  }
-};
 
 struct compressed_chunk_desc
 {
@@ -55,6 +35,7 @@ struct compressed_chunk_desc
   }
 };
 
+
 class csav
 {
 public:
@@ -62,14 +43,101 @@ public:
   csav_version ver;
   uint32_t uk0, uk1;
   std::string suk;
-  std::vector<node_desc> node_descs;
+
+  serial_tree stree;
   std::shared_ptr<const node_t> root_node;
 
-public:
-  bool open_with_progress(std::filesystem::path path, float& progress);
-  bool save_with_progress(std::filesystem::path path, float& progress, bool dump_decompressed_data=false, bool ps4_weird_format=false);
+  // structures and systems
+  CInventory                inventory;
+  CCharacterCustomization   chtrcustom;
+  CStatsPool                statspool;
+  CStats                    stats;
+  //CPSData                   psdata;
 
-  std::shared_ptr<const node_t> search_node(std::string_view name)
+protected:
+  bool load_stree(std::filesystem::path path);
+  bool save_stree(std::filesystem::path path, bool dump_decompressed_data=false, bool ps4_weird_format=false);
+
+public:
+  bool open_with_progress(std::filesystem::path path, float& progress, bool test_reserialization=false)
+  {
+    progress = 0.0f;
+    if (!load_stree(path))
+      return false;
+    progress = 0.2f;
+    try_load_node_data_struct(inventory,  "inventory"                           , test_reserialization); progress = 0.3f;
+    try_load_node_data_struct(chtrcustom, "CharacetrCustomization_Appearances"  , test_reserialization); progress = 0.4f;
+    //try_load_node_data_struct(psdata,     "PSData"                            , test_reserialization); progress = 0.7f;
+    try_load_node_data_struct(stats,      "StatsSystem"                         , test_reserialization); progress = 0.8f;
+    try_load_node_data_struct(statspool,  "StatsPoolSystem"                     , test_reserialization); progress = 1.0f;
+    
+    return true;
+  }
+
+  bool save_with_progress(std::filesystem::path path, float& progress, bool dump_decompressed_data=false, bool ps4_weird_format=false)
+  {
+    progress = 0.0f;
+
+    try_save_node_data_struct(inventory,  "inventory");                           progress = 0.1f;
+    try_save_node_data_struct(chtrcustom, "CharacetrCustomization_Appearances");  progress = 0.2f;
+    //try_save_node_data_struct(psdata,     "PSData");                              progress = 0.5f;
+    try_load_node_data_struct(stats,      "StatsSystem");                         progress = 0.6f;
+    try_save_node_data_struct(statspool,  "StatsPoolSystem");                     progress = 0.8f;
+    
+    if (!save_stree(path, dump_decompressed_data, ps4_weird_format))
+      return false;
+    progress = 1.0f;
+    return true;
+  }
+
+protected:
+  bool try_load_node_data_struct(node_serializable& var, std::string_view nodename, bool test_reserialization=false)
+  {
+    auto node = search_node(nodename);
+    if (!node)
+      return false;
+    if (!var.from_node(node, ver))
+      return false;
+
+    if (test_reserialization)
+    {
+      auto new_node = var.to_node(ver);
+      if (!new_node)
+        return false;
+
+      serial_tree stree1;
+      stree1.from_node(node, 4);
+      serial_tree stree2;
+      stree2.from_node(new_node, 4);
+
+      if (stree1.nodedata.size() != stree1.nodedata.size()
+        || std::memcmp(stree1.nodedata.data(), stree2.nodedata.data(), stree1.nodedata.size()))
+      {
+        throw std::runtime_error(fmt::format("reserialized {} differs from original", nodename));
+      }
+    }
+    return true;
+  }
+
+  bool try_save_node_data_struct(node_serializable& var, std::string_view nodename)
+  {
+    auto node = search_node(nodename);
+    if (!node)
+      return false;
+    auto new_node = var.to_node(ver);
+    if (!new_node)
+      return false;
+
+    auto ncnode = std::const_pointer_cast<node_t>(node);
+    ncnode->assign_children(new_node->children());
+    ncnode->assign_data(new_node->data());
+
+    return true;
+  }
+
+
+public:
+  std::shared_ptr<const node_t> search_node(std::string_view name) const
   {
     if (root_node)
       return search_node(root_node, name);
@@ -77,7 +145,7 @@ public:
     return nullptr;
   }
 
-  std::shared_ptr<const node_t> search_node(const std::shared_ptr<const node_t>& node, std::string_view name)
+  std::shared_ptr<const node_t> search_node(const std::shared_ptr<const node_t>& node, std::string_view name) const
   {
     if (node->name() == name)
       return node;
@@ -89,110 +157,6 @@ public:
     }
 
     return nullptr;
-  }
-
-protected:
-  std::shared_ptr<const node_t> read_node(const std::vector<char>& nodedata, node_desc& desc, int32_t idx)
-  {
-    uint32_t cur_offset = desc.data_offset + 4;
-    uint32_t end_offset = desc.data_offset + desc.data_size;
-
-    if (end_offset > nodedata.size())
-      return nullptr;
-
-    if (*(uint32_t*)(nodedata.data() + desc.data_offset) != idx && idx != node_t::root_node_idx)
-      return nullptr;
-
-    auto node = node_t::create_shared(idx, desc.name);
-    auto& nc_node = node->nonconst();
-
-    std::vector<std::shared_ptr<const node_t>> children;
-
-    if (desc.child_idx >= 0)
-    {
-      int i = desc.child_idx;
-      while (i >= 0)
-      {
-        if (i >= node_descs.size()) // corruption ?
-          return nullptr;
-
-        auto& childdesc = node_descs[i];
-
-        if (childdesc.data_offset > cur_offset) {
-          children.push_back(
-            node_t::create_shared_blob(nodedata.data(), cur_offset, childdesc.data_offset)
-          );
-        }
-
-        auto childnode = read_node(nodedata, childdesc, i);
-        if (!childnode) // something went wrong
-          return nullptr;
-        children.push_back(childnode);
-
-        cur_offset = childdesc.data_offset + childdesc.data_size;
-        i = childdesc.next_idx;
-      }
-
-      if (cur_offset < end_offset) {
-        children.push_back(
-          node_t::create_shared_blob(nodedata.data(), cur_offset, end_offset)
-        );
-      }
-
-      nc_node.assign_children(children.begin(), children.end());
-    }
-    else if (cur_offset < end_offset)
-    {
-      nc_node.assign_data(
-        nodedata.begin() + cur_offset,
-        nodedata.begin() + end_offset
-      );
-    }
-
-    return node;
-  }
-
-  node_desc* write_node_visitor(std::vector<char>& nodedata, const node_t& node, uint32_t& next_idx)
-  {
-    if (node.idx() >= 0)
-    {
-      const uint32_t idx = next_idx++;
-      node.nonconst().idx(idx);
-
-      auto& nd = node_descs[idx];
-      nd.name = node.name();
-      nd.data_offset = (uint32_t)nodedata.size();
-      nd.child_idx = node.has_children() ? next_idx : node_t::null_node_idx;
-
-      char* pIdx = (char*)&idx;
-      std::copy(pIdx, pIdx + 4, std::back_inserter(nodedata));
-      std::copy(node.data().begin(), node.data().end(), std::back_inserter(nodedata));
-
-      write_node_children(nodedata, node, next_idx);
-
-      nd.next_idx = (next_idx < node_descs.size()) ? next_idx : node_t::null_node_idx;
-      nd.data_size = (uint32_t)nodedata.size() - nd.data_offset;
-      return &nd;
-    }
-    else
-    {
-      // data blob
-      std::copy(node.data().begin(), node.data().end(), std::back_inserter(nodedata));
-    }
-    return nullptr;
-  }
-
-  void write_node_children(std::vector<char>& nodedata, const node_t& node, uint32_t& next_idx)
-  {
-    node_desc* last_child_desc = nullptr;
-    for (auto& c : node.children())
-    {
-      auto cnd = write_node_visitor(nodedata, *c, next_idx);
-      if (cnd != nullptr)
-        last_child_desc = cnd;
-    }
-    if (last_child_desc)
-      last_child_desc->next_idx = node_t::null_node_idx;
   }
 };
 

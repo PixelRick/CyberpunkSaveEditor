@@ -4,6 +4,7 @@
 #include <exception>
 #include <stdexcept>
 #include <algorithm>
+#include <numeric>
 
 #include <utils.hpp>
 #include <csav/serializers.hpp>
@@ -47,11 +48,36 @@ public:
 };
 
 
+// todo, don't reallocate buffer: make subpools
+// this will make serialization more complicated but at least I
+// could use the pool for the editor..
 class CStringPool
 {
 protected:
   std::vector<CRangeDesc> m_descs;
   std::vector<char> m_buffer;
+  
+  // accelerated search
+
+  std::vector<size_t> m_sorted_desc_indices;
+
+  struct search_value_t
+  {
+    const CStringPool* sp;
+    std::string_view s;
+
+    bool operator>(const size_t& idx) const {
+      const auto& desc = sp->m_descs[idx];
+      std::string_view other(sp->m_buffer.data() + desc.offset(), desc.len() - 1);
+      const bool ret = s > other;
+      return ret;
+    }
+
+    friend bool operator<(const size_t& idx, const search_value_t& sv) {
+      return sv.operator>(idx);
+    }
+  };
+
 
 public:
   CStringPool()
@@ -59,20 +85,38 @@ public:
     m_buffer.reserve(0x1000);
   }
 
+  static CStringPool& get_global()
+  {
+    static CStringPool strpool;
+    return strpool;
+  }
+
   bool has_string(std::string_view s) const
   {
-    return find_idx(s) != (uint32_t)-1;
+    return const_cast<CStringPool*>(this)->to_idx(s, false) != (uint32_t)-1;
   }
 
   uint32_t size() const { return (uint32_t)m_descs.size(); }
 
-  uint32_t to_idx(std::string_view s)
+  uint32_t to_idx(std::string_view s, bool create_if_not_present=true)
   {
-    uint32_t idx = find_idx(s);
-    if (idx != (uint32_t)-1)
-      return idx;
+    size_t ssize = s.size();
+    const char* const pdata = m_buffer.data();
 
-    const size_t ssize = s.size() + 1;
+    uint32_t idx = 0;
+    auto it = lower_bound_idx(s);
+    if (it != m_sorted_desc_indices.end())
+    {
+      idx = (uint32_t)*it;
+      auto lbound_str = view_from_idx(idx);
+      if (s == lbound_str)
+        return idx;
+    }
+
+    if (!create_if_not_present)
+      return (uint32_t)-1;
+
+    ssize = s.size() + 1;
     if (ssize > 0xFF)
       throw std::length_error("CStringPool: string is too big");
 
@@ -81,11 +125,12 @@ public:
     m_buffer.insert(m_buffer.end(), s.begin(), s.end());
     m_buffer.push_back('\0');
 
+    m_sorted_desc_indices.insert(it, idx);
     return idx;
   }
 
-  // string_view would not be safe since buffer can be reallocated
-  std::string from_idx(uint32_t idx)
+  // string_view is safe atm since buffer can be reallocated
+  std::string from_idx(uint32_t idx) const
   {
     if (idx > m_descs.size())
       throw std::out_of_range("CStringPool: out of range idx");
@@ -93,19 +138,22 @@ public:
     return std::string(m_buffer.data() + desc.offset()/*, desc.len()*/); // should include null character
   }
 
-protected:
-  // returns (uint32_t)-1 if not found
-  uint32_t find_idx(std::string_view s) const
+  std::string_view view_from_idx(uint32_t idx) const
   {
-    const size_t ssize = s.size();
-    const char* const pdata = m_buffer.data();
-    uint32_t idx = 0;
-    for (auto it = m_descs.begin(); it != m_descs.end(); ++it, ++idx)
-    {
-      if (it->len() == ssize && !std::memcmp(s.data(), pdata + it->offset(), ssize))
-        return idx;
-    }
-    return (uint32_t)-1;
+    if (idx > m_descs.size())
+      throw std::out_of_range("CStringPool: out of range idx");
+    const auto& desc = m_descs[idx];
+    return std::string_view(m_buffer.data() + desc.offset()/*, desc.len()*/); // should include null character
+  }
+
+protected:
+  std::vector<size_t>::const_iterator lower_bound_idx(std::string_view s) const
+  {
+    return std::lower_bound(
+      m_sorted_desc_indices.begin(),
+      m_sorted_desc_indices.end(),
+      search_value_t{this, s}
+    );
   }
 
 public:
@@ -138,6 +186,13 @@ public:
     m_buffer.resize(data_size);
     reader.read(m_buffer.data(), data_size);
 
+    // fill acceleration structure
+    m_sorted_desc_indices.resize(m_descs.size());
+    std::iota(m_sorted_desc_indices.begin(), m_sorted_desc_indices.end(), 0);
+
+    std::stable_sort(m_sorted_desc_indices.begin(), m_sorted_desc_indices.end(),
+      [this](size_t i1, size_t i2){ return view_from_idx((uint32_t)i1) < view_from_idx((uint32_t)i2); });
+
     return true;
   }
 
@@ -154,5 +209,44 @@ public:
     pool_size = (uint32_t)m_buffer.size();
     writer.write((char*)m_buffer.data(), pool_size);
     return true;
+  }
+};
+
+// let's use a global pool
+class CSysName
+{
+  uint32_t m_idx;
+
+public:
+  CSysName()
+  {
+    m_idx = CStringPool::get_global().to_idx("uninitialized");
+  }
+
+  CSysName(const char* s)
+    : CSysName(std::string_view(s)) {}
+
+  CSysName(std::string_view s)
+  {
+    m_idx = CStringPool::get_global().to_idx(s);
+  }
+
+  CSysName(const CSysName&) = default;
+  CSysName& operator=(const CSysName&) = default;
+
+  // todo: switch to string_view when CStringPool doesnot reallocate mem
+  std::string str() const
+  {
+    return CStringPool::get_global().from_idx(m_idx);
+  }
+
+  uint32_t idx() const { return m_idx; }
+
+  friend inline bool operator==(const CSysName& a, const CSysName& b) {
+    return a.m_idx == b.m_idx;
+  }
+
+  friend inline bool operator!=(const CSysName& a, const CSysName& b) {
+    return !(a == b);
   }
 };

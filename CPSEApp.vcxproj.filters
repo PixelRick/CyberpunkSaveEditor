@@ -116,6 +116,9 @@
     <ClCompile Include="Source\csav\csystem\CPropertyFactory.cpp">
       <Filter>Source\csav\csystem</Filter>
     </ClCompile>
+    <ClCompile Include="Source\csav\csystem\CObjectBP.cpp">
+      <Filter>Source\csav\csystem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\AppLib\pch.h">
@@ -229,9 +232,6 @@
     <ClInclude Include="Source\widgets\cnames_widget.hpp">
       <Filter>Source\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ps_storage.hpp">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Source\widgets\node_editors\Systems.hpp">
       <Filter>Source\widgets\node_editors</Filter>
     </ClInclude>
@@ -302,7 +302,34 @@
     <ClInclude Include="Source\csav\cnodes\CItemData.hpp">
       <Filter>Source\csav\cnodes</Filter>
     </ClInclude>
-    <ClInclude Include="Source\csav\cnodes\CSystems.hpp">
+    <ClInclude Include="Source\ps_json_storage.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\csystem\CSystemSerCtx.hpp">
+      <Filter>Source\csav\csystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\csystem\fwd.hpp">
+      <Filter>Source\csav\csystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\csystem\CObjectBP.hpp">
+      <Filter>Source\csav\csystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\cnodes\CPSData.hpp">
+      <Filter>Source\csav\cnodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\cnodes\CStatsPool.hpp">
+      <Filter>Source\csav\cnodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\cnodes.hpp">
+      <Filter>Source\csav</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\cnodes\CGenericSystem.hpp">
+      <Filter>Source\csav\cnodes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\serial_tree.hpp">
+      <Filter>Source\csav</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\cnodes\CStats.hpp">
       <Filter>Source\csav\cnodes</Filter>
     </ClInclude>
   </ItemGroup>
@@ -316,10 +343,8 @@
     <CopyFileToFolders Include="Resources\CEnums.json">
       <Filter>Resources</Filter>
     </CopyFileToFolders>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\CClasses.json">
+    <CopyFileToFolders Include="Resources\CObjectBPs.json">
       <Filter>Resources</Filter>
-    </None>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

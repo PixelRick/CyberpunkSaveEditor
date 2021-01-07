@@ -1,0 +1,1311 @@
+{
+    "AIArgumentInstancePS": null,
+    "AIBoolArgumentInstancePS": {
+        "name": "CName",
+        "value": "Bool"
+    },
+    "AIHumanComponentPS": {
+        "aiRole": "handle:AIRole",
+        "behaviorArgumentList": "array:handle:AIArgumentInstancePS",
+        "spotUsageToken": "AISpotUsageToken"
+    },
+    "AIISerializableArgumentInstancePS": {
+        "name": "CName",
+        "value": "handle:ISerializable"
+    },
+    "AIInt64ArgumentInstancePS": {
+        "name": "CName"
+    },
+    "AIPatrolPathParameters": {
+        "path": "NodeRef",
+        "patrolWithWeapon": "Bool"
+    },
+    "AIPatrolRole": {
+        "alertedPathParams": "handle:AIPatrolPathParameters",
+        "pathParams": "handle:AIPatrolPathParameters"
+    },
+    "AIRole": null,
+    "AISpotUsageToken": {
+        "spotUserId": "entEntityID",
+        "usedSpotId": "worldGlobalNodeID"
+    },
+    "AOEAreaControllerPS": {
+        "AOEAreaSetup": "AOEAreaSetup",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "isInitialized": "Bool"
+    },
+    "AOEAreaSetup": null,
+    "AOEEffectorControllerPS": {
+        "debugName": "CName",
+        "drawGridLink": "Bool",
+        "effectsToPlay": "array:CName"
+    },
+    "AccessPointControllerPS": {
+        "authorizationProperties": "AuthorizationData",
+        "backdoorObjectiveData": "handle:BackDoorObjectiveData",
+        "deviceState": "EDeviceStatus",
+        "drawGridLink": "Bool",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool",
+        "markAsQuest": "Bool",
+        "minigameDefinition": "TweakDBID",
+        "performedActions": "array:SPerformedActions",
+        "personalLinkCustomInteraction": "TweakDBID",
+        "skillCheckContainer": "handle:BaseSkillCheckContainer",
+        "wasQuickHacked": "Bool",
+        "wasStateCached": "Bool",
+        "wasStateSet": "Bool"
+    },
+    "ActionsSequencerControllerPS": {
+        "deviceState": "EDeviceStatus"
+    },
+    "ActivatedDeviceControllerPS": {
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "drawGridLink": "Bool",
+        "factToDisableQuestMark": "CName",
+        "isInitialized": "Bool",
+        "markAsQuest": "Bool"
+    },
+    "ActivatorControllerPS": {
+        "debugDevice": "Bool",
+        "debugName": "CName",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool"
+    },
+    "Agent": {
+        "areas": "array:DeviceLink",
+        "cachedDelayDuration": "Float",
+        "incomingFilter": "EFilterType",
+        "link": "DeviceLink"
+    },
+    "AgentRegistry": {
+        "agents": "array:Agent",
+        "isInitialized": "Bool"
+    },
+    "AlarmLightControllerPS": {
+        "deviceState": "EDeviceStatus",
+        "isInitialized": "Bool"
+    },
+    "ApplyDamageDeviceOperation": null,
+    "ApplyStatusEffectDeviceOperation": null,
+    "ArcadeMachineControllerPS": {
+        "drawGridLink": "Bool",
+        "factToDisableQuestMark": "CName",
+        "isInitialized": "Bool",
+        "markAsQuest": "Bool",
+        "minigameDefinition": "TweakDBID"
+    },
+    "AreaEntry": {
+        "user": "entEntityID"
+    },
+    "AuthorizationData": {
+        "alwaysExposeActions": "Bool",
+        "authorizationDataEntry": "SecurityAccessLevelEntryClient",
+        "isAuthorizationModuleOn": "Bool"
+    },
+    "BackDoorObjectiveData": null,
+    "BaseDestructibleControllerPS": {
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "isInitialized": "Bool"
+    },
+    "BaseSkillCheckContainer": null,
+    "BasicDistractionDeviceControllerPS": {
+        "deviceState": "EDeviceStatus",
+        "drawGridLink": "Bool",
+        "factToDisableQuestMark": "CName",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool",
+        "markAsQuest": "Bool"
+    },
+    "BillboardDeviceControllerPS": {
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "drawGridLink": "Bool",
+        "factToDisableQuestMark": "CName",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool",
+        "markAsQuest": "Bool"
+    },
+    "BlindingLightControllerPS": {
+        "destructionProperties": "DestructionData",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "isInitialized": "Bool"
+    },
+    "BraindanceSystem": {
+        "inputMask": "SBraindanceInputMask"
+    },
+    "C4ControllerPS": {
+        "deviceState": "EDeviceStatus"
+    },
+    "CityLightSystem": {
+        "fuses": "array:FuseData",
+        "timeSystemCallbacks": "array:handle:TimetableCallbackData"
+    },
+    "CleaningMachineControllerPS": {
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "drawGridLink": "Bool",
+        "factToDisableQuestMark": "CName",
+        "isInitialized": "Bool",
+        "markAsQuest": "Bool"
+    },
+    "CluePSData": {
+        "conclusionQuestState": "EConclusionQuestState",
+        "wasInspected": "Bool"
+    },
+    "CommunityProxyPS": {
+        "isInitialized": "Bool",
+        "wasQuickHacked": "Bool"
+    },
+    "ComputerControllerPS": {
+        "authorizationProperties": "AuthorizationData",
+        "autoToggleQuestMark": "Bool",
+        "backdoorObjectiveData": "handle:BackDoorObjectiveData",
+        "cachedDeviceState": "EDeviceStatus",
+        "computerSetup": "ComputerSetup",
+        "controlPanelObjectiveData": "handle:ControlPanelObjectiveData",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "disableQuickHacks": "Bool",
+        "drawGridLink": "Bool",
+        "factToDisableQuestMark": "CName",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool",
+        "markAsQuest": "Bool",
+        "minigameDefinition": "TweakDBID",
+        "performedActions": "array:SPerformedActions",
+        "personalLinkCustomInteraction": "TweakDBID",
+        "personalLinkForced": "Bool",
+        "skillCheckContainer": "handle:BaseSkillCheckContainer",
+        "wasQuickHacked": "Bool",
+        "wasStateCached": "Bool",
+        "wasStateSet": "Bool"
+    },
+    "ComputerSetup": {
+        "animationState": "EComputerAnimationState",
+        "filesMenu": "Bool",
+        "filesStructure": "array:gamedeviceGenericDataContent",
+        "ignoreSlaveAuthorizationModule": "Bool",
+        "internetMenu": "Bool",
+        "mailsMenu": "Bool",
+        "mailsStructure": "array:gamedeviceGenericDataContent",
+        "newsFeedMenu": "Bool",
+        "systemMenu": "Bool"
+    },
+    "ConfessionBoothControllerPS": {
+        "illegalActions": "IllegalActionTypes"
+    },
+    "ControlPanelObjectiveData": null,
+    "CraftBook": {
+        "knownRecipes": "array:ItemRecipe"
+    },
+    "CraftingSystem": {
+        "playerCraftBook": "handle:CraftBook"
+    },
+    "DataTermControllerPS": {
+        "cachedDeviceState": "EDeviceStatus",
+        "deviceState": "EDeviceStatus",
+        "isInitialized": "Bool",
+        "performedActions": "array:SPerformedActions",
+        "wasStateCached": "Bool",
+        "wasStateSet": "Bool"
+    },
+    "DataTrackingSystem": {
+        "achievementsMask": "array:Bool",
+        "defeatedEnemies": "Int32",
+        "downedEnemies": "Int32",
+        "downedWithRanged": "Int32",
+        "incapacitatedEnemies": "Int32",
+        "killedEnemies": "Int32",
+        "legendaryItemsCrafted": "Int32",
+        "meleeAttacksMade": "Int32",
+        "rangedAttacksMade": "Int32",
+        "rangedProgress": "Int32"
+    },
+    "DemolitionContainer": {
+        "demolitionCheckSlot": "handle:DemolitionSkillCheck"
+    },
+    "DemolitionSkillCheck": {
+        "isActive": "Bool"
+    },
+    "DestructibleMasterDeviceControllerPS": {
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "isInitialized": "Bool"
+    },
+    "DestructibleMasterLightControllerPS": {
+        "destructionProperties": "DestructionData",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "isInitialized": "Bool"
+    },
+    "DestructionData": {
+        "durabilityType": "EDeviceDurabilityType"
+    },
+    "DetectionParameters": null,
+    "DeviceLink": {
+        "PSID": "gamePersistentID",
+        "className": "CName"
+    },
+    "DeviceLinkComponentPS": null,
+    "DeviceOperationBase": null,
+    "DeviceOperationsContainer": {
+        "operations": "array:handle:DeviceOperationBase"
+    },
+    "DeviceTimeTableManager": {
+        "timeTable": "array:SDeviceTimetableEntry"
+    },
+    "DisassembleOptions": {
+        "canBeDisassembled": "Bool"
+    },
+    "DisplayGlassControllerPS": {
+        "deviceState": "EDeviceStatus",
+        "disableQuickHacks": "Bool",
+        "markAsQuest": "Bool"
+    },
+    "DisposalDeviceControllerPS": {
+        "DisposalDeviceSetup": "DisposalDeviceSetup",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "drawGridLink": "Bool",
+        "factToDisableQuestMark": "CName",
+        "isInitialized": "Bool",
+        "markAsQuest": "Bool",
+        "performedActions": "array:SPerformedActions"
+    },
+    "DisposalDeviceSetup": {
+        "numberOfUses": "Int32"
+    },
+    "DistrictManager": {
+        "visitedDistricts": "array:TweakDBID"
+    },
+    "DoorControllerPS": {
+        "authorizationProperties": "AuthorizationData",
+        "autoToggleQuestMark": "Bool",
+        "cachedDeviceState": "EDeviceStatus",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "disableQuickHacks": "Bool",
+        "doorProperties": "DoorSetup",
+        "drawGridLink": "Bool",
+        "factToDisableQuestMark": "CName",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool",
+        "isLocked": "Bool",
+        "isOpened": "Bool",
+        "isScanned": "Bool",
+        "isSealed": "Bool",
+        "markAsQuest": "Bool",
+        "performedActions": "array:SPerformedActions",
+        "skillCheckContainer": "handle:BaseSkillCheckContainer",
+        "wasQuickHacked": "Bool",
+        "wasStateCached": "Bool",
+        "wasStateSet": "Bool"
+    },
+    "DoorProximityDetectorControllerPS": {
+        "isInitialized": "Bool"
+    },
+    "DoorSetup": {
+        "automaticallyClosesItself": "Bool",
+        "canPayToUnlock": "Bool",
+        "canPlayerToggleLockState": "Bool",
+        "doorType": "EDoorType",
+        "doorTypeSideOne": "EDoorType",
+        "doorTypeSideTwo": "EDoorType",
+        "initialDoorState": "EDoorStatus",
+        "isShutter": "Bool",
+        "paymentRecordID": "TweakDBID"
+    },
+    "DropPointControllerPS": {
+        "isInitialized": "Bool"
+    },
+    "DropPointMappinRegistrationData": {
+        "ownerID": "entEntityID",
+        "position": "Vector4"
+    },
+    "DropPointSystem": {
+        "mappins": "array:handle:DropPointMappinRegistrationData"
+    },
+    "EFirstEquipData": {
+        "hasPlayedFirstEquip": "Bool",
+        "weaponID": "TweakDBID"
+    },
+    "ElectricBoxControllerPS": {
+        "authorizationProperties": "AuthorizationData",
+        "autoToggleQuestMark": "Bool",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "drawGridLink": "Bool",
+        "isInitialized": "Bool"
+    },
+    "ElevatorFloorSetup": {
+        "doorShouldOpenFrontLeftRight": "array:Bool",
+        "floorDisplayName": "CName",
+        "floorMarker": "NodeRef",
+        "isHidden": "Bool",
+        "isInactive": "Bool"
+    },
+    "ElevatorFloorTerminalControllerPS": {
+        "authorizationProperties": "AuthorizationData",
+        "deviceState": "EDeviceStatus",
+        "disableQuickHacks": "Bool",
+        "elevatorFloorSetup": "ElevatorFloorSetup",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool",
+        "markAsQuest": "Bool"
+    },
+    "EngDemoContainer": {
+        "demolitionCheckSlot": "handle:DemolitionSkillCheck",
+        "engineeringCheckSlot": "handle:EngineeringSkillCheck"
+    },
+    "EngineeringSkillCheck": {
+        "isActive": "Bool"
+    },
+    "EntityAttachementComponentPS": null,
+    "EquipmentSystem": {
+        "ownerData": "array:handle:EquipmentSystemPlayerData"
+    },
+    "EquipmentSystemPlayerData": {
+        "clothingSlotsInfo": "array:gameSSlotInfo",
+        "equipment": "gameSLoadout",
+        "hotkeys": "array:handle:Hotkey",
+        "lastUsedStruct": "gameSLastUsedWeapon",
+        "ownerID": "entEntityID"
+    },
+    "ExplosiveDeviceControllerPS": {
+        "destructionProperties": "DestructionData",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "disableQuickHacks": "Bool",
+        "drawGridLink": "Bool",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool",
+        "markAsQuest": "Bool",
+        "skillCheckContainer": "handle:BaseSkillCheckContainer"
+    },
+    "ExplosiveTriggerDeviceControllerPS": {
+        "authorizationProperties": "AuthorizationData",
+        "destructionProperties": "DestructionData",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "disableQuickHacks": "Bool",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool",
+        "markAsQuest": "Bool",
+        "performedActions": "array:SPerformedActions",
+        "skillCheckContainer": "handle:BaseSkillCheckContainer",
+        "wasStateSet": "Bool"
+    },
+    "FactsDeviceOperation": null,
+    "FanControllerPS": {
+        "isInitialized": "Bool",
+        "wasQuickHacked": "Bool"
+    },
+    "FastTravelSystem": null,
+    "FirstEquipSystem": {
+        "equipDataArray": "array:EFirstEquipData"
+    },
+    "FocusCluesSystem": {
+        "linkedClues": "array:LinkedFocusClueData"
+    },
+    "ForkliftControllerPS": {
+        "debugName": "CName",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "drawGridLink": "Bool",
+        "factToDisableQuestMark": "CName",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool",
+        "markAsQuest": "Bool"
+    },
+    "FuseBoxControllerPS": {
+        "deviceState": "EDeviceStatus",
+        "drawGridLink": "Bool",
+        "factToDisableQuestMark": "CName",
+        "isInitialized": "Bool",
+        "markAsQuest": "Bool"
+    },
+    "FuseControllerPS": {
+        "autoToggleQuestMark": "Bool",
+        "backdoorObjectiveData": "handle:BackDoorObjectiveData",
+        "controlPanelObjectiveData": "handle:ControlPanelObjectiveData",
+        "deviceState": "EDeviceStatus",
+        "isInitialized": "Bool",
+        "lightSwitchRandomizerType": "ELightSwitchRandomizerType",
+        "markAsQuest": "Bool",
+        "maxLightsSwitchedAtOnce": "Int32",
+        "performedActions": "array:SPerformedActions",
+        "timeTableSetup": "handle:DeviceTimeTableManager",
+        "wasStateSet": "Bool"
+    },
+    "FuseData": {
+        "psOwnerData": "PSOwnerData",
+        "timeTable": "array:SDeviceTimetableEntry"
+    },
+    "GameplayLightControllerPS": {
+        "deviceState": "EDeviceStatus",
+        "disableQuickHacks": "Bool"
+    },
+    "GameplaySettingsListener": null,
+    "GameplaySettingsSystem": {
+        "gameplaySettingsListener": "handle:GameplaySettingsListener"
+    },
+    "GenericDeviceActionsData": {
+        "customActions": "SCustomDeviceActionsData",
+        "stateActionsOverrides": "SGenericDeviceActionsData"
+    },
+    "GenericDeviceControllerPS": {
+        "authorizationProperties": "AuthorizationData",
+        "autoToggleQuestMark": "Bool",
+        "connectionHighlightObjects": "array:NodeRef",
+        "debugName": "CName",
+        "destructionProperties": "DestructionData",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "disableQuickHacks": "Bool",
+        "disassembleProperties": "DisassembleOptions",
+        "drawGridLink": "Bool",
+        "factToDisableQuestMark": "CName",
+        "genericDeviceActionsSetup": "GenericDeviceActionsData",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool",
+        "isRecognizableBySenses": "Bool",
+        "markAsQuest": "Bool",
+        "performedActions": "array:SPerformedActions",
+        "personalLinkCustomInteraction": "TweakDBID",
+        "wasStateSet": "Bool"
+    },
+    "GenericDeviceOperation": {
+        "isEnabled": "Bool"
+    },
+    "GlitchedTurretControllerPS": {
+        "isInitialized": "Bool"
+    },
+    "HackEngContainer": {
+        "engineeringCheckSlot": "handle:EngineeringSkillCheck",
+        "hackingCheckSlot": "handle:HackingSkillCheck"
+    },
+    "HackingContainer": {
+        "hackingCheckSlot": "handle:HackingSkillCheck"
+    },
+    "HackingSkillCheck": {
+        "isActive": "Bool"
+    },
+    "HoloFeederControllerPS": {
+        "isInitialized": "Bool"
+    },
+    "Hotkey": {
+        "hotkey": "gameEHotkey",
+        "itemID": "gameItemID",
+        "scope": "array:gamedataItemType"
+    },
+    "ISerializable": null,
+    "IceMachineControllerPS": {
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "isInitialized": "Bool"
+    },
+    "IllegalActionTypes": {
+        "quickHacks": "Bool",
+        "regularActions": "Bool",
+        "skillChecks": "Bool"
+    },
+    "IntercomControllerPS": {
+        "authorizationProperties": "AuthorizationData",
+        "deviceState": "EDeviceStatus",
+        "disableQuickHacks": "Bool",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool"
+    },
+    "InvisibleSceneStashControllerPS": {
+        "isInitialized": "Bool"
+    },
+    "ItemRecipe": {
+        "amount": "Int32",
+        "isHidden": "Bool",
+        "targetItem": "TweakDBID"
+    },
+    "JukeboxControllerPS": {
+        "authorizationProperties": "AuthorizationData",
+        "deviceState": "EDeviceStatus",
+        "drawGridLink": "Bool",
+        "factToDisableQuestMark": "CName",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool",
+        "markAsQuest": "Bool"
+    },
+    "LadderControllerPS": {
+        "isInitialized": "Bool"
+    },
+    "LaserDetectorControllerPS": {
+        "deviceState": "EDeviceStatus"
+    },
+    "LiftControllerPS": {
+        "activeFloor": "Int32",
+        "authorizationProperties": "AuthorizationData",
+        "backdoorObjectiveData": "handle:BackDoorObjectiveData",
+        "cachedDeviceState": "EDeviceStatus",
+        "controlPanelObjectiveData": "handle:ControlPanelObjectiveData",
+        "deviceState": "EDeviceStatus",
+        "floorIDs": "array:entEntityID",
+        "floorPSIDs": "array:gamePersistentID",
+        "floors": "array:ElevatorFloorSetup",
+        "floorsAuthorization": "array:Bool",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool",
+        "liftSetup": "LiftSetup",
+        "markAsQuest": "Bool",
+        "performedActions": "array:SPerformedActions",
+        "wasStateCached": "Bool",
+        "wasStateSet": "Bool"
+    },
+    "LiftSetup": {
+        "radioStationNumer": "Int32",
+        "startingFloorTerminal": "Int32"
+    },
+    "LinkedFocusClueData": {
+        "clueGroupID": "CName",
+        "isEnabled": "Bool",
+        "ownerID": "entEntityID",
+        "psData": "PSOwnerData"
+    },
+    "LootContainerObjectAnimatedByTransformPS": {
+        "isDisabled": "Bool",
+        "isLocked": "Bool",
+        "markAsQuest": "Bool"
+    },
+    "MaintenancePanelControllerPS": {
+        "authorizationProperties": "AuthorizationData",
+        "deviceState": "EDeviceStatus",
+        "illegalActions": "IllegalActionTypes"
+    },
+    "MarketSystem": {
+        "vendors": "array:handle:Vendor"
+    },
+    "MeshAppearanceDeviceOperation": null,
+    "MovableDeviceControllerPS": {
+        "deviceState": "EDeviceStatus",
+        "isInitialized": "Bool",
+        "skillCheckContainer": "handle:BaseSkillCheckContainer"
+    },
+    "NetrunnerChairControllerPS": {
+        "disableQuickHacks": "Bool",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool"
+    },
+    "OdaCementBagControllerPS": {
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer"
+    },
+    "OutputPersistentData": {
+        "areaType": "ESecurityAreaType",
+        "breachOrigin": "EBreachOrigin",
+        "currentSecurityState": "ESecuritySystemState",
+        "id": "Int32",
+        "lastKnownPosition": "Vector4",
+        "reporter": "gamePersistentID",
+        "securityStateChanged": "Bool",
+        "type": "ESecurityNotificationType",
+        "whoBreached": "entEntityID"
+    },
+    "PSOwnerData": {
+        "className": "CName",
+        "id": "gamePersistentID"
+    },
+    "PachinkoMachineControllerPS": {
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "drawGridLink": "Bool",
+        "factToDisableQuestMark": "CName",
+        "isInitialized": "Bool",
+        "markAsQuest": "Bool"
+    },
+    "PlayBinkDeviceOperation": null,
+    "PlayEffectDeviceOperation": null,
+    "PlaySoundDeviceOperation": null,
+    "PlayTransformAnimationDeviceOperation": null,
+    "PlayerDevelopmentData": {
+        "attributes": "array:SAttribute",
+        "devPoints": "array:SDevelopmentPoints",
+        "lifePath": "gamedataLifePath",
+        "ownerID": "entEntityID",
+        "perkAreas": "array:SPerkArea",
+        "proficiencies": "array:SProficiency",
+        "queuedCombatExp": "array:SExperiencePoints",
+        "traits": "array:STrait"
+    },
+    "PlayerDevelopmentSystem": {
+        "playerData": "array:handle:PlayerDevelopmentData"
+    },
+    "PlayerPuppetPS": {
+        "availablePrograms": "array:gameuiMinigameProgramData",
+        "isInitialized": "EBOOL",
+        "wasAttached": "Bool"
+    },
+    "PlayerWokrspotDeviceOperation": null,
+    "PreventionSystem": {
+        "districtManager": "handle:DistrictManager"
+    },
+    "PuppetDeviceLinkPS": {
+        "isConnected": "Bool",
+        "ownerEntityID": "entEntityID",
+        "parentDevice": "DeviceLink"
+    },
+    "Quaternion": {
+        "i": "Float",
+        "j": "Float",
+        "k": "Float",
+        "r": "Float"
+    },
+    "RadioControllerPS": {
+        "activeStation": "Int32",
+        "amountOfStations": "Int32",
+        "authorizationProperties": "AuthorizationData",
+        "autoToggleQuestMark": "Bool",
+        "dataInitialized": "Bool",
+        "destructionProperties": "DestructionData",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "disableQuickHacks": "Bool",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool",
+        "isInteractive": "Bool",
+        "performedActions": "array:SPerformedActions",
+        "wasQuickHacked": "Bool",
+        "wasStateSet": "Bool"
+    },
+    "RecipientData": {
+        "entryID": "Int32",
+        "fuseID": "Int32"
+    },
+    "ReflectorControllerPS": {
+        "destructionProperties": "DestructionData",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "isInitialized": "Bool",
+        "wasQuickHacked": "Bool"
+    },
+    "RetractableAdControllerPS": {
+        "activationState": "EActivationState",
+        "deviceState": "EDeviceStatus",
+        "illegalActions": "IllegalActionTypes",
+        "isActive": "Bool",
+        "isInitialized": "Bool"
+    },
+    "RoadBlockControllerPS": {
+        "activationState": "EActivationState",
+        "deviceState": "EDeviceStatus",
+        "illegalActions": "IllegalActionTypes",
+        "isBlocking": "Bool",
+        "isInitialized": "Bool"
+    },
+    "SAttribute": {
+        "attributeName": "gamedataStatType",
+        "id": "TweakDBID",
+        "value": "Int32"
+    },
+    "SBraindanceInputMask": {
+        "cameraToggleAction": "Bool",
+        "pauseAction": "Bool",
+        "playBackwardAction": "Bool",
+        "playForwardAction": "Bool",
+        "restartAction": "Bool",
+        "switchLayerAction": "Bool"
+    },
+    "SCustomDeviceActionsData": {
+        "actions": "array:SDeviceActionCustomData"
+    },
+    "SDevelopmentPoints": {
+        "spent": "Int32",
+        "type": "gamedataDevelopmentPointType",
+        "unspent": "Int32"
+    },
+    "SDeviceActionBoolData": {
+        "currentDisplayName": "CName",
+        "hasInteraction": "Bool",
+        "hasUI": "Bool",
+        "isQuickHack": "Bool",
+        "isSpiderbotAction": "Bool",
+        "nameOnFalseRecord": "TweakDBID",
+        "nameOnTrueRecord": "TweakDBID"
+    },
+    "SDeviceActionCustomData": {
+        "Off": "Bool",
+        "On": "Bool",
+        "Unpowered": "Bool",
+        "actionID": "CName",
+        "attachedToSkillCheck": "EDeviceChallengeSkill",
+        "displayNameRecord": "TweakDBID",
+        "hasInteraction": "Bool",
+        "hasUI": "Bool",
+        "isEnabled": "Bool",
+        "isQuickHack": "Bool",
+        "isSpiderbotAction": "Bool"
+    },
+    "SDeviceTimetableEntry": {
+        "state": "EDeviceStatus",
+        "time": "SSimpleGameTime"
+    },
+    "SExperiencePoints": {
+        "amount": "Float",
+        "entity": "entEntityID",
+        "forType": "gamedataProficiencyType"
+    },
+    "SGenericDeviceActionsData": {
+        "toggleON": "SDeviceActionBoolData",
+        "togglePower": "SDeviceActionBoolData"
+    },
+    "SPerformedActions": {
+        "ActionContext": "array:EActionContext",
+        "ID": "CName"
+    },
+    "SPerk": {
+        "currLevel": "Int32",
+        "type": "gamedataPerkType"
+    },
+    "SPerkArea": {
+        "boughtPerks": "array:SPerk",
+        "type": "gamedataPerkArea",
+        "unlocked": "Bool"
+    },
+    "SProficiency": {
+        "currentExp": "Int32",
+        "currentLevel": "Int32",
+        "spentPerkPoints": "Int32",
+        "type": "gamedataProficiencyType"
+    },
+    "SSimpleGameTime": {
+        "hours": "Int32",
+        "minutes": "Int32"
+    },
+    "STrait": {
+        "currLevel": "Int32",
+        "type": "gamedataTraitType",
+        "unlocked": "Bool"
+    },
+    "ScriptedPuppetPS": {
+        "isDead": "Bool",
+        "isDefeatMechanicActive": "Bool",
+        "isInitialized": "EBOOL",
+        "reactionPresetID": "TweakDBID",
+        "wasAttached": "Bool",
+        "wasIncapacitated": "Bool"
+    },
+    "SecSystemDebugger": null,
+    "SecurityAccessLevelEntryClient": {
+        "keycard": "TweakDBID",
+        "level": "ESecurityAccessLevel",
+        "password": "CName"
+    },
+    "SecurityAlarmControllerPS": {
+        "destructionProperties": "DestructionData",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "disableQuickHacks": "Bool",
+        "isInitialized": "Bool"
+    },
+    "SecurityAreaControllerPS": {
+        "authorizationProperties": "AuthorizationData",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool",
+        "lastOutput": "OutputPersistentData",
+        "pendingDisableRequest": "Bool",
+        "securityAreaType": "ESecurityAreaType",
+        "usersInPerimeter": "array:AreaEntry"
+    },
+    "SecurityGateControllerPS": {
+        "authorizationProperties": "AuthorizationData",
+        "isInitialized": "Bool"
+    },
+    "SecurityGateLockControllerPS": {
+        "deviceState": "EDeviceStatus",
+        "isInitialized": "Bool"
+    },
+    "SecurityLockerControllerPS": {
+        "deviceState": "EDeviceStatus",
+        "isInitialized": "Bool"
+    },
+    "SecuritySystemControllerPS": {
+        "agentsRegistry": "handle:AgentRegistry",
+        "attitudeChangeMode": "EShouldChangeAttitude",
+        "attitudeGroup": "TweakDBID",
+        "authorizationProperties": "AuthorizationData",
+        "deviceState": "EDeviceStatus",
+        "hideAreasOnMinimap": "Bool",
+        "illegalActions": "IllegalActionTypes",
+        "inputsReceived": "Int32",
+        "isInitialized": "Bool",
+        "markAsQuest": "Bool"
+    },
+    "SecurityTurretControllerPS": {
+        "destructionProperties": "DestructionData",
+        "detectionParameters": "DetectionParameters",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "disableQuickHacks": "Bool",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool",
+        "pendingSecuritySystemDisableRequest": "Bool",
+        "performedActions": "array:SPerformedActions",
+        "wasStateSet": "Bool"
+    },
+    "ShardCaseContainerPS": {
+        "markAsQuest": "Bool"
+    },
+    "SimpleSwitchControllerPS": {
+        "deviceState": "EDeviceStatus",
+        "drawGridLink": "Bool",
+        "isInitialized": "Bool",
+        "switchAction": "ESwitchAction"
+    },
+    "SlidingLadderControllerPS": {
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus"
+    },
+    "SmartHouseControllerPS": {
+        "isInitialized": "Bool"
+    },
+    "SmartWindowControllerPS": {
+        "disableQuickHacks": "Bool"
+    },
+    "SmokeMachineControllerPS": {
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "isInitialized": "Bool"
+    },
+    "SoundSystemControllerPS": {
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus"
+    },
+    "SpeakerControllerPS": {
+        "destructionProperties": "DestructionData",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "isInitialized": "Bool"
+    },
+    "StashControllerPS": {
+        "isInitialized": "Bool",
+        "performedActions": "array:SPerformedActions"
+    },
+    "StimDeviceOperation": null,
+    "SubCharacterSystem": null,
+    "SurveillanceCameraControllerPS": {
+        "authorizationProperties": "AuthorizationData",
+        "autoToggleQuestMark": "Bool",
+        "canTagEnemies": "Bool",
+        "debugName": "CName",
+        "destructionProperties": "DestructionData",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "disableQuickHacks": "Bool",
+        "drawGridLink": "Bool",
+        "factToDisableQuestMark": "CName",
+        "illegalActions": "IllegalActionTypes",
+        "isIdleForced": "Bool",
+        "isInitialized": "Bool",
+        "markAsQuest": "Bool",
+        "performedActions": "array:SPerformedActions",
+        "skillCheckContainer": "handle:BaseSkillCheckContainer",
+        "wasStateSet": "Bool"
+    },
+    "TVControllerPS": {
+        "activeStation": "Int32",
+        "amountOfStations": "Int32",
+        "authorizationProperties": "AuthorizationData",
+        "autoToggleQuestMark": "Bool",
+        "dataInitialized": "Bool",
+        "destructionProperties": "DestructionData",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "disableQuickHacks": "Bool",
+        "drawGridLink": "Bool",
+        "factToDisableQuestMark": "CName",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool",
+        "isInteractive": "Bool",
+        "markAsQuest": "Bool",
+        "minigameDefinition": "TweakDBID",
+        "tvSetup": "TVSetup"
+    },
+    "TVSetup": {
+        "isGlobalTvOnly": "Bool"
+    },
+    "TemporaryDoorState": null,
+    "TerminalControllerPS": {
+        "authorizationProperties": "AuthorizationData",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "disableQuickHacks": "Bool",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool",
+        "markAsQuest": "Bool",
+        "performedActions": "array:SPerformedActions",
+        "skillCheckContainer": "handle:BaseSkillCheckContainer",
+        "terminalSetup": "TerminalSetup",
+        "wasStateSet": "Bool"
+    },
+    "TerminalSetup": {
+        "ignoreSlaveAuthorizationModule": "Bool"
+    },
+    "TimetableCallbackData": {
+        "callbackID": "Uint32",
+        "recipients": "array:RecipientData",
+        "time": "SSimpleGameTime"
+    },
+    "ToggleComponentsDeviceOperation": {
+        "isEnabled": "Bool"
+    },
+    "ToiletControllerPS": {
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "isInitialized": "Bool"
+    },
+    "UIScriptableSystem": {
+        "backpackActiveFilter": "Int32",
+        "isBackpackActiveFilterSaved": "Bool",
+        "newItems": "array:gameItemID"
+    },
+    "Vector3": {
+        "X": "Float",
+        "Y": "Float",
+        "Z": "Float"
+    },
+    "Vector4": {
+        "W": "Float",
+        "X": "Float",
+        "Y": "Float",
+        "Z": "Float"
+    },
+    "VehicleComponentPS": {
+        "anyDoorOpen": "Bool",
+        "defaultStateSet": "Bool",
+        "isInitialized": "Bool",
+        "playerVehicle": "Bool",
+        "previousInteractionState": "array:TemporaryDoorState",
+        "sirenLightsOn": "Bool",
+        "sirenOn": "Bool",
+        "skillCheckContainer": "handle:BaseSkillCheckContainer",
+        "stateModifiedByQuest": "Bool",
+        "thrusterState": "Bool"
+    },
+    "VehicleDeviceLinkPS": {
+        "isConnected": "Bool",
+        "ownerEntityID": "entEntityID",
+        "parentDevice": "DeviceLink"
+    },
+    "VendingMachineControllerPS": {
+        "deviceState": "EDeviceStatus",
+        "disableQuickHacks": "Bool",
+        "drawGridLink": "Bool",
+        "factToDisableQuestMark": "CName",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool",
+        "markAsQuest": "Bool"
+    },
+    "Vendor": {
+        "lastInteractionTime": "Float",
+        "stock": "array:gameSItemStack",
+        "tweakID": "TweakDBID",
+        "vendorPersistentID": "gamePersistentID"
+    },
+    "VentilationEffectorControllerPS": {
+        "deviceState": "EDeviceStatus"
+    },
+    "WeakFenceControllerPS": {
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "illegalActions": "IllegalActionTypes"
+    },
+    "WeaponVendingMachineControllerPS": {
+        "isInitialized": "Bool",
+        "weaponVendingMachineSetup": "WeaponVendingMachineSetup"
+    },
+    "WeaponVendingMachineSetup": null,
+    "WindowBlindersControllerPS": {
+        "authorizationProperties": "AuthorizationData",
+        "cachedDeviceState": "EDeviceStatus",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "drawGridLink": "Bool",
+        "factToDisableQuestMark": "CName",
+        "illegalActions": "IllegalActionTypes",
+        "isInitialized": "Bool",
+        "isScanned": "Bool",
+        "markAsQuest": "Bool",
+        "performedActions": "array:SPerformedActions",
+        "wasStateCached": "Bool",
+        "wasStateSet": "Bool",
+        "windowBlindersData": "WindowBlindersData"
+    },
+    "WindowBlindersData": {
+        "hasOpenInteraction": "Bool",
+        "hasQuickHack": "Bool",
+        "hasTiltInteraction": "Bool",
+        "windowBlindersState": "EWindowBlindersStates"
+    },
+    "WindowControllerPS": {
+        "authorizationProperties": "AuthorizationData",
+        "deviceOperationsSetup": "handle:DeviceOperationsContainer",
+        "deviceState": "EDeviceStatus",
+        "disassembleProperties": "DisassembleOptions",
+        "doorProperties": "DoorSetup",
+        "isInitialized": "Bool",
+        "isLocked": "Bool",
+        "isOpened": "Bool",
+        "markAsQuest": "Bool"
+    },
+    "entEntityID": {
+        "hash": "Uint64"
+    },
+    "gameAttitudeAgentPS": {
+        "currentAttitudeGroup": "CName"
+    },
+    "gameCombinedStatModifierData": {
+        "modifierType": "gameStatModifierType",
+        "operation": "gameCombinedStatOperation",
+        "refObject": "gameStatObjectsRelation",
+        "refStatType": "gamedataStatType",
+        "statType": "gamedataStatType",
+        "value": "Float"
+    },
+    "gameCommunityID": {
+        "entityId": "entEntityID"
+    },
+    "gameConstantStatModifierData": {
+        "modifierType": "gameStatModifierType",
+        "statType": "gamedataStatType",
+        "value": "Float"
+    },
+    "gameCurveStatModifierData": {
+        "columnName": "CName",
+        "curveName": "CName",
+        "curveStat": "gamedataStatType",
+        "modifierType": "gameStatModifierType",
+        "statType": "gamedataStatType"
+    },
+    "gameCyberspacePixelsortEffectParams": {
+        "targetIntensity": "Float",
+        "timeBlend": "Float"
+    },
+    "gameDelayedFunctionsScheduler": {
+        "initialized": "Bool",
+        "nextCallId": "Uint32"
+    },
+    "gameEntityStubComponentPS": {
+        "entityLocalPosition": "Vector3",
+        "entityLocalRotation": "Quaternion",
+        "ownerCommunityEntryName": "CName",
+        "selectedAppearanceName": "CName",
+        "spawnerId": "gameCommunityID"
+    },
+    "gameGlobalTierSaveData": {
+        "data": "handle:gameSceneTierData"
+    },
+    "gameGodModeData": {
+        "source": "CName",
+        "type": "gameGodModeType"
+    },
+    "gameGodModeEntityData": {
+        "base": "array:gameGodModeData",
+        "overrides": "array:gameGodModeData"
+    },
+    "gameGodModeSaveData": {
+        "gods": "array:gameGodModeSaveEntityData"
+    },
+    "gameGodModeSaveEntityData": {
+        "data": "gameGodModeEntityData",
+        "entityId": "entEntityID"
+    },
+    "gameIMovingPlatformMovement": null,
+    "gameIMovingPlatformMovementInitData": {
+        "endNode": "NodeRef",
+        "initType": "gameMovingPlatformMovementInitializationType",
+        "initValue": "Float",
+        "startNode": "NodeRef"
+    },
+    "gameInventoryPS": {
+        "isRegisteredShared": "Bool"
+    },
+    "gameItemID": {
+        "id": "TweakDBID",
+        "rngSeed": "Uint32"
+    },
+    "gameMountEventData": {
+        "isInstant": "Bool",
+        "mountParentEntityId": "entEntityID",
+        "slotName": "CName"
+    },
+    "gameMovingPlatformMovementDynamic": {
+        "curveName": "CName",
+        "initData": "gameIMovingPlatformMovementInitData"
+    },
+    "gameMovingPlatformSavedData": {
+        "destinationData": "Int32",
+        "maxTime": "Float",
+        "movement": "handle:gameIMovingPlatformMovement",
+        "time": "Float"
+    },
+    "gameMovingPlatformsSavedState": {
+        "data": "array:gameMovingPlatformSavedData",
+        "mapping": "array:entEntityID"
+    },
+    "gameObjectPS": null,
+    "gamePersistentID": {
+        "componentName": "CName",
+        "entityHash": "Uint64"
+    },
+    "gameRenderGameplayEffectsManagerSaveData": {
+        "cyberspacePixelsortParams": "gameCyberspacePixelsortEffectParams"
+    },
+    "gameSEquipArea": {
+        "areaType": "gamedataEquipmentArea",
+        "equipSlots": "array:gameSEquipSlot"
+    },
+    "gameSEquipSlot": {
+        "itemID": "gameItemID"
+    },
+    "gameSItemStack": {
+        "itemID": "gameItemID",
+        "powerLevel": "Int32",
+        "quantity": "Int32",
+        "vendorItemID": "TweakDBID"
+    },
+    "gameSLastUsedWeapon": {
+        "lastUsedMelee": "gameItemID",
+        "lastUsedRanged": "gameItemID",
+        "lastUsedWeapon": "gameItemID"
+    },
+    "gameSLoadout": {
+        "equipAreas": "array:gameSEquipArea"
+    },
+    "gameSSlotInfo": {
+        "areaType": "gamedataEquipmentArea",
+        "equipSlot": "TweakDBID",
+        "visualTag": "CName"
+    },
+    "gameSavedStatsData": {
+        "inactiveStats": "array:gamedataStatType",
+        "recordID": "TweakDBID",
+        "seed": "Uint32",
+        "statModifiers": "array:handle:gameStatModifierData"
+    },
+    "gameScanningComponentPS": {
+        "isBlocked": "Bool",
+        "pctScanned": "Float",
+        "scanningState": "gameScanningState",
+        "storedClues": "array:handle:CluePSData"
+    },
+    "gameScanningControllerSaveData": null,
+    "gameSceneTier1Data": {
+        "emptyHands": "Bool"
+    },
+    "gameSceneTierData": null,
+    "gameSourceData": {
+        "savable": "Bool"
+    },
+    "gameStatModifierData": null,
+    "gameStatPoolData": {
+        "changeMode": "gameStatPoolDataValueChangeMode",
+        "currentValue": "Float",
+        "customLimitValue": "Float",
+        "maxValue": "Float",
+        "modifiers": "[2]gameStatPoolModifier",
+        "ownerID": "gameStatsObjectID",
+        "recordID": "TweakDBID",
+        "stat": "gamedataStatType",
+        "type": "gamedataStatPoolType"
+    },
+    "gameStatPoolModifier": {
+        "enabled": "Bool",
+        "rangeEnd": "Float",
+        "valuePerSec": "Float"
+    },
+    "gameStatPoolsSystemSave": {
+        "mapping": "array:gameStatsObjectID",
+        "statPools": "array:gameStatPoolData"
+    },
+    "gameStatsComponentPS": null,
+    "gameStatsObjectID": {
+        "entityHash": "Uint64",
+        "idType": "gameStatIDType"
+    },
+    "gameStatsStateMapStructure": {
+        "keys": "array:gameStatsObjectID",
+        "values": "array:gameSavedStatsData"
+    },
+    "gameStatusEffect": {
+        "duration": "Float",
+        "durationID": "Uint32",
+        "durationModifiers": "array:handle:gameStatModifierData",
+        "initialApplicationTimestamp": "Float",
+        "instigatorEntityID": "entEntityID",
+        "instigatorRecordID": "TweakDBID",
+        "lastApplicationTimestamp": "Float",
+        "maxStacks": "Uint32",
+        "ownerEntityID": "entEntityID",
+        "remainingDuration": "Float",
+        "sourcesData": "array:gameSourceData",
+        "stackModifiers": "array:handle:gameStatModifierData",
+        "statusEffectRecordID": "TweakDBID"
+    },
+    "gameStatusEffectComponentPS": {
+        "delayedFunctions": "handle:gameDelayedFunctionsScheduler",
+        "delayedFunctionsNoTd": "handle:gameDelayedFunctionsScheduler",
+        "isPlayerControlled": "Bool",
+        "statusEffectArray": "array:gameStatusEffect",
+        "tickComponent": "Bool"
+    },
+    "gameTierSaveData": {
+        "globalTiers": "array:gameGlobalTierSaveData"
+    },
+    "gameVisionModeComponentPS": {
+        "inactive": "Bool",
+        "questInactive": "Bool"
+    },
+    "gamedeviceDataElement": {
+        "isEnabled": "Bool",
+        "isEncrypted": "Bool",
+        "wasRead": "Bool"
+    },
+    "gamedeviceGenericDataContent": {
+        "content": "array:gamedeviceDataElement"
+    },
+    "gameuiMinigameProgramData": {
+        "actionID": "TweakDBID",
+        "programName": "CName"
+    },
+    "scnVoicesetComponentPS": {
+        "NPCHighLevelState": "gamedataNPCHighLevelState",
+        "gruntSetIndex": "Uint32",
+        "voiceTag": "CName"
+    },
+    "vehicleAudioPSData": {
+        "acousticIsolationFactor": "Float",
+        "activeRadioStation": "CName",
+        "isPlayerVehicleSummoned": "Bool"
+    },
+    "vehicleControllerPS": {
+        "lightMode": "vehicleELightMode",
+        "state": "vehicleEState",
+        "vehicleDoors": "static:6,vehicleVehicleSlotsState"
+    },
+    "vehicleDestructionPSData": {
+        "gridValues": "[30]Float"
+    },
+    "vehicleGarageComponentPS": {
+        "spawnedVehiclesData": "array:vehicleGarageComponentVehicleData"
+    },
+    "vehicleGarageComponentVehicleData": {
+        "entityID": "entEntityID",
+        "spawnRecordID": "TweakDBID"
+    },
+    "vehiclePersistentDataPS": {
+        "audio": "vehicleAudioPSData",
+        "autopilotCurrentSpeed": "Float",
+        "autopilotPos": "Float",
+        "destruction": "vehicleDestructionPSData",
+        "flags": "Uint32",
+        "wheelRuntimeData": "static:4,vehicleWheelRuntimePSData"
+    },
+    "worldGlobalNodeID": {
+        "hash": "Uint64"
+    }
+}

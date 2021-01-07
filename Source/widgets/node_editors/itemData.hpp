@@ -42,7 +42,7 @@ struct CItemID_widget
       //  default: ImGui::Text("resolved kind: invalid"); break;
       //}
 
-      if (ImGui::TreeNode("rngSeed"))
+      if (ImGui::TreeNode("rngSeed (stats uid)"))
       {
         modified |= uk_thing_widget::draw(x.uk);
         ImGui::TreePop();
@@ -58,7 +58,12 @@ struct CItemID_widget
 struct CItemMod_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(CItemMod& item)
+  static inline bool draw_no_stats(CItemMod& item)
+  {
+    return draw(item, nullptr);
+  }
+
+  [[nodiscard]] static inline bool draw(CItemMod& item, CStats* stats)
   {
     scoped_imgui_id _sii(&item);
     bool modified = false;
@@ -102,7 +107,7 @@ struct CItemMod_widget
       ImGui::Text("slots/modifiers:");
 
       static auto name_fn = [](const CItemMod& mod) { return fmt::format("mod: {}", mod.iid.shortname()); };
-      modified |= imgui_list_tree_widget(item.subs, name_fn, &CItemMod_widget::draw, 0, true);
+      modified |= imgui_list_tree_widget(item.subs, name_fn, &CItemMod_widget::draw_no_stats, 0, true);
 
       ImGui::EndTable();
     }
@@ -116,19 +121,20 @@ struct CItemMod_widget
 struct CItemData_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(CItemData& item)
+  [[nodiscard]] static inline bool draw(CItemData& item, CStats* stats=nullptr)
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     ImGuiID id = window->GetID("itemData");
 
     bool modified = false;
 
-    static ImGuiTableFlags tbl_flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV;
+    static ImGuiTableFlags tbl_flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_Resizable
+      | ImGuiTableFlags_NoSavedSettings;
 
     if (ImGui::BeginTable("itemData", 2, tbl_flags))
     {
       ImGui::TableSetupScrollFreeze(0, 1);
-      ImGui::TableSetupColumn("item data", ImGuiTableColumnFlags_WidthFixed, 350.f);
+      ImGui::TableSetupColumn("item data", ImGuiTableColumnFlags_WidthFixed, 400.f);
       ImGui::TableSetupColumn("mods data", ImGuiTableColumnFlags_WidthStretch);
       ImGui::TableHeadersRow();
 
@@ -152,6 +158,26 @@ struct CItemData_widget
       modified |= ImGui::InputScalar("flags (hex)##uk0", ImGuiDataType_U8 , &item.uk0_012, NULL, NULL, "%02X", ImGuiInputTextFlags_CharsHexadecimal);
       modified |= ImGui::InputScalar("unknown u32 (hex)##uk1", ImGuiDataType_U32, &item.uk1_012, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
 
+      if (stats != nullptr)
+      {
+        auto modifiers = stats->get_modifiers_prop(item.iid.uk.uk4);
+        if (modifiers)
+        {
+          ImGui::Text("-----Stats-----");
+          if (ImGui::Button("new constant"))
+            stats->add_constant_stats(modifiers);
+          ImGui::SameLine();
+          if (ImGui::Button("new curve"))
+            stats->add_curve_stats(modifiers);
+          ImGui::SameLine();
+          if (ImGui::Button("new combined"))
+            stats->add_combined_stats(modifiers);
+
+          modified |= modifiers->imgui_widget("item_stats", true);
+        }
+      }
+      //stats
+
 
       ImGui::TableNextColumn();
 
@@ -168,7 +194,7 @@ struct CItemData_widget
         }
 
         ImGui::Text("MOD ROOT:");
-        modified |= CItemMod_widget::draw(item.root2);
+        modified |= CItemMod_widget::draw_no_stats(item.root2);
       }
       else
       {
@@ -182,45 +208,3 @@ struct CItemData_widget
   }
 };
 
-// to be used with CItemData node
-class itemData_editor
-  : public node_editor_widget
-{
-  CItemData item;
-
-public:
-  itemData_editor(const std::shared_ptr<const node_t>& node, const csav_version& version)
-    : node_editor_widget(node, version)
-  {
-    reload();
-  }
-
-  ~itemData_editor() {}
-
-public:
-  bool commit_impl() override
-  {
-    auto rebuilt = item.to_node(version());
-    auto curnode = ncnode();
-
-    if (!rebuilt)
-      return false;
-
-    curnode->assign_children(rebuilt->children());
-    curnode->assign_data(rebuilt->data());
-    return true;
-  }
-
-  bool reload_impl() override
-  {
-    bool success = item.from_node(node(), version());
-    return success;
-  }
-
-protected:
-  bool draw_impl(const ImVec2& size) override
-  {
-    scoped_imgui_id _sii(this);
-    return CItemData_widget::draw(item);
-  }
-};

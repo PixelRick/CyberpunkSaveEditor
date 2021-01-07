@@ -11,6 +11,7 @@
 #include <cpinternals/cpnames.hpp>
 #include <cpinternals/cpenums.hpp>
 #include <csav/serializers.hpp>
+#include <csav/csystem/fwd.hpp>
 #include <csav/csystem/CStringPool.hpp>
 #include <csav/csystem/CPropertyBase.hpp>
 #include <csav/csystem/CPropertyFactory.hpp>
@@ -24,11 +25,8 @@
 class CBoolProperty
   : public CProperty
 {
-  static inline std::string s_ctypename = "Bool";
-
 protected:
   bool m_value = false;
-  
 
 public:
   CBoolProperty()
@@ -41,9 +39,13 @@ public:
 public:
   // overrides
 
-  std::string_view ctypename() const override { return s_ctypename; };
+  CSysName ctypename() const override
+  {
+    static CSysName sname("Bool");
+    return sname;
+  };
 
-  bool serialize_in(std::istream& is, CStringPool& strpool) override
+  bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
   {
     char val = 0;
     is >> cbytes_ref(val);
@@ -51,16 +53,27 @@ public:
     return is.good();
   }
 
-  virtual bool serialize_out(std::ostream& os, CStringPool& strpool) const
+  virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
     char val = m_value ? 1 : 0;
     os.write(&val, 1);
     return true;
   }
 
+  bool value() const { return m_value; }
+
+  void value(bool value)
+  {
+    if (m_value != value)
+    {
+      m_value = value;
+      post_cproperty_event(EPropertyEvent::data_modified);
+    }
+  }
+
 #ifndef DISABLE_CP_IMGUI_WIDGETS
 
-  [[nodiscard]] bool imgui_widget(const char* label, bool editable) override
+  [[nodiscard]] bool imgui_widget_impl(const char* label, bool editable) override
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -111,11 +124,18 @@ protected:
   m_value;
 
 protected:
-  EIntKind m_int_kind;
+  const EIntKind m_int_kind;
+  const size_t m_int_size;
+  CSysName m_ctypename;
 
 public:
-  CIntProperty(EIntKind int_kind)
-    : CProperty(EPropertyKind::Integer), m_int_kind(int_kind) {}
+  explicit CIntProperty(EIntKind int_kind)
+    : CProperty(EPropertyKind::Integer)
+    , m_int_kind(int_kind)
+    , m_int_size(int_size(int_kind))
+    , m_ctypename(int_ctypename(int_kind))
+  {
+  }
 
   ~CIntProperty() override = default;
 
@@ -123,28 +143,10 @@ public:
   EIntKind int_kind() const { return m_int_kind; }
 
 public:
-  // overrides
-
-  std::string_view ctypename() const override
+  
+  static size_t int_size(EIntKind int_kind)
   {
-    switch (m_int_kind)
-    {
-      case EIntKind::U8: return "Uint8";
-      case EIntKind::I8: return "Int8";
-      case EIntKind::U16: return "Uint16";
-      case EIntKind::I16: return "Int16";
-      case EIntKind::U32: return "Uint32";
-      case EIntKind::I32: return "Int32";
-      case EIntKind::U64: return "Uint64";
-      case EIntKind::I64: return "Int64";
-      default: break;
-    }
-    throw std::domain_error("unknown EIntKind");
-  };
-
-  size_t int_size() const
-  {
-    switch (m_int_kind)
+    switch (int_kind)
     {
       case EIntKind::U8:
       case EIntKind::I8: return 1;
@@ -159,22 +161,88 @@ public:
     throw std::domain_error("unknown EIntKind");
   }
 
-  bool serialize_in(std::istream& is, CStringPool& strpool) override
+  static std::string int_ctypename(EIntKind int_kind)
   {
-    const size_t value_size = int_size();
-    is.read((char*)&m_value.u64, value_size);
+    switch (int_kind)
+    {
+      case EIntKind::U8: return "Uint8";
+      case EIntKind::I8: return "Int8";
+      case EIntKind::U16: return "Uint16";
+      case EIntKind::I16: return "Int16";
+      case EIntKind::U32: return "Uint32";
+      case EIntKind::I32: return "Int32";
+      case EIntKind::U64: return "Uint64";
+      case EIntKind::I64: return "Int64";
+      default: break;
+    }
+    throw std::domain_error("unknown EIntKind");
+  };
+
+  uint64_t u64() const { return m_value.u64; }
+  uint32_t u32() const { return m_value.u32; }
+  uint16_t u16() const { return m_value.u16; }
+  uint8_t u8() const { return m_value.u8; }
+
+  // todo: template this class..
+
+  void u64(uint64_t value)
+  {
+    if (value != m_value.u64)
+    {
+      m_value.u64 = value;
+      post_cproperty_event(EPropertyEvent::data_modified);
+    }
+  }
+
+  void u32(uint32_t value)
+  {
+    if (value != m_value.u32)
+    {
+      m_value.u32 = value;
+      post_cproperty_event(EPropertyEvent::data_modified);
+    }
+  }
+
+  void u16(uint16_t value)
+  {
+    if (value != m_value.u16)
+    {
+      m_value.u16 = value;
+      post_cproperty_event(EPropertyEvent::data_modified);
+    }
+  }
+
+  void u8(uint8_t value)
+  {
+    if (value != m_value.u8)
+    {
+      m_value.u8 = value;
+      post_cproperty_event(EPropertyEvent::data_modified);
+    }
+  }
+
+  // overrides
+
+  CSysName ctypename() const override
+  {
+    return m_ctypename;
+  }
+
+  bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
+  {
+    is.read((char*)&m_value.u64, m_int_size);
     return is.good();
   }
 
-  virtual bool serialize_out(std::ostream& os, CStringPool& strpool) const
+  virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
-    os.write((char*)&m_value.u64, int_size());
+    os.write((char*)&m_value.u64, m_int_size);
     return true;
   }
 
 #ifndef DISABLE_CP_IMGUI_WIDGETS
 
-  [[nodiscard]] bool imgui_widget(const char* label, bool editable) override
+  [[nodiscard]] bool imgui_widget_impl(const char* label, bool editable) override
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -210,31 +278,31 @@ public:
 class CFloatProperty
   : public CProperty
 {
-  static inline std::string s_ctypename = "Float";
-
 protected:
-  float m_value;
+  float m_value = 0.f;
 
 public:
   CFloatProperty()
-    : CProperty(EPropertyKind::Float)
-  {
-  }
+    : CProperty(EPropertyKind::Float) {}
 
   ~CFloatProperty() override = default;
 
 public:
   // overrides
 
-  std::string_view ctypename() const override { return s_ctypename; };
+  CSysName ctypename() const override
+  {
+    static CSysName sname("Float");
+    return sname;
+  };
 
-  bool serialize_in(std::istream& is, CStringPool& strpool) override
+  bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
   {
     is >> cbytes_ref(m_value);
     return is.good();
   }
 
-  virtual bool serialize_out(std::ostream& os, CStringPool& strpool) const
+  virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
     char val = m_value ? 1 : 0;
     os.write(&val, 1);
@@ -243,7 +311,7 @@ public:
 
 #ifndef DISABLE_CP_IMGUI_WIDGETS
 
-  [[nodiscard]] bool imgui_widget(const char* label, bool editable) override
+  [[nodiscard]] bool imgui_widget_impl(const char* label, bool editable) override
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -262,6 +330,7 @@ public:
 
 class CArrayProperty
   : public CProperty
+  , public CPropertyListener
 {
 public:
   using container_type = std::vector<CPropertySPtr>;
@@ -274,18 +343,32 @@ protected:
 protected:
   // with a pointer to System in CProperty we could use
   // CName ids too.. but that's for later
-  std::string m_elt_ctypename;
-  std::string m_typename;
+  CSysName m_elt_ctypename;
+  CSysName m_typename;
+  std::function<CPropertySPtr()> m_elt_creator;
 
 public:
-  CArrayProperty(std::string_view elt_ctypename, size_t size)
-    : CProperty(EPropertyKind::DynArray), m_elt_ctypename(elt_ctypename)
+  CArrayProperty(CSysName elt_ctypename, size_t size)
+    : CProperty(EPropertyKind::DynArray)
+    , m_elt_ctypename(elt_ctypename)
+    , m_typename(fmt::format("[{}]{}", size, elt_ctypename.str()))
   {
-    m_typename = fmt::format("[{}]{}", size, m_elt_ctypename);
     m_elts.resize(size);
+    auto& factory = CPropertyFactory::get();
+    m_elt_creator = factory.get_creator(elt_ctypename);
+    for (auto& elt : m_elts)
+    {
+      // todo: use clone on first instance..
+      elt = m_elt_creator();
+      elt->add_listener(this);
+    }
   }
 
-  ~CArrayProperty() override = default;
+  ~CArrayProperty() override
+  {
+    for (auto& elt : m_elts)
+      elt->remove_listener(this);
+  }
 
 public:
   const container_type& elts() const { return m_elts; }
@@ -301,30 +384,34 @@ public:
 
   // overrides
 
-  std::string_view ctypename() const override { return m_typename; };
+  CSysName ctypename() const override { return m_typename; };
 
-  bool serialize_in(std::istream& is, CStringPool& strpool) override
+  bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
   {
-    auto& factory = CPropertyFactory::get();
-    
+    uint32_t uk;
+    is >> cbytes_ref(uk);
+    if (uk != m_elts.size())
+      throw std::logic_error("CArrayProperty: false assumption #1. please open an issue");
+
     for (auto& elt : m_elts)
     {
-      // todo: use clone on first instance..
-      elt = factory.create(m_elt_ctypename);
       if (elt->kind() == EPropertyKind::Unknown)
         return false;
-      if (!elt->serialize_in(is, strpool))
+      if (!elt->serialize_in(is, serctx))
         return false;
     }
 
     return is.good();
   }
 
-  virtual bool serialize_out(std::ostream& os, CStringPool& strpool) const
+  virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
+    uint32_t uk = (uint32_t)m_elts.size();
+    os << cbytes_ref(uk);
+
     for (auto& elt : m_elts)
     {
-      if (!elt->serialize_out(os, strpool))
+      if (!elt->serialize_out(os, serctx))
         return false;
     }
 
@@ -333,7 +420,7 @@ public:
 
 #ifndef DISABLE_CP_IMGUI_WIDGETS
 
-  [[nodiscard]] bool imgui_widget(const char* label, bool editable) override
+  [[nodiscard]] bool imgui_widget_impl(const char* label, bool editable) override
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -352,6 +439,7 @@ public:
       ImGui::TableHeadersRow();
 
       size_t idx = 0;
+      int to_rem = -1;
       for (auto& elt : m_elts)
       {
         auto lbl = fmt::format("{:03d}", idx);
@@ -359,10 +447,23 @@ public:
         ImGui::TableNextRow();
         ImGui::TableNextColumn();
         ImGui::Text(lbl.c_str());
+        if (editable && ImGui::BeginPopupContextItem("item context menu"))
+        {
+          if (ImGui::Selectable("delete"))
+            to_rem = (int)idx;
+          ImGui::EndPopup();
+        }
+
         ImGui::TableNextColumn();
         modified |= elt->imgui_widget(lbl.c_str(), editable);
 
         ++idx;
+      }
+
+      if (to_rem >= 0)
+      {
+        m_elts.erase(m_elts.begin() + to_rem);
+        modified = true;
       }
 
       ImGui::EndTable();
@@ -372,6 +473,13 @@ public:
   }
 
 #endif
+
+  // child events
+
+  void on_cproperty_event(const std::shared_ptr<const CProperty>& prop, EPropertyEvent evt) override
+  {
+    post_cproperty_event(EPropertyEvent::data_modified);
+  }
 };
 
 //------------------------------------------------------------------------------
@@ -380,6 +488,7 @@ public:
 
 class CDynArrayProperty
   : public CProperty
+  , public CPropertyListener
 {
 public:
   using container_type = std::vector<CPropertySPtr>;
@@ -392,17 +501,25 @@ protected:
 protected:
   // with a pointer to System in CProperty we could use
   // CName ids too.. but that's for later
-  std::string m_elt_ctypename;
-  std::string m_typename;
+  CSysName m_elt_ctypename;
+  CSysName m_ctypename;
+  std::function<CPropertySPtr()> m_elt_creator;
 
 public:
-  CDynArrayProperty(std::string_view elt_ctypename)
-    : CProperty(EPropertyKind::DynArray), m_elt_ctypename(elt_ctypename)
+  explicit CDynArrayProperty(CSysName elt_ctypename)
+    : CProperty(EPropertyKind::DynArray)
+    , m_elt_ctypename(elt_ctypename)
+    , m_ctypename(std::string("array:") + m_elt_ctypename.str())
   {
-    m_typename = "array:" + m_elt_ctypename;
+    auto& factory = CPropertyFactory::get();
+    m_elt_creator = factory.get_creator(elt_ctypename);
   }
 
-  ~CDynArrayProperty() override = default;
+  ~CDynArrayProperty() override
+  {
+    for (auto& elt : m_elts)
+      elt->remove_listener(this);
+  }
 
 public:
   const container_type& elts() const { return m_elts; }
@@ -416,19 +533,23 @@ public:
   iterator begin() { return m_elts.begin(); }
   iterator end() { return m_elts.end(); }
 
-  // accepts no arguments for now
   iterator emplace(const_iterator _where)
   {
-    auto new_elt = CPropertyFactory::get().create(m_elt_ctypename);
-    return m_elts.emplace(_where);
+    auto new_elt = m_elt_creator();
+    new_elt->add_listener(this);
+    auto it = m_elts.emplace(_where, new_elt);
+    post_cproperty_event(EPropertyEvent::data_modified);
+    return it;
   }
 
   // overrides
 
-  std::string_view ctypename() const override { return m_typename; };
+  CSysName ctypename() const override { return m_ctypename; };
 
-  bool serialize_in(std::istream& is, CStringPool& strpool) override
+  bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
   {
+    for (auto& elt : m_elts)
+      elt->remove_listener(this);
     m_elts.clear();
 
     uint32_t cnt = 0;
@@ -439,24 +560,25 @@ public:
 
     for (auto& elt : m_elts)
     {
-      elt = factory.create(m_elt_ctypename);
+      elt = m_elt_creator();
       if (elt->kind() == EPropertyKind::Unknown)
         return false;
-      if (!elt->serialize_in(is, strpool))
+      if (!elt->serialize_in(is, serctx))
         return false;
+      elt->add_listener(this);
     }
 
     return is.good();
   }
 
-  virtual bool serialize_out(std::ostream& os, CStringPool& strpool) const
+  virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
     uint32_t cnt = 0;
     os << cbytes_ref(cnt);
 
     for (auto& elt : m_elts)
     {
-      if (!elt->serialize_out(os, strpool))
+      if (!elt->serialize_out(os, serctx))
         return false;
     }
 
@@ -465,7 +587,7 @@ public:
 
 #ifndef DISABLE_CP_IMGUI_WIDGETS
 
-  [[nodiscard]] bool imgui_widget(const char* label, bool editable) override
+  [[nodiscard]] bool imgui_widget_impl(const char* label, bool editable) override
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -479,31 +601,78 @@ public:
     if (ImGui::BeginTable(label, 2, tbl_flags, size))
     {
       ImGui::TableSetupScrollFreeze(0, 1);
-      ImGui::TableSetupColumn("idx", ImGuiTableColumnFlags_WidthFixed, 30.f);
+      ImGui::TableSetupColumn("idx", ImGuiTableColumnFlags_WidthFixed, editable ? 68.f : 28.f);
       ImGui::TableSetupColumn("value", ImGuiTableColumnFlags_WidthStretch);
       ImGui::TableHeadersRow();
 
-      size_t idx = 0;
-      for (auto& elt : m_elts)
+      int to_rem = -1;
+      for (size_t idx = 0; idx < m_elts.size(); ++idx)
       {
+        scoped_imgui_id _sii((int)idx);
+
+        auto& elt = m_elts[idx];
+
         auto lbl = fmt::format("{:03d}", idx);
 
         ImGui::TableNextRow();
         ImGui::TableNextColumn();
+
         ImGui::Text(lbl.c_str());
+        if (editable)
+        { 
+          ImGui::SameLine();
+          if (ImGui::ArrowButton("up", ImGuiDir_Up))
+          {
+            if (idx > 0)
+            {
+              size_t prev = idx - 1;
+              CPropertySPtr tmp = elt; // copy
+              m_elts[idx] = m_elts[prev];
+              m_elts[prev] = tmp;
+              modified = true;
+            }
+          }
+          ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, ImGui::GetStyle().ItemSpacing.y));
+          ImGui::SameLine();
+          if (ImGui::ArrowButton("down", ImGuiDir_Down))
+          {
+            if (idx + 1 < m_elts.size())
+            {
+              size_t next = idx + 1;
+              CPropertySPtr tmp = elt; // copy
+              m_elts[idx] = m_elts[next];
+              m_elts[next] = tmp;
+              modified = true;
+            }
+          }
+          ImGui::PopStyleVar();
+          if (editable && ImGui::SmallButton("delete"))
+            to_rem = (int)idx;
+        }
+
         ImGui::TableNextColumn();
         modified |= elt->imgui_widget(lbl.c_str(), editable);
-
-        ++idx;
       }
-
       ImGui::EndTable();
+
+      if (to_rem >= 0)
+      {
+        m_elts.erase(m_elts.begin() + to_rem);
+        modified = true;
+      }
     }
 
     return modified;
   }
 
 #endif
+
+  // child events
+
+  void on_cproperty_event(const std::shared_ptr<const CProperty>& prop, EPropertyEvent evt) override
+  {
+    post_cproperty_event(EPropertyEvent::data_modified);
+  }
 };
 
 
@@ -513,45 +682,58 @@ public:
 
 class CObjectProperty
   : public CProperty
+  , public CObjectListener
 {
 protected:
   CObjectSPtr m_object;
-
-  std::string m_obj_ctypename;
+  CSysName m_obj_ctypename;
 
 public:
-  CObjectProperty(std::string_view obj_ctypename)
+  CObjectProperty(CSysName obj_ctypename)
     : CProperty(EPropertyKind::Object), m_obj_ctypename(obj_ctypename)
   {
+    m_object = std::make_shared<CObject>(m_obj_ctypename);
+    m_object->add_listener(this);
   }
 
-  ~CObjectProperty() override = default;
+  ~CObjectProperty() override
+  {
+    m_object->remove_listener(this);
+  }
 
 public:
+  CObjectSPtr obj() const { return m_object; }
+
   // overrides
 
-  std::string_view ctypename() const override { return m_obj_ctypename; };
+  CSysName ctypename() const override { return m_obj_ctypename; };
 
-  bool serialize_in(std::istream& is, CStringPool& strpool) override
+  bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
   {
-    m_object = std::make_shared<CObject>();
-    m_object->serialize_in(is, strpool);
+    m_object->serialize_in(is, serctx);
     return is.good();
   }
 
-  virtual bool serialize_out(std::ostream& os, CStringPool& strpool) const
+  virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
-    return m_object->serialize_out(os, strpool);
+    return m_object->serialize_out(os, serctx);
   }
 
 #ifndef DISABLE_CP_IMGUI_WIDGETS
 
-  [[nodiscard]] bool imgui_widget(const char* label, bool editable) override
+  [[nodiscard]] bool imgui_widget_impl(const char* label, bool editable) override
   {
     return m_object->imgui_widget(label, editable);
   }
 
 #endif
+
+  // object events
+
+  void on_cobject_event(const std::shared_ptr<const CObject>& prop, EObjectEvent evt) override
+  {
+    post_cproperty_event(EPropertyEvent::data_modified);
+  }
 };
 
 //------------------------------------------------------------------------------
@@ -562,16 +744,20 @@ class CEnumProperty
   : public CProperty
 {
 protected:
-  std::string m_enum_name;
+  CSysName m_enum_name;
   uint32_t m_value = 0;
-  std::string m_val_name;
+  CSysName m_val_name;
   CEnumList::enum_members_sptr m_p_enum_members;
 
 public:
-  CEnumProperty(std::string enum_name)
+  CEnumProperty(CSysName enum_name)
     : CProperty(EPropertyKind::Combo), m_enum_name(enum_name)
   {
-    m_p_enum_members = CEnumList::get().get_enum(enum_name);
+    m_p_enum_members = CEnumList::get().get_enum(enum_name.str());
+    if (m_p_enum_members->size())
+      m_val_name = CSysName(m_p_enum_members->at(m_value));
+    else
+      m_val_name = CSysName("empty enum");
   }
 
   ~CEnumProperty() override = default;
@@ -579,20 +765,20 @@ public:
 public:
   // overrides
 
-  std::string_view ctypename() const override { return m_enum_name; };
+  CSysName ctypename() const override { return m_enum_name; };
 
-  bool serialize_in(std::istream& is, CStringPool& strpool) override
+  bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
   {
     uint16_t strpool_idx = 0;
     is >> cbytes_ref(strpool_idx);
-    if (strpool_idx >= strpool.size())
+    if (strpool_idx >= serctx.strpool.size())
       return false;
-    m_val_name = strpool.from_idx(strpool_idx);
+    m_val_name = CSysName(serctx.strpool.from_idx(strpool_idx));
     auto& enum_members = *m_p_enum_members;
     m_value = (uint32_t)enum_members.size();
     for (size_t i = 0; i < enum_members.size(); ++i)
     {
-      if (enum_members[i] == m_val_name)
+      if (enum_members[i] == m_val_name.str())
       {
         m_value = (uint32_t)i;
         break;
@@ -600,15 +786,15 @@ public:
     }
     if (m_value == enum_members.size())
     {
-      enum_members.push_back(m_val_name);
+      enum_members.push_back(m_val_name.str());
     }
 
     return is.good();
   }
 
-  virtual bool serialize_out(std::ostream& os, CStringPool& strpool) const
+  virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
-    uint16_t strpool_idx = strpool.to_idx(m_val_name);
+    uint16_t strpool_idx = serctx.strpool.to_idx(m_val_name.str());
     os << cbytes_ref(strpool_idx);
     return true;
   }
@@ -624,10 +810,11 @@ public:
     return true;
   }
 
-  [[nodiscard]] bool imgui_widget(const char* label, bool editable) override
+  [[nodiscard]] bool imgui_widget_impl(const char* label, bool editable) override
   {
     auto& enum_members = *m_p_enum_members;
     int current_item = m_value;
+
     auto current_enum_name = fmt::format("unknown enum value {}", current_item);
     if (current_item >= 0 && current_item < enum_members.size())
       current_enum_name = enum_members[current_item];
@@ -637,12 +824,13 @@ public:
     if (editable)
       ImGui::Combo(label, &current_item, &enum_name_getter, (void*)&enum_members, (int)enum_members.size());
     else
-      ImGui::Text("%s: %s::%s", label, m_enum_name.c_str(), current_enum_name);
+      ImGui::Text("%s: %s::%s", label, m_enum_name.str().c_str(), current_enum_name);
     
     if (current_item == m_value || current_item < 0)
       return false;
+
     m_value = (uint16_t)current_item;
-    m_val_name = enum_members[m_value];
+    m_val_name = CSysName(enum_members[m_value]);
     return true;
   }
 
@@ -656,10 +844,8 @@ public:
 class CTweakDBIDProperty
   : public CProperty
 {
-  static inline std::string s_ctypename = "TweakDBID";
-
 protected:
-  TweakDBID m_id;
+  TweakDBID m_id = {};
 
 public:
   CTweakDBIDProperty()
@@ -672,15 +858,19 @@ public:
 public:
   // overrides
 
-  std::string_view ctypename() const override { return s_ctypename; };
+  CSysName ctypename() const override
+  {
+    static CSysName sname("TweakDBID");
+    return sname;
+  };
 
-  bool serialize_in(std::istream& is, CStringPool& strpool) override
+  bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
   {
     is >> m_id;
     return is.good();
   }
 
-  virtual bool serialize_out(std::ostream& os, CStringPool& strpool) const
+  virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
     os << m_id;
     return true;
@@ -688,7 +878,7 @@ public:
 
 #ifndef DISABLE_CP_IMGUI_WIDGETS
 
-  [[nodiscard]] bool imgui_widget(const char* label, bool editable) override
+  [[nodiscard]] bool imgui_widget_impl(const char* label, bool editable) override
   {
     return TweakDBID_widget::draw(m_id, label);
   }
@@ -703,10 +893,8 @@ public:
 class CNameProperty
   : public CProperty
 {
-  static inline std::string s_ctypename = "CName";
-
 protected:
-  CName m_id;
+  CName m_id = {};
 
 public:
   CNameProperty()
@@ -719,29 +907,33 @@ public:
 public:
   // overrides
 
-  std::string_view ctypename() const override { return s_ctypename; };
+  CSysName ctypename() const override
+  {
+    static CSysName sname("CName");
+    return sname;
+  };
 
-  bool serialize_in(std::istream& is, CStringPool& strpool) override
+  bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
   {
     uint16_t strpool_idx = 0;
     is >> cbytes_ref(strpool_idx);
-    if (!is.good() || strpool_idx >= strpool.size())
+    if (!is.good() || strpool_idx >= serctx.strpool.size())
       return false;
 
-    m_id = CName(strpool.from_idx(strpool_idx));
+    m_id = CName(serctx.strpool.from_idx(strpool_idx));
     return true;
   }
 
-  virtual bool serialize_out(std::ostream& os, CStringPool& strpool) const
+  virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
-    uint16_t strpool_idx = strpool.to_idx(m_id.str());
+    uint16_t strpool_idx = serctx.strpool.to_idx(m_id.str());
     os << cbytes_ref(strpool_idx);
     return true;
   }
 
 #ifndef DISABLE_CP_IMGUI_WIDGETS
 
-  [[nodiscard]] bool imgui_widget(const char* label, bool editable) override
+  [[nodiscard]] bool imgui_widget_impl(const char* label, bool editable) override
   {
     return CName_widget::draw(m_id, label);
   }
@@ -750,52 +942,95 @@ public:
 };
 
 //------------------------------------------------------------------------------
-// HANDLE
+// HANDLE (pointers..)
 //------------------------------------------------------------------------------
+
+// for now, replacing the object is permissive, but the original obj_ctypename
+// must be a base class of the new object class.
+// todo: implement inheritance in the BP database
+//
+// also, base type may not be constructible, so a default type might be necessary..
+//
 
 class CHandleProperty
   : public CProperty
+  , public CObjectListener
 {
 protected:
-  uint32_t m_handle;
-  std::string m_sub_ctypename;
-  std::string m_ctypename;
+  CSysName m_base_ctypename;
+  CSysName m_ctypename;
+  CObjectSPtr m_obj;
 
 public:
-  CHandleProperty(std::string_view sub_ctypename)
-    : CProperty(EPropertyKind::Handle), m_sub_ctypename(sub_ctypename)
+  CHandleProperty(CSysName sub_ctypename)
+    : CProperty(EPropertyKind::Handle)
+    , m_base_ctypename(sub_ctypename)
+    , m_ctypename(std::string("handle:") + m_base_ctypename.str())
   {
-    m_ctypename = "handle:" + m_sub_ctypename;
+    m_obj = std::make_shared<CObject>(m_base_ctypename);
+    m_obj->add_listener(this);
   }
 
   ~CHandleProperty() override = default;
 
 public:
-  // overrides
 
-  std::string_view ctypename() const override { return m_ctypename; };
+  CObjectSPtr obj() const { return m_obj; }
 
-  bool serialize_in(std::istream& is, CStringPool& strpool) override
+  void set_obj(const CObjectSPtr& new_obj)
   {
-    is >> cbytes_ref(m_handle);
-    return is.good();
+    if (!new_obj) // no!
+      return;
+    m_obj->remove_listener(this);
+    m_obj = new_obj;
+    m_obj->add_listener(this);
   }
 
-  virtual bool serialize_out(std::ostream& os, CStringPool& strpool) const
+  // overrides
+
+  CSysName ctypename() const override { return m_ctypename; }
+
+  bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
   {
-    os << cbytes_ref(m_handle);
+    uint32_t handle;
+    is >> cbytes_ref(handle);
+
+    auto new_obj = serctx.from_handle(handle);
+    set_obj(new_obj);
+
+    return new_obj && is.good();
+  }
+
+  virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
+  {
+    uint32_t handle = serctx.to_handle(m_obj);
+    os << cbytes_ref(handle);
     return true;
   }
 
 #ifndef DISABLE_CP_IMGUI_WIDGETS
 
-  [[nodiscard]] bool imgui_widget(const char* label, bool editable) override
+  [[nodiscard]] bool imgui_widget_impl(const char* label, bool editable) override
   {
-    ImGui::Text("handle: %08X", m_handle);
-    return false;
+    if (!m_obj)
+    {
+      ImGui::Text("error: dead handle.");
+      return false;
+    }
+    //auto basetype = m_base_ctypename.str();
+    auto childtype = m_obj->ctypename().str();
+    ImGui::Text("shared %s", childtype.c_str());
+    return m_obj->imgui_widget(label, editable);
   }
 
 #endif
+
+  // object events
+
+  void on_cobject_event(const std::shared_ptr<const CObject>& prop, EObjectEvent evt) override
+  {
+    post_cproperty_event(EPropertyEvent::data_modified);
+  }
 };
 
 //------------------------------------------------------------------------------
@@ -807,8 +1042,6 @@ public:
 class CNodeRefProperty
   : public CProperty
 {
-  static inline std::string s_ctypename = "NodeRef";
-
 protected:
   std::string m_str;
 
@@ -823,9 +1056,13 @@ public:
 public:
   // overrides
 
-  std::string_view ctypename() const override { return s_ctypename; };
+  CSysName ctypename() const override
+  {
+    static CSysName sname("NodeRef");
+    return sname;
+  };
 
-  bool serialize_in(std::istream& is, CStringPool& strpool) override
+  bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
   {
     uint16_t cnt = 0;
     is >> cbytes_ref(cnt);
@@ -835,9 +1072,9 @@ public:
     return is.good();
   }
 
-  virtual bool serialize_out(std::ostream& os, CStringPool& strpool) const
+  virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
-    uint16_t cnt = m_str.size();
+    uint16_t cnt = (uint16_t)m_str.size();
     os.write(m_str.data(), cnt);
     os << cbytes_ref(cnt);
     return true;
@@ -845,7 +1082,7 @@ public:
 
 #ifndef DISABLE_CP_IMGUI_WIDGETS
 
-  [[nodiscard]] bool imgui_widget(const char* label, bool editable) override
+  [[nodiscard]] bool imgui_widget_impl(const char* label, bool editable) override
   {
     ImGui::Text("noderef: %s", m_str.c_str());
     return false;

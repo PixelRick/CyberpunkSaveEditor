@@ -2,7 +2,7 @@
 #include <inttypes.h>
 #include "serializers.hpp"
 
-bool csav::open_with_progress(std::filesystem::path path, float& progress)
+bool csav::load_stree(std::filesystem::path path)
 {
   uint32_t chunkdescs_start = 0;
   uint32_t nodedescs_start = 0;
@@ -10,9 +10,7 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
   uint32_t i = 0;
 
   std::vector<compressed_chunk_desc> chunk_descs;
-  std::vector<char> nodedata;
-
-  progress = 0.05f;
+  std::vector<char>& nodedata = stree.nodedata;
 
   filepath = path;
   std::ifstream ifs;
@@ -31,8 +29,6 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
   ifs >> cbytes_ref(magic);
   if (magic != 'CSAV' && magic != 'SAVE')
     return false;
-
-  progress = 0.1f;
 
   ifs >> cbytes_ref(ver.v1);
   ifs >> cbytes_ref(ver.v2);
@@ -59,8 +55,6 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
 
   chunkdescs_start = (uint32_t)ifs.tellg();
 
-  progress = 0.15f;
-
   // --------------------------------------------------------
   //  FOOTER (offset of 'NODE', 'DONE' tag)
   // --------------------------------------------------------
@@ -83,21 +77,16 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
   if (magic != 'NODE')
     return false;
 
-  progress = 0.2f;
-
   // now read node descs
   size_t nd_cnt = 0;
   ifs >> cp_packedint_ref((int64_t&)nd_cnt);
-  node_descs.resize(nd_cnt);
+  stree.descs.resize(nd_cnt);
   for (size_t i = 0; i < nd_cnt; ++i)
   {
-    ifs >> node_descs[i];
-    progress = 0.2f + 0.1f * i / (float)nd_cnt;
+    ifs >> stree.descs[i];
   }
   if ((size_t)ifs.tellg() != footer_start)
     return false;
-
-  progress = 0.3f;
 
   // --------------------------------------------------------
   //  COMPRESSED CHUNKS
@@ -116,10 +105,7 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
   for (uint32_t i = 0; i < cd_cnt; ++i)
   {
     ifs >> chunk_descs[i];
-    progress = 0.3f + 0.1f * i / (float)cd_cnt;
   }
-
-  progress = 0.4f;
 
   // actual chunks
 
@@ -137,12 +123,9 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
       auto& cd = chunk_descs[i];
       cd.data_offset = data_offset;
       data_offset += cd.data_size;
-      progress = 0.4f + 0.1f * i / (float)cd_cnt;
     }
     nodedata_size = data_offset;
   }
-
-  progress = 0.5f;
 
   // --------------------------------------------------------
   //  DECOMPRESSION from compressed chunks to nodedata
@@ -183,8 +166,6 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
     int res = LZ4_decompress_safe(tmp.data(), nodedata.data() + cd.data_offset, (int)csize, cd.data_size);
     if (res != cd.data_size)
       return false;
-
-    progress = 0.5f + 0.3f * i / (float)cd_cnt;
   }
 
   if (is_ps4)
@@ -197,36 +178,24 @@ bool csav::open_with_progress(std::filesystem::path path, float& progress)
   if (ifs.fail())
     return false;
   ifs.close();
-  progress = 0.8f;
-
-  // check that each blob starts with its node index (dword)
-  i = 0;
-  for (auto& nd : node_descs)
-  {
-    if (*(uint32_t*)(nodedata.data() + nd.data_offset) != i++)
-      return false;
-  }
 
   // --------------------------------------------------------
   //  UNFLATTENING of node tree
   // --------------------------------------------------------
 
-  // fake descriptor, our buffer should be prefixed with zeroes so the *data==idx will pass..
-  uint32_t data_size = (uint32_t)nodedata.size() - chunks_start;
-  node_desc root_desc {"root", node_t::null_node_idx, 0, chunks_start-4, data_size+4};
-  root_node = read_node(nodedata, root_desc, node_t::root_node_idx);
+  root_node = stree.to_node(chunks_start);
   if (!root_node)
     return false;
 
+  const uint32_t data_size = (uint32_t)nodedata.size() - chunks_start;
   auto tree_size = root_node->calcsize();
-  if (tree_size != data_size) // check the unflattening worked
+  if (tree_size != data_size) // check that the unflattening worked
     return false;
 
-  progress = 1.f;
   return true;
 }
 
-bool csav::save_with_progress(std::filesystem::path path, float& progress, bool dump_decompressed_data, bool ps4_weird_format)
+bool csav::save_stree(std::filesystem::path path, bool dump_decompressed_data, bool ps4_weird_format)
 {
   if (!root_node)
     return false;
@@ -238,9 +207,6 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
   uint32_t i = 0;
 
   std::vector<compressed_chunk_desc> chunk_descs;
-  std::vector<char> nodedata;
-
-  progress = 0.05f;
 
   // make a backup (when there isn't one, oldest wins for safety reasons)
   if (std::filesystem::exists(path))
@@ -268,8 +234,6 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
   magic = 'CSAV';
   ofs << cbytes_ref(magic);
 
-  progress = 0.1f;
-
   ofs << cbytes_ref(ver.v1);
   ofs << cbytes_ref(ver.v2);
   ofs << cp_plstring_ref(suk);
@@ -278,8 +242,6 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
 
   if (ver.v1 >= 83)
     ofs << cbytes_ref(ver.v3);
-
-  progress = 0.15f;
 
   // --------------------------------------------------------
   //  WEIRD PREP
@@ -302,26 +264,8 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
   //  FLATTENING of node tree
   // --------------------------------------------------------
 
-  // yes that looks dumb, but cdpred use first data_offset = min_offset
-  // so before creating the node descriptors i fill the buffer to min_offset
-  nodedata.resize(chunks_start);
-
-  auto& nc_root = root_node->nonconst();
-  uint32_t node_cnt = root_node->treecount();
-
-  node_descs.resize(node_cnt);
-  uint32_t next_idx = 0;
-  write_node_children(nodedata, *root_node, next_idx);
-
-  // check that each blob starts with its node index (dword)
-  i = 0;
-  for (auto& ed : node_descs)
-  {
-    if (*(uint32_t*)(nodedata.data() + ed.data_offset) != i++)
-      return false;
-  }
-
-  progress = 0.35f;
+  if (!stree.from_node(root_node, chunks_start))
+    return false;
 
   // --------------------------------------------------------
   //  COMPRESSION from nodedata to compressed chunks
@@ -330,9 +274,9 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
   // chunks
 
   char* const ptmp = tmp.data();
-  char* const prealbeg = nodedata.data();
+  char* const prealbeg = stree.nodedata.data();
   char* const pbeg = prealbeg + chunks_start; // compression starts at min_offset!
-  char* const pend = prealbeg + nodedata.size();
+  char* const pend = prealbeg + stree.nodedata.size();
   char* pcur = pbeg;
 
   i = 1;
@@ -372,13 +316,9 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
 
     chunk_desc.data_size = srcsize;
     pcur += srcsize;
-
-    progress = 0.35f + ((float)i / max_chunkcnt) * 0.4f;
   }
   if (pcur > pend)
     return false;
-
-  progress = 0.75f;
 
   nodedescs_start = (uint32_t)ofs.tellp();
 
@@ -394,10 +334,7 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
   for (uint32_t i = 0; i < cd_cnt; ++i)
   {
     ofs << chunk_descs[i];
-    progress = 0.75f + 0.1f * i / (float)cd_cnt;
   }
-
-  progress = 0.85f;
 
   // --------------------------------------------------------
   //  NODE DESCRIPTORS
@@ -411,20 +348,17 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
   // ofs.write(zerobuf.data(), zerobuf.size());
   // nodedescs_start = ofs.tellp();
 
-
   magic = 'NODE';
   ofs << cbytes_ref(magic);
 
   // now write node descs
+  const uint32_t node_cnt = (uint32_t)stree.descs.size();
   int64_t node_cnt_i64 = (int64_t)node_cnt;
   ofs << cp_packedint_ref(node_cnt_i64);
   for (uint32_t i = 0; i < node_cnt; ++i)
   {
-    ofs << node_descs[i];
-    progress = 0.85f + 0.1f * i / (float)node_cnt;
+    ofs << stree.descs[i];
   }
-
-  progress = 0.95f;
 
   // --------------------------------------------------------
   //  FOOTER (offset of 'NODE', 'DONE' tag)
@@ -448,11 +382,10 @@ bool csav::save_with_progress(std::filesystem::path path, float& progress, bool 
     auto dump_path = path;
     dump_path.replace_filename(L"decompressed_blob.bin");
     ofs.open(dump_path, ofs.binary | ofs.trunc);
-    ofs.write(nodedata.data(), nodedata.size());
+    ofs.write(stree.nodedata.data(), stree.nodedata.size());
     ofs.close();
   }
 
-  progress = 1.f;
   return true;
 }
 

@@ -100,12 +100,12 @@ CNameResolver::CNameResolver()
     }
     catch (std::exception&)
     {
-      MessageBox(0, L"db/CNames.json has an unexpected content", L"corrupt resource file", 0);
+      MessageBox(0, L"db/CNames.json has unexpected content", L"corrupt resource file", 0);
     }
   }
   else
   {
-    MessageBox(0, L"db/CNames.json is missing", L"missing resource file", 0);
+    MessageBox(0, L"db/CNames.json is missing", L"CObjectBPs", 0);
   }
   for (auto& n : s_full_list)
   {

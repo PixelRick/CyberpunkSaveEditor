@@ -9,35 +9,114 @@
 #include <utils.hpp>
 #include <cpinternals/cpnames.hpp>
 #include <csav/serializers.hpp>
+
+#include <csav/csystem/fwd.hpp>
 #include <csav/csystem/CStringPool.hpp>
+#include <csav/csystem/CSystemSerCtx.hpp>
+#include <csav/csystem/CObjectBP.hpp>
 #include <csav/csystem/CPropertyBase.hpp>
 #include <csav/csystem/CPropertyFactory.hpp>
 
-class CObject;
-using CObjectSPtr = std::shared_ptr<CObject>;
 
+// probably temporary until we can match CClass def
 struct CPropertyField
 {
   CPropertyField() = default;
 
-  CPropertyField(std::string_view name, const CPropertySPtr& prop)
+  CPropertyField(CSysName name, const CPropertySPtr& prop)
     : name(name), prop(prop) {}
 
-  std::string name;
+  CSysName name;
   CPropertySPtr prop;
 };
 
+
+enum class EObjectEvent
+{
+  data_modified,
+};
+
+struct CObjectListener
+{
+  virtual ~CObjectListener() = default;
+  virtual void on_cobject_event(const std::shared_ptr<const CObject>& obj, EObjectEvent evt) = 0;
+};
+
+
 class CObject
+  : public std::enable_shared_from_this<const CObject>
+  , public CPropertyListener
 {
 protected:
   std::vector<CPropertyField> m_fields;
+  CObjectBPSPtr m_blueprint; // todo: replace by CClassSPtr
 
 public:
-  CObject() {}
+  CObject(CSysName ctypename)
+  {
+    m_blueprint = CObjectBPList::get().get_or_make_bp(ctypename);
+    reset_fields_from_bp();
+  }
 
-  virtual ~CObject() = default;
+  ~CObject() override
+  {
+    // stop listening to field events
+    clear_fields();
+  }
+
+public:
+  CSysName ctypename() const { return m_blueprint->ctypename(); }
+
+  CPropertySPtr get_prop(CSysName field_name) const
+  {
+    for (auto& field : m_fields)
+    {
+      if (field.name == field_name)
+        return field.prop;
+    }
+    return nullptr;
+  }
 
 protected:
+  // returned reference is valid until next call only
+  CPropertyField& get_or_make_field(CSysName field_name, CSysName ctypename)
+  {
+    for (auto& field : m_fields)
+    {
+      if (field.name == field_name)
+      {
+        if (field.prop->ctypename() != ctypename)
+          throw std::runtime_error("CObject field has unexpected type");
+        return field;
+      }
+    }
+    m_blueprint->register_field(field_name, ctypename);
+    auto new_prop = CPropertyFactory::create(ctypename.str());
+    m_fields.emplace_back(field_name, new_prop);
+    new_prop->add_listener(this);
+    return m_fields.back();
+  }
+
+protected:
+  void clear_fields()
+  {
+    for (auto& field : m_fields)
+      field.prop->remove_listener(this);
+    m_fields.clear();
+  }
+
+  void reset_fields_from_bp()
+  {
+    clear_fields();
+    for (auto& field_desc : m_blueprint->field_descs())
+    {
+      // all fields are property fields
+      auto new_prop = field_desc.create_prop();
+      new_prop->add_listener(this);
+      m_fields.emplace_back(field_desc.name(), new_prop);
+    }
+  }
+
   struct property_desc_t
   {
     property_desc_t() = default;
@@ -52,26 +131,27 @@ protected:
 
   static inline std::set<std::string> to_implement_ctypenames;
 
-  CPropertySPtr serialize_property(std::string_view ctypename, std::istream& is, CStringPool& strpool, bool eof_is_end_of_prop = false)
+  bool serialize_field(CSysName name, CSysName ctypename, std::istream& is, CSystemSerCtx& serctx, bool eof_is_end_of_prop = false)
   {
     if (!is.good())
-      return nullptr;
+      return false;
 
-    auto prop = CPropertyFactory::get().create(ctypename);
+    auto& field = get_or_make_field(name, ctypename);
+    auto prop = field.prop;
     const bool is_unknown_prop = prop->kind() == EPropertyKind::Unknown;
 
     if (!eof_is_end_of_prop && is_unknown_prop)
-      return nullptr;
+      return false;
 
     size_t start_pos = (size_t)is.tellg();
 
     try
     {
-      if (prop->serialize_in(is, strpool))
+      if (prop->serialize_in(is, serctx))
       {
         // if end of prop is known, return property only if it serialized completely
         if (!eof_is_end_of_prop || is.peek() == EOF)
-          return prop;
+          return true;
       }
     }
     catch (std::exception&)
@@ -79,7 +159,7 @@ protected:
       is.setstate(std::ios_base::badbit);
     }
 
-    to_implement_ctypenames.emplace(prop->ctypename());
+    to_implement_ctypenames.emplace(std::string(prop->ctypename().str()));
 
     // try fall-back
     if (!is_unknown_prop && eof_is_end_of_prop)
@@ -87,20 +167,21 @@ protected:
       is.clear();
       is.seekg(start_pos);
       prop = std::make_shared<CUnknownProperty>(ctypename);
-      if (prop->serialize_in(is, strpool))
-        return prop;
+      field.prop = prop;
+      if (prop->serialize_in(is, serctx))
+        return true;
     }
 
-    return nullptr;
+    return false;
   }
 
 public:
-  bool serialize_in(const std::span<char>& blob, CStringPool& strpool)
+  bool serialize_in(const std::span<char>& blob, CSystemSerCtx& serctx)
   {
     span_istreambuf sbuf(blob);
     std::istream is(&sbuf);
 
-    if (!serialize_in(is, strpool, true))
+    if (!serialize_in(is, serctx, true))
       return false;
     if (!is.good())
       return false;
@@ -117,17 +198,15 @@ public:
 
   // eof_is_end_of_object allows for last property to be an unknown one (greedy read)
   // callers should check if object has been serialized completely ! (array props, system..)
-  bool serialize_in(std::istream& is, CStringPool& strpool, bool eof_is_end_of_object=false)
+  bool serialize_in(std::istream& is, CSystemSerCtx& serctx, bool eof_is_end_of_object=false)
   {
-    m_fields.clear();
+    reset_fields_from_bp();
 
     uint32_t start_pos = (uint32_t)is.tellg();
 
     // m_fields cnt
     uint16_t fields_cnt = 0;
     is >> cbytes_ref(fields_cnt);
-
-    m_fields.resize(fields_cnt);
 
     // field descriptors
     std::vector<property_desc_t> descs(fields_cnt);
@@ -136,6 +215,8 @@ public:
       return false;
 
     uint32_t data_pos = (uint32_t)is.tellg();
+
+    auto& strpool = serctx.strpool;
 
     // check descriptors
     for (auto& desc : descs)
@@ -154,13 +235,12 @@ public:
     // last field first
     const auto& last_desc = descs.back();
     is.seekg(start_pos + last_desc.data_offset);
-    auto prop_ctypename = strpool.from_idx(last_desc.ctypename_idx);
-    auto last_prop = serialize_property(prop_ctypename, is, strpool, eof_is_end_of_object);
 
-    if (!last_prop)
+    auto field_name = CSysName(strpool.from_idx(last_desc.name_idx));
+    auto prop_ctypename = CSysName(strpool.from_idx(last_desc.ctypename_idx));
+
+    if (!serialize_field(field_name, prop_ctypename, is, serctx, eof_is_end_of_object))
       return false;
-
-    m_fields.back() = {strpool.from_idx(last_desc.name_idx), last_prop};
 
     if (is.eof()) // tellg would fail if eofbit is set
       is.seekg(0, std::ios_base::end);
@@ -179,23 +259,25 @@ public:
 
       isubstreambuf sbuf(is.rdbuf(), start_pos + desc.data_offset, field_size);
       std::istream isubs(&sbuf);
-      auto prop_ctypename = strpool.from_idx(desc.ctypename_idx);
-      auto prop = serialize_property(prop_ctypename, isubs, strpool, true);
+      auto field_name = CSysName(strpool.from_idx(desc.name_idx));
+      auto prop_ctypename = CSysName(strpool.from_idx(desc.ctypename_idx));
 
-      if (!prop)
+      if (!serialize_field(field_name, prop_ctypename, isubs, serctx, true))
         return false;
-
-      m_fields[i] = {strpool.from_idx(desc.name_idx), prop};
 
       next_field_offset = desc.data_offset;
     }
 
     is.seekg(end_pos);
+
+    post_cobject_event(EObjectEvent::data_modified);
     return true;
   }
 
-  bool serialize_out(std::ostream& os, CStringPool& strpool) const
+  bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
+    auto& strpool = serctx.strpool;
+
     auto start_pos = os.tellp();
 
     // m_fields cnt
@@ -215,13 +297,20 @@ public:
     descs.reserve(fields_cnt);
     for (auto& field : m_fields)
     {
+      if (!field.prop)
+        throw std::runtime_error("null property field");
+
+      // the magical thingy
+      if (field.prop->is_skippable_in_serialization())
+        continue;
+
       const uint32_t data_offset = (uint32_t)(os.tellp() - start_pos);
       descs.emplace_back(
-        strpool.to_idx(field.name),
-        strpool.to_idx(field.prop->ctypename()),
+        strpool.to_idx(field.name.str()),
+        strpool.to_idx(field.prop->ctypename().str()),
         data_offset
       );
-      field.prop->serialize_out(os, strpool);
+      field.prop->serialize_out(os, serctx);
     }
 
     auto end_pos = os.tellp();
@@ -238,9 +327,13 @@ public:
 
 #ifndef DISABLE_CP_IMGUI_WIDGETS
 
+
   static std::string_view field_name_getter(const CPropertyField& field)
   {
-    return field.name;
+    // should be ok for rendering, only one value is used at a time
+    static std::string tmp;
+    tmp = field.name.str();
+    return tmp;
   };
 
   [[nodiscard]] bool imgui_widget(const char* label, bool editable)
@@ -268,28 +361,29 @@ public:
       {
         ImGui::TableNextRow();
         ImGui::TableNextColumn();
-        ImGui::Text(field.name.c_str());
-        if (editable && ImGui::BeginPopupContextItem("item context menu"))
-        {
-          if (ImGui::Selectable("delete"))
-            torem_idx = i;
-          ImGui::EndPopup();
-        }
+        auto field_name = field.name.str();
+        ImGui::Text(field_name.c_str());
+        //if (editable && ImGui::BeginPopupContextItem("item context menu"))
+        //{
+        //  if (ImGui::Selectable("reset to default"))
+        //    toreset_idx = i;
+        //  ImGui::EndPopup();
+        //}
 
         ImGui::TableNextColumn();
 
         //ImGui::PushItemWidth(300.f);
-        modified |= field.prop->imgui_widget(field.name.c_str(), editable);
+        modified |= field.prop->imgui_widget(field_name.c_str(), editable);
         //ImGui::PopItemWidth();
 
         ++i;
       }
 
-      if (torem_idx != -1)
-      {
-        m_fields.erase(m_fields.begin() + torem_idx);
-        modified = true;
-      }
+      //if (torem_idx != -1)
+      //{
+      //  m_fields.erase(m_fields.begin() + torem_idx);
+      //  modified = true;
+      //}
 
       ImGui::EndTable();
     }
@@ -298,13 +392,38 @@ public:
   }
 
 #endif
+
+  // events
+
+protected:
+  std::set<CObjectListener*> m_listeners;
+
+  void post_cobject_event(EObjectEvent evt) const
+  {
+    std::set<CObjectListener*> listeners = m_listeners;
+    for (auto& l : listeners) {
+      l->on_cobject_event(shared_from_this(), evt);
+    }
+  }
+
+  void on_cproperty_event(const std::shared_ptr<const CProperty>& prop, EPropertyEvent evt) override
+  {
+    post_cobject_event(EObjectEvent::data_modified);
+  }
+
+public:
+  // provided as const for ease of use
+
+  void add_listener(CObjectListener* listener) const
+  {
+    auto& listeners = const_cast<CObject*>(this)->m_listeners;
+    listeners.insert(listener);
+  }
+
+  void remove_listener(CObjectListener* listener) const
+  {
+    auto& listeners = const_cast<CObject*>(this)->m_listeners;
+    listeners.erase(listener);
+  }
 };
-
-/*
-ImGuiWindow* window = ImGui::GetCurrentWindow();
-if (window->SkipItems)
-return false;
-
-
-*/
 

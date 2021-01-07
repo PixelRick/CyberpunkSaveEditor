@@ -35,21 +35,29 @@
     <ClCompile Include="Source\cpinternals\cpenums.cpp" />
     <ClCompile Include="Source\cpinternals\cpnames.cpp" />
     <ClInclude Include="Source\cpinternals\cpenums.hpp" />
+    <ClInclude Include="Source\csav\cnodes.hpp" />
     <ClInclude Include="Source\csav\cnodes\CCharacterCustomization.hpp" />
     <ClInclude Include="Source\csav\cnodes\CInventory.hpp" />
     <ClInclude Include="Source\csav\cnodes\CItemData.hpp" />
-    <ClInclude Include="Source\csav\cnodes\CSystems.hpp" />
+    <ClInclude Include="Source\csav\cnodes\CStats.hpp" />
+    <ClInclude Include="Source\csav\cnodes\CStatsPool.hpp" />
+    <ClInclude Include="Source\csav\cnodes\CGenericSystem.hpp" />
+    <ClInclude Include="Source\csav\cnodes\CPSData.hpp" />
     <ClInclude Include="Source\csav\csav.hpp" />
+    <ClInclude Include="Source\csav\serial_tree.hpp" />
     <ClInclude Include="Source\csav\csav_version.hpp" />
+    <ClInclude Include="Source\csav\csystem\CObjectBP.hpp" />
     <ClInclude Include="Source\csav\csystem\CObject.hpp" />
     <ClInclude Include="Source\csav\csystem\CProperty.hpp" />
     <ClInclude Include="Source\csav\csystem\CPropertyBase.hpp" />
     <ClInclude Include="Source\csav\csystem\CPropertyFactory.hpp" />
     <ClInclude Include="Source\csav\csystem\CStringPool.hpp" />
     <ClInclude Include="Source\csav\csystem\CSystem.hpp" />
+    <ClInclude Include="Source\csav\csystem\CSystemSerCtx.hpp" />
+    <ClInclude Include="Source\csav\csystem\fwd.hpp" />
     <ClInclude Include="Source\csav\node.hpp" />
     <ClInclude Include="Source\csav\serializers.hpp" />
-    <ClInclude Include="Source\ps_storage.hpp" />
+    <ClInclude Include="Source\ps_json_storage.hpp" />
     <ClInclude Include="Source\cpinternals\cpnames.hpp" />
     <ClInclude Include="Source\external\fmt\chrono.h" />
     <ClInclude Include="Source\external\fmt\color.h" />
@@ -72,6 +80,7 @@
     <ClInclude Include="Source\widgets\node_editors\Systems.hpp" />
     <ClInclude Include="Source\cserialization\csystem\CPropertyBase.hpp" />
     <ClCompile Include="Source\csav\csav.cpp" />
+    <ClCompile Include="Source\csav\csystem\CObjectBP.cpp" />
     <ClCompile Include="Source\csav\csystem\CObject.cpp" />
     <ClCompile Include="Source\csav\csystem\CPropertyFactory.cpp" />
     <ClCompile Include="Source\external\fmt\format.cc" />
@@ -114,7 +123,7 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="Resources\CClasses.json">
+    <CopyFileToFolders Include="Resources\CObjectBPs.json">
       <FileType>Document</FileType>
     </CopyFileToFolders>
   </ItemGroup>
@@ -204,7 +213,8 @@
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)$(TargetName)_rel.pdb</ProgramDatabaseFile>
     </Link>
     <CopyFileToFolders>
       <DestinationFolders>$(OutDir)/db</DestinationFolders>

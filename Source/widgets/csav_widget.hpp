@@ -14,7 +14,7 @@
 #include "AppLib/IApp.hpp"
 
 #include "utils.hpp"
-#include <ps_storage.hpp>
+#include <ps_json_storage.hpp>
 #include "csav/csav.hpp"
 #include "cpinternals/cpnames.hpp"
 #include "hexeditor_windows_mgr.hpp"
@@ -112,11 +112,6 @@ public:
 
     if (m_csav)
     {
-      add_collapsible_editor<inventory_editor>("inventory");
-      add_collapsible_editor<CharacetrCustomization_Appearances_editor>("CharacetrCustomization_Appearances");
-
-      add_collapsible_editor<System_editor>("StatsSystem", true);
-      add_collapsible_editor<System_editor>("StatPoolsSystem", true);
       add_collapsible_editor<System_editor>("ScriptableSystemsContainer", true);
       add_collapsible_editor<PSData_editor>("PSData", true);
 
@@ -405,8 +400,44 @@ public:
     //ImGui::EndChild();
   }
 
+  int selected_item1 = -1;
+  int selected_item2 = -1;
+  bool modified = false; // unused atm, this pending save feature needs refactoring
+
   void draw_content()
   {
+    if (ImGui::CollapsingHeader("Inventories", ImGuiTreeNodeFlags_None))
+    {
+      //scoped_imgui_id _sii("Appearance Customization");
+      ImGui::Indent(5.f);
+      modified |= CInventory_widget::draw(m_csav->inventory, &m_csav->stats);
+      ImGui::Unindent(5.f);
+    }
+
+    if (ImGui::CollapsingHeader("Appearance Customization", ImGuiTreeNodeFlags_None))
+    {
+      //scoped_imgui_id _sii("Appearance Customization");
+      ImGui::Indent(5.f);
+      modified |= CCharacterCustomization_widget::draw(m_csav->chtrcustom);
+      ImGui::Unindent(5.f);
+    }
+    
+    if (ImGui::CollapsingHeader("Stats Map", ImGuiTreeNodeFlags_None))
+    {
+      //scoped_imgui_id _sii("Appearance Customization");
+      ImGui::Indent(5.f);
+      modified |= CSystem_widget::draw(m_csav->stats.system(), &selected_item1);
+      ImGui::Unindent(5.f);
+    }
+
+    if (ImGui::CollapsingHeader("Stats Pool", ImGuiTreeNodeFlags_None))
+    {
+      //scoped_imgui_id _sii("Appearance Customization");
+      ImGui::Indent(5.f);
+      modified |= CSystem_widget::draw(m_csav->statspool.system(), &selected_item2);
+      ImGui::Unindent(5.f);
+    }
+
     for (auto& ce : m_collapsible_editors)
     {
       scoped_imgui_id _sii((void*)&ce);
@@ -459,12 +490,12 @@ public:
         ImGui::TableHeadersRow();
 
         ImGuiListClipper clipper;
-        clipper.Begin((int)m_csav->node_descs.size());
+        clipper.Begin((int)m_csav->stree.descs.size());
         while (clipper.Step())
         {
           for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++)
           {
-            auto& desc = m_csav->node_descs[row];
+            auto& desc = m_csav->stree.descs[row];
             scoped_imgui_id sii{&desc};
             ImGui::TableNextRow();
             ImGui::TableNextColumn(); ImGui::Text("0x%X", row);
@@ -739,7 +770,7 @@ public:
 
     try
     {
-      auto& jroot = ps_storage::jroot();
+      auto& jroot = ps_json_storage::get().jroot();
       if (jroot.find("open_path") != jroot.end())
         open_dialog.SetPwd(jroot.at("open_path").get<std::string>());
     }
@@ -814,7 +845,7 @@ public:
       try
       {
         std::filesystem::path dirpath = open_filepath;
-        auto& jroot = ps_storage::jroot();
+        auto& jroot = ps_json_storage::get().jroot();
         jroot["open_path"] = dirpath.remove_filename().string();
       }
       catch (std::exception&) {}

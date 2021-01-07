@@ -8,9 +8,10 @@
 #include <imgui_extras/imgui_stdlib.h>
 #include <utils.hpp>
 #include <cpinternals/cpnames.hpp>
-#include <csav/cnodes/CSystems.hpp>
 #include "node_editor.hpp"
 #include "hexedit.hpp"
+
+#include <csav/cnodes.hpp>
 
 // to be used with CScriptObjProperty struct
 struct CProperty_widget
@@ -33,7 +34,9 @@ struct CObject_widget
 {
   static std::string_view prop_name_getter(const CPropertyField& field)
   {
-    return field.name;
+    static std::string tmp;
+    tmp = field.name.str();
+    return tmp;
   };
 
   // returns true if content has been edited
@@ -54,13 +57,15 @@ struct CObject_widget
 // to be used with CSystem struct
 struct CSystem_widget
 {
-  static std::string_view object_name_getter(const CSystemObject& item)
+  static std::string object_name_getter(const CObjectSPtr& item)
   {
-    return item.name;
+    static std::string tmp;
+    tmp = item->ctypename().str();
+    return tmp;
   };
 
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(CSystem& sys, int* selected_object, int* selected_property)
+  [[nodiscard]] static inline bool draw(CSystem& sys, int* selected_object)
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -96,9 +101,10 @@ struct CSystem_widget
       {
         auto& obj = objects[object_idx];
         ImGui::PushItemWidth(300.f);
-        ImGui::Text("object type: %s", obj.name.c_str());
+        auto ctype = obj->ctypename().str();
+        ImGui::Text("object type: %s", ctype.c_str());
         ImGui::PopItemWidth();
-        modified |= obj.obj->imgui_widget(obj.name.c_str(), true);
+        modified |= obj->imgui_widget(ctype.c_str(), true);
       }
       else
         ImGui::Text("no selected object");
@@ -111,13 +117,10 @@ struct CSystem_widget
 };
 
 
-
-
-
 class System_editor
   : public node_editor_widget
 {
-  CSystemGeneric m_data;
+  CGenericSystem m_data;
 
 public:
   System_editor(const std::shared_ptr<const node_t>& node, const csav_version& version)
@@ -167,7 +170,6 @@ public:
 
 protected:
   int selected_obj = -1;
-  int selected_prop = -1;
 
   bool draw_impl(const ImVec2& size) override
   {
@@ -175,7 +177,7 @@ protected:
 
     //ImGui::Text("System");
 
-    return CSystem_widget::draw(m_data.system(), &selected_obj, &selected_prop);
+    return CSystem_widget::draw(m_data.system(), &selected_obj);
   }
 };
 
@@ -252,7 +254,7 @@ protected:
     scoped_imgui_id _sii(this);
 
     //ImGui::Text("PSData");
-    bool modified = CSystem_widget::draw(m_data.system(), &selected_obj, &selected_prop);
+    bool modified = CSystem_widget::draw(m_data.system(), &selected_obj);
 
     ImGui::ListBox("trailing names", &selected_dummy, &trailing_name_string_getter, (void*)&m_data.trailing_names, (int)m_data.trailing_names.size());
 

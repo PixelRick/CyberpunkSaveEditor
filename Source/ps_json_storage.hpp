@@ -9,29 +9,42 @@ namespace {
   namespace fs = ::std::filesystem;
 }
 
-class ps_storage 
+class ps_json_storage 
 {
-  static inline nlohmann::json m_jroot;
-  static inline const char* const filepath = "persistent.json";
+  nlohmann::json m_jroot;
+  static inline const char* const s_filepath = "persistent.json";
+
+private:
+  ps_json_storage()
+  {
+    // not the best idea
+    load();
+  }
+
+  ~ps_json_storage()
+  {
+    // save on termination
+    save();
+  }
 
 public:
-  static ps_storage& get()
+  ps_json_storage(const ps_json_storage&) = delete;
+  ps_json_storage& operator=(const ps_json_storage&) = delete;
+
+  static ps_json_storage& get()
   {
-    static ps_storage s;
+    static ps_json_storage s;
     return s;
   }
 
-  static nlohmann::json& jroot()
+  nlohmann::json& jroot()
   {
-    return get().m_jroot;
+    return m_jroot;
   }
-
-  ps_storage(const ps_storage&) = delete;
-  ps_storage& operator=(const ps_storage&) = delete;
 
   void load()
   {
-    fs::path path(filepath);
+    fs::path path = s_filepath;
     if (!fs::exists(path) || !fs::is_regular_file(path))
       return;
 
@@ -53,26 +66,13 @@ public:
 
   void save()
   {
-    fs::path path(filepath);
+    fs::path path = s_filepath;
     if (fs::exists(path) && !fs::is_regular_file(path))
       return;
 
-    std::ofstream ofile(filepath);
+    std::ofstream ofile(path);
     if (ofile.is_open())
       ofile << m_jroot.dump(4);
-  }
-
-private:
-  ps_storage()
-  {
-    // not the best idea
-    load();
-  }
-
-  ~ps_storage()
-  {
-    // save on termination
-    save();
   }
 };
 

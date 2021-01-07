@@ -6,52 +6,11 @@
 #include <csav/serializers.hpp>
 #include <csav/csystem/CSystem.hpp>
 
-struct CSystemGeneric
-{
-  std::shared_ptr<const node_t> m_raw; // temporary
-  std::string node_name;
-  CSystem m_sys;
-
-public:
-  CSystemGeneric() = default;
-
-
-  const CSystem& system() const { return m_sys; }
-        CSystem& system()       { return m_sys; }
-
-
-  bool from_node(const std::shared_ptr<const node_t>& node, const csav_version& version)
-  {
-    if (!node)
-      return false;
-
-    m_raw = node;
-    node_name = node->name();
-
-    node_reader reader(node, version);
-
-    if (!m_sys.serialize_in(reader))
-        return false;
-
-    return reader.at_end();
-  }
-
-  std::shared_ptr<const node_t> to_node(const csav_version& version)
-  {
-    node_writer writer(version);
-    
-    if (!m_sys.serialize_out(writer))
-      return nullptr;
-
-    return writer.finalize(node_name);
-  }
-};
-
 
 struct CPSData
+  : public node_serializable
 {
   std::shared_ptr<const node_t> m_raw; // temporary
-  std::string node_name;
   CSystem m_sys;
   std::vector<CName> trailing_names;
 
@@ -62,14 +21,14 @@ public:
   const CSystem& system() const { return m_sys; }
         CSystem& system()       { return m_sys; }
 
+  std::string node_name() const override { return "PSData"; }
 
-  bool from_node(const std::shared_ptr<const node_t>& node, const csav_version& version)
+  bool from_node_impl(const std::shared_ptr<const node_t>& node, const csav_version& version) override
   {
     if (!node)
       return false;
 
     m_raw = node;
-    node_name = node->name();
 
     node_reader reader(node, version);
 
@@ -85,7 +44,7 @@ public:
     return reader.at_end();
   }
 
-  std::shared_ptr<const node_t> to_node(const csav_version& version)
+  std::shared_ptr<const node_t> to_node_impl(const csav_version& version) const override
   {
     node_writer writer(version);
 
@@ -103,7 +62,7 @@ public:
       return nullptr;
     }
 
-    return writer.finalize(node_name);
+    return writer.finalize(node_name());
   }
 };
 

@@ -6,7 +6,6 @@
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
-#include <csav/serializers.hpp>
 #include <fmt/format.h>
 #include <utils.hpp>
 
@@ -17,7 +16,7 @@ public:
   using enum_members_sptr = std::shared_ptr<enum_members_t>;
 
 private:
-  std::unordered_map<std::string, enum_members_sptr> s_list;
+  std::unordered_map<std::string, enum_members_sptr> m_enummap;
 
   // filtered lists
 
@@ -25,25 +24,25 @@ private:
   ~CEnumList() = default;
 
 public:
+  CEnumList(const CEnumList&) = delete;
+  CEnumList& operator=(const CEnumList&) = delete;
+
   static CEnumList& get()
   {
     static CEnumList s = {};
     return s;
   }
 
-  CEnumList(const CEnumList&) = delete;
-  CEnumList& operator=(const CEnumList&) = delete;
-
 public:
   bool is_registered(std::string_view enum_name) const
   {
-    return s_list.find(std::string(enum_name)) != s_list.end();
+    return m_enummap.find(std::string(enum_name)) != m_enummap.end();
   }
 
   enum_members_sptr get_enum(std::string enum_name) const
   {
-    auto it = s_list.find(enum_name);
-    if (it != s_list.end())
+    auto it = m_enummap.find(enum_name);
+    if (it != m_enummap.end())
       return it->second;
     return nullptr;
   }

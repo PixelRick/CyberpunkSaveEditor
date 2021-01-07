@@ -4,6 +4,7 @@
 #include <memory>
 #include <list>
 #include <vector>
+#include <set>
 #include <array>
 #include <exception>
 
@@ -11,6 +12,7 @@
 #include <cpinternals/cpnames.hpp>
 #include <csav/serializers.hpp>
 #include <csav/csystem/CStringPool.hpp>
+#include <csav/csystem/CSystemSerCtx.hpp>
 
 #ifndef DISABLE_CP_IMGUI_WIDGETS
 #include <widgets/list_widget.hpp>
@@ -58,12 +60,26 @@ property_kind_to_display_name(EPropertyKind prop_kind)
 }
 
 
+enum class EPropertyEvent
+{
+  data_modified,
+};
+
+struct CPropertyListener
+{
+  virtual ~CPropertyListener() = default;
+  virtual void on_cproperty_event(const std::shared_ptr<const CProperty>& prop, EPropertyEvent evt) = 0;
+};
+
+
 class CProperty
+  : public std::enable_shared_from_this<const CProperty>
 {
   EPropertyKind m_property_kind;
+  bool m_is_skippable_in_ser = true;
 
 protected:
-  CProperty(EPropertyKind kind)
+  explicit CProperty(EPropertyKind kind)
     : m_property_kind(kind) {}
 
   virtual ~CProperty() = default;
@@ -71,18 +87,31 @@ protected:
 public:
   EPropertyKind kind() const { return m_property_kind; }
 
-public:
-  virtual std::string_view ctypename() const = 0;
+  virtual CSysName ctypename() const = 0;
+
+  bool is_skippable_in_serialization() const { return m_is_skippable_in_ser; }
 
   // serialization
 
-  virtual bool serialize_in(std::istream& is, CStringPool& strpool) = 0;
+protected:
+  // when called, a data_modified event is sent automatically by base class' serialize_in(..)
+  virtual bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) = 0;
 
-  virtual bool serialize_out(std::ostream& os, CStringPool& strpool) const = 0;
+public:
+  bool serialize_in(std::istream& is, CSystemSerCtx& serctx)
+  {
+    bool ok = serialize_in_impl(is, serctx);
+    post_cproperty_event(EPropertyEvent::data_modified);
+    return ok;
+  }
+
+  virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const = 0;
 
   // gui (define DISABLE_CP_IMGUI_WIDGETS to disable implementations)
 
-  [[nodiscard]] virtual bool imgui_widget(const char* label, bool editable)
+protected:
+  // when returns true, a data_modified event is sent automatically by base class' imgui_widget(..)
+  [[nodiscard]] virtual bool imgui_widget_impl(const char* label, bool editable)
   {
 #ifndef DISABLE_CP_IMGUI_WIDGETS
     ImGui::Text("widget not implemented");
@@ -90,13 +119,50 @@ public:
 #endif
   }
 
+public:
+  [[nodiscard]] bool imgui_widget(const char* label, bool editable)
+  {
+    bool modified = imgui_widget_impl(label, editable);
+    if (modified)
+      post_cproperty_event(EPropertyEvent::data_modified);
+    return modified;
+  }
+
   void imgui_widget(const char* label) const
   {
     std::ignore = const_cast<CProperty*>(this)->imgui_widget(label, false);
   }
-};
 
-using CPropertySPtr = std::shared_ptr<CProperty>;
+  // events
+
+protected:
+  std::set<CPropertyListener*> m_listeners;
+
+  void post_cproperty_event(EPropertyEvent evt) const
+  {
+    std::set<CPropertyListener*> listeners = m_listeners;
+    for (auto& l : listeners) {
+      l->on_cproperty_event(shared_from_this(), evt);
+    }
+    if (evt == EPropertyEvent::data_modified)
+      const_cast<CProperty*>(this)->m_is_skippable_in_ser = false;
+  }
+
+public:
+  // provided as const for ease of use
+
+  void add_listener(CPropertyListener* listener) const
+  {
+    auto& listeners = const_cast<CProperty*>(this)->m_listeners;
+    listeners.insert(listener);
+  }
+
+  void remove_listener(CPropertyListener* listener) const
+  {
+    auto& listeners = const_cast<CProperty*>(this)->m_listeners;
+    listeners.erase(listener);
+  }
+};
 
 
 //------------------------------------------------------------------------------
@@ -107,13 +173,13 @@ class CUnknownProperty
   : public CProperty
 {
 protected:
-  std::string m_ctypename;
+  CSysName m_ctypename;
   std::vector<char> m_data;
-  std::string m_child_ctypename;
 
 public:
-  CUnknownProperty(std::string_view ctypename)
-    : CProperty(EPropertyKind::Unknown), m_ctypename(ctypename)
+  explicit CUnknownProperty(CSysName ctypename)
+    : CProperty(EPropertyKind::Unknown)
+    , m_ctypename(ctypename)
   {
   }
 
@@ -124,9 +190,9 @@ public:
 
   // overrides
 
-  std::string_view ctypename() const override { return m_ctypename; };
+  CSysName ctypename() const override { return m_ctypename; };
 
-  bool serialize_in(std::istream& is, CStringPool& strpool) override
+  bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
   {
     std::streampos beg = is.tellg();
     is.seekg(0, std::ios_base::end);
@@ -139,7 +205,7 @@ public:
     return is.good();
   }
 
-  virtual bool serialize_out(std::ostream& os, CStringPool& strpool) const
+  virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
     os.write(m_data.data(), m_data.size());
     return true;
@@ -147,7 +213,7 @@ public:
 
 #ifndef DISABLE_CP_IMGUI_WIDGETS
 
-  [[nodiscard]] bool imgui_widget(const char* label, bool editable) override
+  [[nodiscard]] bool imgui_widget_impl(const char* label, bool editable) override
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -158,7 +224,7 @@ public:
     ImGui::BeginChild(label, ImVec2(0,0), true, ImGuiWindowFlags_AlwaysAutoResize);
 
     ImGui::Text("refactoring");
-    ImGui::Text("ctypename: %s", ctypename().data());
+    ImGui::Text("ctypename: %s", ctypename().str().c_str());
     ImGui::Text("data size: %08X", m_data.size());
     if (m_data.size() > 50)
       ImGui::Text("data: %s...", bytes_to_hex(m_data.data(), 50).c_str());
@@ -166,6 +232,7 @@ public:
       ImGui::Text("data: %s", bytes_to_hex(m_data.data(), m_data.size()).c_str());
 
     ImGui::EndChild();
+
     return modified;
   }
 

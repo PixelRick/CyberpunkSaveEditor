@@ -23,7 +23,7 @@ struct uk_thing
     return reader;
   }
 
-  friend std::ostream& operator<<(std::ostream& writer, uk_thing& kt)
+  friend std::ostream& operator<<(std::ostream& writer, const uk_thing& kt)
   {
     writer << cbytes_ref(kt.uk4);
     writer << cbytes_ref(kt.uk1);
@@ -55,7 +55,7 @@ struct CItemID
     return reader;
   }
 
-  friend std::ostream& operator<<(std::ostream& writer, CItemID& iid)
+  friend std::ostream& operator<<(std::ostream& writer, const CItemID& iid)
   {
     writer << cbytes_ref(iid.nameid.as_u64);
     writer << iid.uk;
@@ -115,7 +115,7 @@ struct CItemMod // for CItemData kind 0, 2
     return reader;
   }
 
-  friend std::ostream& operator<<(std::ostream& writer, CItemMod& d2)
+  friend std::ostream& operator<<(std::ostream& writer, const CItemMod& d2)
   {
     writer << d2.iid;
 
@@ -138,6 +138,7 @@ struct CItemMod // for CItemData kind 0, 2
 };
 
 struct CItemData
+  : public node_serializable
 {
   // CP 1.06
   // serial func at vtbl+0x128
@@ -162,7 +163,9 @@ struct CItemData
 
   csav_version ver;
 
-  bool from_node(const std::shared_ptr<const node_t>& node, const csav_version& version)
+  std::string node_name() const override { return "itemData"; }
+
+  bool from_node_impl(const std::shared_ptr<const node_t>& node, const csav_version& version) override
   {
     if (!node)
       return false;
@@ -188,7 +191,7 @@ struct CItemData
     return true;
   }
 
-  std::shared_ptr<const node_t> to_node(const csav_version& version)
+  std::shared_ptr<const node_t> to_node_impl(const csav_version& version) const override
   {
     node_writer writer(version);
     writer << iid;
@@ -208,7 +211,7 @@ struct CItemData
       writer << root2;
     }
 
-    return writer.finalize("itemData");
+    return writer.finalize(node_name());
   }
 
   std::string name() const

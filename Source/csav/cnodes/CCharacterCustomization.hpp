@@ -23,7 +23,7 @@ struct cetr_uk_thing5
     return reader;
   }
 
-  friend node_writer& operator<<(node_writer& writer, cetr_uk_thing5& x)
+  friend node_writer& operator<<(node_writer& writer, const cetr_uk_thing5& x)
   {
     writer << cp_plstring_ref(x.uk0);
     writer << cp_plstring_ref(x.uk1);
@@ -49,7 +49,7 @@ struct cetr_uk_thing4
     return reader;
   }
 
-  friend node_writer& operator<<(node_writer& writer, cetr_uk_thing4& x)
+  friend node_writer& operator<<(node_writer& writer, const cetr_uk_thing4& x)
   {
     writer << cp_plstring_ref(x.uk0);
     writer << cp_plstring_ref(x.uk1);
@@ -90,7 +90,7 @@ struct cetr_uk_thing3
     return reader;
   }
 
-  friend node_writer& operator<<(node_writer& writer, cetr_uk_thing3& x)
+  friend node_writer& operator<<(node_writer& writer, const cetr_uk_thing3& x)
   {
     if (writer.version().v3 < 195)
     {
@@ -143,7 +143,7 @@ struct cetr_uk_thing2
     return reader;
   }
 
-  friend node_writer& operator<<(node_writer& writer, cetr_uk_thing2& x)
+  friend node_writer& operator<<(node_writer& writer, const cetr_uk_thing2& x)
   {
     writer << cp_plstring_ref(x.uks);
     // if (v1 < 168) { .. }
@@ -177,7 +177,7 @@ struct cetr_uk_thing1
     return reader;
   }
 
-  friend node_writer& operator<<(node_writer& writer, cetr_uk_thing1& x)
+  friend node_writer& operator<<(node_writer& writer, const cetr_uk_thing1& x)
   {
     uint32_t cnt = (uint32_t)x.vuk2.size();
     writer << cbytes_ref(cnt);
@@ -189,6 +189,7 @@ struct cetr_uk_thing1
 
 
 struct CCharacterCustomization
+  : public node_serializable
 {
   uint8_t data_exists = 0;
 
@@ -205,7 +206,9 @@ struct CCharacterCustomization
 
   std::list<std::string> uk6s;
 
-  bool from_node(const std::shared_ptr<const node_t>& node, const csav_version& version)
+  std::string node_name() const override { return "CharacetrCustomization_Appearances"; }
+
+  bool from_node_impl(const std::shared_ptr<const node_t>& node, const csav_version& version) override
   {
     if (!node)
       return false;
@@ -250,7 +253,7 @@ struct CCharacterCustomization
     return reader.at_end();
   }
 
-  std::shared_ptr<const node_t> to_node(const csav_version& version)
+  std::shared_ptr<const node_t> to_node_impl(const csav_version& version) const override
   {
     node_writer writer(version);
 
@@ -288,7 +291,7 @@ struct CCharacterCustomization
       return nullptr;
     }
 
-    return writer.finalize("CharacetrCustomization_Appearances");
+    return writer.finalize(node_name());
   }
 };
 

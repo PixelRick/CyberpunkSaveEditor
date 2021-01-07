@@ -136,8 +136,6 @@ inline std::string TweakDBID::name() const
 // CName
 /////////////////////////////////////////
 
-#pragma pack(push, 1)
-
 struct CName
 {
   uint64_t as_u64;
@@ -165,7 +163,15 @@ struct CName
   std::string str() const;
 };
 
-#pragma pack(pop)
+inline bool operator==(const CName& a, const CName& b)
+{
+  return a.as_u64 == b.as_u64;
+}
+
+inline bool operator!=(const CName& a, const CName& b)
+{
+  return !(a == b);
+}
 
 class CNameResolver
 {

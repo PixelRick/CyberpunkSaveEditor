@@ -11,7 +11,7 @@ struct CInventory_widget
   //static CItemData copied_item = ;
 
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(CInventory& inv, bool* p_remove = nullptr)
+  [[nodiscard]] static inline bool draw(CInventory& inv, CStats* stats=nullptr)
   {
     scoped_imgui_id _sii("##inventory_editor");
     bool modified = false;
@@ -54,7 +54,9 @@ struct CInventory_widget
         }
 
         static auto name_fn = [](const CItemData& item) { return item.iid.shortname(); };
-        modified |= imgui_list_tree_widget(subinv.items, name_fn, &CItemData_widget::draw, 0, true, false);
+        modified |= imgui_list_tree_widget(subinv.items, name_fn,
+         [stats](CItemData& itemData) { return CItemData_widget::draw(itemData, stats); },
+         0, true, false);
 
         ImGui::TreePop();
       }
@@ -64,46 +66,4 @@ struct CInventory_widget
   }
 };
 
-
-class inventory_editor
-  : public node_editor_widget
-{
-  CInventory m_inv;
-
-public:
-  inventory_editor(const std::shared_ptr<const node_t>& node, const csav_version& version)
-    : node_editor_widget(node, version)
-  {
-    reload();
-  }
-
-  ~inventory_editor() override {}
-
-public:
-  bool commit_impl() override
-  {
-    auto rebuilt = m_inv.to_node(version());
-    auto curnode = ncnode();
-
-    if (!rebuilt)
-      return false;
-
-    curnode->assign_children(rebuilt->children());
-    curnode->assign_data(rebuilt->data());
-    return true;
-  }
-
-  bool reload_impl() override
-  {
-    bool success = m_inv.from_node(node(), version());
-    return success;
-  }
-
-protected:
-  bool draw_impl(const ImVec2& size) override
-  {
-    scoped_imgui_id _sii(this);
-    return CInventory_widget::draw(m_inv, 0);
-  }
-};
 
