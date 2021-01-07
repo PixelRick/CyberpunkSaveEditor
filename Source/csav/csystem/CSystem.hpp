@@ -239,7 +239,7 @@ public:
 
     std::ostringstream ss;
     std::vector<obj_desc_t> obj_descs;
-    obj_descs.reserve(m_objects.size()); // ends up higher in the presence of handles
+    obj_descs.reserve(serctx.m_objects.size()); // ends up higher in the presence of handles
 
     // serctx.m_objects is extended during object serialization (handles)
     for (size_t i = 0; i < serctx.m_objects.size(); ++i)

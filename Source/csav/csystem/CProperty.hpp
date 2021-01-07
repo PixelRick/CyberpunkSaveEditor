@@ -304,8 +304,7 @@ public:
 
   virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
-    char val = m_value ? 1 : 0;
-    os.write(&val, 1);
+    os << cbytes_ref(m_value);
     return true;
   }
 
@@ -388,7 +387,7 @@ public:
 
   bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
   {
-    uint32_t uk;
+    uint32_t uk = 0;
     is >> cbytes_ref(uk);
     if (uk != m_elts.size())
       throw std::logic_error("CArrayProperty: false assumption #1. please open an issue");
@@ -404,7 +403,7 @@ public:
     return is.good();
   }
 
-  virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
+  virtual [[nodiscard]] bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
     uint32_t uk = (uint32_t)m_elts.size();
     os << cbytes_ref(uk);
@@ -573,7 +572,7 @@ public:
 
   virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
-    uint32_t cnt = 0;
+    uint32_t cnt = (uint32_t)m_elts.size();
     os << cbytes_ref(cnt);
 
     for (auto& elt : m_elts)

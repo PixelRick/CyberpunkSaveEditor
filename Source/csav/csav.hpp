@@ -65,8 +65,8 @@ public:
     if (!load_stree(path))
       return false;
     progress = 0.2f;
-    try_load_node_data_struct(inventory,  "inventory"                           , test_reserialization); progress = 0.3f;
-    try_load_node_data_struct(chtrcustom, "CharacetrCustomization_Appearances"  , test_reserialization); progress = 0.4f;
+    try_load_node_data_struct(inventory,  "inventory"                           , false); progress = 0.3f;
+    try_load_node_data_struct(chtrcustom, "CharacetrCustomization_Appearances"  , false); progress = 0.4f;
     //try_load_node_data_struct(psdata,     "PSData"                            , test_reserialization); progress = 0.7f;
     //try_load_node_data_struct(stats,      "StatsSystem"                         , test_reserialization); progress = 0.8f;
     try_load_node_data_struct(statspool,  "StatPoolsSystem"                     , test_reserialization); progress = 1.0f;
@@ -121,6 +121,14 @@ protected:
       if (stree1.nodedata.size() != stree2.nodedata.size()
         || std::memcmp(stree1.nodedata.data(), stree2.nodedata.data(), stree1.nodedata.size()))
       {
+        std::ofstream ofs;
+        ofs.open("dump1.bin");
+        ofs.write(stree1.nodedata.data(), stree1.nodedata.size());
+        ofs.close();
+        ofs.open("dump2.bin");
+        ofs.write(stree2.nodedata.data(), stree2.nodedata.size());
+        ofs.close();
+
         throw std::runtime_error(fmt::format("reserialized {} differs from original", nodename));
       }
     }

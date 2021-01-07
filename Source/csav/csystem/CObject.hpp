@@ -55,7 +55,7 @@ public:
   CObject(CSysName ctypename)
   {
     m_blueprint = CObjectBPList::get().get_or_make_bp(ctypename);
-    reset_fields_from_bp();
+    complete_fields_from_bp();
   }
 
   ~CObject() override
@@ -105,11 +105,23 @@ protected:
     m_fields.clear();
   }
 
-  void reset_fields_from_bp()
+  void complete_fields_from_bp()
   {
-    clear_fields();
     for (auto& field_desc : m_blueprint->field_descs())
     {
+      bool already_there = false;
+      for (auto& field : m_fields)
+      {
+        if (field.name == field_desc.name())
+        {
+          if (field.prop->ctypename() != field_desc.ctypename())
+            throw std::runtime_error("CObject field has unexpected type");
+          already_there = true;
+          break;
+        }
+      }
+      if (already_there)
+        continue;
       // all fields are property fields
       auto new_prop = field_desc.create_prop();
       new_prop->add_listener(this);
@@ -200,13 +212,15 @@ public:
   // callers should check if object has been serialized completely ! (array props, system..)
   bool serialize_in(std::istream& is, CSystemSerCtx& serctx, bool eof_is_end_of_object=false)
   {
-    reset_fields_from_bp();
+    clear_fields();
 
     uint32_t start_pos = (uint32_t)is.tellg();
 
     // m_fields cnt
     uint16_t fields_cnt = 0;
     is >> cbytes_ref(fields_cnt);
+    if (!fields_cnt)
+      return true;
 
     // field descriptors
     std::vector<property_desc_t> descs(fields_cnt);
@@ -228,9 +242,6 @@ public:
       if (desc.data_offset < data_pos - start_pos)
         return false;
     }
-
-    if (!fields_cnt)
-      return true;
 
     // last field first
     const auto& last_desc = descs.back();
@@ -267,9 +278,11 @@ public:
 
       next_field_offset = desc.data_offset;
     }
+    std::reverse(m_fields.begin(), m_fields.end());
 
     is.seekg(end_pos);
 
+    complete_fields_from_bp();
     post_cobject_event(EObjectEvent::data_modified);
     return true;
   }
@@ -296,6 +309,8 @@ public:
     }
 
     os << cbytes_ref(fields_cnt);
+    if (!fields_cnt)
+      return true;
 
     // record current cursor position, since we'll rewrite descriptors
     auto descs_pos = os.tellp();
@@ -320,7 +335,8 @@ public:
         strpool.to_idx(field.prop->ctypename().str()),
         data_offset
       );
-      field.prop->serialize_out(os, serctx);
+      if (!field.prop->serialize_out(os, serctx))
+        return false;
     }
 
     auto end_pos = os.tellp();
