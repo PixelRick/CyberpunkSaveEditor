@@ -281,7 +281,21 @@ public:
     auto start_pos = os.tellp();
 
     // m_fields cnt
-    uint16_t fields_cnt = (uint16_t)m_fields.size();;
+    uint16_t fields_cnt = 0;
+
+    for (auto& field : m_fields)
+    {
+      if (!field.prop)
+        throw std::runtime_error("null property field");
+
+      // the magical thingy
+      if (field.prop->is_skippable_in_serialization())
+        continue;
+
+      fields_cnt++;
+    }
+
+
     os << cbytes_ref(fields_cnt);
 
     // record current cursor position, since we'll rewrite descriptors
@@ -297,10 +311,7 @@ public:
     descs.reserve(fields_cnt);
     for (auto& field : m_fields)
     {
-      if (!field.prop)
-        throw std::runtime_error("null property field");
-
-      // the magical thingy
+      // the magical thingy again
       if (field.prop->is_skippable_in_serialization())
         continue;
 

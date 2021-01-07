@@ -59,7 +59,7 @@ protected:
   bool save_stree(std::filesystem::path path, bool dump_decompressed_data=false, bool ps4_weird_format=false);
 
 public:
-  bool open_with_progress(std::filesystem::path path, float& progress, bool test_reserialization=false)
+  bool open_with_progress(std::filesystem::path path, float& progress, bool test_reserialization=true)
   {
     progress = 0.0f;
     if (!load_stree(path))
@@ -110,7 +110,7 @@ protected:
       serial_tree stree2;
       stree2.from_node(new_node, 4);
 
-      if (stree1.nodedata.size() != stree1.nodedata.size()
+      if (stree1.nodedata.size() != stree2.nodedata.size()
         || std::memcmp(stree1.nodedata.data(), stree2.nodedata.data(), stree1.nodedata.size()))
       {
         throw std::runtime_error(fmt::format("reserialized {} differs from original", nodename));
