@@ -236,6 +236,7 @@ public:
     // here we can't really remove handle-objects because there might be hidden handles in unsupported types
     serctx.m_objects.assign(m_objects.begin(), m_objects.end());
     serctx.m_objects.insert(serctx.m_objects.end(), m_handle_objects.begin(), m_handle_objects.end());
+    serctx.rebuild_handlemap();
 
     std::ostringstream ss;
     std::vector<obj_desc_t> obj_descs;

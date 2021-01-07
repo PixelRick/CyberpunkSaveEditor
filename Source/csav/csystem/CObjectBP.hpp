@@ -45,18 +45,18 @@ public:
 
   const std::vector<CFieldDesc>& field_descs() const { return m_field_descs; }
 
-  void register_field(CSysName field_name, CSysName ctypename)
+  CFieldDesc& register_field(CSysName field_name, CSysName ctypename)
   {
     for (auto& field : m_field_descs)
     {
-      if (field.name() == field_name)
-      {
-        if (field.ctypename() != ctypename)
-          throw std::runtime_error("CObjectBP identified field has different type than the registered one");
-        return;
-      }
+      if (field.name() != field_name)
+        continue;
+      if (field.ctypename() == ctypename)
+        return field;
+
+      throw std::runtime_error("CObjectBP identified field has different type than the registered one");
     }
-    m_field_descs.emplace_back(field_name, ctypename);
+    return m_field_descs.emplace_back(field_name, ctypename);
   }
 };
 

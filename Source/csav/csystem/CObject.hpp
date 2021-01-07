@@ -55,7 +55,7 @@ public:
   CObject(CSysName ctypename)
   {
     m_blueprint = CObjectBPList::get().get_or_make_bp(ctypename);
-    complete_fields_from_bp();
+    reset_fields_from_bp();
   }
 
   ~CObject() override
@@ -69,32 +69,13 @@ public:
 
   CPropertySPtr get_prop(CSysName field_name) const
   {
+    // fast enough
     for (auto& field : m_fields)
     {
       if (field.name == field_name)
         return field.prop;
     }
     return nullptr;
-  }
-
-protected:
-  // returned reference is valid until next call only
-  CPropertyField& get_or_make_field(CSysName field_name, CSysName ctypename)
-  {
-    for (auto& field : m_fields)
-    {
-      if (field.name == field_name)
-      {
-        if (field.prop->ctypename() != ctypename)
-          throw std::runtime_error("CObject field has unexpected type");
-        return field;
-      }
-    }
-    m_blueprint->register_field(field_name, ctypename);
-    auto new_prop = CPropertyFactory::create(ctypename.str());
-    m_fields.emplace_back(field_name, new_prop);
-    new_prop->add_listener(this);
-    return m_fields.back();
   }
 
 protected:
@@ -105,23 +86,12 @@ protected:
     m_fields.clear();
   }
 
-  void complete_fields_from_bp()
+  void reset_fields_from_bp()
   {
+    clear_fields();
+    //return;
     for (auto& field_desc : m_blueprint->field_descs())
     {
-      bool already_there = false;
-      for (auto& field : m_fields)
-      {
-        if (field.name == field_desc.name())
-        {
-          if (field.prop->ctypename() != field_desc.ctypename())
-            throw std::runtime_error("CObject field has unexpected type");
-          already_there = true;
-          break;
-        }
-      }
-      if (already_there)
-        continue;
       // all fields are property fields
       auto new_prop = field_desc.create_prop();
       new_prop->add_listener(this);
@@ -143,12 +113,11 @@ protected:
 
   static inline std::set<std::string> to_implement_ctypenames;
 
-  bool serialize_field(CSysName name, CSysName ctypename, std::istream& is, CSystemSerCtx& serctx, bool eof_is_end_of_prop = false)
+  [[nodiscard]] bool serialize_field(CPropertyField& field, std::istream& is, CSystemSerCtx& serctx, bool eof_is_end_of_prop = false)
   {
     if (!is.good())
       return false;
 
-    auto& field = get_or_make_field(name, ctypename);
     auto prop = field.prop;
     const bool is_unknown_prop = prop->kind() == EPropertyKind::Unknown;
 
@@ -178,8 +147,10 @@ protected:
     {
       is.clear();
       is.seekg(start_pos);
-      prop = std::make_shared<CUnknownProperty>(ctypename);
+      prop = std::make_shared<CUnknownProperty>(prop->ctypename());
+      field.prop->remove_listener(this);
       field.prop = prop;
+      field.prop->add_listener(this);
       if (prop->serialize_in(is, serctx))
         return true;
     }
@@ -188,7 +159,7 @@ protected:
   }
 
 public:
-  bool serialize_in(const std::span<char>& blob, CSystemSerCtx& serctx)
+  [[nodiscard]] bool serialize_in(const std::span<char>& blob, CSystemSerCtx& serctx)
   {
     span_istreambuf sbuf(blob);
     std::istream is(&sbuf);
@@ -210,10 +181,8 @@ public:
 
   // eof_is_end_of_object allows for last property to be an unknown one (greedy read)
   // callers should check if object has been serialized completely ! (array props, system..)
-  bool serialize_in(std::istream& is, CSystemSerCtx& serctx, bool eof_is_end_of_object=false)
+  [[nodiscard]] bool serialize_in(std::istream& is, CSystemSerCtx& serctx, bool eof_is_end_of_object=false)
   {
-    clear_fields();
-
     uint32_t start_pos = (uint32_t)is.tellg();
 
     // m_fields cnt
@@ -232,62 +201,131 @@ public:
 
     auto& strpool = serctx.strpool;
 
-    // check descriptors
-    for (auto& desc : descs)
+    auto& bpdescs = m_blueprint->field_descs();
+
+    std::set<uint32_t> sr_names;
+    struct better_desc_t
     {
+      CSysName oname;
+      CSysName tname;
+      uint32_t data_offset;
+      uint32_t data_size = 0;
+    };
+
+    std::vector<better_desc_t> better_descs(descs.size());
+
+    std::vector<CPropertyField> new_fields;
+
+    uint32_t prev_offset = 0;
+    for (size_t i = 0, n = descs.size(); i < n; ++i)
+    {
+      const auto& desc = descs[i];
+
+      // sanity checks
       if (desc.name_idx >= strpool.size())
         return false;
       if (desc.ctypename_idx >= strpool.size())
         return false;
       if (desc.data_offset < data_pos - start_pos)
         return false;
+      if (desc.data_offset < prev_offset)
+        return false;
+      prev_offset = desc.data_offset;
+
+      auto& bdesc = better_descs[i];
+      bdesc.oname = CSysName(strpool.from_idx(desc.name_idx));
+      bdesc.tname = CSysName(strpool.from_idx(desc.ctypename_idx));
+      bdesc.data_offset = desc.data_offset;
+
+      sr_names.insert(bdesc.oname.idx());
+
+      if (i > 0)
+      {
+        auto& prev_bdesc = better_descs[i-1];
+        prev_bdesc.data_size = desc.data_offset - prev_bdesc.data_offset;
+      }
+
+      // find or create field
+      bool found = false;
+      for (auto it = m_fields.begin(); it != m_fields.end(); ++it)
+      {
+        if (it->name == bdesc.oname)
+        {
+          new_fields.emplace_back(*it);
+          found = true;
+          // remove it from m_fields, it will be prepended
+          m_fields.erase(it);
+          break;
+        }
+      }
+      if (!found)
+      {
+        // check in blueprint
+        for (auto& fdesc : m_blueprint->field_descs())
+        {
+          if (fdesc.name() == bdesc.oname)
+          {
+            auto prop = fdesc.create_prop();
+            prop->add_listener(this);
+            new_fields.emplace_back(bdesc.oname, prop);
+            found = true;
+            break;
+          }
+        }
+      }
+      // create
+      if (!found)
+      {
+        auto& fdesc = m_blueprint->register_field(bdesc.oname, bdesc.tname);
+        auto prop = fdesc.create_prop();
+        prop->add_listener(this);
+        new_fields.emplace_back(bdesc.oname, prop);
+      }
     }
+    // prepend the to-be-serialized-in fields
+    m_fields.insert(m_fields.begin(), new_fields.begin(), new_fields.end());
 
-    // last field first
-    const auto& last_desc = descs.back();
+    // last field first (most susceptible to fail)
+    const auto& last_desc = better_descs.back();
+    auto& last_field = m_fields[better_descs.size() - 1];
+
     is.seekg(start_pos + last_desc.data_offset);
-
-    auto field_name = CSysName(strpool.from_idx(last_desc.name_idx));
-    auto prop_ctypename = CSysName(strpool.from_idx(last_desc.ctypename_idx));
-
-    if (!serialize_field(field_name, prop_ctypename, is, serctx, eof_is_end_of_object))
+    if (!serialize_field(last_field, is, serctx, eof_is_end_of_object))
       return false;
 
     if (is.eof()) // tellg would fail if eofbit is set
       is.seekg(0, std::ios_base::end);
     uint32_t end_pos = (uint32_t)is.tellg();
 
+    serctx.log(fmt::format("serialized_in (last) {}::{} in {} bytes", this->ctypename().str(), last_desc.oname.str(), end_pos - (start_pos + last_desc.data_offset)));
+
     // rest of the m_fields (named props)
-    uint32_t next_field_offset = last_desc.data_offset;
-    for (size_t i = fields_cnt - 1; i--; /**/)
+    for (size_t i = 0; i + 1 < fields_cnt; ++i)
     {
-      const auto& desc = descs[i];
+      const auto& bdesc = better_descs[i];
+      auto& field = m_fields[i];
 
-      if (desc.data_offset > next_field_offset)
-        throw std::logic_error("CObject: false assumption #1. please open an issue.");
+      if (field.name != bdesc.oname)
+        throw std::logic_error("CObject::serialize_in: assertion #1");
 
-      const size_t field_size = next_field_offset - desc.data_offset;
-
-      isubstreambuf sbuf(is.rdbuf(), start_pos + desc.data_offset, field_size);
+      isubstreambuf sbuf(is.rdbuf(), start_pos + bdesc.data_offset, bdesc.data_size);
       std::istream isubs(&sbuf);
-      auto field_name = CSysName(strpool.from_idx(desc.name_idx));
-      auto prop_ctypename = CSysName(strpool.from_idx(desc.ctypename_idx));
 
-      if (!serialize_field(field_name, prop_ctypename, isubs, serctx, true))
+      if (!serialize_field(field, isubs, serctx, true))
         return false;
 
-      next_field_offset = desc.data_offset;
+      serctx.log(fmt::format("serialized_in ({}) {}::{} in {} bytes", i, this->ctypename().str(), bdesc.oname.str(), bdesc.data_size));
     }
-    std::reverse(m_fields.begin(), m_fields.end());
+
+    serctx.log(fmt::format("serialized_in CObject {} in {} bytes", this->ctypename().str(), (size_t)(end_pos - start_pos)));
 
     is.seekg(end_pos);
 
-    complete_fields_from_bp();
     post_cobject_event(EObjectEvent::data_modified);
     return true;
   }
 
-  bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
+  [[nodiscard]] bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
     auto& strpool = serctx.strpool;
 
@@ -317,7 +355,7 @@ public:
 
     // temp field descriptors
     property_desc_t empty_desc {};
-    for (auto& field : m_fields)
+    for (size_t i = 0; i < fields_cnt; ++i)
       os << cbytes_ref(empty_desc);
 
     // m_fields (named props)
@@ -329,14 +367,24 @@ public:
       if (field.prop->is_skippable_in_serialization())
         continue;
 
-      const uint32_t data_offset = (uint32_t)(os.tellp() - start_pos);
+      size_t prop_start_pos = (size_t)os.tellp();
+
+      const uint32_t data_offset = (uint32_t)(prop_start_pos - start_pos);
       descs.emplace_back(
         strpool.to_idx(field.name.str()),
         strpool.to_idx(field.prop->ctypename().str()),
         data_offset
       );
+
       if (!field.prop->serialize_out(os, serctx))
+      {
+        serctx.log(fmt::format("couldn't serialize_out {}::{}", this->ctypename().str(), field.name.str()));
         return false;
+      }
+
+      size_t prop_end_pos = (size_t)os.tellp();
+
+      serctx.log(fmt::format("serialized_out {}::{} in {} bytes", this->ctypename().str(), field.name.str(), prop_end_pos - prop_start_pos));
     }
 
     auto end_pos = os.tellp();
@@ -344,6 +392,8 @@ public:
     // real field descriptors
     os.seekp(descs_pos);
     os.write((char*)descs.data(), descs.size() * sizeof(property_desc_t));
+
+    serctx.log(fmt::format("serialized_out CObject {} in {} bytes", this->ctypename().str(), (size_t)(end_pos - start_pos)));
 
     os.seekp(end_pos);
     return true;

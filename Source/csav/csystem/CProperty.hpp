@@ -387,6 +387,8 @@ public:
 
   bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
   {
+    size_t start_pos = is.tellg();
+
     uint32_t uk = 0;
     is >> cbytes_ref(uk);
     if (uk != m_elts.size())
@@ -400,11 +402,16 @@ public:
         return false;
     }
 
+    size_t end_pos = is.tellg();
+    serctx.log(fmt::format("serialized_in {} in {} bytes", this->ctypename().str(), (size_t)(end_pos - start_pos)));
+
     return is.good();
   }
 
   virtual [[nodiscard]] bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
+    size_t start_pos = os.tellp();
+
     uint32_t uk = (uint32_t)m_elts.size();
     os << cbytes_ref(uk);
 
@@ -413,6 +420,9 @@ public:
       if (!elt->serialize_out(os, serctx))
         return false;
     }
+
+    size_t end_pos = os.tellp();
+    serctx.log(fmt::format("serialized_in {} in {} bytes", this->ctypename().str(), (size_t)(end_pos - start_pos)));
 
     return true;
   }
@@ -709,8 +719,7 @@ public:
 
   bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
   {
-    m_object->serialize_in(is, serctx);
-    return is.good();
+    return m_object->serialize_in(is, serctx) && is.good();
   }
 
   virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
@@ -953,7 +962,6 @@ public:
 
 class CHandleProperty
   : public CProperty
-  , public CObjectListener
 {
 protected:
   CSysName m_base_ctypename;
@@ -967,7 +975,6 @@ public:
     , m_ctypename(std::string("handle:") + m_base_ctypename.str())
   {
     m_obj = std::make_shared<CObject>(m_base_ctypename);
-    m_obj->add_listener(this);
   }
 
   ~CHandleProperty() override = default;
@@ -980,9 +987,7 @@ public:
   {
     if (!new_obj) // no!
       return;
-    m_obj->remove_listener(this);
     m_obj = new_obj;
-    m_obj->add_listener(this);
   }
 
   // overrides
@@ -1023,13 +1028,6 @@ public:
   }
 
 #endif
-
-  // object events
-
-  void on_cobject_event(const std::shared_ptr<const CObject>& prop, EObjectEvent evt) override
-  {
-    post_cproperty_event(EPropertyEvent::data_modified);
-  }
 };
 
 //------------------------------------------------------------------------------
