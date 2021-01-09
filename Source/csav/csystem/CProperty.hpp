@@ -1052,8 +1052,8 @@ public:
   virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
     uint16_t cnt = (uint16_t)m_str.size();
-    os.write(m_str.data(), cnt);
     os << cbytes_ref(cnt);
+    os.write(m_str.data(), cnt);
     return true;
   }
 
