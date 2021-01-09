@@ -38,7 +38,6 @@ class field_order_graph
     stack.push_back(i);
   }
 
-
 public:
   std::vector<CSysName> topo_sort()
   {

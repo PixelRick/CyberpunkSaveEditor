@@ -252,15 +252,35 @@ public:
     // ideally doing it in reverse order would catch failures earlier (unknown prop with unknown end)
     // but it would also reverse the order of appearance in the log
 
-    auto field_it = m_fields.begin();
+    //auto field_it = m_fields.begin();
+    auto prev_field_it = m_fields.begin();
     for (size_t i = 0; i < serial_fields_cnt; ++i)
     {
       auto& fdesc = field_descs[i];
       auto& ddesc = data_descs[i];
 
       // search for field
+      auto field_it(prev_field_it);
       while (field_it != m_fields.end() && field_it->name != fdesc.name)
         ++field_it;
+
+      // (allow for unordered, but the reserialization tests will fail)
+      if (field_it == m_fields.end())
+      {
+        field_it = m_fields.begin();
+        while (field_it != m_fields.end() && field_it->name != fdesc.name)
+          ++field_it;
+        if (field_it != m_fields.end())
+        {
+          serctx.log(fmt::format(
+            "serialized_in ({}) out of order {}::{} (ctype:{})",
+            i, this->ctypename().str(), fdesc.name.str(), fdesc.ctypename.str()));
+        }
+      }
+      else
+      {
+        prev_field_it = field_it;
+      }
 
       if (field_it == m_fields.end())
       {
@@ -268,7 +288,7 @@ public:
         // todo: replace with logging
         throw std::runtime_error(
           fmt::format(
-            "CObject::serialize_in: serial field {}::{} is either missing from bp fields or those are in a bad order",
+            "CObject::serialize_in: serial field {}::{} is missing from bp fields",
             this->ctypename().str(), fdesc.name.str())
         );
         return false;
