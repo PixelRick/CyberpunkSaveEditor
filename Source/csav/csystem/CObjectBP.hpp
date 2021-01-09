@@ -15,7 +15,7 @@
 #include <csav/csystem/CPropertyFactory.hpp>
 #include <csav/csystem/CStringPool.hpp>
 
-#define COBJECT_BP_GENERATION 1
+#define COBJECT_BP_GENERATION 0
 
 // little tool to retrieve the real order of fields (don't wanna rely on dumps)
 class field_order_graph
