@@ -176,3 +176,4 @@ std::optional<std::filesystem::path> find_user_saved_games() {
   }
   return {};
 }
+
