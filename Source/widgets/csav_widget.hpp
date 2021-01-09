@@ -116,14 +116,14 @@ public:
 
     if (m_csav)
     {
-      add_collapsible_editor<System_editor>("ScriptableSystemsContainer", true);
-      add_collapsible_editor<PSData_editor>("PSData", true);
-
-      add_collapsible_editor<System_editor>("RenderGameplayEffectsManagerSystem", true);
-      add_collapsible_editor<System_editor>("godModeSystem", true);
-      add_collapsible_editor<System_editor>("MovingPlatformSystem", true);
-      add_collapsible_editor<System_editor>("scanningController", true);
-      add_collapsible_editor<System_editor>("tierSystem", true);
+      //add_collapsible_editor<System_editor>("ScriptableSystemsContainer", true);
+      //add_collapsible_editor<PSData_editor>("PSData", true);
+      //
+      //add_collapsible_editor<System_editor>("RenderGameplayEffectsManagerSystem", true);
+      //add_collapsible_editor<System_editor>("godModeSystem", true);
+      //add_collapsible_editor<System_editor>("MovingPlatformSystem", true);
+      //add_collapsible_editor<System_editor>("scanningController", true);
+      //add_collapsible_editor<System_editor>("tierSystem", true);
     }
   }
 
@@ -134,18 +134,18 @@ public:
       Sleep(1);
   }
 
-  template <typename EditorType>
-  void add_collapsible_editor(std::string_view node_name, bool advanced = false)
-  {
-    auto node = m_csav->search_node(node_name);
-    if (node)
-    {
-      if (advanced)
-        m_advanced_collapsible_editors.push_back(std::make_shared<EditorType>(node, m_csav->ver));
-      else
-        m_collapsible_editors.push_back(std::make_shared<EditorType>(node, m_csav->ver));
-    }
-  }
+  //template <typename EditorType>
+  //void add_collapsible_editor(std::string_view node_name, bool advanced = false)
+  //{
+  //  auto node = m_csav->search_node(node_name);
+  //  if (node)
+  //  {
+  //    if (advanced)
+  //      m_advanced_collapsible_editors.push_back(std::make_shared<EditorType>(node, m_csav->ver));
+  //    else
+  //      m_collapsible_editors.push_back(std::make_shared<EditorType>(node, m_csav->ver));
+  //  }
+  //}
 
 protected:
   void do_save()
