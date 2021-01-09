@@ -35,6 +35,9 @@ SOFTWARE.
 #include <string>
 #include <vector>
 
+#include <utils.hpp>
+
+
 #ifndef IMGUI_VERSION
 #   error "include imgui.h before this header"
 #endif
@@ -323,6 +326,20 @@ inline void ImGui::FileBrowser::Display()
 #ifdef _WIN32
   char currentDrive = static_cast<char>(pwd_.c_str()[0]);
   char driveStr[] = { currentDrive, ':', '\0' };
+
+  static std::optional<std::filesystem::path> saved_games_path = find_user_saved_games();
+  if (saved_games_path.has_value())
+  {
+    if (ImGui::Button("saved games directory"))
+    {
+      SetPwd(saved_games_path.value());
+    }
+    ImGui::SameLine();
+  }
+  if (ImGui::Button("app directory"))
+  {
+    SetPwd("");
+  }
 
   PushItemWidth(4 * GetFontSize());
   if(BeginCombo("##select_drive", driveStr))
