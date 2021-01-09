@@ -96,7 +96,9 @@ protected:
 	virtual void update() = 0;
 	virtual void draw_imgui() = 0;
 	virtual void on_resized() {};
-	virtual bool quitting() { return false; }
+	virtual bool quitting() const { return false; }
+	virtual bool has_file_drop() const { return false; }
+	virtual void on_file_drop(std::wstring fpath) {};
 
 public:
 	std::shared_ptr<AppImage> load_texture_from_file(const std::string& filename);

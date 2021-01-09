@@ -225,6 +225,13 @@ protected:
 		}
 	}
 
+	bool has_file_drop() const override { return true; }
+
+	void on_file_drop(std::wstring fpath) override
+	{
+		csav_list.open_file(this, fpath);
+	}
+
 	void on_resized() override
 	{
 	}

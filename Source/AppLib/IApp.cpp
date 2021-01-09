@@ -1,4 +1,5 @@
 #include "IApp.hpp"
+#include "shellapi.h"
 #include <stdexcept>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -101,6 +102,8 @@ int IApp::run()
 	ImGui_ImplWin32_Init(m_hwnd);
 	ImGui_ImplDX11_Init(m_device.Get(), m_devctx.Get());
 
+	DragAcceptFiles(m_hwnd, has_file_drop());
+
 	startup();
 
 	MSG msg = {};
@@ -136,6 +139,8 @@ int IApp::run()
 
 	cleanup();
 
+	DragAcceptFiles(m_hwnd, FALSE);
+
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
@@ -158,6 +163,24 @@ LRESULT IApp::window_proc(UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
+	case WM_DROPFILES:
+	{
+		HDROP hDrop = (HDROP)wParam;
+		UINT files_cnt = (UINT)DragQueryFileW(hDrop, 0xFFFFFFFF, nullptr, 0);
+		std::wstring wsPath;
+		for (UINT i = 0; i < files_cnt; ++i)
+		{
+			UINT nameLen = DragQueryFileW(hDrop, i, nullptr, 0);
+			if (nameLen)
+			{
+				wsPath.resize(nameLen + 1);
+				DragQueryFileW(hDrop, i, wsPath.data(), (UINT)wsPath.size());
+				on_file_drop(wsPath);
+			}
+		}
+
+		return 0;
+	}
 	default:
 		break;
 	}

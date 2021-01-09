@@ -893,6 +893,39 @@ public:
     }
   }
 
+  void open_file(IApp* owning_app, std::wstring fpath)
+  {
+    if (open_job.is_running())
+    {
+      // todo: add centralized error modal popup to IApp
+      // and open an error here
+      return;
+    }
+
+    open_filepath = std::filesystem::absolute(fpath);
+
+    try
+    {
+      std::filesystem::path dirpath = open_filepath;
+      auto& jroot = ps_json_storage::get().jroot();
+      jroot["open_path"] = dirpath.remove_filename().string();
+    }
+    catch (std::exception&) {}
+
+    auto screenshot_path = open_filepath;
+    screenshot_path.replace_filename(L"screenshot.png");
+    if (std::filesystem::exists(screenshot_path))
+      opened_save_img = owning_app->load_texture_from_file(screenshot_path.string());
+
+    open_job.start([this](progress_t& progress) -> bool {
+      auto cs = std::make_shared<csav>();
+      if (!cs->open_with_progress(open_filepath, progress))
+        return false;
+      opened_save = cs;
+      return true;
+    });
+  }
+
   void draw_menu_item(IApp* owning_app)
   {
     if (ImGui::MenuItem("Open savefile", 0, false, !open_job.is_running()))
@@ -902,32 +935,13 @@ public:
 
     if (open_dialog.HasSelected())
     {
-      open_filepath = std::filesystem::absolute(open_dialog.GetSelected().wstring());
-
-      try
-      {
-        std::filesystem::path dirpath = open_filepath;
-        auto& jroot = ps_json_storage::get().jroot();
-        jroot["open_path"] = dirpath.remove_filename().string();
-      }
-      catch (std::exception&) {}
-
-      auto screenshot_path = open_filepath;
-      screenshot_path.replace_filename(L"screenshot.png");
-      if (std::filesystem::exists(screenshot_path))
-        opened_save_img = owning_app->load_texture_from_file(screenshot_path.string());
-
-      open_job.start([this](progress_t& progress) -> bool {
-        auto cs = std::make_shared<csav>();
-        if (!cs->open_with_progress(open_filepath, progress))
-          return false;
-        opened_save = cs;
-        return true;
-      });
-      ImGui::OpenPopup("Loading..##LOAD");
-
+      open_file(owning_app, open_dialog.GetSelected().wstring());
       open_dialog.ClearSelected();
     }
+
+    // be sure that this modal is opened
+    if (open_job.is_running())
+      ImGui::OpenPopup("Loading..##LOAD");
 
     if (ImGui::BeginMenu("Options"))
     {
