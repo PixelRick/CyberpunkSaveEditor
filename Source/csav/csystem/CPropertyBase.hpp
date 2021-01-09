@@ -65,27 +65,29 @@ enum class EPropertyEvent
   data_modified,
 };
 
-struct CPropertyListener
+
+struct CPropertyOwner
 {
-  virtual ~CPropertyListener() = default;
-  virtual void on_cproperty_event(const std::shared_ptr<const CProperty>& prop, EPropertyEvent evt) = 0;
+  virtual ~CPropertyOwner() = default;
+  virtual void on_cproperty_event(const CProperty& prop, EPropertyEvent evt) = 0;
 };
 
 
 class CProperty
-  : public std::enable_shared_from_this<const CProperty>
 {
-  EPropertyKind m_property_kind;
+  CPropertyOwner* m_owner;
+  EPropertyKind m_kind;
   bool m_is_skippable_in_ser = true;
 
 protected:
-  explicit CProperty(EPropertyKind kind)
-    : m_property_kind(kind) {}
-
-  virtual ~CProperty() = default;
+  CProperty(CPropertyOwner* owner, EPropertyKind kind)
+    : m_owner(owner), m_kind(kind) {}
 
 public:
-  EPropertyKind kind() const { return m_property_kind; }
+  virtual ~CProperty() = default;
+
+  CPropertyOwner* owner() const  { return m_owner; }
+  EPropertyKind kind() const { return m_kind; }
 
   virtual CSysName ctypename() const = 0;
 
@@ -136,31 +138,12 @@ public:
   // events
 
 protected:
-  std::set<CPropertyListener*> m_listeners;
-
   void post_cproperty_event(EPropertyEvent evt) const
   {
-    std::set<CPropertyListener*> listeners = m_listeners;
-    for (auto& l : listeners) {
-      l->on_cproperty_event(shared_from_this(), evt);
-    }
+    if (m_owner)
+      m_owner->on_cproperty_event(*this, evt);
     if (evt == EPropertyEvent::data_modified)
       const_cast<CProperty*>(this)->m_is_skippable_in_ser = false;
-  }
-
-public:
-  // provided as const for ease of use
-
-  void add_listener(CPropertyListener* listener) const
-  {
-    auto& listeners = const_cast<CProperty*>(this)->m_listeners;
-    listeners.insert(listener);
-  }
-
-  void remove_listener(CPropertyListener* listener) const
-  {
-    auto& listeners = const_cast<CProperty*>(this)->m_listeners;
-    listeners.erase(listener);
   }
 };
 
@@ -177,8 +160,8 @@ protected:
   std::vector<char> m_data;
 
 public:
-  explicit CUnknownProperty(CSysName ctypename)
-    : CProperty(EPropertyKind::Unknown)
+  CUnknownProperty(CPropertyOwner* owner, CSysName ctypename)
+    : CProperty(owner, EPropertyKind::Unknown)
     , m_ctypename(ctypename)
   {
   }

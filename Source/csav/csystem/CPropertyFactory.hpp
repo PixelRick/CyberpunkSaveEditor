@@ -25,9 +25,6 @@ public:
   }
 
 public:
-  static std::function<CPropertySPtr()> get_creator(CSysName ctypename);
-
-  // to be removed.. better use the one above to store a creator
-  static CPropertySPtr create(std::string_view ctypename);
+  static std::function<CPropertyUPtr(CPropertyOwner*)> get_creator(CSysName ctypename);
 };
 

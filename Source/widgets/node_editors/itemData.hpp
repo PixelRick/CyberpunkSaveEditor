@@ -146,6 +146,7 @@ struct CItemData_widget
 
       int flgs = item.uk0_012;
       modified |= ImGui::CheckboxFlags("Quest Item", &flgs, 1);
+      modified |= ImGui::CheckboxFlags("Fact Item", &flgs, 2);
       item.uk0_012 = (uint8_t)flgs;
 
       unsigned kind = item.iid.uk.kind();

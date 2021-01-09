@@ -17,12 +17,6 @@
 struct CProperty_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(const CPropertySPtr& prop)
-  {
-    return draw(*prop);
-  }
-
-  // returns true if content has been edited
   [[nodiscard]] static inline bool draw(CProperty& prop)
   {
     return prop.imgui_widget("Property", true);
@@ -32,13 +26,6 @@ struct CProperty_widget
 // to be used with CScriptObject struct
 struct CObject_widget
 {
-  static std::string_view prop_name_getter(const CPropertyField& field)
-  {
-    static std::string tmp;
-    tmp = field.name.str();
-    return tmp;
-  };
-
   // returns true if content has been edited
   [[nodiscard]] static inline bool draw(const CObjectSPtr& pobj, int* selected_property)
   {

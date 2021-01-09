@@ -242,6 +242,10 @@ public:
 
   uint32_t idx() const { return m_idx; }
 
+  friend inline bool operator<(const CSysName& a, const CSysName& b) {
+    return a.m_idx < b.m_idx;
+  }
+
   friend inline bool operator==(const CSysName& a, const CSysName& b) {
     return a.m_idx == b.m_idx;
   }
@@ -250,3 +254,17 @@ public:
     return !(a == b);
   }
 };
+
+namespace std {
+
+  template <>
+  struct hash<CSysName>
+  {
+    std::size_t operator()(const CSysName& k) const
+    {
+      return hash<uint32_t>()(k.idx());
+    }
+  };
+
+}
+

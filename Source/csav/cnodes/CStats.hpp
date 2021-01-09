@@ -9,17 +9,13 @@
 
 struct CStats
   : public node_serializable
+  , public CObjectListener
 {
   std::shared_ptr<const node_t> m_raw; // temporary
   CSystem m_sys;
 
-  CObjectSPtr m_mapstruct;
-  std::shared_ptr<CDynArrayProperty> m_stats_values_object;
-
-  // precompute this
-  // todo: listen to system objects and update it when necessary
-  std::unordered_map<uint32_t, std::shared_ptr<CDynArrayProperty>> m_seed_to_modifiers_map;
-
+  CObjectSPtr m_mapstruct = nullptr;
+  std::unordered_map<uint32_t, CObjectSPtr> m_seed_to_stats_obj_map;
 
 public:
   CStats() = default;
@@ -30,38 +26,95 @@ public:
 public:
 
   // tools
-  CPropertySPtr get_modifiers_prop(uint32_t seed)
+
+  // todo: add a field* param to this listener, so that we can do things depending on which property has been edited
+  void on_cobject_event(const CObject& obj, EObjectEvent evt) override
   {
-    auto it = m_seed_to_modifiers_map.find(seed);
-    if (it == m_seed_to_modifiers_map.end())
+    if (m_mapstruct.get() == &obj)
+      update_stats_stuff();
+  }
+
+  bool update_stats_stuff()
+  {
+    // this isn't editor breaking, so we return true if it fails
+
+    m_seed_to_stats_obj_map.clear();
+
+    if (m_sys.objects().empty())
+      return false;
+
+    // update m_mapstruct
+    if (m_mapstruct)
+      m_mapstruct->remove_listener(this);
+
+    m_mapstruct = m_sys.objects()[0];
+    if (!m_mapstruct)
+      return true;
+
+    m_mapstruct->add_listener(this);
+
+    // update seed->stats map
+
+    auto mapvalues = m_mapstruct->get_prop("values");
+    auto m_stats_values_prop = dynamic_cast<CDynArrayProperty*>(mapvalues);
+    if (!m_stats_values_prop)
+      return true;
+
+    // iterate over gameSavedStatsData objects
+    for (auto& it : *m_stats_values_prop)
+    {
+      CObjectProperty* objprop = dynamic_cast<CObjectProperty*>(it.get());
+      if (!objprop)
+        continue;
+      auto obj = objprop->obj();
+
+      auto seedprop = dynamic_cast<CIntProperty*>(obj->get_prop("seed"));
+      if (!seedprop)
+        continue;
+      uint32_t seed = seedprop->u32();
+      m_seed_to_stats_obj_map.emplace(seed, obj);
+    }
+
+    return true;
+  }
+
+  CProperty* get_modifiers_prop(uint32_t seed)
+  {
+    auto stats = m_seed_to_stats_obj_map.find(seed);
+    if (stats == m_seed_to_stats_obj_map.end())
       return nullptr;
-    return std::static_pointer_cast<CProperty>(it->second);
+
+    auto modsarray = dynamic_cast<CDynArrayProperty*>(stats->second->get_prop("statModifiers"));
+    if (!modsarray)
+      return nullptr;
+
+    return modsarray;
   }
 
 protected:
-  void add_new_modifier(const CPropertySPtr& modifiers, CSysName name)
+  void add_new_modifier(CProperty* modifiers, CSysName name)
   {
-    auto mods = std::dynamic_pointer_cast<CDynArrayProperty>(modifiers);
+    auto mods = dynamic_cast<CDynArrayProperty*>(modifiers);
     if (!mods)
       return;
-    auto new_handle = std::dynamic_pointer_cast<CHandleProperty>(*mods->emplace(mods->begin()));
+    auto new_handle = dynamic_cast<CHandleProperty*>(mods->emplace(mods->begin())->get());
     if (!new_handle)
       return;//damnit
     new_handle->set_obj(std::make_shared<CObject>(name));
   }
 
 public:
-  void add_combined_stats(const CPropertySPtr& modifiers)
+  void add_combined_stats(CProperty* modifiers)
   {
     add_new_modifier(modifiers, "gameCombinedStatModifierData");
   }
 
-  void add_curve_stats(const CPropertySPtr& modifiers)
+  void add_curve_stats(CProperty* modifiers)
   {
     add_new_modifier(modifiers, "gameCurveStatModifierData");
   }
 
-  void add_constant_stats(const CPropertySPtr& modifiers)
+  void add_constant_stats(CProperty* modifiers)
   {
     add_new_modifier(modifiers, "gameConstantStatModifierData");
   }
@@ -85,33 +138,7 @@ public:
     if (!reader.at_end())
       return false;
 
-    // this isn't editor breaking, so we return true if it fails
-
-    m_mapstruct = m_sys.objects()[0];
-    if (!m_mapstruct)
-      return true;
-
-    auto mapvalues = m_mapstruct->get_prop("values");
-    m_stats_values_object = std::dynamic_pointer_cast<CDynArrayProperty>(mapvalues);
-    if (!m_stats_values_object)
-      return true;
-
-    // iterate over gameSavedStatsData objects
-    for (auto& it : *m_stats_values_object)
-    {
-      std::shared_ptr<CObjectProperty> objprop = std::dynamic_pointer_cast<CObjectProperty>(it);
-      if (!objprop)
-        continue;
-      auto obj = objprop->obj();
-      auto seedprop = std::dynamic_pointer_cast<CIntProperty>(obj->get_prop("seed"));
-      if (!seedprop)
-        continue;
-      uint32_t seed = seedprop->u32();
-      auto modsarray = std::dynamic_pointer_cast<CDynArrayProperty>(obj->get_prop("statModifiers"));
-      if (!modsarray)
-        continue;
-      m_seed_to_modifiers_map.emplace(seed, modsarray);
-    }
+    update_stats_stuff();
 
     return true;
   }

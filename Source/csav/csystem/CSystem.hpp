@@ -172,7 +172,7 @@ public:
         return false;
 
       auto obj_ctypename = CSysName(strpool.from_idx(desc.name_idx));
-      auto new_obj = std::make_shared<CObject>(obj_ctypename); // todo: static create method
+      auto new_obj = std::make_shared<CObject>(obj_ctypename, true); // todo: static create method
       m_serctx.m_objects.push_back(new_obj);
     }
 

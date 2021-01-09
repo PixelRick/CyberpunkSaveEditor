@@ -7,6 +7,7 @@
 #include <nlohmann/json.hpp>
 #include <fmt/format.h>
 
+
 CObjectBPList::CObjectBPList()
 {
   std::ifstream ifs;
@@ -19,12 +20,15 @@ CObjectBPList::CObjectBPList()
       ifs >> db;
       for (nlohmann::json::iterator it = db.begin(); it != db.end(); ++it)
       {
-        auto bp = std::make_shared<CObjectBP>(CSysName(it.key()));
+
         auto fields = it.value();
+        std::vector<CFieldDesc> fdescs;
         for (nlohmann::json::iterator field_it = fields.begin(); field_it != fields.end(); ++field_it)
         {
-          bp->register_field(CSysName(field_it.key()), CSysName(field_it.value()));
+          fdescs.emplace_back(CSysName(field_it.key()), CSysName(field_it.value()));
         }
+        auto bp = std::make_shared<CObjectBP>(CSysName(it.key()), fdescs);
+
         m_classmap.emplace(CSysName(it.key()).idx(), bp);
       }
     }
@@ -44,6 +48,8 @@ CObjectBPList::CObjectBPList()
 
 CObjectBPList::~CObjectBPList()
 {
+#ifdef COBJECT_BP_GENERATION
+
   std::ofstream ofs;
   ofs.open("db/CObjectBPs.json");
   if (ofs.is_open())
@@ -55,7 +61,7 @@ CObjectBPList::~CObjectBPList()
       {
         const auto& bp = it.second;
         nlohmann::json jbp;
-        for (auto& field : it.second->field_descs())
+        for (auto& field : it.second->field_bps())
         {
           jbp[field.name().str()] = field.ctypename().str();
         }
@@ -76,4 +82,6 @@ CObjectBPList::~CObjectBPList()
   {
     MessageBox(0, L"db/CObjectBPs.json couldn't be updated", L"couldn't open resource file", 0);
   }
+
+#endif
 }

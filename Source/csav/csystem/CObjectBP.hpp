@@ -4,59 +4,216 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <deque>
+#include <set>
 #include <unordered_map>
 #include <algorithm>
 #include <fmt/format.h>
 #include <utils.hpp>
 #include <csav/csystem/fwd.hpp>
+#include <csav/csystem/CPropertyBase.hpp>
 #include <csav/csystem/CPropertyFactory.hpp>
 #include <csav/csystem/CStringPool.hpp>
 
-class CFieldDesc
+#define COBJECT_BP_GENERATION 1
+
+// little tool to retrieve the real order of fields (don't wanna rely on dumps)
+class field_order_graph
 {
-  CSysName m_name;
-  CSysName m_ctypename;
+  std::unordered_map<CSysName, uint16_t> name_to_idx;
+  std::vector<CSysName> idx_to_name;
 
-  std::function<CPropertySPtr()> m_prop_creator;
+  std::vector<std::set<uint16_t>> adjs;
+  // adj[0].contains(1)  ==>  0 < 1
 
-public:
-  CFieldDesc(CSysName name, CSysName ctypename)
-    : m_name(name), m_ctypename(ctypename)
+  void topo_sort_rec(std::vector<bool>& visited, std::vector<uint16_t>& stack, uint16_t i)
   {
-    m_prop_creator = CPropertyFactory::get().get_creator(ctypename);
+    visited[i] = true;
+    const auto& adj_i = adjs[i];
+    for (auto it = adj_i.begin(); it != adj_i.end(); ++it)
+    {
+      if (!visited[*it])
+        topo_sort_rec(visited, stack, *it);
+    }
+    stack.push_back(i);
   }
 
-  CSysName name() const { return m_name; }
-  CSysName ctypename() const { return m_ctypename; }
 
-  CPropertySPtr create_prop() const { return m_prop_creator(); }
+public:
+  std::vector<CSysName> topo_sort()
+  {
+    const uint16_t elts_cnt = (uint16_t)idx_to_name.size();
+    std::vector<bool> visited(elts_cnt);
+    std::vector<uint16_t> stack;
+
+    for (uint16_t i = 0; i < elts_cnt; ++i)
+    {
+      if (!visited[i])
+        topo_sort_rec(visited, stack, i);
+    }
+
+    std::vector<CSysName> ret;
+    while (stack.size())
+    {
+      ret.push_back(idx_to_name[stack.back()]);
+      stack.pop_back();
+    }
+    return ret;
+  }
+
+  void insert_name(const CSysName& name)
+  {
+    // todo: add size check (uint16_t max)
+    size_t idx = idx_to_name.size();
+    if (name_to_idx.emplace(name, (uint16_t)idx).second)
+    {
+      idx_to_name.push_back(name);
+      adjs.emplace_back();
+    }
+  }
+
+  // returns true if transitive closure has been updated
+  bool insert_ordered_list(const std::vector<CSysName>& names)
+  {
+    bool has_new_constraint = false;
+    std::set<uint16_t> adj_set;
+    for (auto rit = names.rbegin(); rit != names.rend(); ++rit)
+    {
+      // todo: add size check (uint16_t max)
+      size_t idx = idx_to_name.size();
+      auto it = name_to_idx.emplace(*rit, (uint16_t)idx);
+      if (it.second)
+      {
+        idx_to_name.push_back(*rit);
+        adjs.emplace_back();
+        has_new_constraint = true;
+      }
+      else
+        idx = it.first->second;
+
+      const size_t prev_size = adjs[idx].size();
+      adjs[idx].insert(adj_set.begin(), adj_set.end());
+      if (prev_size != adjs[idx].size())
+        has_new_constraint = true;
+
+      adj_set.emplace((uint16_t)idx);
+    }
+
+    return has_new_constraint;
+  }
+};
+
+struct CFieldDesc
+{
+  CSysName name;
+  CSysName ctypename;
+
+  CFieldDesc() = default;
+
+  CFieldDesc(CSysName name, CSysName ctypename)
+    : name(name), ctypename(ctypename) {}
+};
+
+static_assert(sizeof(CFieldDesc) == sizeof(uint64_t));
+
+class CFieldBP
+{
+  CFieldDesc m_desc;
+
+  std::function<CPropertyUPtr(CPropertyOwner*)> m_prop_creator;
+
+public:
+  CFieldBP(CFieldDesc desc)
+    : m_desc(desc)
+  {
+    m_prop_creator = CPropertyFactory::get().get_creator(desc.ctypename);
+  }
+
+  CFieldDesc desc() const { return m_desc; }
+
+  CSysName name() const { return m_desc.name; }
+  CSysName ctypename() const { return m_desc.ctypename; }
+
+  CPropertyUPtr create_prop(CPropertyOwner* owner) const { return std::move(m_prop_creator(owner)); }
 };
 
 class CObjectBP
 {
   CSysName m_ctypename;
-  std::vector<CFieldDesc> m_field_descs;
+  std::vector<CFieldBP> m_field_bps;
+
+#ifdef COBJECT_BP_GENERATION
+  field_order_graph m_fograph;
+#endif
 
 public:
   explicit CObjectBP(CSysName ctypename)
     : m_ctypename(ctypename) {}
 
+  CObjectBP(CSysName ctypename, const std::vector<CFieldDesc>& fdescs)
+    : m_ctypename(ctypename)
+  {
+    for (const auto& fdesc : fdescs)
+    {
+      // partial orders may be wrong in the json db,
+      // so let's not use insert_ordered_list
+      m_fograph.insert_name(fdesc.name);
+      // append the field bp
+      m_field_bps.emplace_back(fdesc);
+    }
+  }
+
   CSysName ctypename() const { return m_ctypename; }
 
-  const std::vector<CFieldDesc>& field_descs() const { return m_field_descs; }
+  const std::vector<CFieldBP>& field_bps() const { return m_field_bps; }
 
-  CFieldDesc& register_field(CSysName field_name, CSysName ctypename)
+  bool register_partial_field_descs(const std::vector<CFieldDesc>& descs)
   {
-    for (auto& field : m_field_descs)
+#ifdef COBJECT_BP_GENERATION
+    std::vector<CSysName> ordered_names;
+    for (auto& desc : descs)
     {
-      if (field.name() != field_name)
-        continue;
-      if (field.ctypename() == ctypename)
-        return field;
+      ordered_names.push_back(desc.name);
 
-      throw std::runtime_error("CObjectBP identified field has different type than the registered one");
+      bool found = false;
+      for (auto& fbp : m_field_bps)
+      {
+        if (fbp.name() == desc.name)
+        {
+          if (fbp.ctypename() != desc.ctypename)
+          {
+            throw std::runtime_error( // todo: replace with logged error
+              fmt::format(
+                "CObjectBP: a {}'s field bp has different ctype ({}) than newly registered one ({}).",
+                fbp.ctypename().str(), desc.ctypename.str()));
+            return false;
+          }
+          found = true;
+          break;
+        }
+      }
+      if (!found)
+      {
+        m_field_bps.emplace_back(desc);
+      }
     }
-    return m_field_descs.emplace_back(field_name, ctypename);
+
+    if (m_fograph.insert_ordered_list(ordered_names))
+    {
+      auto ordered = m_fograph.topo_sort();
+      std::vector<CFieldBP> new_field_bps;
+      for (auto& name : ordered)
+      {
+        auto it = std::find_if(m_field_bps.begin(), m_field_bps.end(),
+          [name](const CFieldBP& fbp){ return fbp.name() == name; });
+        new_field_bps.push_back(std::move(*it));
+        m_field_bps.erase(it);
+      }
+      m_field_bps = std::move(new_field_bps);
+    }
+
+#endif
+    return true;
   }
 };
 

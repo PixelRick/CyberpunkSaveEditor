@@ -7,11 +7,11 @@ class CObject;
 class CSystem;
 class CSystemSerCtx;
 
-using CPropertySPtr = std::shared_ptr<CProperty>;
+using CPropertyUPtr = std::unique_ptr<CProperty>;
 using CObjectSPtr = std::shared_ptr<CObject>;
 
 class CObjectBP;
-class CFieldDesc;
+class CFieldBP;
 
 using CObjectBPSPtr = std::shared_ptr<CObjectBP>;
 

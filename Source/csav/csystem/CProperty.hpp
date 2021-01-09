@@ -29,8 +29,8 @@ protected:
   bool m_value = false;
 
 public:
-  CBoolProperty()
-    : CProperty(EPropertyKind::Bool)
+  CBoolProperty(CPropertyOwner* owner)
+    : CProperty(owner, EPropertyKind::Bool)
   {
   }
 
@@ -129,8 +129,8 @@ protected:
   CSysName m_ctypename;
 
 public:
-  explicit CIntProperty(EIntKind int_kind)
-    : CProperty(EPropertyKind::Integer)
+  CIntProperty(CPropertyOwner* owner, EIntKind int_kind)
+    : CProperty(owner, EPropertyKind::Integer)
     , m_int_kind(int_kind)
     , m_int_size(int_size(int_kind))
     , m_ctypename(int_ctypename(int_kind))
@@ -282,8 +282,8 @@ protected:
   float m_value = 0.f;
 
 public:
-  CFloatProperty()
-    : CProperty(EPropertyKind::Float) {}
+  CFloatProperty(CPropertyOwner* owner)
+    : CProperty(owner, EPropertyKind::Float) {}
 
   ~CFloatProperty() override = default;
 
@@ -329,10 +329,10 @@ public:
 
 class CArrayProperty
   : public CProperty
-  , public CPropertyListener
+  , public CPropertyOwner
 {
 public:
-  using container_type = std::vector<CPropertySPtr>;
+  using container_type = std::vector<CPropertyUPtr>;
   using iterator = container_type::iterator;
   using const_iterator = container_type::const_iterator;
 
@@ -344,29 +344,22 @@ protected:
   // CName ids too.. but that's for later
   CSysName m_elt_ctypename;
   CSysName m_typename;
-  std::function<CPropertySPtr()> m_elt_creator;
+  std::function<CPropertyUPtr(CPropertyOwner*)> m_elt_create_fn;
 
 public:
-  CArrayProperty(CSysName elt_ctypename, size_t size)
-    : CProperty(EPropertyKind::DynArray)
+  CArrayProperty(CPropertyOwner* owner, CSysName elt_ctypename, size_t size)
+    : CProperty(owner, EPropertyKind::DynArray)
     , m_elt_ctypename(elt_ctypename)
     , m_typename(fmt::format("[{}]{}", size, elt_ctypename.str()))
   {
     m_elts.resize(size);
     auto& factory = CPropertyFactory::get();
-    m_elt_creator = factory.get_creator(elt_ctypename);
+    m_elt_create_fn = factory.get_creator(elt_ctypename);
     for (auto& elt : m_elts)
     {
       // todo: use clone on first instance..
-      elt = m_elt_creator();
-      elt->add_listener(this);
+      elt = m_elt_create_fn(this);
     }
-  }
-
-  ~CArrayProperty() override
-  {
-    for (auto& elt : m_elts)
-      elt->remove_listener(this);
   }
 
 public:
@@ -485,7 +478,7 @@ public:
 
   // child events
 
-  void on_cproperty_event(const std::shared_ptr<const CProperty>& prop, EPropertyEvent evt) override
+  void on_cproperty_event(const CProperty& prop, EPropertyEvent evt) override
   {
     post_cproperty_event(EPropertyEvent::data_modified);
   }
@@ -497,10 +490,10 @@ public:
 
 class CDynArrayProperty
   : public CProperty
-  , public CPropertyListener
+  , public CPropertyOwner
 {
 public:
-  using container_type = std::vector<CPropertySPtr>;
+  using container_type = std::vector<CPropertyUPtr>;
   using iterator = container_type::iterator;
   using const_iterator = container_type::const_iterator;
 
@@ -512,25 +505,16 @@ protected:
   // CName ids too.. but that's for later
   CSysName m_elt_ctypename;
   CSysName m_ctypename;
-  std::function<CPropertySPtr()> m_elt_creator;
+  std::function<CPropertyUPtr(CPropertyOwner*)> m_elt_create_fn;
 
 public:
-  explicit CDynArrayProperty(CSysName elt_ctypename)
-    : CProperty(EPropertyKind::DynArray)
+  CDynArrayProperty(CPropertyOwner* owner, CSysName elt_ctypename)
+    : CProperty(owner, EPropertyKind::DynArray)
     , m_elt_ctypename(elt_ctypename)
-    , m_ctypename(std::string("array:") + m_elt_ctypename.str())
+    , m_ctypename(std::string("array:") + elt_ctypename.str())
   {
     auto& factory = CPropertyFactory::get();
-    m_elt_creator = factory.get_creator(elt_ctypename);
-  }
-
-  ~CDynArrayProperty() override
-  {
-    for (auto& elt : m_elts)
-    {
-      if (elt)
-        elt->remove_listener(this);
-    }
+    m_elt_create_fn = factory.get_creator(elt_ctypename);
   }
 
 public:
@@ -547,9 +531,7 @@ public:
 
   iterator emplace(const_iterator _where)
   {
-    auto new_elt = m_elt_creator();
-    new_elt->add_listener(this);
-    auto it = m_elts.emplace(_where, new_elt);
+    auto it = m_elts.emplace(_where, m_elt_create_fn(this));
     post_cproperty_event(EPropertyEvent::data_modified);
     return it;
   }
@@ -560,8 +542,6 @@ public:
 
   bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
   {
-    for (auto& elt : m_elts)
-      elt->remove_listener(this);
     m_elts.clear();
 
     uint32_t cnt = 0;
@@ -572,8 +552,7 @@ public:
 
     for (auto& elt : m_elts)
     {
-      elt = m_elt_creator();
-      elt->add_listener(this);
+      elt = m_elt_create_fn(this);
       if (elt->kind() == EPropertyKind::Unknown)
         return false;
       if (!elt->serialize_in(is, serctx))
@@ -638,9 +617,7 @@ public:
             if (idx > 0)
             {
               size_t prev = idx - 1;
-              CPropertySPtr tmp = elt; // copy
-              m_elts[idx] = m_elts[prev];
-              m_elts[prev] = tmp;
+              std::swap(m_elts[idx], m_elts[prev]);
               modified = true;
             }
           }
@@ -651,9 +628,7 @@ public:
             if (idx + 1 < m_elts.size())
             {
               size_t next = idx + 1;
-              CPropertySPtr tmp = elt; // copy
-              m_elts[idx] = m_elts[next];
-              m_elts[next] = tmp;
+              std::swap(m_elts[idx], m_elts[next]);
               modified = true;
             }
           }
@@ -671,7 +646,6 @@ public:
       {
         auto remit = m_elts.begin() + to_rem;
         m_elts.erase(remit);
-        (*remit)->remove_listener(this);
         modified = true;
       }
     }
@@ -683,7 +657,7 @@ public:
 
   // child events
 
-  void on_cproperty_event(const std::shared_ptr<const CProperty>& prop, EPropertyEvent evt) override
+  void on_cproperty_event(const CProperty& prop, EPropertyEvent evt) override
   {
     post_cproperty_event(EPropertyEvent::data_modified);
   }
@@ -703,8 +677,8 @@ protected:
   CSysName m_obj_ctypename;
 
 public:
-  CObjectProperty(CSysName obj_ctypename)
-    : CProperty(EPropertyKind::Object), m_obj_ctypename(obj_ctypename)
+  CObjectProperty(CPropertyOwner* owner, CSysName obj_ctypename)
+    : CProperty(owner, EPropertyKind::Object), m_obj_ctypename(obj_ctypename)
   {
     m_object = std::make_shared<CObject>(m_obj_ctypename);
     m_object->add_listener(this);
@@ -743,7 +717,7 @@ public:
 
   // object events
 
-  void on_cobject_event(const std::shared_ptr<const CObject>& prop, EObjectEvent evt) override
+  void on_cobject_event(const CObject& prop, EObjectEvent evt) override
   {
     post_cproperty_event(EPropertyEvent::data_modified);
   }
@@ -763,8 +737,8 @@ protected:
   CEnumList::enum_members_sptr m_p_enum_members;
 
 public:
-  CEnumProperty(CSysName enum_name)
-    : CProperty(EPropertyKind::Combo), m_enum_name(enum_name)
+  CEnumProperty(CPropertyOwner* owner, CSysName enum_name)
+    : CProperty(owner, EPropertyKind::Combo), m_enum_name(enum_name)
   {
     m_p_enum_members = CEnumList::get().get_enum(enum_name.str());
     if (m_p_enum_members->size())
@@ -861,8 +835,8 @@ protected:
   TweakDBID m_id = {};
 
 public:
-  CTweakDBIDProperty()
-    : CProperty(EPropertyKind::TweakDBID)
+  CTweakDBIDProperty(CPropertyOwner* owner)
+    : CProperty(owner, EPropertyKind::TweakDBID)
   {
   }
 
@@ -910,8 +884,8 @@ protected:
   CName m_id = {};
 
 public:
-  CNameProperty()
-    : CProperty(EPropertyKind::CName)
+  CNameProperty(CPropertyOwner* owner)
+    : CProperty(owner, EPropertyKind::CName)
   {
   }
 
@@ -974,8 +948,8 @@ protected:
   CObjectSPtr m_obj;
 
 public:
-  CHandleProperty(CSysName sub_ctypename)
-    : CProperty(EPropertyKind::Handle)
+  CHandleProperty(CPropertyOwner* owner, CSysName sub_ctypename)
+    : CProperty(owner, EPropertyKind::Handle)
     , m_base_ctypename(sub_ctypename)
     , m_ctypename(std::string("handle:") + m_base_ctypename.str())
   {
@@ -1049,8 +1023,8 @@ protected:
   std::string m_str;
 
 public:
-  CNodeRefProperty()
-    : CProperty(EPropertyKind::NodeRef)
+  CNodeRefProperty(CPropertyOwner* owner)
+    : CProperty(owner, EPropertyKind::NodeRef)
   {
   }
 
