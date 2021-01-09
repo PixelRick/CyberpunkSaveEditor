@@ -423,6 +423,8 @@ public:
     return tmp;
   };
 
+  static inline bool show_field_types = false;
+
   [[nodiscard]] bool imgui_widget(const char* label, bool editable)
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
@@ -436,11 +438,12 @@ public:
 
     int torem_idx = -1;
     ImVec2 size = ImVec2(-FLT_MIN, std::min(600.f, ImGui::GetContentRegionAvail().y));
-    if (ImGui::BeginTable(label, 3, tbl_flags))
+    if (ImGui::BeginTable(label, show_field_types ? 3 : 2, tbl_flags))
     {
       ImGui::TableSetupScrollFreeze(0, 1);
-      ImGui::TableSetupColumn("field type", ImGuiTableColumnFlags_WidthFixed, 200.f);
-      ImGui::TableSetupColumn("field name", ImGuiTableColumnFlags_WidthFixed, 200.f);
+      if (show_field_types)
+        ImGui::TableSetupColumn("field type", ImGuiTableColumnFlags_WidthFixed, 100.f);
+      ImGui::TableSetupColumn("field name", ImGuiTableColumnFlags_WidthFixed, 100.f);
       ImGui::TableSetupColumn("value", ImGuiTableColumnFlags_WidthStretch);
       ImGui::TableHeadersRow();
 
@@ -451,10 +454,13 @@ public:
         ImGui::TableNextRow();
         ImGui::TableNextColumn();
 
-        auto field_type = field.prop->ctypename().str();
-        ImGui::Text(field_type.c_str());
+        if (show_field_types)
+        {
+          auto field_type = field.prop->ctypename().str();
+          ImGui::Text(field_type.c_str());
 
-        ImGui::TableNextColumn();
+          ImGui::TableNextColumn();
+        }
 
         auto field_name = field.name.str();
         ImGui::Text(field_name.c_str());
@@ -478,6 +484,7 @@ public:
         }
         else
         {
+          ImGui::PushItemWidth(-FLT_MIN);
           modified |= field.prop->imgui_widget(field_name.c_str(), editable);
         }
 
