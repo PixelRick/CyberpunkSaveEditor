@@ -132,6 +132,8 @@ struct CCharacterCustomization_widget
     if (window->SkipItems)
       return false;
 
+    ImGui::BeginChild("##chter_editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings);
+
     bool modified = false;
 
     modified |= ImGui::InputScalar("unknown #0 (08X)##cetr", ImGuiDataType_U32, &x.uk0, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
@@ -171,6 +173,8 @@ struct CCharacterCustomization_widget
       modified |= imgui_list_tree_widget(x.uk6s, name_fn, edit_fn, 0, false, false);
       ImGui::TreePop();
     }
+
+    ImGui::EndChild();
 
     return modified;
   }

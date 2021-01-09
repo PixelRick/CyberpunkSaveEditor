@@ -48,11 +48,19 @@ public:
   std::shared_ptr<const node_t> root_node;
 
   // structures and systems
+
   CInventory                inventory;
   CCharacterCustomization   chtrcustom;
+  CGenericSystem            scriptables;
+
   CStatsPool                statspool;
   CStats                    stats;
-  //CPSData                   psdata;
+
+  CPSData                   psdata;
+
+  //CGenericSystem            scriptables;
+
+
 
 protected:
   bool load_stree(std::filesystem::path path);
@@ -63,80 +71,138 @@ public:
   // this is because although the order of the CProperties isn't important for the game
   // we don't want to keep the initial order for each object but rely on a standardized one (blueprint db)
   // the one the game uses
-  bool open_with_progress(std::filesystem::path path, float& progress, bool test_reserialization=true)
+  bool open_with_progress(std::filesystem::path path, progress_t& progress, bool test=true)
   {
-    progress = 0.0f;
+    progress.value = 0.00f;
     if (!load_stree(path))
       return false;
-    progress = 0.2f;
-    try_load_node_data_struct(inventory,  "inventory"                           , false); progress = 0.3f;
-    try_load_node_data_struct(chtrcustom, "CharacetrCustomization_Appearances"  , false); progress = 0.4f;
-    //try_load_node_data_struct(psdata,     "PSData"                            , test_reserialization); progress = 0.7f;
-    try_load_node_data_struct(stats,      "StatsSystem"                         , test_reserialization); progress = 0.8f;
-    try_load_node_data_struct(statspool,  "StatPoolsSystem"                     , test_reserialization); progress = 1.0f;
+    progress.value = 0.20f;
+
+    try_load_node_data_struct(inventory,    "inventory"                           , progress, 0.30f, test);
+    try_load_node_data_struct(chtrcustom,   "CharacetrCustomization_Appearances"  , progress, 0.35f, test);
+
+    try_load_node_data_struct(scriptables,  "ScriptableSystemsContainer"          , progress, 0.50f, test);
+    try_load_node_data_struct(psdata,       "PSData"                              , progress, 0.80f, test);
+
+    try_load_node_data_struct(stats,        "StatsSystem"                         , progress, 0.90f, test);
+    try_load_node_data_struct(statspool,    "StatPoolsSystem"                     , progress, 1.00f, test);
     
     return true;
   }
 
-  bool save_with_progress(std::filesystem::path path, float& progress, bool dump_decompressed_data=false, bool ps4_weird_format=false)
+  bool save_with_progress(std::filesystem::path path, progress_t& progress, bool dump_decompressed_data=false, bool ps4_weird_format=false)
   {
-    progress = 0.0f;
+    progress.value = 0.00f;
 
-    try_save_node_data_struct(inventory,  "inventory");                           progress = 0.1f;
-    try_save_node_data_struct(chtrcustom, "CharacetrCustomization_Appearances");  progress = 0.2f;
-    //try_save_node_data_struct(psdata,     "PSData");                              progress = 0.5f;
-    try_save_node_data_struct(stats,      "StatsSystem");                         progress = 0.6f;
-    try_save_node_data_struct(statspool,  "StatPoolsSystem");                     progress = 0.8f;
+    try_save_node_data_struct(inventory,    "inventory"                             );  progress.value = 0.10f;
+    try_save_node_data_struct(chtrcustom,   "CharacetrCustomization_Appearances"    );  progress.value = 0.15f;
+
+    try_save_node_data_struct(scriptables,  "ScriptableSystemsContainer"            );  progress.value = 0.30f;
+    try_save_node_data_struct(psdata,       "PSData"                                );  progress.value = 0.60f;
+
+    try_save_node_data_struct(stats,        "StatsSystem"                           );  progress.value = 0.70f;
+    try_save_node_data_struct(statspool,    "StatPoolsSystem"                       );  progress.value = 0.80f;
     
+
     if (!save_stree(path, dump_decompressed_data, ps4_weird_format))
       return false;
-    progress = 1.0f;
+    progress.value = 1.00f;
     return true;
   }
 
 protected:
-  bool try_load_node_data_struct(node_serializable& var, std::string_view nodename, bool test_reserialization=false)
+  bool try_load_node_data_struct(node_serializable& var, std::string_view nodename, progress_t& progress, float end_progress, bool test=false)
   {
     auto node = search_node(nodename);
     if (!node)
       return false;
-    if (!var.from_node(node, ver))
-      return false;
 
-    if (test_reserialization)
+    bool ok = false;
+
+    progress.comment.assign(fmt::format("Loading node {}", node->name()));
+    if (load_node_data_struct(node, var))
     {
-      auto new_node = var.to_node(ver);
-      if (!new_node)
-        return false;
-
-      serial_tree stree1, stree2;
-
+      if (test)
       {
-        auto root = node_t::create_shared(node_t::root_node_idx, "root");
-        root->nonconst().children_push_back(node);
-        stree1.from_node(root, 4);
+        progress.value = 0.5f * (end_progress + progress.value);
+        progress.comment.assign(fmt::format("Testing reserialization of node {}", node->name()));
+        if (test_reserialize(node, var))
+          ok = true;
       }
+      else
       {
-        auto root = node_t::create_shared(node_t::root_node_idx, "root");
-        root->nonconst().children_push_back(new_node);
-        stree2.from_node(root, 4);
-      }
-
-      if (stree1.nodedata.size() != stree2.nodedata.size()
-        || std::memcmp(stree1.nodedata.data(), stree2.nodedata.data(), stree1.nodedata.size()))
-      {
-        std::ofstream ofs;
-        ofs.open("dump1.bin");
-        ofs.write(stree1.nodedata.data(), stree1.nodedata.size());
-        ofs.close();
-        ofs.open("dump2.bin");
-        ofs.write(stree2.nodedata.data(), stree2.nodedata.size());
-        ofs.close();
-
-        MessageBoxA(0, "reserialized {} differs from original", "test error", 0);
-        return false;
+        ok = true;
       }
     }
+
+    progress.value = end_progress;
+    return ok;
+  }
+
+  bool test_reserialize(const std::shared_ptr<const node_t>& node, node_serializable& var)
+  {
+    auto new_node = var.to_node(ver);
+    if (!new_node)
+      return false;
+
+    serial_tree stree1, stree2;
+
+    {
+      auto root = node_t::create_shared(node_t::root_node_idx, "root");
+      root->nonconst().children_push_back(node);
+      stree1.from_node(root, 4);
+    }
+    {
+      auto root = node_t::create_shared(node_t::root_node_idx, "root");
+      root->nonconst().children_push_back(new_node);
+      stree2.from_node(root, 4);
+    }
+
+    if (stree1.nodedata.size() != stree2.nodedata.size()
+      || std::memcmp(stree1.nodedata.data(), stree2.nodedata.data(), stree1.nodedata.size()))
+    {
+      std::ofstream ofs;
+      ofs.open(fmt::format("dump_{}_orig.bin", node->name()));
+      ofs.write(stree1.nodedata.data(), stree1.nodedata.size());
+      ofs.close();
+      ofs.open(fmt::format("dump_{}_reserialized.bin", node->name()));
+      ofs.write(stree2.nodedata.data(), stree2.nodedata.size());
+      ofs.close();
+
+      // it's easier to call this atm than the GUI's error box
+      MessageBoxA(
+        0,
+        fmt::format(
+          "Reserialized \"{}\" node differs from original\n"
+          "\n"
+          "If your save has been edited with an older version of CPSE,\n"
+          "please make the game save it again.\n"
+          "\n"
+          "Otherwise, please open an issue.",
+          node->name()
+        ).c_str(), 
+        "Reserialization test failed.",
+        0);
+
+      return false;
+    }
+
+    return true;
+  }
+
+  bool load_node_data_struct(const std::shared_ptr<const node_t>& node, node_serializable& var)
+  {
+    try
+    {
+      if (!var.from_node(node, ver))
+        return false;
+    }
+    catch (std::exception& e)
+    {
+      MessageBoxA(0, fmt::format("couldn't load node {}\nreason: {}", node->name(), e.what()).c_str(), "error", 0);
+      return false;
+    }
+
     return true;
   }
 

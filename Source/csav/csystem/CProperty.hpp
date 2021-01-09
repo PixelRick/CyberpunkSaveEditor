@@ -451,12 +451,13 @@ public:
         ImGui::Text(lbl.c_str());
         if (editable && ImGui::BeginPopupContextItem("item context menu"))
         {
-          if (ImGui::Selectable("delete"))
+          if (ImGui::Selectable("^ delete"))
             to_rem = (int)idx;
           ImGui::EndPopup();
         }
 
         ImGui::TableNextColumn();
+
         modified |= elt->imgui_widget(lbl.c_str(), editable);
 
         ++idx;
@@ -473,6 +474,8 @@ public:
 
     return modified;
   }
+
+  bool imgui_is_one_liner() override { return false; }
 
 #endif
 
@@ -653,6 +656,8 @@ public:
     return modified;
   }
 
+  bool imgui_is_one_liner() override { return false; }
+
 #endif
 
   // child events
@@ -712,6 +717,8 @@ public:
   {
     return m_object->imgui_widget(label, editable);
   }
+
+  bool imgui_is_one_liner() override { return false; }
 
 #endif
 

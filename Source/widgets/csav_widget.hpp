@@ -28,20 +28,20 @@ class loading_bar_job_widget
 {
   std::thread thread;
   bool finished = false;
-  float progress = 0.f;
+  progress_t progress = {};
 
 public:
   bool failed = false;
 
   bool is_running() const { return thread.joinable(); }
 
-  template <class Fn, std::enable_if_t<std::is_same_v<std::invoke_result_t<Fn, float&>, bool>, int> = 0> 
+  template <class Fn, std::enable_if_t<std::is_same_v<std::invoke_result_t<Fn, progress_t&>, bool>, int> = 0> 
   bool start(Fn&& fn)
   {
     if (is_running())
       return false;
     failed = false;
-    progress = 0.f;
+    progress = {};
     thread = std::thread([this, fn]() {
       failed = !fn(progress);
       finished = true;
@@ -61,8 +61,12 @@ public:
   {
     if (is_running()) {
       std::stringstream ss;
-      ss << std::fixed << std::setprecision(1) << (progress * 100) << "%";
-      ImGui::ProgressBar(progress, ImVec2(ImGui::GetContentRegionAvailWidth(), 0.f), ss.str().c_str());
+      ss << std::fixed << std::setprecision(1) << (progress.value * 100) << "%";
+      ImGui::ProgressBar(progress.value, ImVec2(ImGui::GetContentRegionAvailWidth(), 0.f), ss.str().c_str());
+      if (progress.comment.size())
+        ImGui::Text(progress.comment.c_str());
+      else
+        ImGui::Text("processing...");
     }
   }
 };
@@ -147,7 +151,7 @@ protected:
   void do_save()
   {
     std::weak_ptr<csav> weak_csav = m_csav;
-    save_job.start([weak_csav](float& progress) -> bool {
+    save_job.start([weak_csav](progress_t& progress) -> bool {
       auto csav = weak_csav.lock();
       return csav->save_with_progress(csav->filepath, progress, s_dump_decompressed_data, s_use_ps4_weird_format);
     });
@@ -402,255 +406,313 @@ public:
 
   int selected_item1 = -1;
   int selected_item2 = -1;
+  int selected_item3 = -1;
+  int selected_item4 = -1;
+  bool advanced_tabs = false;
+
   bool modified = false; // unused atm, this pending save feature needs refactoring
 
   void draw_content()
   {
-    if (ImGui::CollapsingHeader("Inventories", ImGuiTreeNodeFlags_None))
-    {
-      //scoped_imgui_id _sii("Appearance Customization");
-      ImGui::Indent(5.f);
-      modified |= CInventory_widget::draw(m_csav->inventory, &m_csav->stats);
-      ImGui::Unindent(5.f);
-    }
+    // Expose a couple of the available flags. In most cases you may just call BeginTabBar() with no flags (0).
+    static ImGuiTabBarFlags tab_bar_flags =
+      //ImGuiTabBarFlags_Reorderable |
+      //ImGuiTabBarFlags_AutoSelectNewTabs |
+      ImGuiTabBarFlags_FittingPolicyResizeDown;
 
-    if (ImGui::CollapsingHeader("Appearance Customization", ImGuiTreeNodeFlags_None))
+    // Passing a bool* to BeginTabItem() is similar to passing one to Begin():
+    // the underlying bool will be set to false when the tab is closed.
+    if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags))
     {
-      //scoped_imgui_id _sii("Appearance Customization");
-      ImGui::Indent(5.f);
-      modified |= CCharacterCustomization_widget::draw(m_csav->chtrcustom);
-      ImGui::Unindent(5.f);
-    }
-    
-    if (ImGui::CollapsingHeader("Stats Map", ImGuiTreeNodeFlags_None))
-    {
-      //scoped_imgui_id _sii("Appearance Customization");
-      ImGui::Indent(5.f);
-      modified |= CSystem_widget::draw(m_csav->stats.system(), &selected_item1);
-      ImGui::Unindent(5.f);
-    }
+      //if (ImGui::TabItemButton("  +  ", ImGuiTabItemFlags_Leading | ImGuiTabItemFlags_NoTooltip) && !open_job.is_running())
+      //  open_dialog.Open();
 
-    if (ImGui::CollapsingHeader("Stats Pool", ImGuiTreeNodeFlags_None))
-    {
-      //scoped_imgui_id _sii("Appearance Customization");
-      ImGui::Indent(5.f);
-      modified |= CSystem_widget::draw(m_csav->statspool.system(), &selected_item2);
-      ImGui::Unindent(5.f);
-    }
-
-    for (auto& ce : m_collapsible_editors)
-    {
-      scoped_imgui_id _sii((void*)&ce);
-
-      if (ce && ImGui::CollapsingHeader(ce->node_name().c_str(), ImGuiTreeNodeFlags_None))
+      if (ImGui::BeginTabItem("Inventories", 0, ImGuiTabItemFlags_None))
       {
-        ImGui::Indent(5.f);
-        ce->draw_widget();
-        ImGui::Unindent(5.f);
+        ImGui::BeginChild("current editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
+        modified |= CInventory_widget::draw(m_csav->inventory, &m_csav->stats);
+        ImGui::EndChild();
+        ImGui::EndTabItem();
       }
-    }
 
-    ImGui::Separator();
-    ImGui::Text("for advanced users:");
-
-    for (auto& ce : m_advanced_collapsible_editors)
-    {
-      scoped_imgui_id _sii((void*)&ce);
-
-      if (ce && ImGui::CollapsingHeader(ce->node_name().c_str(), ImGuiTreeNodeFlags_None))
+      if (ImGui::BeginTabItem("Appearance Customization", 0, ImGuiTabItemFlags_None))
       {
-        ImGui::Indent(5.f);
-        ce->draw_widget();
-        ImGui::Unindent(5.f);
+        //scoped_imgui_id _sii("Appearance Customization");
+        ImGui::BeginChild("current editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
+        modified |= CCharacterCustomization_widget::draw(m_csav->chtrcustom);
+        ImGui::EndChild();
+        ImGui::EndTabItem();
       }
-    }
-
-    ImGui::Separator();
-    ImGui::Text("for devs:");
-
-    if (ImGui::CollapsingHeader("Original Node Descriptors", ImGuiTreeNodeFlags_None))
-    {
-      ImGui::Indent(5.f);
-
-      static ImGuiTableFlags flags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter
-        | ImGuiTableFlags_BordersV | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable;
-
-      static float u32row_width = ImGui::CalcTextSize("0xFFFFFFFF ").x;
-
-      ImVec2 size = ImVec2(-FLT_MIN, ImGui::GetTextLineHeightWithSpacing() * 30);
-      if (ImGui::BeginTable("##nodedescs_table", 6, flags, size))
-      {
-        ImGui::TableSetupScrollFreeze(0, 1);
-        ImGui::TableSetupColumn("idx", ImGuiTableColumnFlags_WidthFixed, u32row_width);
-        ImGui::TableSetupColumn("name", ImGuiTableColumnFlags_WidthStretch);
-        ImGui::TableSetupColumn("next idx", ImGuiTableColumnFlags_WidthFixed, u32row_width);
-        ImGui::TableSetupColumn("child idx", ImGuiTableColumnFlags_WidthFixed, u32row_width);
-        ImGui::TableSetupColumn("offset", ImGuiTableColumnFlags_WidthFixed, u32row_width);
-        ImGui::TableSetupColumn("size", ImGuiTableColumnFlags_WidthFixed, u32row_width);
-        ImGui::TableHeadersRow();
-
-        ImGuiListClipper clipper;
-        clipper.Begin((int)m_csav->stree.descs.size());
-        while (clipper.Step())
-        {
-          for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++)
-          {
-            auto& desc = m_csav->stree.descs[row];
-            scoped_imgui_id sii{&desc};
-            ImGui::TableNextRow();
-            ImGui::TableNextColumn(); ImGui::Text("0x%X", row);
-            ImGui::TableNextColumn(); ImGui::Text("%s", desc.name.c_str());
-            ImGui::TableNextColumn(); ImGui::Text("0x%X", desc.next_idx);
-            ImGui::TableNextColumn(); ImGui::Text("0x%X", desc.child_idx);
-            ImGui::TableNextColumn(); ImGui::Text("0x%X", desc.data_offset);
-            ImGui::TableNextColumn(); ImGui::Text("0x%X", desc.data_size);
-          }
-        }
-        ImGui::EndTable();
-      }
-
-      ImGui::Unindent(5.f);
-    }
-
-    if (ImGui::CollapsingHeader("Node Tree", ImGuiTreeNodeFlags_None))
-    {
-      ImGui::Indent(5.f);
-
-      if (m_csav->root_node)
-        for (const auto& n : m_csav->root_node->children())
-          draw_tree_node(n);
-
-      ImGui::Unindent(5.f);
-    }
-
-    if (ImGui::CollapsingHeader("Search Tools", ImGuiTreeNodeFlags_None))
-    {
-      ImGui::Indent(5.f);
-
-      int line_width = (int)ImGui::GetContentRegionAvail().x;
-      float slider_width = (float)std::max(line_width - 300, 100);
-
-      static char search_text[256];
-      const bool text_search = ImGui::Button("search text", ImVec2(150, 0)); ImGui::SameLine();
-      ImGui::PushItemWidth(slider_width);
-      ImGui::InputText("input text", search_text, 256);
-      const bool crc32_search = ImGui::Button("search crc32", ImVec2(150, 0)); ImGui::SameLine();
-      TweakDBID nhash(search_text);
-      std::stringstream ss;
-      for (size_t i = 0; i < sizeof(TweakDBID); ++i)
-        ss << std::setfill('0') << std::setw(2) << std::hex << std::uppercase << (uint32_t)*((uint8_t*)&nhash.as_u64 + i);
-      ImGui::Text("namehash:%s (crc32 on 4 bytes, strlen on 1 byte, 3 zeroes) crc32=0x%08X",
-        ss.str().c_str(), nhash.crc);
-
-      if (text_search) {
-        search_pattern_in_nodes(search_text, "");
-      }
-      if (crc32_search) {
-        search_pattern_in_nodes(std::string((char*)&nhash.crc, (char*)&nhash.crc + 4), "");
-      }
-
-      static uint32_t u32_v;
-      const bool u32_search = ImGui::Button("search u32", ImVec2(150, 0)); ImGui::SameLine();
-      ImGui::PushItemWidth(slider_width);
-      ImGui::InputScalar("input u32 (dec)", ImGuiDataType_U32, &u32_v);
-      ImGui::InvisibleButton("search u32##next", ImVec2(150, 1)); ImGui::SameLine();
-      ImGui::PushItemWidth(slider_width);
-      ImGui::InputScalar("input u32 (hex)", ImGuiDataType_U32, &u32_v, 0, 0, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
-      if (u32_search) {
-        search_pattern_in_nodes(std::string((char*)&u32_v, (char*)&u32_v + 4), "");
-      }
-
-      static float f32_v;
-      const bool f32_search = ImGui::Button("search float", ImVec2(150, 0)); ImGui::SameLine();
-      ImGui::PushItemWidth(slider_width);
-      ImGui::InputScalar("input float", ImGuiDataType_Float, &f32_v, 0, 0);
-      if (f32_search) {
-        search_pattern_in_nodes(std::string((char*)&f32_v, (char*)&f32_v + 4), "");
-      }
-
-      static double f64_v;
-      const bool f64_search = ImGui::Button("search double", ImVec2(150, 0)); ImGui::SameLine();
-      ImGui::PushItemWidth(slider_width);
-      ImGui::InputScalar("input double", ImGuiDataType_Double, &f64_v);
-      if (f64_search) {
-        search_pattern_in_nodes(std::string((char*)&f64_v, (char*)&f64_v + 8), "");
-      }
-
-      ImGui::Separator();
-      if (ImGui::Button("search bytes from editor clipboard (context/copy)"))
-      {
-        auto& cp = node_hexeditor::clipboard();
-        std::string needle(cp.begin(), cp.end());
-        if (needle.size())
-          search_pattern_in_nodes(needle, "");
-      }
-
-      ImGui::Separator();
-
-      // bool pat_search = ImGui::Button("search pattern", ImVec2(150, 0)); ImGui::SameLine();
-      // ImGui::PushItemWidth(slider_width);
-      // ImGui::InputText("pattern bytes", search_needle.data(), (int)search_needle.size(), ImGuiInputTextFlags_CharsUppercase | ImGuiInputTextFlags_AlwaysInsertMode);
-      // ImGui::InvisibleButton("search pattern##inv", ImVec2(150, 1)); ImGui::SameLine();
-      // ImGui::PushItemWidth(slider_width);
-      // ImGui::InputTextEx("pattern mask", "x?xxx??x", search_mask.data(), (int)search_mask.size(), ImVec2(0, 0), ImGuiInputTextFlags_AlwaysInsertMode);
       
-      // todo, parse hex string
-
-      ImGui::Separator();
-
-      // results
-
-      static std::shared_ptr<node_hexeditor> nh;
-
-      static float u32row_width = ImGui::CalcTextSize("0xFFFFFFFF ").x;
-
-      static ImGuiTableFlags flags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter
-        | ImGuiTableFlags_BordersV | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable;
-      ImVec2 size = ImVec2(500, ImGui::GetTextLineHeightWithSpacing() * 28);
-      if (ImGui::BeginTable("##searchres_table2", 1, flags, size))
+      if (ImGui::BeginTabItem("Scriptable Systems", 0, ImGuiTabItemFlags_None))
       {
-        ImGui::TableSetupScrollFreeze(0, 1);
-        ImGui::TableSetupColumn("matches", ImGuiTableColumnFlags_WidthStretch);
-        ImGui::TableHeadersRow();
+        ImGui::BeginChild("current editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
+        modified |= CSystem_widget::draw(m_csav->scriptables.system(), &selected_item1);
+        ImGui::EndChild();
+        ImGui::EndTabItem();
+      }
 
-        ImGuiListClipper clipper;
-        clipper.Begin((int)search_result.size());
-        while (clipper.Step())
+      if (ImGui::TabItemButton(" advanced.. ", ImGuiTabItemFlags_NoTooltip))
+        advanced_tabs = !advanced_tabs;
+
+      if (advanced_tabs)
+      {
+        if (ImGui::BeginTabItem("Stats Map", 0, ImGuiTabItemFlags_None))
         {
-          for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++)
-          {
-            auto& match = search_result[row];
-            scoped_imgui_id sii{&match};
-            ImGui::TableNextRow();
-            ImGui::TableNextColumn();
-            
-            static char matchname[512];
-            ImFormatString(matchname, 512, "offset 0x%08X in node %4d - %s", match.offset, match.n->idx(), match.n->name().c_str());
-
-            if (ImGui::Selectable(matchname, selected_result == row))
-            {
-              selected_result = row;
-              if (!nh || nh->node() != match.n)
-                nh = std::make_shared<node_hexeditor>(match.n);
-              nh->select(match.offset, match.size);
-            }
-          }
+          ImGui::BeginChild("current editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
+          modified |= CSystem_widget::draw(m_csav->stats.system(), &selected_item2);
+          ImGui::EndChild();
+          ImGui::EndTabItem();
         }
-        ImGui::EndTable();
+
+        if (ImGui::BeginTabItem("Stats Pool", 0, ImGuiTabItemFlags_None))
+        {
+          ImGui::BeginChild("current editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
+          modified |= CSystem_widget::draw(m_csav->statspool.system(), &selected_item3);
+          ImGui::EndChild();
+          ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Persistent Data", 0, ImGuiTabItemFlags_None))
+        {
+          ImGui::BeginChild("current editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
+          modified |= CSystem_widget::draw(m_csav->psdata.system(), &selected_item4);
+          ImGui::EndChild();
+          ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Original Node Descriptors", 0, ImGuiTabItemFlags_None))
+        {
+          ImGui::BeginChild("current editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
+          draw_node_descs();
+          ImGui::EndChild();
+          ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Node Tree", 0, ImGuiTabItemFlags_None))
+        {
+          ImGui::BeginChild("current editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
+          draw_node_tree();
+          ImGui::EndChild();
+          ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Search Tools", 0, ImGuiTabItemFlags_None))
+        {
+          ImGui::BeginChild("current editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
+          draw_search_tools();
+          ImGui::EndChild();
+          ImGui::EndTabItem();
+        }
+
       }
 
+      ImGui::EndTabBar();
+    }
 
-      if (nh) {
-        bool opened = true;
-        ImGui::SameLine();
-        nh->draw_widget();
-        if (!opened)
-          nh.reset();
+    //for (auto& ce : m_collapsible_editors)
+    //{
+    //  scoped_imgui_id _sii((void*)&ce);
+    //
+    //  if (ce && ImGui::CollapsingHeader(ce->node_name().c_str(), ImGuiTreeNodeFlags_None))
+    //  {
+    //    ImGui::Indent(5.f);
+    //    ce->draw_widget();
+    //    ImGui::Unindent(5.f);
+    //  }
+    //}
+
+    //ImGui::Separator();
+    //ImGui::Text("for advanced users:");
+    //
+    //for (auto& ce : m_advanced_collapsible_editors)
+    //{
+    //  scoped_imgui_id _sii((void*)&ce);
+    //
+    //  if (ce && ImGui::CollapsingHeader(ce->node_name().c_str(), ImGuiTreeNodeFlags_None))
+    //  {
+    //    ImGui::Indent(5.f);
+    //    ce->draw_widget();
+    //    ImGui::Unindent(5.f);
+    //  }
+    //}
+
+    
+  }
+
+  void draw_node_descs()
+  {
+    static ImGuiTableFlags flags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter
+      | ImGuiTableFlags_BordersV | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable;
+
+    static float u32row_width = ImGui::CalcTextSize("0xFFFFFFFF ").x;
+
+    ImVec2 size = ImVec2(-FLT_MIN, -FLT_MIN/*ImGui::GetTextLineHeightWithSpacing() * 30*/);
+    if (ImGui::BeginTable("##nodedescs_table", 6, flags, size))
+    {
+      ImGui::TableSetupScrollFreeze(0, 1);
+      ImGui::TableSetupColumn("idx", ImGuiTableColumnFlags_WidthFixed, u32row_width);
+      ImGui::TableSetupColumn("name", ImGuiTableColumnFlags_WidthStretch);
+      ImGui::TableSetupColumn("next idx", ImGuiTableColumnFlags_WidthFixed, u32row_width);
+      ImGui::TableSetupColumn("child idx", ImGuiTableColumnFlags_WidthFixed, u32row_width);
+      ImGui::TableSetupColumn("offset", ImGuiTableColumnFlags_WidthFixed, u32row_width);
+      ImGui::TableSetupColumn("size", ImGuiTableColumnFlags_WidthFixed, u32row_width);
+      ImGui::TableHeadersRow();
+
+      ImGuiListClipper clipper;
+      clipper.Begin((int)m_csav->stree.descs.size());
+      while (clipper.Step())
+      {
+        for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++)
+        {
+          auto& desc = m_csav->stree.descs[row];
+          scoped_imgui_id sii{&desc};
+          ImGui::TableNextRow();
+          ImGui::TableNextColumn(); ImGui::Text("0x%X", row);
+          ImGui::TableNextColumn(); ImGui::Text("%s", desc.name.c_str());
+          ImGui::TableNextColumn(); ImGui::Text("0x%X", desc.next_idx);
+          ImGui::TableNextColumn(); ImGui::Text("0x%X", desc.child_idx);
+          ImGui::TableNextColumn(); ImGui::Text("0x%X", desc.data_offset);
+          ImGui::TableNextColumn(); ImGui::Text("0x%X", desc.data_size);
+        }
       }
-
-      ImGui::Unindent(5.f);
+      ImGui::EndTable();
     }
   }
+
+  void draw_node_tree()
+  {
+    ImGui::BeginChild("node_tree", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings);
+    if (m_csav->root_node)
+      for (const auto& n : m_csav->root_node->children())
+        draw_tree_node(n);
+    ImGui::EndChild();
+  }
+
+  void draw_search_tools()
+  {
+    int line_width = (int)ImGui::GetContentRegionAvail().x;
+    float slider_width = (float)std::max(line_width - 300, 100);
+
+    static char search_text[256];
+    const bool text_search = ImGui::Button("search text", ImVec2(150, 0)); ImGui::SameLine();
+    ImGui::PushItemWidth(slider_width);
+    ImGui::InputText("input text", search_text, 256);
+    const bool crc32_search = ImGui::Button("search crc32", ImVec2(150, 0)); ImGui::SameLine();
+    TweakDBID nhash(search_text);
+    std::stringstream ss;
+    for (size_t i = 0; i < sizeof(TweakDBID); ++i)
+      ss << std::setfill('0') << std::setw(2) << std::hex << std::uppercase << (uint32_t)*((uint8_t*)&nhash.as_u64 + i);
+    ImGui::Text("namehash:%s (crc32 on 4 bytes, strlen on 1 byte, 3 zeroes) crc32=0x%08X",
+      ss.str().c_str(), nhash.crc);
+
+    if (text_search) {
+      search_pattern_in_nodes(search_text, "");
+    }
+    if (crc32_search) {
+      search_pattern_in_nodes(std::string((char*)&nhash.crc, (char*)&nhash.crc + 4), "");
+    }
+
+    static uint32_t u32_v;
+    const bool u32_search = ImGui::Button("search u32", ImVec2(150, 0)); ImGui::SameLine();
+    ImGui::PushItemWidth(slider_width);
+    ImGui::InputScalar("input u32 (dec)", ImGuiDataType_U32, &u32_v);
+    ImGui::InvisibleButton("search u32##next", ImVec2(150, 1)); ImGui::SameLine();
+    ImGui::PushItemWidth(slider_width);
+    ImGui::InputScalar("input u32 (hex)", ImGuiDataType_U32, &u32_v, 0, 0, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+    if (u32_search) {
+      search_pattern_in_nodes(std::string((char*)&u32_v, (char*)&u32_v + 4), "");
+    }
+
+    static float f32_v;
+    const bool f32_search = ImGui::Button("search float", ImVec2(150, 0)); ImGui::SameLine();
+    ImGui::PushItemWidth(slider_width);
+    ImGui::InputScalar("input float", ImGuiDataType_Float, &f32_v, 0, 0);
+    if (f32_search) {
+      search_pattern_in_nodes(std::string((char*)&f32_v, (char*)&f32_v + 4), "");
+    }
+
+    static double f64_v;
+    const bool f64_search = ImGui::Button("search double", ImVec2(150, 0)); ImGui::SameLine();
+    ImGui::PushItemWidth(slider_width);
+    ImGui::InputScalar("input double", ImGuiDataType_Double, &f64_v);
+    if (f64_search) {
+      search_pattern_in_nodes(std::string((char*)&f64_v, (char*)&f64_v + 8), "");
+    }
+
+    ImGui::Separator();
+    if (ImGui::Button("search bytes from editor clipboard (context/copy)"))
+    {
+      auto& cp = node_hexeditor::clipboard();
+      std::string needle(cp.begin(), cp.end());
+      if (needle.size())
+        search_pattern_in_nodes(needle, "");
+    }
+
+    ImGui::Separator();
+
+    // bool pat_search = ImGui::Button("search pattern", ImVec2(150, 0)); ImGui::SameLine();
+    // ImGui::PushItemWidth(slider_width);
+    // ImGui::InputText("pattern bytes", search_needle.data(), (int)search_needle.size(), ImGuiInputTextFlags_CharsUppercase | ImGuiInputTextFlags_AlwaysInsertMode);
+    // ImGui::InvisibleButton("search pattern##inv", ImVec2(150, 1)); ImGui::SameLine();
+    // ImGui::PushItemWidth(slider_width);
+    // ImGui::InputTextEx("pattern mask", "x?xxx??x", search_mask.data(), (int)search_mask.size(), ImVec2(0, 0), ImGuiInputTextFlags_AlwaysInsertMode);
+
+    // todo, parse hex string
+
+    ImGui::Separator();
+
+    // results
+
+    static std::shared_ptr<node_hexeditor> nh;
+
+    static float u32row_width = ImGui::CalcTextSize("0xFFFFFFFF ").x;
+
+    static ImGuiTableFlags flags = ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersOuter
+      | ImGuiTableFlags_BordersV | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable;
+    ImVec2 size = ImVec2(500, ImGui::GetTextLineHeightWithSpacing() * 28);
+    if (ImGui::BeginTable("##searchres_table2", 1, flags, size))
+    {
+      ImGui::TableSetupScrollFreeze(0, 1);
+      ImGui::TableSetupColumn("matches", ImGuiTableColumnFlags_WidthStretch);
+      ImGui::TableHeadersRow();
+
+      ImGuiListClipper clipper;
+      clipper.Begin((int)search_result.size());
+      while (clipper.Step())
+      {
+        for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++)
+        {
+          auto& match = search_result[row];
+          scoped_imgui_id sii{&match};
+          ImGui::TableNextRow();
+          ImGui::TableNextColumn();
+
+          static char matchname[512];
+          ImFormatString(matchname, 512, "offset 0x%08X in node %4d - %s", match.offset, match.n->idx(), match.n->name().c_str());
+
+          if (ImGui::Selectable(matchname, selected_result == row))
+          {
+            selected_result = row;
+            if (!nh || nh->node() != match.n)
+              nh = std::make_shared<node_hexeditor>(match.n);
+            nh->select(match.offset, match.size);
+          }
+        }
+      }
+      ImGui::EndTable();
+    }
+
+
+    if (nh) {
+      bool opened = true;
+      ImGui::SameLine();
+      nh->draw_widget();
+      if (!opened)
+        nh.reset();
+    }
+  }
+
 
 protected:
   void draw_tree_node(const std::shared_ptr<const node_t>& node)
@@ -855,7 +917,7 @@ public:
       if (std::filesystem::exists(screenshot_path))
         opened_save_img = owning_app->load_texture_from_file(screenshot_path.string());
 
-      open_job.start([this](float& progress) -> bool {
+      open_job.start([this](progress_t& progress) -> bool {
         auto cs = std::make_shared<csav>();
         if (!cs->open_with_progress(open_filepath, progress))
           return false;

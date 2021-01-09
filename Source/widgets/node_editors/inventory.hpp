@@ -13,7 +13,8 @@ struct CInventory_widget
   // returns true if content has been edited
   [[nodiscard]] static inline bool draw(CInventory& inv, CStats* stats=nullptr)
   {
-    scoped_imgui_id _sii("##inventory_editor");
+    ImGui::BeginChild("##inventory_editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings);
+    //scoped_imgui_id _sii("##inventory_editor");
     bool modified = false;
 
     for (auto inv_it = inv.m_subinvs.begin(); inv_it != inv.m_subinvs.end(); ++inv_it)
@@ -61,6 +62,7 @@ struct CInventory_widget
         ImGui::TreePop();
       }
     }
+    ImGui::EndChild();
 
     return modified;
   }

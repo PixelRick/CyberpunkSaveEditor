@@ -12,6 +12,14 @@
 namespace std { using tcb::span; }
 #endif
 
+// really bad place
+struct progress_t
+{
+	float value = 0.f;
+	std::string comment;
+};
+
+
 constexpr uint16_t byteswap(uint16_t value) noexcept
 {
 	return (value << 8) | (value >> 8);

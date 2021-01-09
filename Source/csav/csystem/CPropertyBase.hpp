@@ -122,6 +122,8 @@ protected:
   }
 
 public:
+  virtual bool imgui_is_one_liner() { return true; }
+
   [[nodiscard]] bool imgui_widget(const char* label, bool editable)
   {
     bool modified = imgui_widget_impl(label, editable);

@@ -431,15 +431,17 @@ public:
 
     bool modified = false;
 
-    static ImGuiTableFlags tbl_flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg;
+    static ImGuiTableFlags tbl_flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg
+      | ImGuiTableFlags_Resizable;
 
     int torem_idx = -1;
     ImVec2 size = ImVec2(-FLT_MIN, std::min(600.f, ImGui::GetContentRegionAvail().y));
-    if (ImGui::BeginTable(label, 2, tbl_flags))
+    if (ImGui::BeginTable(label, 3, tbl_flags))
     {
       ImGui::TableSetupScrollFreeze(0, 1);
-      ImGui::TableSetupColumn("fields", ImGuiTableColumnFlags_WidthAutoResize);
-      ImGui::TableSetupColumn("values", ImGuiTableColumnFlags_WidthStretch);
+      ImGui::TableSetupColumn("field type", ImGuiTableColumnFlags_WidthFixed, 200.f);
+      ImGui::TableSetupColumn("field name", ImGuiTableColumnFlags_WidthFixed, 200.f);
+      ImGui::TableSetupColumn("value", ImGuiTableColumnFlags_WidthStretch);
       ImGui::TableHeadersRow();
 
       // can't clip but not a problem
@@ -448,6 +450,12 @@ public:
       {
         ImGui::TableNextRow();
         ImGui::TableNextColumn();
+
+        auto field_type = field.prop->ctypename().str();
+        ImGui::Text(field_type.c_str());
+
+        ImGui::TableNextColumn();
+
         auto field_name = field.name.str();
         ImGui::Text(field_name.c_str());
         //if (editable && ImGui::BeginPopupContextItem("item context menu"))
@@ -459,9 +467,19 @@ public:
 
         ImGui::TableNextColumn();
 
-        //ImGui::PushItemWidth(300.f);
-        modified |= field.prop->imgui_widget(field_name.c_str(), editable);
-        //ImGui::PopItemWidth();
+        auto prop = field.prop.get();
+        if (!prop->imgui_is_one_liner())
+        {
+          if (ImGui::TreeNodeEx((void*)prop, 0, "view value"))
+          {
+            modified |= prop->imgui_widget(field_name.c_str(), editable);
+            ImGui::TreePop();
+          }
+        }
+        else
+        {
+          modified |= field.prop->imgui_widget(field_name.c_str(), editable);
+        }
 
         ++i;
       }
