@@ -265,7 +265,8 @@ public:
       default: break;
     }
 
-    return ImGui::InputScalar(label, dtype, &m_value.u64, 0, 0, dfmt, editable ? 0 : ImGuiInputTextFlags_ReadOnly);
+    return ImGui::InputScalar(label, dtype, &m_value.u64, 0, 0, dfmt,
+      ImGuiInputTextFlags_CharsHexadecimal | (editable ? 0 : ImGuiInputTextFlags_ReadOnly));
   }
 
 #endif
