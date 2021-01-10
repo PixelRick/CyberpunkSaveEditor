@@ -408,6 +408,7 @@ public:
   int selected_item2 = -1;
   int selected_item3 = -1;
   int selected_item4 = -1;
+  int selected_item5 = -1;
   bool advanced_tabs = false;
 
   bool modified = false; // unused atm, this pending save feature needs refactoring
@@ -477,6 +478,14 @@ public:
         {
           ImGui::BeginChild("current editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
           modified |= CSystem_widget::draw(m_csav->psdata.system(), &selected_item4);
+          ImGui::EndChild();
+          ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("God Mode", 0, ImGuiTabItemFlags_None))
+        {
+          ImGui::BeginChild("current editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
+          modified |= CSystem_widget::draw(m_csav->godmode.system(), &selected_item5);
           ImGui::EndChild();
           ImGui::EndTabItem();
         }
