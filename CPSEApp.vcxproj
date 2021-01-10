@@ -32,8 +32,10 @@
     <ClCompile Include="Source\AppLib\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Source\AppLib\imgui_impl_dx11.cpp" />
     <ClCompile Include="Source\AppLib\imgui_impl_win32.cpp" />
+    <ClCompile Include="Source\archive\archive_test.cpp" />
     <ClCompile Include="Source\cpinternals\cpenums.cpp" />
     <ClCompile Include="Source\cpinternals\cpnames.cpp" />
+    <ClInclude Include="Source\archive\archive_test.hpp" />
     <ClInclude Include="Source\cpinternals\cpenums.hpp" />
     <ClInclude Include="Source\csav\cnodes.hpp" />
     <ClInclude Include="Source\csav\cnodes\CCharacterCustomization.hpp" />

@@ -937,6 +937,56 @@ public:
 };
 
 //------------------------------------------------------------------------------
+// CRUID
+//------------------------------------------------------------------------------
+
+class CCRUIDProperty
+  : public CProperty
+{
+protected:
+  uint64_t m_id = {};
+
+public:
+  CCRUIDProperty(CPropertyOwner* owner)
+    : CProperty(owner, EPropertyKind::CRUID)
+  {
+  }
+
+  ~CCRUIDProperty() override = default;
+
+public:
+  // overrides
+
+  CSysName ctypename() const override
+  {
+    static CSysName sname("CRUID");
+    return sname;
+  };
+
+  bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
+  {
+    is >> cbytes_ref(m_id);
+    return is.good();
+  }
+
+  virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
+  {
+    os << cbytes_ref(m_id);
+    return true;
+  }
+
+#ifndef DISABLE_CP_IMGUI_WIDGETS
+
+  [[nodiscard]] bool imgui_widget_impl(const char* label, bool editable) override
+  {
+    return ImGui::InputScalar(label, ImGuiDataType_U64, &m_id, 0, 0, "%016X",
+      ImGuiInputTextFlags_CharsHexadecimal | (editable ? 0 : ImGuiInputTextFlags_ReadOnly));
+  }
+
+#endif
+};
+
+//------------------------------------------------------------------------------
 // HANDLE (pointers..)
 //------------------------------------------------------------------------------
 

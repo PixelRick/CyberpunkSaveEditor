@@ -61,6 +61,7 @@ std::function<CPropertyUPtr(CPropertyOwner*)> CPropertyFactory::get_creator(CSys
   else if (str_ctypename == "Float")      { return build_prop_creator<CFloatProperty>();            }
   else if (str_ctypename == "TweakDBID")  { return build_prop_creator<CTweakDBIDProperty>();        }
   else if (str_ctypename == "CName")      { return build_prop_creator<CNameProperty>();             }
+  else if (str_ctypename == "CRUID")      { return build_prop_creator<CCRUIDProperty>();             }
   else if (str_ctypename == "NodeRef")
   {
     return build_prop_creator<CNodeRefProperty>();

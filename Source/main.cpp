@@ -12,6 +12,7 @@
 
 #include "widgets/csav_widget.hpp"
 #include "widgets/node_editors/hexedit.hpp"
+#include "archive/archive_test.hpp"
 
 using namespace std::chrono_literals;
 
@@ -40,6 +41,8 @@ protected:
 	ImVec4 bg_color = ImVec4(0.1f, 0.1f, 0.1f, 1.f);
 	ImVec4 addr_color = ImVec4(0.f, 0.6f, 0.8f, 1.f);
 	csav_list_widget csav_list;
+
+	archive_test archtest;
 
 public:
 	CPSEApp()
@@ -223,12 +226,23 @@ protected:
 			ImGui::ShowStyleEditor();
 			ImGui::End();
 		}
+
+		archtest.imgui_draw();
 	}
 
 	bool has_file_drop() const override { return true; }
 
 	void on_file_drop(std::wstring fpath) override
 	{
+		std::filesystem::path p(fpath);
+		p = std::filesystem::canonical(p); // remove last null character.. todo: fix in IAppLib
+		auto ext = p.extension().string();
+		if (ext == ".bin" or ext == ".buffer")
+		{
+			archtest.open(fpath);
+			return;
+		}
+
 		csav_list.open_file(this, fpath);
 	}
 

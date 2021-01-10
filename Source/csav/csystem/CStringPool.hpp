@@ -157,10 +157,12 @@ protected:
   }
 
 public:
-  bool serialize_in(std::istream& reader, uint32_t descs_size, uint32_t data_size)
+  bool serialize_in(std::istream& reader, uint32_t descs_size, uint32_t data_size, uint32_t descs_offset = 0)
   {
     if (descs_size % sizeof(CRangeDesc) != 0)
       return false;
+
+    const uint32_t data_offset = descs_offset + descs_size;
 
     const size_t descs_cnt = descs_size / sizeof(CRangeDesc);
     if (descs_cnt == 0)
@@ -172,7 +174,7 @@ public:
     // reoffset offsets
     for (auto& desc : m_descs)
     {
-      desc.offset(desc.offset() - descs_size);
+      desc.offset(desc.offset() - data_offset);
       const uint32_t end_offset = desc.end_offset();
       if (end_offset > max_offset)
         max_offset = end_offset;

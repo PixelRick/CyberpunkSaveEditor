@@ -35,6 +35,7 @@ enum class EPropertyKind
   Object,
   TweakDBID,
   CName,
+  CRUID,
   NodeRef
 };
 

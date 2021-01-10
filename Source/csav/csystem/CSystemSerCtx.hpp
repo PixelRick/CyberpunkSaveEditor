@@ -9,6 +9,7 @@
 class CSystemSerCtx
 {
   friend class CSystem;
+  friend class archive_test;
 
 protected:
   std::vector<CObjectSPtr> m_objects;

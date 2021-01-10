@@ -84,13 +84,19 @@ public:
         std::vector<CObjectSPtr>& objects()       { return m_objects; }
 
 public:
+
   bool serialize_in(std::istream& reader)
+  {
+    uint32_t blob_size = 0;
+    reader >> cbytes_ref(blob_size);
+
+    return serialize_in_sized(reader, blob_size, true);
+  }
+
+  bool serialize_in_sized(std::istream& reader, uint32_t blob_size, bool do_cnames=false)
   {
     m_subsys_names.clear();
     m_objects.clear();
-
-    uint32_t blob_size;
-    reader >> cbytes_ref(blob_size);
 
     // let's get our header start position
     auto blob_spos = reader.tellg();
@@ -104,8 +110,9 @@ public:
       return false;
 
     m_subsys_names.clear();
-    if (m_header.cnames_cnt > 1)
+    if (m_header.cnames_cnt > 1 && do_cnames)
     {
+
       uint32_t cnames_cnt = 0;
       reader >> cbytes_ref(cnames_cnt);
       

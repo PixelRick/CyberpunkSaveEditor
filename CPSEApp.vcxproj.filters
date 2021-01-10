@@ -69,6 +69,9 @@
     <Filter Include="Source\external\spdlog\cfg">
       <UniqueIdentifier>{390f4e55-3cf1-4615-875a-107c76a63f90}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\archive">
+      <UniqueIdentifier>{89e4ea18-4d76-4a53-80ae-012759a4f53f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AppLib\IApp.cpp">
@@ -136,6 +139,9 @@
     </ClCompile>
     <ClCompile Include="Source\csav\csystem\CObjectBP.cpp">
       <Filter>Source\csav\csystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\archive\archive_test.cpp">
+      <Filter>Source\archive</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -619,6 +625,9 @@
     </ClInclude>
     <ClInclude Include="Source\external\spdlog\cfg\helpers-inl.h">
       <Filter>Source\external\spdlog\cfg</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\archive\archive_test.hpp">
+      <Filter>Source\archive</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
