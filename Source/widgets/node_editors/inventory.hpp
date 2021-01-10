@@ -24,9 +24,12 @@ struct CInventory_widget
 
       auto& subinv = *inv_it;
 
-      std::stringstream ss;
-      ss << "inventory_" << std::hex << std::uppercase << std::setfill('0') << std::setw(16) << subinv.uid;
-      if (ImGui::TreeNodeBehavior(row_id, ImGuiTreeNodeFlags_Framed, ss.str().c_str()))
+
+      std::string inv_label = "V's bag";
+      if (subinv.uid != 1)
+        inv_label = fmt::format("inventory_{:016X}", subinv.uid);
+
+      if (ImGui::TreeNodeBehavior(row_id, ImGuiTreeNodeFlags_Framed, inv_label.c_str()))
       {
         if (ImGui::Button("Sort (alpha)", ImVec2(0, 30)))
         {
