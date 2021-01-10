@@ -957,6 +957,7 @@ public:
       ImGui::Checkbox("use ps4wizard format", &s_use_ps4_weird_format);
       ImGui::Checkbox("dump decompressed data", &s_dump_decompressed_data);
       ImGui::Checkbox("show CObject field types", &CObject::show_field_types);
+      ImGui::Checkbox("show CProperty skipped flag", &CProperty::imgui_show_skipped);
       ImGui::EndMenu();
     }
 

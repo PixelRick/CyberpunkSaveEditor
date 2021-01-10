@@ -132,10 +132,12 @@ protected:
 public:
   virtual bool imgui_is_one_liner() { return true; }
 
+  static inline bool imgui_show_skipped = false;
+
   [[nodiscard]] bool imgui_widget(const char* label, bool editable)
   {
-    if (is_skippable_in_serialization())
-      ImGui::Text("s");
+    if (imgui_show_skipped && is_skippable_in_serialization())
+      ImGui::Text("(default, may be skipped during serialization)");
     bool modified = imgui_widget_impl(label, editable);
     if (modified)
       post_cproperty_event(EPropertyEvent::data_edited);
