@@ -209,8 +209,7 @@ public:
 
     ImGui::BeginChild(label, ImVec2(0,0), true, ImGuiWindowFlags_AlwaysAutoResize);
 
-    ImGui::Text("refactoring");
-    ImGui::Text("ctypename: %s", ctypename().str().c_str());
+    ImGui::Text("unsupported ctypename: %s", ctypename().str().c_str());
     ImGui::Text("data size: %08X", m_data.size());
     if (m_data.size() > 50)
       ImGui::Text("data: %s...", bytes_to_hex(m_data.data(), 50).c_str());
