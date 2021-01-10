@@ -612,6 +612,7 @@ public:
       ImGui::TableHeadersRow();
 
       int to_rem = -1;
+      int to_ins = -1;
       for (size_t idx = 0; idx < m_elts.size(); ++idx)
       {
         scoped_imgui_id _sii((int)idx);
@@ -650,17 +651,36 @@ public:
           ImGui::PopStyleVar();
           if (editable && ImGui::SmallButton("delete"))
             to_rem = (int)idx;
+
+          if (editable && ImGui::SmallButton("insert"))
+            to_ins = (int)idx;
         }
 
         ImGui::TableNextColumn();
         modified |= elt->imgui_widget(lbl.c_str(), editable);
       }
+
+      if (m_elts.empty())
+      {
+        ImGui::TableNextRow();
+        ImGui::TableNextColumn();
+        if (ImGui::SmallButton("insert"))
+          to_ins = 0;
+      }
+
       ImGui::EndTable();
 
       if (to_rem >= 0)
       {
         auto remit = m_elts.begin() + to_rem;
         m_elts.erase(remit);
+        modified = true;
+      }
+
+      if (to_ins >= 0)
+      {
+        auto insit = m_elts.begin() + to_ins;
+        emplace(insit);
         modified = true;
       }
     }
