@@ -1061,7 +1061,7 @@ protected:
   CSysName m_ctypename;
   CObjectSPtr m_obj;
 
-  uint32_t m_original_handle;
+  uint32_t m_original_handle = 0;
 
 public:
   CHandleProperty(CPropertyOwner* owner, CSysName sub_ctypename)
