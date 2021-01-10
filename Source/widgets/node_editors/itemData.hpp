@@ -149,7 +149,9 @@ struct CItemData_widget
       modified |= ImGui::CheckboxFlags("Fact Item", &flgs, 2);
       item.uk0_012 = (uint8_t)flgs;
 
+
       unsigned kind = item.iid.uk.kind();
+      
 
       if (kind != 2)
       {
@@ -159,12 +161,61 @@ struct CItemData_widget
       modified |= ImGui::InputScalar("flags (hex)##uk0", ImGuiDataType_U8 , &item.uk0_012, NULL, NULL, "%02X", ImGuiInputTextFlags_CharsHexadecimal);
       modified |= ImGui::InputScalar("unknown u32 (hex)##uk1", ImGuiDataType_U32, &item.uk1_012, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
 
-      if (stats != nullptr)
+
+      if (kind != 1 && ImGui::Button("make item legendary"))
       {
-        auto modifiers = stats->get_modifiers_prop(item.iid.uk.uk4);
+        auto modifiers = stats == nullptr
+          ? nullptr
+          : dynamic_cast<CDynArrayProperty*>(stats->get_modifiers_prop(item.iid.uk.uk4));
+
         if (modifiers)
         {
-          ImGui::Text("-----Stats-----");
+          // https://github.com/Deweh/CyberCAT-SimpleGUI/blob/master/CP2077SaveEditor/ItemDetails.cs
+          try
+          {
+            bool found_qstat = false;
+            for (auto& o : *modifiers)
+            {
+              auto stat = dynamic_cast<CHandleProperty*>(o.get())->obj();
+              if (stat->ctypename() != CSysName("GameConstantStatModifierData"))
+                continue;
+              if (stat->get_prop_cast<CEnumProperty>("statType")->value_name() == CSysName("Quality"))
+              {
+                stat->get_prop_cast<CFloatProperty>("value")->set_value(4.0f);
+                //stat->get_prop_cast<CEnumProperty>("modifierType")->set_value_by_name("Additive");
+                found_qstat = true;
+                break;
+              }
+            }
+            if (!found_qstat)
+            {
+              auto stat = stats->add_constant_stats(modifiers);
+              if (stat)
+              {
+                stat->get_prop_cast<CFloatProperty>("value")->set_value(4.0f);
+                //stat->get_prop_cast<CEnumProperty>("modifierType")->set_value_by_name("Additive");
+                stat->get_prop_cast<CEnumProperty>("statType")->set_value_by_name("Quality");
+              }
+            }
+          }
+          catch (std::exception& e)
+          {
+            MessageBoxA(0, e.what(), "error", 0);
+          }
+        }
+        else
+        {
+          item.uk3_02.as_u64 = 0x14951C01A5;
+        }
+      }
+
+
+      ImGui::Text("-----Stats-----");
+      if (stats != nullptr)
+      {
+        auto modifiers = dynamic_cast<CDynArrayProperty*>(stats->get_modifiers_prop(item.iid.uk.uk4));
+        if (modifiers)
+        {
           if (ImGui::Button("new constant"))
             stats->add_constant_stats(modifiers);
           ImGui::SameLine();
@@ -177,8 +228,6 @@ struct CItemData_widget
           modified |= modifiers->imgui_widget("item_stats", true);
         }
       }
-      //stats
-
 
       ImGui::TableNextColumn();
 

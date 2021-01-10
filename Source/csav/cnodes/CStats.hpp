@@ -92,31 +92,33 @@ public:
   }
 
 protected:
-  void add_new_modifier(CProperty* modifiers, CSysName name)
+  CObjectSPtr add_new_modifier(CProperty* modifiers, CSysName name)
   {
     auto mods = dynamic_cast<CDynArrayProperty*>(modifiers);
     if (!mods)
-      return;
+      return nullptr;
     auto new_handle = dynamic_cast<CHandleProperty*>(mods->emplace(mods->begin())->get());
     if (!new_handle)
-      return;//damnit
-    new_handle->set_obj(std::make_shared<CObject>(name));
+      return nullptr;//damnit
+    auto new_obj = std::make_shared<CObject>(name);
+    new_handle->set_obj(new_obj);
+    return new_obj;
   }
 
 public:
-  void add_combined_stats(CProperty* modifiers)
+  CObjectSPtr add_combined_stats(CProperty* modifiers)
   {
-    add_new_modifier(modifiers, "gameCombinedStatModifierData");
+    return add_new_modifier(modifiers, "gameCombinedStatModifierData");
   }
 
-  void add_curve_stats(CProperty* modifiers)
+  CObjectSPtr add_curve_stats(CProperty* modifiers)
   {
-    add_new_modifier(modifiers, "gameCurveStatModifierData");
+    return add_new_modifier(modifiers, "gameCurveStatModifierData");
   }
 
-  void add_constant_stats(CProperty* modifiers)
+  CObjectSPtr add_constant_stats(CProperty* modifiers)
   {
-    add_new_modifier(modifiers, "gameConstantStatModifierData");
+    return add_new_modifier(modifiers, "gameConstantStatModifierData");
   }
 
 public:
