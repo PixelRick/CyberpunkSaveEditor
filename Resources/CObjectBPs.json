@@ -104,16 +104,16 @@
       "name": "alertedPathParams"
     },
     {
-      "ctypename": "Float",
-      "name": "alertedRadius"
-    },
-    {
       "ctypename": "handle:AIbehaviorWorkspotList",
       "name": "alertedSpots"
     },
     {
       "ctypename": "Bool",
       "name": "forceAlerted"
+    },
+    {
+      "ctypename": "Float",
+      "name": "alertedRadius"
     }
   ],
   "AIRole": [],
@@ -135,16 +135,20 @@
   ],
   "AOEAreaControllerPS": [
     {
+      "ctypename": "EDeviceStatus",
+      "name": "deviceState"
+    },
+    {
+      "ctypename": "Bool",
+      "name": "wasStateSet"
+    },
+    {
       "ctypename": "Bool",
       "name": "isInitialized"
     },
     {
       "ctypename": "EActivationState",
       "name": "activationState"
-    },
-    {
-      "ctypename": "handle:DeviceOperationsContainer",
-      "name": "deviceOperationsSetup"
     },
     {
       "ctypename": "Bool",
@@ -157,10 +161,18 @@
     {
       "ctypename": "AOEAreaSetup",
       "name": "AOEAreaSetup"
+    },
+    {
+      "ctypename": "handle:DeviceOperationsContainer",
+      "name": "deviceOperationsSetup"
     }
   ],
   "AOEAreaSetup": [],
   "AOEEffectorControllerPS": [
+    {
+      "ctypename": "EDeviceStatus",
+      "name": "deviceState"
+    },
     {
       "ctypename": "Bool",
       "name": "wasStateSet"
@@ -200,10 +212,6 @@
       "name": "markAsQuest"
     },
     {
-      "ctypename": "handle:BackDoorObjectiveData",
-      "name": "backdoorObjectiveData"
-    },
-    {
       "ctypename": "Bool",
       "name": "isScanned"
     },
@@ -234,6 +242,10 @@
     {
       "ctypename": "Bool",
       "name": "wasRevealedInNetworkPing"
+    },
+    {
+      "ctypename": "handle:BackDoorObjectiveData",
+      "name": "backdoorObjectiveData"
     },
     {
       "ctypename": "Bool",
@@ -430,6 +442,10 @@
       "name": "link"
     },
     {
+      "ctypename": "array:ReprimandData",
+      "name": "reprimands"
+    },
+    {
       "ctypename": "array:gamePersistentID",
       "name": "supportingAgents"
     },
@@ -524,16 +540,16 @@
       "name": "wasRevealedInNetworkPing"
     },
     {
+      "ctypename": "EDeviceStatus",
+      "name": "deviceState"
+    },
+    {
       "ctypename": "Bool",
       "name": "markAsQuest"
     },
     {
       "ctypename": "CName",
       "name": "factToDisableQuestMark"
-    },
-    {
-      "ctypename": "EDeviceStatus",
-      "name": "deviceState"
     },
     {
       "ctypename": "Bool",
@@ -636,16 +652,16 @@
   "BaseSkillCheckContainer": [],
   "BasicDistractionDeviceControllerPS": [
     {
+      "ctypename": "EDeviceStatus",
+      "name": "deviceState"
+    },
+    {
       "ctypename": "Bool",
       "name": "markAsQuest"
     },
     {
       "ctypename": "CName",
       "name": "factToDisableQuestMark"
-    },
-    {
-      "ctypename": "EDeviceStatus",
-      "name": "deviceState"
     },
     {
       "ctypename": "Bool",
@@ -738,16 +754,16 @@
       "name": "wasQuickHacked"
     },
     {
-      "ctypename": "handle:DeviceOperationsContainer",
-      "name": "deviceOperationsSetup"
-    },
-    {
       "ctypename": "Bool",
       "name": "drawGridLink"
     },
     {
       "ctypename": "array:SPerformedActions",
       "name": "performedActions"
+    },
+    {
+      "ctypename": "handle:DeviceOperationsContainer",
+      "name": "deviceOperationsSetup"
     },
     {
       "ctypename": "IllegalActionTypes",
@@ -873,16 +889,16 @@
       "name": "wasRevealedInNetworkPing"
     },
     {
+      "ctypename": "EDeviceStatus",
+      "name": "deviceState"
+    },
+    {
       "ctypename": "Bool",
       "name": "markAsQuest"
     },
     {
       "ctypename": "CName",
       "name": "factToDisableQuestMark"
-    },
-    {
-      "ctypename": "EDeviceStatus",
-      "name": "deviceState"
     },
     {
       "ctypename": "Bool",
@@ -1019,6 +1035,10 @@
       "name": "minigameDefinition"
     },
     {
+      "ctypename": "Int32",
+      "name": "minigameAttempt"
+    },
+    {
       "ctypename": "gameuiHackingMinigameState",
       "name": "hackingMinigameState"
     },
@@ -1053,6 +1073,14 @@
     {
       "ctypename": "ComputerSetup",
       "name": "computerSetup"
+    },
+    {
+      "ctypename": "SDocumentAdress",
+      "name": "openedMailAdress"
+    },
+    {
+      "ctypename": "SDocumentAdress",
+      "name": "openedFileAdress"
     }
   ],
   "ComputerSetup": [
@@ -1097,6 +1125,10 @@
     {
       "ctypename": "Bool",
       "name": "isInitialized"
+    },
+    {
+      "ctypename": "array:SPerformedActions",
+      "name": "performedActions"
     },
     {
       "ctypename": "handle:BaseSkillCheckContainer",
@@ -1250,12 +1282,12 @@
       "name": "meleeProgress"
     },
     {
-      "ctypename": "Float",
-      "name": "failedShardDrops"
-    },
-    {
       "ctypename": "Int32",
       "name": "downedInTimeDilatation"
+    },
+    {
+      "ctypename": "Float",
+      "name": "failedShardDrops"
     },
     {
       "ctypename": "Int32",
@@ -1328,6 +1360,10 @@
     {
       "ctypename": "DestructionData",
       "name": "destructionProperties"
+    },
+    {
+      "ctypename": "EDeviceDurabilityState",
+      "name": "durabilityState"
     },
     {
       "ctypename": "array:SPerformedActions",
@@ -1485,16 +1521,16 @@
       "name": "distractionSetup"
     },
     {
-      "ctypename": "Bool",
-      "name": "wasActivated"
-    },
-    {
       "ctypename": "DistractionSetup",
       "name": "explosionSetup"
     },
     {
       "ctypename": "Bool",
       "name": "wasLethalTakedownPerformed"
+    },
+    {
+      "ctypename": "Bool",
+      "name": "wasActivated"
     }
   ],
   "DisposalDeviceSetup": [
@@ -1605,11 +1641,11 @@
     },
     {
       "ctypename": "Bool",
-      "name": "isPlayerAuthorised"
+      "name": "isLocked"
     },
     {
       "ctypename": "Bool",
-      "name": "isLocked"
+      "name": "isPlayerAuthorised"
     },
     {
       "ctypename": "Bool",
@@ -1688,8 +1724,20 @@
   ],
   "DropPointControllerPS": [
     {
-      "ctypename": "array:TweakDBID",
-      "name": "rewardsLootTable"
+      "ctypename": "Bool",
+      "name": "wasStateCached"
+    },
+    {
+      "ctypename": "Bool",
+      "name": "wasStateSet"
+    },
+    {
+      "ctypename": "EDeviceStatus",
+      "name": "cachedDeviceState"
+    },
+    {
+      "ctypename": "Bool",
+      "name": "isScanned"
     },
     {
       "ctypename": "Bool",
@@ -1706,6 +1754,10 @@
     {
       "ctypename": "array:SPerformedActions",
       "name": "performedActions"
+    },
+    {
+      "ctypename": "array:TweakDBID",
+      "name": "rewardsLootTable"
     },
     {
       "ctypename": "Bool",
@@ -1868,6 +1920,10 @@
     {
       "ctypename": "Bool",
       "name": "isInitialized"
+    },
+    {
+      "ctypename": "Bool",
+      "name": "wasQuickHacked"
     },
     {
       "ctypename": "array:SecuritySystemClearanceEntry",
@@ -2121,16 +2177,16 @@
       "name": "performedActions"
     },
     {
+      "ctypename": "IllegalActionTypes",
+      "name": "illegalActions"
+    },
+    {
       "ctypename": "Bool",
       "name": "exploded"
     },
     {
       "ctypename": "Bool",
       "name": "playerSafePass"
-    },
-    {
-      "ctypename": "IllegalActionTypes",
-      "name": "illegalActions"
     },
     {
       "ctypename": "Bool",
@@ -2148,6 +2204,14 @@
     }
   ],
   "FanControllerPS": [
+    {
+      "ctypename": "gameuiHackingMinigameState",
+      "name": "hackingMinigameState"
+    },
+    {
+      "ctypename": "Int32",
+      "name": "minigameAttempt"
+    },
     {
       "ctypename": "Bool",
       "name": "isScanned"
@@ -2169,20 +2233,12 @@
       "name": "isInitialized"
     },
     {
-      "ctypename": "Int32",
-      "name": "minigameAttempt"
-    },
-    {
-      "ctypename": "gameuiHackingMinigameState",
-      "name": "hackingMinigameState"
+      "ctypename": "array:SPerformedActions",
+      "name": "performedActions"
     },
     {
       "ctypename": "Bool",
       "name": "wasQuickHacked"
-    },
-    {
-      "ctypename": "array:SPerformedActions",
-      "name": "performedActions"
     }
   ],
   "FastTravelSystem": [
@@ -2261,6 +2317,10 @@
   ],
   "ForkliftControllerPS": [
     {
+      "ctypename": "AuthorizationData",
+      "name": "authorizationProperties"
+    },
+    {
       "ctypename": "Bool",
       "name": "markAsQuest"
     },
@@ -2273,12 +2333,12 @@
       "name": "isScanned"
     },
     {
-      "ctypename": "EDeviceStatus",
-      "name": "deviceState"
-    },
-    {
       "ctypename": "Bool",
       "name": "wasStateCached"
+    },
+    {
+      "ctypename": "EDeviceStatus",
+      "name": "deviceState"
     },
     {
       "ctypename": "Bool",
@@ -2340,6 +2400,10 @@
   "ForkliftSetup": [],
   "FuseBoxControllerPS": [
     {
+      "ctypename": "EDeviceStatus",
+      "name": "deviceState"
+    },
+    {
       "ctypename": "Bool",
       "name": "markAsQuest"
     },
@@ -2350,10 +2414,6 @@
     {
       "ctypename": "Bool",
       "name": "isScanned"
-    },
-    {
-      "ctypename": "EDeviceStatus",
-      "name": "deviceState"
     },
     {
       "ctypename": "Bool",
@@ -2374,6 +2434,10 @@
     {
       "ctypename": "Bool",
       "name": "isInitialized"
+    },
+    {
+      "ctypename": "Int32",
+      "name": "minigameAttempt"
     },
     {
       "ctypename": "gameuiHackingMinigameState",
@@ -2586,6 +2650,10 @@
       "name": "isInitialized"
     },
     {
+      "ctypename": "Bool",
+      "name": "isRecognizableBySenses"
+    },
+    {
       "ctypename": "handle:BaseSkillCheckContainer",
       "name": "skillCheckContainer"
     },
@@ -2600,10 +2668,6 @@
     {
       "ctypename": "Bool",
       "name": "wasQuickHacked"
-    },
-    {
-      "ctypename": "Bool",
-      "name": "isRecognizableBySenses"
     },
     {
       "ctypename": "TweakDBID",
@@ -2716,6 +2780,10 @@
     {
       "ctypename": "IllegalActionTypes",
       "name": "illegalActions"
+    },
+    {
+      "ctypename": "Int32",
+      "name": "amountOfStations"
     }
   ],
   "Hotkey": [
@@ -2735,12 +2803,12 @@
   "ISerializable": [],
   "IceMachineControllerPS": [
     {
-      "ctypename": "EDeviceStatus",
-      "name": "deviceState"
-    },
-    {
       "ctypename": "Bool",
       "name": "wasRevealedInNetworkPing"
+    },
+    {
+      "ctypename": "EDeviceStatus",
+      "name": "deviceState"
     },
     {
       "ctypename": "Bool",
@@ -2780,6 +2848,10 @@
   "IntercomControllerPS": [
     {
       "ctypename": "Bool",
+      "name": "isScanned"
+    },
+    {
+      "ctypename": "Bool",
       "name": "wasRevealedInNetworkPing"
     },
     {
@@ -2793,6 +2865,10 @@
     {
       "ctypename": "Bool",
       "name": "isInitialized"
+    },
+    {
+      "ctypename": "gameuiHackingMinigameState",
+      "name": "hackingMinigameState"
     },
     {
       "ctypename": "Bool",
@@ -2842,16 +2918,16 @@
       "name": "isScanned"
     },
     {
+      "ctypename": "EDeviceStatus",
+      "name": "deviceState"
+    },
+    {
       "ctypename": "Bool",
       "name": "markAsQuest"
     },
     {
       "ctypename": "CName",
       "name": "factToDisableQuestMark"
-    },
-    {
-      "ctypename": "EDeviceStatus",
-      "name": "deviceState"
     },
     {
       "ctypename": "Bool",
@@ -2936,6 +3012,10 @@
   ],
   "LiftControllerPS": [
     {
+      "ctypename": "gamePlatformMovementState",
+      "name": "movementState"
+    },
+    {
       "ctypename": "Bool",
       "name": "wasRevealedInNetworkPing"
     },
@@ -2998,10 +3078,6 @@
     {
       "ctypename": "Int32",
       "name": "activeFloor"
-    },
-    {
-      "ctypename": "gamePlatformMovementState",
-      "name": "movementState"
     },
     {
       "ctypename": "array:ElevatorFloorSetup",
@@ -3113,12 +3189,20 @@
   "MeshAppearanceDeviceOperation": [],
   "MovableDeviceControllerPS": [
     {
+      "ctypename": "Bool",
+      "name": "wasStateCached"
+    },
+    {
       "ctypename": "EDeviceStatus",
       "name": "deviceState"
     },
     {
       "ctypename": "Bool",
       "name": "wasStateSet"
+    },
+    {
+      "ctypename": "EDeviceStatus",
+      "name": "cachedDeviceState"
     },
     {
       "ctypename": "Bool",
@@ -3306,10 +3390,6 @@
       "name": "factToDisableQuestMark"
     },
     {
-      "ctypename": "EDeviceStatus",
-      "name": "deviceState"
-    },
-    {
       "ctypename": "Bool",
       "name": "wasStateCached"
     },
@@ -3324,6 +3404,10 @@
     {
       "ctypename": "Bool",
       "name": "wasQuickHacked"
+    },
+    {
+      "ctypename": "EDeviceStatus",
+      "name": "deviceState"
     },
     {
       "ctypename": "Bool",
@@ -3407,10 +3491,6 @@
       "name": "gender"
     },
     {
-      "ctypename": "Bool",
-      "name": "isCrouch"
-    },
-    {
       "ctypename": "EBOOL",
       "name": "isInitialized"
     },
@@ -3425,6 +3505,10 @@
     {
       "ctypename": "Bool",
       "name": "hasAutoReveal"
+    },
+    {
+      "ctypename": "Bool",
+      "name": "isCrouch"
     }
   ],
   "PlayerWokrspotDeviceOperation": [],
@@ -3510,6 +3594,14 @@
       "name": "isInitialized"
     },
     {
+      "ctypename": "Int32",
+      "name": "minigameAttempt"
+    },
+    {
+      "ctypename": "gameuiHackingMinigameState",
+      "name": "hackingMinigameState"
+    },
+    {
       "ctypename": "DestructionData",
       "name": "destructionProperties"
     },
@@ -3582,6 +3674,10 @@
       "name": "wasStateSet"
     },
     {
+      "ctypename": "EDeviceStatus",
+      "name": "cachedDeviceState"
+    },
+    {
       "ctypename": "Bool",
       "name": "wasRevealedInNetworkPing"
     },
@@ -3616,6 +3712,24 @@
     {
       "ctypename": "handle:DeviceOperationsContainer",
       "name": "deviceOperationsSetup"
+    }
+  ],
+  "ReprimandData": [
+    {
+      "ctypename": "entEntityID",
+      "name": "receiver"
+    },
+    {
+      "ctypename": "CName",
+      "name": "receiverAttitudeGroup"
+    },
+    {
+      "ctypename": "Int32",
+      "name": "reprimandID"
+    },
+    {
+      "ctypename": "Int32",
+      "name": "count"
     }
   ],
   "RetractableAdControllerPS": [
@@ -3663,6 +3777,18 @@
   "RoadBlockControllerPS": [
     {
       "ctypename": "Bool",
+      "name": "wasStateCached"
+    },
+    {
+      "ctypename": "Bool",
+      "name": "wasStateSet"
+    },
+    {
+      "ctypename": "EDeviceStatus",
+      "name": "cachedDeviceState"
+    },
+    {
+      "ctypename": "Bool",
       "name": "isScanned"
     },
     {
@@ -3680,6 +3806,10 @@
     {
       "ctypename": "EActivationState",
       "name": "activationState"
+    },
+    {
+      "ctypename": "array:SPerformedActions",
+      "name": "performedActions"
     },
     {
       "ctypename": "Bool",
@@ -3786,12 +3916,12 @@
       "name": "hasInteraction"
     },
     {
-      "ctypename": "CName",
-      "name": "currentDisplayName"
-    },
-    {
       "ctypename": "Bool",
       "name": "isQuickHack"
+    },
+    {
+      "ctypename": "CName",
+      "name": "currentDisplayName"
     },
     {
       "ctypename": "Bool",
@@ -3870,6 +4000,7 @@
       "name": "state"
     }
   ],
+  "SDocumentAdress": [],
   "SExperiencePoints": [
     {
       "ctypename": "Float",
@@ -4116,10 +4247,6 @@
       "name": "usersInPerimeter"
     },
     {
-      "ctypename": "Bool",
-      "name": "isPlayerInside"
-    },
-    {
       "ctypename": "ESecurityAreaType",
       "name": "securityAreaType"
     },
@@ -4128,11 +4255,19 @@
       "name": "pendingDisableRequest"
     },
     {
+      "ctypename": "Bool",
+      "name": "isPlayerInside"
+    },
+    {
       "ctypename": "OutputPersistentData",
       "name": "lastOutput"
     }
   ],
   "SecurityGateControllerPS": [
+    {
+      "ctypename": "Bool",
+      "name": "wasQuickHacked"
+    },
     {
       "ctypename": "EDeviceStatus",
       "name": "deviceState"
@@ -4160,10 +4295,6 @@
     {
       "ctypename": "array:SPerformedActions",
       "name": "performedActions"
-    },
-    {
-      "ctypename": "Bool",
-      "name": "wasQuickHacked"
     }
   ],
   "SecurityGateLockControllerPS": [
@@ -4380,6 +4511,10 @@
       "name": "isInFollowMode"
     },
     {
+      "ctypename": "DetectionParameters",
+      "name": "detectionParameters"
+    },
+    {
       "ctypename": "IllegalActionTypes",
       "name": "illegalActions"
     },
@@ -4390,10 +4525,6 @@
     {
       "ctypename": "handle:DeviceOperationsContainer",
       "name": "deviceOperationsSetup"
-    },
-    {
-      "ctypename": "DetectionParameters",
-      "name": "detectionParameters"
     },
     {
       "ctypename": "Bool",
@@ -4416,16 +4547,16 @@
   ],
   "SimpleSwitchControllerPS": [
     {
+      "ctypename": "Bool",
+      "name": "isScanned"
+    },
+    {
       "ctypename": "EDeviceStatus",
       "name": "deviceState"
     },
     {
       "ctypename": "Bool",
       "name": "wasStateCached"
-    },
-    {
-      "ctypename": "Bool",
-      "name": "isScanned"
     },
     {
       "ctypename": "Bool",
@@ -4446,6 +4577,10 @@
     {
       "ctypename": "Bool",
       "name": "drawGridLink"
+    },
+    {
+      "ctypename": "Bool",
+      "name": "wasQuickHacked"
     },
     {
       "ctypename": "Bool",
@@ -4490,6 +4625,10 @@
   ],
   "SmartWindowControllerPS": [
     {
+      "ctypename": "ComputerSetup",
+      "name": "computerSetup"
+    },
+    {
       "ctypename": "Bool",
       "name": "isScanned"
     },
@@ -4498,12 +4637,12 @@
       "name": "isInitialized"
     },
     {
-      "ctypename": "Bool",
-      "name": "disableQuickHacks"
+      "ctypename": "array:SPerformedActions",
+      "name": "performedActions"
     },
     {
-      "ctypename": "ComputerSetup",
-      "name": "computerSetup"
+      "ctypename": "Bool",
+      "name": "disableQuickHacks"
     }
   ],
   "SmokeMachineControllerPS": [
@@ -4614,6 +4753,10 @@
     {
       "ctypename": "Bool",
       "name": "isInitialized"
+    },
+    {
+      "ctypename": "array:SPerformedActions",
+      "name": "performedActions"
     }
   ],
   "StimDeviceOperation": [],
@@ -4672,6 +4815,10 @@
       "name": "skillCheckContainer"
     },
     {
+      "ctypename": "Int32",
+      "name": "minigameAttempt"
+    },
+    {
       "ctypename": "gameuiHackingMinigameState",
       "name": "hackingMinigameState"
     },
@@ -4720,10 +4867,6 @@
       "name": "detectionParameters"
     },
     {
-      "ctypename": "CameraQuestProperties",
-      "name": "cameraQuestProperties"
-    },
-    {
       "ctypename": "CameraSetup",
       "name": "cameraProperties"
     },
@@ -4746,6 +4889,10 @@
     {
       "ctypename": "ESurveillanceCameraStatus",
       "name": "cameraState"
+    },
+    {
+      "ctypename": "CameraQuestProperties",
+      "name": "cameraQuestProperties"
     }
   ],
   "SurveillanceSystemControllerPS": [
@@ -4786,20 +4933,20 @@
       "name": "isScanned"
     },
     {
-      "ctypename": "Bool",
-      "name": "markAsQuest"
-    },
-    {
-      "ctypename": "CName",
-      "name": "factToDisableQuestMark"
-    },
-    {
       "ctypename": "EDeviceStatus",
       "name": "deviceState"
     },
     {
       "ctypename": "AuthorizationData",
       "name": "authorizationProperties"
+    },
+    {
+      "ctypename": "Bool",
+      "name": "markAsQuest"
+    },
+    {
+      "ctypename": "CName",
+      "name": "factToDisableQuestMark"
     },
     {
       "ctypename": "Bool",
@@ -4838,16 +4985,16 @@
       "name": "destructionProperties"
     },
     {
-      "ctypename": "handle:DeviceOperationsContainer",
-      "name": "deviceOperationsSetup"
-    },
-    {
       "ctypename": "Bool",
       "name": "wasQuickHacked"
     },
     {
       "ctypename": "array:SPerformedActions",
       "name": "performedActions"
+    },
+    {
+      "ctypename": "handle:DeviceOperationsContainer",
+      "name": "deviceOperationsSetup"
     },
     {
       "ctypename": "IllegalActionTypes",
@@ -4888,16 +5035,16 @@
   "TemporaryDoorState": [],
   "TerminalControllerPS": [
     {
-      "ctypename": "Bool",
-      "name": "isScanned"
-    },
-    {
       "ctypename": "EDeviceStatus",
       "name": "deviceState"
     },
     {
       "ctypename": "Bool",
       "name": "markAsQuest"
+    },
+    {
+      "ctypename": "Bool",
+      "name": "isScanned"
     },
     {
       "ctypename": "AuthorizationData",
@@ -5112,19 +5259,11 @@
     },
     {
       "ctypename": "Bool",
-      "name": "isStolen"
-    },
-    {
-      "ctypename": "Bool",
-      "name": "playerVehicle"
-    },
-    {
-      "ctypename": "array:SPerformedActions",
-      "name": "performedActions"
-    },
-    {
-      "ctypename": "Bool",
       "name": "defaultStateSet"
+    },
+    {
+      "ctypename": "Bool",
+      "name": "crystalDomeQuestModified"
     },
     {
       "ctypename": "Bool",
@@ -5132,11 +5271,31 @@
     },
     {
       "ctypename": "Bool",
+      "name": "crystalDomeState"
+    },
+    {
+      "ctypename": "Bool",
+      "name": "playerVehicle"
+    },
+    {
+      "ctypename": "Bool",
       "name": "isDestroyed"
+    },
+    {
+      "ctypename": "array:SPerformedActions",
+      "name": "performedActions"
+    },
+    {
+      "ctypename": "Bool",
+      "name": "isStolen"
     },
     {
       "ctypename": "Bool",
       "name": "exploded"
+    },
+    {
+      "ctypename": "Bool",
+      "name": "anyDoorOpen"
     },
     {
       "ctypename": "Bool",
@@ -5147,16 +5306,16 @@
       "name": "sirenLightsOn"
     },
     {
-      "ctypename": "Bool",
-      "name": "anyDoorOpen"
-    },
-    {
       "ctypename": "array:TemporaryDoorState",
       "name": "previousInteractionState"
     },
     {
       "ctypename": "Bool",
       "name": "thrusterState"
+    },
+    {
+      "ctypename": "Bool",
+      "name": "uiQuestModified"
     }
   ],
   "VehicleDeviceLinkPS": [
@@ -5215,6 +5374,10 @@
       "name": "isInitialized"
     },
     {
+      "ctypename": "IllegalActionTypes",
+      "name": "illegalActions"
+    },
+    {
       "ctypename": "Int32",
       "name": "minigameAttempt"
     },
@@ -5225,10 +5388,6 @@
     {
       "ctypename": "Bool",
       "name": "wasQuickHacked"
-    },
-    {
-      "ctypename": "IllegalActionTypes",
-      "name": "illegalActions"
     },
     {
       "ctypename": "Bool",
@@ -5324,6 +5483,10 @@
       "name": "skillCheckContainer"
     },
     {
+      "ctypename": "Bool",
+      "name": "wasQuickHacked"
+    },
+    {
       "ctypename": "array:SPerformedActions",
       "name": "performedActions"
     },
@@ -5373,20 +5536,20 @@
       "name": "isScanned"
     },
     {
-      "ctypename": "Bool",
-      "name": "markAsQuest"
-    },
-    {
-      "ctypename": "CName",
-      "name": "factToDisableQuestMark"
-    },
-    {
       "ctypename": "EDeviceStatus",
       "name": "deviceState"
     },
     {
       "ctypename": "AuthorizationData",
       "name": "authorizationProperties"
+    },
+    {
+      "ctypename": "Bool",
+      "name": "markAsQuest"
+    },
+    {
+      "ctypename": "CName",
+      "name": "factToDisableQuestMark"
     },
     {
       "ctypename": "Bool",
@@ -5409,10 +5572,6 @@
       "name": "wasQuickHacked"
     },
     {
-      "ctypename": "handle:DeviceOperationsContainer",
-      "name": "deviceOperationsSetup"
-    },
-    {
       "ctypename": "handle:BaseSkillCheckContainer",
       "name": "skillCheckContainer"
     },
@@ -5427,6 +5586,10 @@
     {
       "ctypename": "IllegalActionTypes",
       "name": "illegalActions"
+    },
+    {
+      "ctypename": "handle:DeviceOperationsContainer",
+      "name": "deviceOperationsSetup"
     },
     {
       "ctypename": "WindowBlindersData",
@@ -5452,6 +5615,10 @@
     }
   ],
   "WindowControllerPS": [
+    {
+      "ctypename": "Bool",
+      "name": "isScanned"
+    },
     {
       "ctypename": "Bool",
       "name": "wasRevealedInNetworkPing"
@@ -5663,6 +5830,42 @@
       "name": "requesterID"
     }
   ],
+  "gameGodModeData": [
+    {
+      "ctypename": "gameGodModeType",
+      "name": "type"
+    },
+    {
+      "ctypename": "CName",
+      "name": "source"
+    }
+  ],
+  "gameGodModeEntityData": [
+    {
+      "ctypename": "array:gameGodModeData",
+      "name": "overrides"
+    },
+    {
+      "ctypename": "array:gameGodModeData",
+      "name": "base"
+    }
+  ],
+  "gameGodModeSaveData": [
+    {
+      "ctypename": "array:gameGodModeSaveEntityData",
+      "name": "gods"
+    }
+  ],
+  "gameGodModeSaveEntityData": [
+    {
+      "ctypename": "entEntityID",
+      "name": "entityId"
+    },
+    {
+      "ctypename": "gameGodModeEntityData",
+      "name": "data"
+    }
+  ],
   "gameInventoryPS": [
     {
       "ctypename": "Bool",
@@ -5759,11 +5962,11 @@
     },
     {
       "ctypename": "Int32",
-      "name": "quantity"
+      "name": "powerLevel"
     },
     {
       "ctypename": "Int32",
-      "name": "powerLevel"
+      "name": "quantity"
     },
     {
       "ctypename": "TweakDBID",
@@ -6187,12 +6390,12 @@
   ],
   "vehicleDestructionPSData": [
     {
-      "ctypename": "[30]Float",
-      "name": "gridValues"
+      "ctypename": "Uint8",
+      "name": "flatTire"
     },
     {
-      "ctypename": "array:Vector3",
-      "name": "windshieldPoints"
+      "ctypename": "[30]Float",
+      "name": "gridValues"
     },
     {
       "ctypename": "Uint32",
@@ -6205,6 +6408,10 @@
     {
       "ctypename": "array:CName",
       "name": "detachedParts"
+    },
+    {
+      "ctypename": "array:Vector3",
+      "name": "windshieldPoints"
     }
   ],
   "vehicleGarageComponentPS": [
@@ -6237,6 +6444,10 @@
     {
       "ctypename": "entEntityID",
       "name": "entityID"
+    },
+    {
+      "ctypename": "NodeRef",
+      "name": "vehicleNameNodeRef"
     }
   ],
   "vehicleGarageVehicleID": [
