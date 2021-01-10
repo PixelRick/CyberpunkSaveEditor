@@ -99,7 +99,7 @@ struct CItemMod // for CItemData kind 0, 2
 
     std::string s;
     reader >> cp_plstring_ref(s);
-    strcpy(d2.uk0, s.c_str());
+    strcpy_s(d2.uk0, s.c_str());
     reader >> d2.uk1;
 
     size_t cnt = 0;
