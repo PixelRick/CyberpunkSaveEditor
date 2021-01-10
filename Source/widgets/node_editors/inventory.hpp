@@ -53,7 +53,7 @@ struct CInventory_widget
         if (ImGui::Button("Unflag all Quest items (makes them normal items)", ImVec2(0, 30)))
         {
           for (auto& item : subinv.items)
-            item.uk0_012 &= 0xFE;
+            item.uk0_012 &= 0xFC;
           modified = true;
         }
 
