@@ -58,6 +58,8 @@ public:
 
   CPSData                   psdata;
 
+  CGenericSystem            godmode;
+
   //CGenericSystem            scriptables;
 
 
@@ -81,6 +83,8 @@ public:
     try_load_node_data_struct(inventory,    "inventory"                           , progress, 0.30f, test);
     try_load_node_data_struct(chtrcustom,   "CharacetrCustomization_Appearances"  , progress, 0.35f, test);
 
+    try_load_node_data_struct(godmode,      "godModeSystem"                       , progress, 0.40f, test);
+
     try_load_node_data_struct(scriptables,  "ScriptableSystemsContainer"          , progress, 0.50f, test);
     try_load_node_data_struct(psdata,       "PSData"                              , progress, 0.80f, test);
 
@@ -96,6 +100,8 @@ public:
 
     try_save_node_data_struct(inventory,    "inventory"                             );  progress.value = 0.10f;
     try_save_node_data_struct(chtrcustom,   "CharacetrCustomization_Appearances"    );  progress.value = 0.15f;
+
+    try_save_node_data_struct(godmode,      "godModeSystem"                         );  progress.value = 0.20f;
 
     try_save_node_data_struct(scriptables,  "ScriptableSystemsContainer"            );  progress.value = 0.30f;
     try_save_node_data_struct(psdata,       "PSData"                                );  progress.value = 0.60f;
