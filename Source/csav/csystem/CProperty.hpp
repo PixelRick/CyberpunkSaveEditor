@@ -751,7 +751,7 @@ class CEnumProperty
 {
 protected:
   CSysName m_enum_name;
-  uint32_t m_value = 0;
+  uint32_t m_bp_index = 0;
   CSysName m_val_name;
   CEnumList::enum_members_sptr m_p_enum_members;
 
@@ -761,7 +761,7 @@ public:
   {
     m_p_enum_members = CEnumList::get().get_enum(enum_name.str());
     if (m_p_enum_members->size())
-      m_val_name = CSysName(m_p_enum_members->at(m_value));
+      m_val_name = CSysName(m_p_enum_members->at(m_bp_index));
     else
       m_val_name = CSysName("empty enum");
   }
@@ -770,7 +770,7 @@ public:
 
 public:
 
-  bool has_default_value() const override { return m_value == 0; }
+  bool has_default_value() const override { return m_bp_index == 0; }
 
   CSysName value_name() const { return m_val_name; }
 
@@ -784,7 +784,7 @@ public:
       {
         if (CSysName(enum_members[i]) == name)
         {
-          m_value = (uint32_t)i;
+          m_bp_index = (uint32_t)i;
           m_val_name = name;
           post_cproperty_event(EPropertyEvent::data_edited);
           return true;
@@ -807,16 +807,16 @@ public:
       return false;
     m_val_name = CSysName(serctx.strpool.from_idx(strpool_idx));
     auto& enum_members = *m_p_enum_members;
-    m_value = (uint32_t)enum_members.size();
+    m_bp_index = (uint32_t)enum_members.size();
     for (size_t i = 0; i < enum_members.size(); ++i)
     {
       if (enum_members[i] == m_val_name.str())
       {
-        m_value = (uint32_t)i;
+        m_bp_index = (uint32_t)i;
         break;
       }
     }
-    if (m_value == enum_members.size())
+    if (m_bp_index == enum_members.size())
     {
       enum_members.push_back(m_val_name.str());
     }
@@ -845,7 +845,7 @@ public:
   [[nodiscard]] bool imgui_widget_impl(const char* label, bool editable) override
   {
     auto& enum_members = *m_p_enum_members;
-    int current_item = m_value;
+    int current_item = m_bp_index;
 
     auto current_enum_name = fmt::format("unknown enum value {}", current_item);
     if (current_item >= 0 && current_item < enum_members.size())
@@ -858,11 +858,11 @@ public:
     else
       ImGui::Text("%s: %s::%s", label, m_enum_name.str().c_str(), current_enum_name);
     
-    if (current_item == m_value || current_item < 0)
+    if (current_item == m_bp_index || current_item < 0)
       return false;
 
-    m_value = (uint16_t)current_item;
-    m_val_name = CSysName(enum_members[m_value]);
+    m_bp_index = (uint16_t)current_item;
+    m_val_name = CSysName(enum_members[m_bp_index]);
     return true;
   }
 
