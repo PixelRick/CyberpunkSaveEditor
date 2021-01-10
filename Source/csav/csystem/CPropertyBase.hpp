@@ -99,6 +99,12 @@ public:
     return !m_is_unskippable && (m_is_freshly_constructed || has_default_value());
   }
 
+  bool has_construction_value() const
+  {
+    return m_is_freshly_constructed;
+  }
+
+  // todo: dump them...
   virtual bool has_default_value() const { return false; }
 
   // serialization
@@ -136,8 +142,10 @@ public:
 
   [[nodiscard]] bool imgui_widget(const char* label, bool editable)
   {
-    if (imgui_show_skipped && is_skippable_in_serialization())
-      ImGui::Text("(default, may be skipped during serialization)");
+    //if (imgui_show_skipped && is_skippable_in_serialization())
+    //  ImGui::Text("(default, may be skipped during serialization)");
+    if (has_construction_value())
+      ImGui::Text("unknown default value: won't be serialized until you edit it");
     bool modified = imgui_widget_impl(label, editable);
     if (modified)
       post_cproperty_event(EPropertyEvent::data_edited);
