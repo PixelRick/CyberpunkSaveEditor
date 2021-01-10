@@ -235,9 +235,9 @@ protected:
 	void on_file_drop(std::wstring fpath) override
 	{
 		std::filesystem::path p(fpath);
-		p = std::filesystem::canonical(p); // remove last null character.. todo: fix in IAppLib
+		p = std::filesystem::canonical(p); // let's try to remove last null character.. todo: fix in IAppLib
 		auto ext = p.extension().string();
-		if (ext == ".bin" or ext == ".buffer")
+		if (ext.rfind(".bin", 0) == 0 or ext.rfind(".buffer", 0) == 0)
 		{
 			archtest.open(fpath);
 			return;

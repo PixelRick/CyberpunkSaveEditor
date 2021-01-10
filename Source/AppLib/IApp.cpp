@@ -175,6 +175,8 @@ LRESULT IApp::window_proc(UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				wsPath.resize(nameLen + 1);
 				DragQueryFileW(hDrop, i, wsPath.data(), (UINT)wsPath.size());
+				while (wsPath.size() && wsPath.back() == L'\0')
+					wsPath.pop_back();
 				on_file_drop(wsPath);
 			}
 		}
