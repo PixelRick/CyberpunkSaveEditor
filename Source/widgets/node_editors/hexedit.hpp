@@ -77,7 +77,7 @@ protected:
     me.CalcSizes(s, editbuf.size(), 0);
     ImVec2 child_size = size;
     if (child_size.x <= 0)
-      child_size.x = s.WindowWidth;
+      child_size.x = s.WindowWidth + 20.f;
     if (child_size.y <= 0)
       child_size.y = 400;
 
