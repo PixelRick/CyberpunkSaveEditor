@@ -928,7 +928,7 @@ public:
 
     open_job.start([this](progress_t& progress) -> bool {
       auto cs = std::make_shared<csav>();
-      if (!cs->open_with_progress(open_filepath, progress))
+      if (!cs->open_with_progress(open_filepath, progress, s_dump_decompressed_data))
         return false;
       opened_save = cs;
       return true;

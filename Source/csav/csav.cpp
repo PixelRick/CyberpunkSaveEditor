@@ -2,7 +2,7 @@
 #include <inttypes.h>
 #include "serializers.hpp"
 
-bool csav::load_stree(std::filesystem::path path)
+bool csav::load_stree(std::filesystem::path path, bool dump_decompressed_data)
 {
   uint32_t chunkdescs_start = 0;
   uint32_t nodedescs_start = 0;
@@ -192,6 +192,16 @@ bool csav::load_stree(std::filesystem::path path)
   if (tree_size != data_size) // check that the unflattening worked
     return false;
 
+  if (dump_decompressed_data)
+  {
+    std::ofstream ofs;
+    auto dump_path = path;
+    dump_path.replace_filename(L"decompressed_blob_in.bin");
+    ofs.open(dump_path, ofs.binary | ofs.trunc);
+    ofs.write(stree.nodedata.data(), stree.nodedata.size());
+    ofs.close();
+  }
+
   return true;
 }
 
@@ -380,7 +390,7 @@ bool csav::save_stree(std::filesystem::path path, bool dump_decompressed_data, b
   if (dump_decompressed_data)
   {
     auto dump_path = path;
-    dump_path.replace_filename(L"decompressed_blob.bin");
+    dump_path.replace_filename(L"decompressed_blob_out.bin");
     ofs.open(dump_path, ofs.binary | ofs.trunc);
     ofs.write(stree.nodedata.data(), stree.nodedata.size());
     ofs.close();

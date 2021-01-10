@@ -64,11 +64,9 @@ public:
 
   void value(bool value)
   {
-    if (m_value != value)
-    {
-      m_value = value;
-      post_cproperty_event(EPropertyEvent::data_edited);
-    }
+    // whatever happens.. because we don't really know the default values
+    post_cproperty_event(EPropertyEvent::data_edited);
+    m_value = value;
   }
 
 #ifndef DISABLE_CP_IMGUI_WIDGETS
@@ -187,38 +185,31 @@ public:
 
   void u64(uint64_t value)
   {
-    if (value != m_value.u64)
-    {
-      m_value.u64 = value;
-      post_cproperty_event(EPropertyEvent::data_edited);
-    }
+    // whatever happens.. because we don't really know the default values
+    post_cproperty_event(EPropertyEvent::data_edited);
+    m_value.u64 = value;
+
   }
 
   void u32(uint32_t value)
   {
-    if (value != m_value.u32)
-    {
-      m_value.u32 = value;
-      post_cproperty_event(EPropertyEvent::data_edited);
-    }
+    // whatever happens.. because we don't really know the default values
+    post_cproperty_event(EPropertyEvent::data_edited);
+    m_value.u32 = value;
   }
 
   void u16(uint16_t value)
   {
-    if (value != m_value.u16)
-    {
-      m_value.u16 = value;
-      post_cproperty_event(EPropertyEvent::data_edited);
-    }
+    // whatever happens.. because we don't really know the default values
+    post_cproperty_event(EPropertyEvent::data_edited);
+    m_value.u16 = value;
   }
 
   void u8(uint8_t value)
   {
-    if (value != m_value.u8)
-    {
-      m_value.u8 = value;
-      post_cproperty_event(EPropertyEvent::data_edited);
-    }
+    // whatever happens.. because we don't really know the default values
+    post_cproperty_event(EPropertyEvent::data_edited);
+    m_value.u8 = value;
   }
 
   // overrides
@@ -301,11 +292,9 @@ public:
 
   void set_value(float value)
   {
-    if (value != m_value)
-    {
-      m_value = value;
-      post_cproperty_event(EPropertyEvent::data_edited);
-    }
+    // whatever happens.. because we don't really know the default values
+    post_cproperty_event(EPropertyEvent::data_edited);
+    m_value = value;
   }
 
   bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
@@ -790,13 +779,20 @@ public:
 
 public:
 
-  bool has_default_value() const override { return m_bp_index == 0; }
+  bool has_default_value() const override
+  {
+    // disabled: we don't know them.. let's find out later if it's dumpable or not
+    return false;
+    //return m_bp_index == 0;
+  }
 
   CSysName value_name() const { return m_val_name; }
 
   // returns true if name exists
   bool set_value_by_name(CSysName name)
   {
+    // whatever happens.. because we don't really know the default values
+    post_cproperty_event(EPropertyEvent::data_edited);
     if (name != m_val_name)
     {
       auto& enum_members = *m_p_enum_members;
@@ -806,7 +802,6 @@ public:
         {
           m_bp_index = (uint32_t)i;
           m_val_name = name;
-          post_cproperty_event(EPropertyEvent::data_edited);
           return true;
         }
       }
@@ -1059,6 +1054,7 @@ public:
 
 class CHandleProperty
   : public CProperty
+  , public CObjectListener
 {
 protected:
   CSysName m_base_ctypename;
@@ -1087,6 +1083,10 @@ public:
   {
     if (!new_obj) // no!
       return;
+    if (m_obj)
+      m_obj->remove_listener(this);
+    new_obj->add_listener(this);
+    // assign
     m_obj = new_obj;
   }
 
@@ -1131,6 +1131,11 @@ public:
   }
 
 #endif
+
+  void on_cobject_event(const CObject& obj, EObjectEvent evt) override
+  {
+    post_cproperty_event(EPropertyEvent::data_edited);
+  }
 };
 
 //------------------------------------------------------------------------------

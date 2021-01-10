@@ -65,7 +65,7 @@ public:
 
 
 protected:
-  bool load_stree(std::filesystem::path path);
+  bool load_stree(std::filesystem::path path, bool dump_decompressed_data=false);
   bool save_stree(std::filesystem::path path, bool dump_decompressed_data=false, bool ps4_weird_format=false);
 
 public:
@@ -73,10 +73,10 @@ public:
   // this is because although the order of the CProperties isn't important for the game
   // we don't want to keep the initial order for each object but rely on a standardized one (blueprint db)
   // the one the game uses
-  bool open_with_progress(std::filesystem::path path, progress_t& progress, bool test=true)
+  bool open_with_progress(std::filesystem::path path, progress_t& progress, bool dump_decompressed_data=false, bool test=true)
   {
     progress.value = 0.00f;
-    if (!load_stree(path))
+    if (!load_stree(path, dump_decompressed_data))
       return false;
     progress.value = 0.20f;
 
