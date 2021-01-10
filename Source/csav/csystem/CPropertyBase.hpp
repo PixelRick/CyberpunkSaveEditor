@@ -63,7 +63,8 @@ property_kind_to_display_name(EPropertyKind prop_kind)
 
 enum class EPropertyEvent
 {
-  data_modified,
+  data_edited,
+  data_serialized_in
 };
 
 
@@ -78,7 +79,8 @@ class CProperty
 {
   CPropertyOwner* m_owner;
   EPropertyKind m_kind;
-  bool m_is_skippable_in_ser = true;
+  bool m_is_unskippable = false;
+  bool m_is_freshly_constructed = true;
 
 protected:
   CProperty(CPropertyOwner* owner, EPropertyKind kind)
@@ -92,7 +94,12 @@ public:
 
   virtual CSysName ctypename() const = 0;
 
-  bool is_skippable_in_serialization() const { return m_is_skippable_in_ser; }
+  bool is_skippable_in_serialization() const
+  {
+    return !m_is_unskippable && (m_is_freshly_constructed);// || has_default_value());
+  }
+
+  virtual bool has_default_value() const { return false; }
 
   // serialization
 
@@ -104,7 +111,7 @@ public:
   bool serialize_in(std::istream& is, CSystemSerCtx& serctx)
   {
     bool ok = serialize_in_impl(is, serctx);
-    post_cproperty_event(EPropertyEvent::data_modified);
+    post_cproperty_event(EPropertyEvent::data_serialized_in);
     return ok;
   }
 
@@ -127,9 +134,11 @@ public:
 
   [[nodiscard]] bool imgui_widget(const char* label, bool editable)
   {
+    if (is_skippable_in_serialization())
+      ImGui::Text("s");
     bool modified = imgui_widget_impl(label, editable);
     if (modified)
-      post_cproperty_event(EPropertyEvent::data_modified);
+      post_cproperty_event(EPropertyEvent::data_edited);
     return modified;
   }
 
@@ -145,8 +154,16 @@ protected:
   {
     if (m_owner)
       m_owner->on_cproperty_event(*this, evt);
-    if (evt == EPropertyEvent::data_modified)
-      const_cast<CProperty*>(this)->m_is_skippable_in_ser = false;
+    auto nc_this = const_cast<CProperty*>(this);
+    if (evt == EPropertyEvent::data_edited)
+    {
+      nc_this->m_is_freshly_constructed = false;
+      nc_this->m_is_unskippable = false;
+    }
+    else if (evt == EPropertyEvent::data_serialized_in)
+    {
+      nc_this->m_is_unskippable = true;
+    }
   }
 };
 

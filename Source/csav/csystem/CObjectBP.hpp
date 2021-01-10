@@ -10,14 +10,15 @@
 #include <algorithm>
 #include <fmt/format.h>
 #include <utils.hpp>
+#include <nlohmann/json.hpp>
 #include <csav/csystem/fwd.hpp>
 #include <csav/csystem/CPropertyBase.hpp>
 #include <csav/csystem/CPropertyFactory.hpp>
 #include <csav/csystem/CStringPool.hpp>
 
-#define COBJECT_BP_GENERATION 0
+//#define COBJECT_BP_GENERATION
 
-// little tool to retrieve the real order of fields (don't wanna rely on dumps)
+// little tool to retrieve the real order of fields
 class field_order_graph
 {
   std::unordered_map<CSysName, uint16_t> name_to_idx;
@@ -39,6 +40,9 @@ class field_order_graph
   }
 
 public:
+
+  // ok let's CHECK for back edges :)
+
   std::vector<CSysName> topo_sort()
   {
     const uint16_t elts_cnt = (uint16_t)idx_to_name.size();
@@ -49,6 +53,19 @@ public:
     {
       if (!visited[i])
         topo_sort_rec(visited, stack, i);
+    }
+
+    // check that there is no conflicting relation (cycles)
+    std::set<uint16_t> preds;
+    for (auto it = stack.rbegin(); it != stack.rend(); ++it)
+    {
+      auto& adj = adjs[*it];
+      for (auto& a : adj)
+      {
+        if (preds.find(a) != preds.end())
+          throw std::runtime_error("field_order_graph is over constrained, not cool :(");
+        preds.emplace(*it);
+      }
     }
 
     std::vector<CSysName> ret;
@@ -115,6 +132,7 @@ struct CFieldDesc
 
 static_assert(sizeof(CFieldDesc) == sizeof(uint64_t));
 
+
 class CFieldBP
 {
   CFieldDesc m_desc;
@@ -152,11 +170,15 @@ public:
   CObjectBP(CSysName ctypename, const std::vector<CFieldDesc>& fdescs)
     : m_ctypename(ctypename)
   {
+    // let's consider our db orders correct..
+#ifndef COBJECT_BP_GENERATION
+    register_partial_field_descs(fdescs);
+#endif
     for (const auto& fdesc : fdescs)
     {
-      // partial orders may be wrong in the json db,
-      // so let's not use insert_ordered_list
+#ifdef COBJECT_BP_GENERATION
       m_fograph.insert_name(fdesc.name);
+#endif
       // append the field bp
       m_field_bps.emplace_back(fdesc);
     }
@@ -219,7 +241,7 @@ public:
 class CObjectBPList
 {
 private:
-  std::unordered_map<uint32_t, CObjectBPSPtr> m_classmap;
+  std::unordered_map<CSysName, CObjectBPSPtr> m_classmap;
 
   // filtered lists
 
@@ -240,10 +262,10 @@ public:
   // always returns a class, so that unknown ones can be configured
   CObjectBPSPtr get_or_make_bp(CSysName objtype)
   {
-    auto it = m_classmap.find(objtype.idx());
+    auto it = m_classmap.find(objtype);
     if (it != m_classmap.end())
       return it->second;
-    it = m_classmap.emplace(objtype.idx(), std::make_shared<CObjectBP>(objtype)).first;
+    it = m_classmap.emplace(objtype, std::make_shared<CObjectBP>(objtype)).first;
     return it->second;
   }
 };

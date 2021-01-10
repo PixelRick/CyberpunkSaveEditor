@@ -87,6 +87,18 @@ public:
     return nullptr;
   }
 
+  template <typename T>
+  T* get_prop_cast(CSysName field_name) const
+  {
+    // fast enough
+    for (auto& field : m_fields)
+    {
+      if (field.name == field_name)
+        return dynamic_cast<T*>(field.prop.get());
+    }
+    return nullptr;
+  }
+
 protected:
   void clear_fields()
   {

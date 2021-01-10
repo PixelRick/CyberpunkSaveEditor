@@ -67,7 +67,7 @@ public:
     if (m_value != value)
     {
       m_value = value;
-      post_cproperty_event(EPropertyEvent::data_modified);
+      post_cproperty_event(EPropertyEvent::data_edited);
     }
   }
 
@@ -190,7 +190,7 @@ public:
     if (value != m_value.u64)
     {
       m_value.u64 = value;
-      post_cproperty_event(EPropertyEvent::data_modified);
+      post_cproperty_event(EPropertyEvent::data_edited);
     }
   }
 
@@ -199,7 +199,7 @@ public:
     if (value != m_value.u32)
     {
       m_value.u32 = value;
-      post_cproperty_event(EPropertyEvent::data_modified);
+      post_cproperty_event(EPropertyEvent::data_edited);
     }
   }
 
@@ -208,7 +208,7 @@ public:
     if (value != m_value.u16)
     {
       m_value.u16 = value;
-      post_cproperty_event(EPropertyEvent::data_modified);
+      post_cproperty_event(EPropertyEvent::data_edited);
     }
   }
 
@@ -217,7 +217,7 @@ public:
     if (value != m_value.u8)
     {
       m_value.u8 = value;
-      post_cproperty_event(EPropertyEvent::data_modified);
+      post_cproperty_event(EPropertyEvent::data_edited);
     }
   }
 
@@ -296,6 +296,17 @@ public:
     static CSysName sname("Float");
     return sname;
   };
+
+  float value() const { return m_value; }
+
+  void set_value(float value)
+  {
+    if (value != m_value)
+    {
+      m_value = value;
+      post_cproperty_event(EPropertyEvent::data_edited);
+    }
+  }
 
   bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
   {
@@ -484,7 +495,7 @@ public:
 
   void on_cproperty_event(const CProperty& prop, EPropertyEvent evt) override
   {
-    post_cproperty_event(EPropertyEvent::data_modified);
+    post_cproperty_event(evt);
   }
 };
 
@@ -536,7 +547,7 @@ public:
   iterator emplace(const_iterator _where)
   {
     auto it = m_elts.emplace(_where, m_elt_create_fn(this));
-    post_cproperty_event(EPropertyEvent::data_modified);
+    post_cproperty_event(EPropertyEvent::data_edited);
     return it;
   }
 
@@ -665,7 +676,7 @@ public:
 
   void on_cproperty_event(const CProperty& prop, EPropertyEvent evt) override
   {
-    post_cproperty_event(EPropertyEvent::data_modified);
+    post_cproperty_event(evt);
   }
 };
 
@@ -727,7 +738,7 @@ public:
 
   void on_cobject_event(const CObject& prop, EObjectEvent evt) override
   {
-    post_cproperty_event(EPropertyEvent::data_modified);
+    post_cproperty_event(EPropertyEvent::data_edited);
   }
 };
 
@@ -758,6 +769,32 @@ public:
   ~CEnumProperty() override = default;
 
 public:
+
+  bool has_default_value() const override { return m_value == 0; }
+
+  CSysName value_name() const { return m_val_name; }
+
+  // returns true if name exists
+  bool set_value_by_name(CSysName name)
+  {
+    if (name != m_val_name)
+    {
+      auto& enum_members = *m_p_enum_members;
+      for (size_t i = 0; i < enum_members.size(); ++i)
+      {
+        if (CSysName(enum_members[i]) == name)
+        {
+          m_value = (uint32_t)i;
+          m_val_name = name;
+          post_cproperty_event(EPropertyEvent::data_edited);
+          return true;
+        }
+      }
+      return false;
+    }
+    return true;
+  }
+
   // overrides
 
   CSysName ctypename() const override { return m_enum_name; };
@@ -1005,6 +1042,8 @@ protected:
   CSysName m_ctypename;
   CObjectSPtr m_obj;
 
+  uint32_t m_original_handle;
+
 public:
   CHandleProperty(CPropertyOwner* owner, CSysName sub_ctypename)
     : CProperty(owner, EPropertyKind::Handle)
@@ -1034,10 +1073,10 @@ public:
 
   bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
   {
-    uint32_t handle;
-    is >> cbytes_ref(handle);
+    m_original_handle = 0;
+    is >> cbytes_ref(m_original_handle);
 
-    auto new_obj = serctx.from_handle(handle);
+    auto new_obj = serctx.from_handle(m_original_handle);
     set_obj(new_obj);
 
     return new_obj && is.good();
@@ -1045,8 +1084,8 @@ public:
 
   virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
-    uint32_t handle = serctx.to_handle(m_obj);
-    os << cbytes_ref(handle);
+    const_cast<CHandleProperty*>(this)->m_original_handle = serctx.to_handle(m_obj);
+    os << cbytes_ref(m_original_handle);
     return true;
   }
 
@@ -1061,7 +1100,7 @@ public:
     }
     //auto basetype = m_base_ctypename.str();
     auto childtype = m_obj->ctypename().str();
-    ImGui::Text("shared %s", childtype.c_str());
+    ImGui::Text("shared %s (handle:%d)", childtype.c_str(), m_original_handle);
     return m_obj->imgui_widget(label, editable);
   }
 
