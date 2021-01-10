@@ -80,6 +80,10 @@ public:
       return false;
     progress.value = 0.20f;
 
+    progress.comment = "loading game classes definitions";
+    CObjectBPList::get();
+    progress.value = 0.25f;
+
     try_load_node_data_struct(inventory,    "inventory"                           , progress, 0.30f, test);
     try_load_node_data_struct(chtrcustom,   "CharacetrCustomization_Appearances"  , progress, 0.35f, test);
 

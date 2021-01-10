@@ -256,8 +256,8 @@ public:
       }
     }
 
-    if (!m_blueprint->register_partial_field_descs(field_descs))
-      return false;
+    //if (!m_blueprint->register_partial_field_descs(field_descs))
+    //  return false;
 
     reset_fields_from_bp();
 

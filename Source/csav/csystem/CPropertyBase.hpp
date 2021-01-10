@@ -96,7 +96,7 @@ public:
 
   bool is_skippable_in_serialization() const
   {
-    return !m_is_unskippable && (m_is_freshly_constructed);// || has_default_value());
+    return !m_is_unskippable && (m_is_freshly_constructed || has_default_value());
   }
 
   virtual bool has_default_value() const { return false; }

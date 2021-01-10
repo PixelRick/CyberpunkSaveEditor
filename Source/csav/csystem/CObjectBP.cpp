@@ -18,6 +18,66 @@ void from_json(const nlohmann::json& j, CFieldDesc& p)
   p.ctypename = CSysName(j.at("ctypename").get<std::string>());
 }
 
+/* example:
+"AIMeleeAttackCommand": {
+  "ctypename": "AIMeleeAttackCommand",
+  "parent": "AICombatRelatedCommand",
+  "props": [
+    {
+      "ctypename": "NodeRef",
+      "name": "targetOverrideNodeRef"
+    },
+    {
+      "ctypename": "gameEntityReference",
+      "name": "targetOverridePuppetRef"
+    },
+    {
+      "ctypename": "Float",
+      "name": "duration"
+    }
+  ]
+},
+
+*/
+
+
+// isn't safe against circular dependencies.. but shouldn't happen anyway
+CObjectBPSPtr read_class_bp(std::unordered_map<CSysName, CObjectBPSPtr>& classmap, nlohmann::json& j, nlohmann::json::iterator j_it)
+{
+  CSysName ctypename(j_it.key());
+
+  auto it = classmap.find(ctypename);
+  if (it != classmap.end())
+    return it->second;
+
+  auto& cdef = j_it.value();
+
+  CObjectBPSPtr parent = nullptr;
+  if (cdef.find("parent") != cdef.end())
+  {
+    auto parent_name = cdef["parent"].get<std::string>();
+    auto parent_it = j.find(parent_name);
+    if (parent_it == j.end())
+    {
+      auto err = fmt::format("Incomplete DB, {} is missing parent def {}", ctypename.str(), parent_name);
+      MessageBoxA(0, err.c_str(), "CObjectBPList Error", 0);
+      throw std::runtime_error(err);
+    }
+    parent = read_class_bp(classmap, j, parent_it);
+  }
+
+  std::vector<CFieldDesc> fdescs;
+  cdef["props"].get_to(fdescs);
+
+  auto new_bp = std::make_shared<CObjectBP>(ctypename, parent, fdescs);
+  if (parent)
+    parent->add_child(new_bp);
+
+  classmap.emplace(ctypename, new_bp);
+
+  return new_bp;
+}
+
 
 CObjectBPList::CObjectBPList()
 {
@@ -31,11 +91,7 @@ CObjectBPList::CObjectBPList()
       ifs >> db;
       for (nlohmann::json::iterator it = db.begin(); it != db.end(); ++it)
       {
-        auto fields = it.value();
-        std::vector<CFieldDesc> fdescs;
-        it.value().get_to(fdescs);
-        auto bp = std::make_shared<CObjectBP>(CSysName(it.key()), fdescs);
-        m_classmap.emplace(CSysName(it.key()), bp);
+        read_class_bp(m_classmap, db, it);
       }
     }
     catch (std::exception& e)
@@ -54,37 +110,4 @@ CObjectBPList::CObjectBPList()
 
 CObjectBPList::~CObjectBPList()
 {
-#ifdef COBJECT_BP_GENERATION
-  std::ofstream ofs;
-  ofs.open("db/CObjectBPs.json");
-  if (ofs.is_open())
-  {
-    try
-    {
-      nlohmann::json db;
-      for (auto& it : m_classmap)
-      {
-        const auto& bp = it.second;
-        nlohmann::json jbp;
-        std::vector<CFieldDesc> fdescs;
-        for (auto& field : it.second->field_bps())
-          fdescs.emplace_back(field.name(), field.ctypename());
-        db[bp->ctypename().str()] = fdescs;
-      }
-
-      ofs << db.dump(2);
-    }
-    catch (std::exception& e)
-    {
-      std::wostringstream oss;
-      oss << L"error occurred during db/CObjectBPs.json update:" << std::endl;
-      oss << e.what();
-      MessageBox(0, oss.str().c_str(), L"couldn't update resource file", 0);
-    }
-  }
-  else
-  {
-    MessageBox(0, L"db/CObjectBPs.json couldn't be updated", L"couldn't open resource file", 0);
-  }
-#endif
 }

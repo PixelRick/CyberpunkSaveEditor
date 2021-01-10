@@ -144,7 +144,7 @@ public:
 
 public:
   
-  static size_t int_size(EIntKind int_kind)
+  static inline size_t int_size(EIntKind int_kind)
   {
     switch (int_kind)
     {
@@ -161,7 +161,7 @@ public:
     throw std::domain_error("unknown EIntKind");
   }
 
-  static std::string int_ctypename(EIntKind int_kind)
+  static inline std::string int_ctypename(EIntKind int_kind)
   {
     switch (int_kind)
     {
@@ -846,6 +846,9 @@ public:
 
   virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
+    if (m_val_name == "<no_zero_name>")
+      throw std::logic_error("enum value must be skipped, 0 has no name");
+
     uint16_t strpool_idx = serctx.strpool.to_idx(m_val_name.str());
     os << cbytes_ref(strpool_idx);
     return true;
@@ -1070,8 +1073,8 @@ public:
     , m_base_ctypename(sub_ctypename)
     , m_ctypename(std::string("handle:") + m_base_ctypename.str())
   {
-    // dangerous, could infinite loop.. but also dangerous to have a nullptr here atm
-    m_obj = std::make_shared<CObject>(m_base_ctypename);
+    // let's not infinite loop...
+    m_obj = nullptr; //std::make_shared<CObject>(m_base_ctypename);
   }
 
   ~CHandleProperty() override = default;
@@ -1104,6 +1107,9 @@ public:
 
   virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
+    if (!m_obj)
+      throw std::runtime_error("can't serialize_out a null handle");
+
     const_cast<CHandleProperty*>(this)->m_original_handle = serctx.to_handle(m_obj);
     os << cbytes_ref(m_original_handle);
     return true;
@@ -1115,7 +1121,7 @@ public:
   {
     if (!m_obj)
     {
-      ImGui::Text("error: dead handle.");
+      ImGui::Text("null handle");
       return false;
     }
     //auto basetype = m_base_ctypename.str();
