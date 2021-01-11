@@ -166,8 +166,10 @@ public:
   {
     size_t start_pos = (size_t)reader.tellg();
 
+    m_ids.clear();
     m_u32_array.clear();
     m_objects.clear();
+    m_handle_objects.clear();
 
     // let's get our header start position
     auto blob_spos = reader.tellg();
@@ -260,6 +262,7 @@ public:
       return false;
 
     // prepare default initialized objects
+    m_serctx.m_objects.clear();
     m_serctx.m_objects.reserve(obj_descs.size());
     for (auto it = obj_descs.begin(); it != obj_descs.end(); ++it)
     {
