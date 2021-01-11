@@ -144,7 +144,7 @@ public:
   {
     //if (imgui_show_skipped && is_skippable_in_serialization())
     //  ImGui::Text("(default, may be skipped during serialization)");
-    if (has_construction_value())
+    if (has_construction_value() && !m_is_unskippable)
       ImGui::Text("unknown default value: won't be serialized until you edit it");
     bool modified = imgui_widget_impl(label, editable);
     if (modified)
