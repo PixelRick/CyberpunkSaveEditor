@@ -28,7 +28,7 @@ struct TweakDBID
       uint8_t uk[2];
       uint8_t _pad;
     };
-    uint64_t as_u64;
+    uint64_t as_u64 = 0;
   };
 
   TweakDBID() = default;

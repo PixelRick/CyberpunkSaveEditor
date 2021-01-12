@@ -46,7 +46,9 @@ struct CItemID
   uk_thing uk;
 
   CItemID()
-    : nameid(), uk() {}
+    : nameid(), uk()
+  {
+  }
 
   friend std::istream& operator>>(std::istream& reader, CItemID& iid)
   {
@@ -73,67 +75,104 @@ struct CItemID
   }
 };
 
+struct CUk0ID
+{
+  TweakDBID nameid;
+  uint32_t uk0 = 0;
+  float weird_float = FLT_MAX;
+
+  CUk0ID()
+    : nameid()
+  {
+  }
+
+  bool serialize_in(std::istream& reader, const csav_version& ver)
+  {
+    reader >> cbytes_ref(nameid.as_u64);
+    reader >> cbytes_ref(uk0);
+    reader >> cbytes_ref(weird_float);
+    return true;
+  }
+
+  bool serialize_out(std::ostream& writer, const csav_version& ver) const
+  {
+    writer << cbytes_ref(nameid.as_u64);
+    writer << cbytes_ref(uk0);
+    writer << cbytes_ref(weird_float);
+    return true;
+  }
+
+  std::string name() const
+  {
+    return nameid.name();
+  }
+
+  std::string shortname() const
+  {
+    return nameid.name();
+  }
+};
+
 #pragma pack(pop)
 
 struct CItemMod // for CItemData kind 0, 2
 {
   CItemID iid;
-  char uk0[256];
-  TweakDBID uk1;
+  char cn0[256];
+  TweakDBID tdbid1;
   std::list<CItemMod> subs;
   uint32_t uk2 = 0;
 
-  TweakDBID uk3;       //
-  uint32_t uk4 = 0;    // is read as a whole
-  float uk5 = FLT_MAX; //
+  CUk0ID uk3;
 
   CItemMod()
-    : iid(), uk1(), uk3()
+    : iid(), tdbid1(), uk3()
   {
-    std::fill(uk0, uk0 + sizeof(uk0), 0);
+    std::fill(cn0, cn0 + sizeof(cn0), 0);
   }
 
-  friend std::istream& operator>>(std::istream& reader, CItemMod& d2)
+  bool serialize_in(std::istream& reader, const csav_version& ver)
   {
-    reader >> d2.iid;
+    reader >> iid;
 
     std::string s;
     reader >> cp_plstring_ref(s);
-    strcpy_s(d2.uk0, s.c_str());
-    reader >> d2.uk1;
+    strcpy_s(cn0, s.c_str());
+    reader >> tdbid1;
 
     size_t cnt = 0;
     reader >> cp_packedint_ref((int64_t&)cnt);
-    d2.subs.resize(cnt);
-    for (auto& sub : d2.subs)
-      reader >> sub;
+    subs.resize(cnt);
+    for (auto& sub : subs)
+      sub.serialize_in(reader, ver);
 
-    reader >> cbytes_ref(d2.uk2);
-    reader >> d2.uk3;
-    reader >> cbytes_ref(d2.uk4);
-    reader >> cbytes_ref(d2.uk5);
-    return reader;
+    reader >> cbytes_ref(uk2);
+
+    if (ver.v1 >= 192)
+      uk3.serialize_in(reader, ver);
+    
+    return true;
   }
 
-  friend std::ostream& operator<<(std::ostream& writer, const CItemMod& d2)
+  bool serialize_out(std::ostream& writer, const csav_version& ver) const
   {
-    writer << d2.iid;
+    writer << iid;
 
-    std::string s = d2.uk0;
+    std::string s = cn0;
     writer << cp_plstring_ref(s);
-    writer << d2.uk1;
+    writer << tdbid1;
 
-    const size_t cnt = d2.subs.size();
+    const size_t cnt = subs.size();
     writer << cp_packedint_ref((int64_t&)cnt);
-    for (auto& sub : d2.subs)
-      writer << sub;
+    for (auto& sub : subs)
+      sub.serialize_out(writer, ver);
 
-    writer << cbytes_ref(d2.uk2);
-    writer << d2.uk3;
-    writer << cbytes_ref(d2.uk4);
-    writer << cbytes_ref(d2.uk5);
+    writer << cbytes_ref(uk2);
 
-    return writer;
+    if (ver.v1 >= 192)
+      uk3.serialize_out(writer, ver);
+
+    return true;
   }
 };
 
@@ -148,20 +187,16 @@ struct CItemData
 
   CItemID iid;
 
-  uint8_t  uk0_012 = 0;
+  uint8_t  flags = 0;
   uint32_t uk1_012 = 0;
 
   // kind 0,1 stuff
-  uint32_t uk2_01 = 0;
+  uint32_t quantity = 0;
 
   // kind 0,2 stuff
-  TweakDBID uk3_02;    //
-  uint32_t uk4_02 = 0; // is read as a whole
-  float uk5_02 = 0; //
+  CUk0ID uk3;
 
   CItemMod root2;
-
-  csav_version ver;
 
   std::string node_name() const override { return "itemData"; }
 
@@ -174,18 +209,20 @@ struct CItemData
     reader >> iid;
     auto kind = iid.uk.kind();
 
-    reader >> cbytes_ref(uk0_012);
+    reader >> cbytes_ref(flags);
     reader >> cbytes_ref(uk1_012);
 
     if (kind != 2)
-      reader >> cbytes_ref(uk2_01);
+      reader >> cbytes_ref(quantity);
 
     if (kind != 1)
     {
-      reader >> uk3_02;
-      reader >> cbytes_ref(uk4_02);
-      reader >> cbytes_ref(uk5_02);
-      reader >> root2;
+      // uk0id
+      if (!uk3.serialize_in(reader, version))
+        return false;
+      // recursive
+      if (!root2.serialize_in(reader, version))
+        return false;
     }
 
     return true;
@@ -197,18 +234,16 @@ struct CItemData
     writer << iid;
     auto kind = iid.uk.kind();
 
-    writer << cbytes_ref(uk0_012);
+    writer << cbytes_ref(flags);
     writer << cbytes_ref(uk1_012);
 
     if (kind != 2)
-      writer << cbytes_ref(uk2_01);
+      writer << cbytes_ref(quantity);
 
     if (kind != 1)
     {
-      writer << uk3_02;
-      writer << cbytes_ref(uk4_02);
-      writer << cbytes_ref(uk5_02);
-      writer << root2;
+      uk3.serialize_out(writer, version);
+      root2.serialize_out(writer, version);
     }
 
     return writer.finalize(node_name());

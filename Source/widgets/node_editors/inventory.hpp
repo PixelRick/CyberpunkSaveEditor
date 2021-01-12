@@ -45,7 +45,7 @@ struct CInventory_widget
           item_data.iid.nameid.as_u64 = 0x1859EA0850; // Alcohol6
           item_data.iid.uk.uk4 = 2;
           item_data.uk1_012 = 0x213ACD;
-          item_data.uk2_01 = 1; // quantity
+          item_data.quantity = 1; // quantity
           subinv.items.insert(subinv.items.begin(), 1, item_data);
           modified = true;
         }

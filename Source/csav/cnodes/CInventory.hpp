@@ -57,6 +57,9 @@ struct CInventory
 
           if (!entry.from_node(item_node, version))
             return false;
+
+          if (!reader.good())
+            return false;
         }
       }
     }

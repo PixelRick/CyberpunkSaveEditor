@@ -55,6 +55,23 @@ struct CItemID_widget
   }
 };
 
+struct CUk0ID_widget
+{
+  // returns true if content has been edited
+  [[nodiscard]] static inline bool draw(CUk0ID& x)
+  {
+    scoped_imgui_id _sii(&x);
+    bool modified = false;
+
+    modified |= TweakDBID_widget::draw(x.nameid, "uk3.name");
+    modified |= ImGui::InputScalar("uk3.uk0 (u32 hex)##uk4",   ImGuiDataType_U32, &x.uk0, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+    //modified |= ImGui::InputScalar("field u32 (hex)##uk5",   ImGuiDataType_U32, &item.uk5, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+    modified |= ImGui::InputFloat("uk3.weird_float ##uk5", &x.weird_float, NULL, NULL, "%.4e");
+
+    return modified;
+  }
+};
+
 struct CItemMod_widget
 {
   // returns true if content has been edited
@@ -90,19 +107,15 @@ struct CItemMod_widget
       //  default: break;
       //}
 
-      ImGui::InputText("unknown string", item.uk0, sizeof(item.uk0));
+      ImGui::InputText("unknown string", item.cn0, sizeof(item.cn0));
 
       modified |= ImGui::InputScalar("field u32 (hex)##uk2",   ImGuiDataType_U32, &item.uk2, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
 
-      modified |= TweakDBID_widget::draw(item.uk3, "uk3 name");
-
-      modified |= ImGui::InputScalar("field u32 (hex)##uk4",   ImGuiDataType_U32, &item.uk4, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
-      //modified |= ImGui::InputScalar("field u32 (hex)##uk5",   ImGuiDataType_U32, &item.uk5, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
-      modified |= ImGui::InputFloat("field float##uk5", &item.uk5, NULL, NULL, "%.4e");
+      modified |= CUk0ID_widget::draw(item.uk3);
 
       ImGui::TableNextColumn();
 
-      modified |= TweakDBID_widget::draw(item.uk1, "attachment slot name", TweakDBIDCategory::Attachment);
+      modified |= TweakDBID_widget::draw(item.tdbid1, "attachment slot name", TweakDBIDCategory::Attachment);
 
       ImGui::Text("slots/modifiers:");
 
@@ -144,7 +157,7 @@ struct CItemData_widget
 
       modified |= CItemID_widget::draw(item.iid, false);
 
-      int flgs = item.uk0_012;
+      int flgs = item.flags;
       modified |= ImGui::CheckboxFlags("Quest Item", &flgs, 1);
       modified |= ImGui::CheckboxFlags("Special Item", &flgs, 2);
       modified |= ImGui::CheckboxFlags("Special Item (PS4)", &flgs, 4);
@@ -156,10 +169,10 @@ struct CItemData_widget
 
       if (kind != 2)
       {
-        modified |= ImGui::InputScalar("Quantity##uk2", ImGuiDataType_U32, &item.uk2_01, NULL, NULL);
+        modified |= ImGui::InputScalar("Quantity##uk2", ImGuiDataType_U32, &item.quantity, NULL, NULL);
       }
 
-      modified |= ImGui::InputScalar("flags (hex)##uk0", ImGuiDataType_U8 , &item.uk0_012, NULL, NULL, "%02X", ImGuiInputTextFlags_CharsHexadecimal);
+      modified |= ImGui::InputScalar("flags (hex)##uk0", ImGuiDataType_U8 , &item.flags, NULL, NULL, "%02X", ImGuiInputTextFlags_CharsHexadecimal);
       modified |= ImGui::InputScalar("unknown u32 (hex)##uk1", ImGuiDataType_U32, &item.uk1_012, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
 
 
@@ -206,7 +219,7 @@ struct CItemData_widget
         }
         else
         {
-          item.uk3_02.as_u64 = 0x14951C01A5;
+          item.uk3.nameid.as_u64 = 0x14951C01A5;
         }
       }
 
@@ -234,9 +247,7 @@ struct CItemData_widget
 
       if (kind != 1)
       {
-        modified |= TweakDBID_widget::draw(item.uk3_02, "unknown name");
-        modified |= ImGui::InputScalar("field u32 (hex)##uk4", ImGuiDataType_U32, &item.uk4_02, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
-        modified |= ImGui::InputFloat("field float##uk5", &item.uk5_02, NULL, NULL, "%.4e");
+        modified |= CUk0ID_widget::draw(item.uk3);
 
         if (ImGui::SmallButton("clear mods"))
         {
