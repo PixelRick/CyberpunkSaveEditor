@@ -161,7 +161,7 @@ struct CItemData_widget
       modified |= ImGui::CheckboxFlags("Quest Item", &flgs, 1);
       modified |= ImGui::CheckboxFlags("Special Item", &flgs, 2);
       modified |= ImGui::CheckboxFlags("Special Item (PS4)", &flgs, 4);
-      item.uk0_012 = (uint8_t)flgs;
+      item.flags = (uint8_t)flgs;
 
 
       unsigned kind = item.iid.uk.kind();
