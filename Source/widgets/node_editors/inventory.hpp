@@ -26,8 +26,17 @@ struct CInventory_widget
 
 
       std::string inv_label = "V's bag";
-      if (subinv.uid != 1)
-        inv_label = fmt::format("inventory_{:016X}", subinv.uid);
+      switch (subinv.uid)
+      {
+        case 1: break;
+        case 0x00000000000F4240: inv_label = "Car Stash"; break;
+        case 0x38E8D0C9F9A087AE: inv_label = "Nomade Stash"; break;
+        case 0x6E48C594562422DE: inv_label = "Judy's Stash"; break;
+        case 0x7901DE03D136A5AF: inv_label = "V's Wardrobe"; break;
+        case 0xEDAD8C9B086A615E: inv_label = "River's Stash"; break;
+        default:
+          inv_label = fmt::format("inventory_{:016X}", subinv.uid);break;
+      }
 
       if (ImGui::TreeNodeBehavior(row_id, ImGuiTreeNodeFlags_Framed, inv_label.c_str()))
       {
