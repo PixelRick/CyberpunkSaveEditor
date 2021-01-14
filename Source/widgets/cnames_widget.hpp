@@ -24,7 +24,7 @@ struct TweakDBID_widget
     int item_current = 0;
 
     ItemGetterData data {x.name(), namelist};
-    ImGui::BetterCombo(label, &item_current, &ItemGetter, (void*)&data, (int)namelist.size()+1, 0);
+    ImGui::BetterCombo(label, &item_current, &ItemGetter, (void*)&data, (int)namelist.size()+1);
 
     if (item_current != 0)
     {
@@ -61,7 +61,19 @@ struct TweakDBID_widget
     if (n == 0)
       *out_str = dataref.cur_name.c_str();
     else
-      *out_str = dataref.namelist[n-1].c_str();
+    {
+      auto& s = dataref.namelist[n-1];
+      auto cs = s.c_str();
+
+      if (s.rfind("Items.", 0) == 0)
+        *out_str = cs + 6;
+      else if (s.rfind("AttachmentSlots.", 0) == 0)
+        *out_str = cs + 16;
+      else if (s.rfind("Vehicle.", 0) == 0)
+        *out_str = cs + 8;
+      else
+        *out_str = cs;
+    }
     return true;
   }
 };
@@ -81,7 +93,7 @@ struct CName_widget
     int item_current = 0;
 
     const auto& curname = x.name();
-    ImGui::BetterCombo(label, &item_current, &ItemGetter, (void*)curname.c_str(), (int)namelist.size()+1, 0);
+    ImGui::BetterCombo(label, &item_current, &ItemGetter, (void*)curname.c_str(), (int)namelist.size()+1);
 
     if (item_current != 0)
     {

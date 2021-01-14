@@ -872,7 +872,7 @@ public:
       ImGui::Text(fmt::format("unknown enum value %d", current_item).c_str());
 
     if (editable)
-      ImGui::Combo(label, &current_item, &enum_name_getter, (void*)&enum_members, (int)enum_members.size());
+      ImGui::BetterCombo(label, &current_item, &enum_name_getter, (void*)&enum_members, (int)enum_members.size());
     else
       ImGui::Text("%s: %s::%s", label, m_enum_name.str().c_str(), current_enum_name);
     

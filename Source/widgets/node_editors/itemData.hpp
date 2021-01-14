@@ -63,7 +63,7 @@ struct CUk0ID_widget
     scoped_imgui_id _sii(&x);
     bool modified = false;
 
-    modified |= TweakDBID_widget::draw(x.nameid, "uk3.name");
+    modified |= TweakDBID_widget::draw(x.nameid, "uk3.name", TweakDBIDCategory::Item);
     modified |= ImGui::InputScalar("uk3.uk0 (u32 hex)##uk4",   ImGuiDataType_U32, &x.uk0, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
     //modified |= ImGui::InputScalar("field u32 (hex)##uk5",   ImGuiDataType_U32, &item.uk5, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
     modified |= ImGui::InputFloat("uk3.weird_float ##uk5", &x.weird_float, NULL, NULL, "%.4e");
