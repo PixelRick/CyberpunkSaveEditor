@@ -47,7 +47,7 @@ protected:
 public:
 	CPSEApp()
 	{
-		m_wndname = L"Cyberpunk 2077\u2122 Save Editor v0.5.3-alpha.2 (CP_v1.06)";
+		m_wndname = L"Cyberpunk 2077\u2122 Save Editor v0.5.4-alpha (CP_v1.06)";
 		m_display_width = 1600;
 		m_display_height = 900;
 	}
