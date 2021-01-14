@@ -33,6 +33,11 @@ struct TweakDBID
 
   TweakDBID() = default;
 
+  explicit TweakDBID(uint64_t u64)
+  {
+    as_u64 = u64;
+  }
+
   explicit TweakDBID(std::string_view name)
   {
     as_u64 = 0;
@@ -61,6 +66,7 @@ enum class TweakDBIDCategory
   All,
   Item,
   Attachment,
+  Vehicle,
   Unknown,
 };
 
@@ -77,6 +83,7 @@ class TweakDBIDResolver
 
   std::vector<std::string> s_item_list;
   std::vector<std::string> s_attachment_list;
+  std::vector<std::string> s_vehicle_list;
   std::vector<std::string> s_unknown_list;
 
   TweakDBIDResolver();
@@ -118,6 +125,7 @@ public:
       case TweakDBIDCategory::All:          return s_full_list;
       case TweakDBIDCategory::Item:         return s_item_list;
       case TweakDBIDCategory::Attachment:   return s_attachment_list;
+      case TweakDBIDCategory::Vehicle:      return s_vehicle_list;
       default: break;
     }
     return s_unknown_list;

@@ -13,6 +13,9 @@ struct CInventory_widget
   // returns true if content has been edited
   [[nodiscard]] static inline bool draw(CInventory& inv, CStats* stats=nullptr)
   {
+    if (!inv.has_valid_data)
+      ImGui::Text("has invalid data");
+
     ImGui::BeginChild("##inventory_editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings);
     //scoped_imgui_id _sii("##inventory_editor");
     bool modified = false;

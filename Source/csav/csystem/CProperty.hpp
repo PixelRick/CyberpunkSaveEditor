@@ -894,7 +894,7 @@ public:
 class CTweakDBIDProperty
   : public CProperty
 {
-protected:
+public:
   TweakDBID m_id = {};
 
 public:

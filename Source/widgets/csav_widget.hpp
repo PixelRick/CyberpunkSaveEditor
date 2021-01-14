@@ -413,6 +413,9 @@ public:
 
   bool modified = false; // unused atm, this pending save feature needs refactoring
 
+  TweakDBID vehicle_tdbid { 0x0000001B4E8371E1 };
+  std::string result_str = "err";
+
   void draw_content()
   {
     // Expose a couple of the available flags. In most cases you may just call BeginTabBar() with no flags (0).
@@ -427,6 +430,45 @@ public:
     {
       //if (ImGui::TabItemButton("  +  ", ImGuiTabItemFlags_Leading | ImGuiTabItemFlags_NoTooltip) && !open_job.is_running())
       //  open_dialog.Open();
+
+      if (ImGui::BeginTabItem("Fun Stuff", 0, ImGuiTabItemFlags_None))
+      {
+        ImGui::BeginChild("current editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
+        
+        ImGui::Separator();
+        ImGui::Text("Change all your already spawned vehicles (near you):");
+        
+        ImGui::SetNextItemWidth(300.f);
+        std::ignore = TweakDBID_widget::draw(vehicle_tdbid, "##vehicle", TweakDBIDCategory::Vehicle, false);
+        ImGui::SameLine();
+        if (ImGui::Button("APPLY"))
+        {
+          bool res = m_csav->psdata.replace_spawned_vehicles(vehicle_tdbid);
+          result_str = res ? "     success :)     " : "failed :( please open an issue.";
+          ImGui::OpenPopup("Result##RESULT");
+        }
+        ImGui::Text("This is the only known way for ps4 players to access forbidden vehicles");
+
+        // Always center this window when appearing
+        ImVec2 center(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.5f);
+        ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+        if (ImGui::BeginPopupModal("Result##RESULT", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove))
+        {
+          ImGui::Text(result_str.c_str());
+          ImGui::Separator();
+          if (ImGui::Button("OK", ImVec2(ImGui::GetContentRegionAvail().x, 0)))
+            ImGui::CloseCurrentPopup();
+          ImGui::EndPopup();
+        }
+
+        ImGui::Separator();
+        ImGui::Text("...");
+
+        ImGui::EndChild();
+        ImGui::EndTabItem();
+      }
+
 
       if (ImGui::BeginTabItem("Inventories", 0, ImGuiTabItemFlags_None))
       {
@@ -477,7 +519,7 @@ public:
         if (ImGui::BeginTabItem("Persistent Data", 0, ImGuiTabItemFlags_None))
         {
           ImGui::BeginChild("current editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
-          modified |= CSystem_widget::draw(m_csav->psdata.system(), &selected_item4);
+          modified |= CPSData_widget::draw(m_csav->psdata, &selected_item4);
           ImGui::EndChild();
           ImGui::EndTabItem();
         }

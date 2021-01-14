@@ -52,6 +52,14 @@ TweakDBIDResolver::TweakDBIDResolver()
           //s_attachment_list.emplace_back(leg_name);
           s_full_list.emplace_back(leg_name);
         }
+        else if (name.rfind("Vehicle.v_", 0) == 0)
+        {
+          s_vehicle_list.emplace_back(name);
+        }
+        else if (name.rfind("Vehicle.av_", 0) == 0)
+        {
+          s_vehicle_list.emplace_back(name);
+        }
         else
         {
           s_unknown_list.emplace_back(name);
@@ -77,10 +85,11 @@ TweakDBIDResolver::TweakDBIDResolver()
     s_tdbid_invmap[id.as_u64] = n;
     s_crc32_invmap[id.crc] = n;
   }
-
+  
   std::sort(s_full_list.begin(), s_full_list.end());
   std::sort(s_item_list.begin(), s_item_list.end());
   std::sort(s_attachment_list.begin(), s_attachment_list.end());
+  std::sort(s_vehicle_list.begin(), s_vehicle_list.end());
   std::sort(s_unknown_list.begin(), s_unknown_list.end());
 }
 

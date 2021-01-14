@@ -13,7 +13,7 @@ struct TweakDBID_widget
   };
 
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(TweakDBID& x, const char* label, TweakDBIDCategory cat = TweakDBIDCategory::All)
+  [[nodiscard]] static inline bool draw(TweakDBID& x, const char* label, TweakDBIDCategory cat = TweakDBIDCategory::All, bool advanced_edit=true)
   {
     scoped_imgui_id _sii(&x);
     bool modified = false;
@@ -32,21 +32,24 @@ struct TweakDBID_widget
       modified = true;
     }
 
-    bool namehash_opened = ImGui::TreeNode("> edit tdbid by value");
-
+    if (advanced_edit)
     {
-      scoped_imgui_style_color _stc(ImGuiCol_Text, ImColor::HSV(0.f, 1.f, 0.7f, 1.f).Value);
-      ImGui::SameLine();
-      ImGui::Text("(TweakDBID's DB is not complete yet !)"); // you can enter its hash manually too meanwhile
-    }
+      bool namehash_opened = ImGui::TreeNode("> edit tdbid by value");
 
-    if (namehash_opened)
-    {
-      modified |= ImGui::InputScalar("crc32(name) hex",  ImGuiDataType_U32, &x.crc, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
-      modified |= ImGui::InputScalar("length(name) hex", ImGuiDataType_U8,  &x.slen,  NULL, NULL, "%02X");
-      modified |= ImGui::InputScalar("raw u64 hex",  ImGuiDataType_U64, &x.as_u64,  NULL, NULL, "%016llX", ImGuiInputTextFlags_CharsHexadecimal);
-      //ImGui::Text("resolved name: %s", x.name().c_str());
-      ImGui::TreePop();
+      {
+        scoped_imgui_style_color _stc(ImGuiCol_Text, ImColor::HSV(0.f, 1.f, 0.7f, 1.f).Value);
+        ImGui::SameLine();
+        ImGui::Text("(TweakDBID's DB is not complete yet !)"); // you can enter its hash manually too meanwhile
+      }
+
+      if (namehash_opened)
+      {
+        modified |= ImGui::InputScalar("crc32(name) hex",  ImGuiDataType_U32, &x.crc, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+        modified |= ImGui::InputScalar("length(name) hex", ImGuiDataType_U8,  &x.slen,  NULL, NULL, "%02X");
+        modified |= ImGui::InputScalar("raw u64 hex",  ImGuiDataType_U64, &x.as_u64,  NULL, NULL, "%016llX", ImGuiInputTextFlags_CharsHexadecimal);
+        //ImGui::Text("resolved name: %s", x.name().c_str());
+        ImGui::TreePop();
+      }
     }
 
     return modified;

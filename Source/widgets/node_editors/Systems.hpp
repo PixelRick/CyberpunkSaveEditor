@@ -121,6 +121,42 @@ struct CSystem_widget
 };
 
 
+// to be used with CSystem struct
+struct CPSData_widget
+{
+  static bool trailing_name_string_getter(void* data, int idx, const char** out)
+  {
+    const auto& tn = *(std::vector<CName>*)data;
+    if (idx < 0 || idx >= tn.size())
+      return false;
+    static std::string dummy_str;
+    dummy_str = tn[idx].str();
+    *out = dummy_str.c_str();
+    return true;
+  }
+
+  // returns true if content has been edited
+  [[nodiscard]] static inline bool draw(CPSData& psdata, int* selected_object)
+  {
+    bool modified = false;
+
+    ImGui::BeginChild("TopList");
+    
+    modified |= psdata.m_vehicleGarageComponentPS->imgui_widget("aa", true);
+    
+    ImGui::EndChild();
+
+    //ImGui::Text("PSData");
+    modified |= CSystem_widget::draw(psdata.system(), selected_object);
+
+    static int selected_dummy = -1;
+    ImGui::ListBox("trailing names", &selected_dummy, &trailing_name_string_getter, (void*)&psdata.trailing_names, (int)psdata.trailing_names.size());
+
+    return modified;
+  }
+};
+
+
 class System_editor
   : public node_editor_widget
 {
@@ -242,27 +278,9 @@ protected:
   int selected_prop = -1;
   int selected_dummy = -1;
 
-  static bool trailing_name_string_getter(void* data, int idx, const char** out)
-  {
-    const auto& tn = *(std::vector<CName>*)data;
-    if (idx < 0 || idx >= tn.size())
-      return false;
-    static std::string dummy_str;
-    dummy_str = tn[idx].str();
-    *out = dummy_str.c_str();
-    return true;
-  }
-
   bool draw_impl(const ImVec2& size) override
   {
-    scoped_imgui_id _sii(this);
-
-    //ImGui::Text("PSData");
-    bool modified = CSystem_widget::draw(m_data.system(), &selected_obj);
-
-    ImGui::ListBox("trailing names", &selected_dummy, &trailing_name_string_getter, (void*)&m_data.trailing_names, (int)m_data.trailing_names.size());
-
-    return modified;
+    return CPSData_widget::draw(m_data, &selected_obj);;
   }
 };
 
