@@ -1,6 +1,8 @@
 # CyberpunkSaveEditor
 A tool to edit Cyberpunk 2077 sav.dat files (join the CP modding discord: https://discord.gg/cp77modding)
 
+![](./basilisks.png)
+
 This is a holidays project and will probably not reach the user-friendly GUI state that a save editor is expected to have.
 
 If you are looking for an intuitive editor, please take a look at the other save editor project made by a group of C# developers on the CP modding discord:
