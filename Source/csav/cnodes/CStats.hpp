@@ -118,7 +118,11 @@ public:
 
   CObjectSPtr add_constant_stats(CProperty* modifiers)
   {
-    return add_new_modifier(modifiers, "gameConstantStatModifierData");
+    auto a = add_new_modifier(modifiers, "gameConstantStatModifierData");
+    a->get_prop_cast<CEnumProperty>("modifierType")->set_value_by_idx(0);
+    a->get_prop_cast<CEnumProperty>("statType")->set_value_by_idx(0);
+    a->get_prop_cast<CFloatProperty>("value")->set_value(1.0f);
+    return a;
   }
 
 public:
