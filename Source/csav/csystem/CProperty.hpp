@@ -791,8 +791,7 @@ public:
   // returns true if name exists
   bool set_value_by_name(CSysName name)
   {
-    // whatever happens.. because we don't really know the default values
-    post_cproperty_event(EPropertyEvent::data_edited);
+    bool success = false;
     if (name != m_val_name)
     {
       auto& enum_members = *m_p_enum_members;
@@ -802,12 +801,29 @@ public:
         {
           m_bp_index = (uint32_t)i;
           m_val_name = name;
-          return true;
+          success = true;
+          break;
         }
       }
-      return false;
     }
-    return true;
+    // whatever happens.. because we don't really know the default values
+    post_cproperty_event(EPropertyEvent::data_edited);
+    return success;
+  }
+
+  bool set_value_by_idx(size_t idx)
+  {
+    bool success = false;
+    auto& enum_members = *m_p_enum_members;
+    if (idx < enum_members.size())
+    {
+      m_bp_index = (uint32_t)idx;
+      m_val_name = CSysName(enum_members[idx]);
+      success = true;
+    }
+    // whatever happens.. because we don't really know the default values
+    post_cproperty_event(EPropertyEvent::data_edited);
+    return success;
   }
 
   // overrides
