@@ -6,9 +6,10 @@
 #include <fstream>
 #include <iomanip>
 
-#include "imgui_extras/imgui_filebrowser.hpp"
-#include "nlohmann/json.hpp"
-#include "fmt/format.h"
+
+#include <nlohmann/json.hpp>
+#include <fmt/format.h>
+#include <imgui_extras/imgui_filebrowser.hpp>
 
 #include "widgets/csav_widget.hpp"
 #include "widgets/node_editors/hexedit.hpp"
@@ -44,6 +45,8 @@ protected:
 
 	archive_test archtest;
 
+	ImFont* font = nullptr;
+
 public:
 	CPSEApp()
 	{
@@ -75,12 +78,13 @@ protected:
 		// - Read 'misc/fonts/README.txt' for more instructions and details.
 		// - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
 		//io.Fonts->AddFontDefault();
-		//io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
 		//io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
 		//io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
 		//io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
 		//ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
 		//IM_ASSERT(font != NULL);
+
+
 	}
 
 	bool load_style()
@@ -158,6 +162,11 @@ protected:
 		static bool imgui_demo = false;
 		static bool imgui_style_editor = false;
 
+		if (font != nullptr)
+		{
+			ImGui::SetCurrentFont(font);
+		}
+
 		ImGui::SetNextWindowPos(ImVec2(0, 0));
 		ImGui::SetNextWindowSize(ImVec2((float)m_display_width, (float)m_display_height));
 
@@ -198,6 +207,8 @@ protected:
 					ImGui::Text("  Khuong");
 					ImGui::Text("  Gibbed");
 					ImGui::Text("  Architect");
+					ImGui::Text("  Expired");
+					ImGui::Text("  Seba842005");
 					ImGui::EndMenu();
 				}
 

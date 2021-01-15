@@ -3,6 +3,60 @@
 #include <AppLib/IApp.hpp>
 #include <imgui_extras/imgui_better_combo.hpp>
 #include <cpinternals/cpnames.hpp>
+#include <cpinternals/CFact.hpp>
+
+namespace UI {
+
+struct WidCFact
+{
+  static inline bool ItemGetter(void* data, int n, const char** out_str)
+  { 
+    static std::string tmp;
+    auto& namelist = CP::CFactResolver::get().sorted_names();
+    if (n == 0)
+      *out_str = (const char*)data;
+    else
+    {
+      tmp = namelist[n-1].str();
+      *out_str = tmp.c_str();
+    }
+    return true;
+  }
+
+  // returns true if content has been edited
+  [[nodiscard]] static inline bool draw(CP::CFact& x)
+  {
+    scoped_imgui_id _sii(&x);
+    bool modified = false;
+
+    auto& namelist = CP::CFactResolver::get().sorted_names();
+
+    // tricky ;)
+    int current_item_idx = 0;
+
+    const auto& curname = x.name();
+    ImGui::SetNextItemWidth(std::min(380.f, ImGui::GetContentRegionAvailWidth() * 0.5f));
+    modified |= ImGui::BetterCombo("name, ", &current_item_idx, &ItemGetter, (void*)curname.str().c_str(), static_cast<int>(namelist.size() + 1));
+
+    if (current_item_idx > 0)
+    {
+      x.name(namelist[static_cast<size_t>(current_item_idx) - 1]);
+      modified = true;
+    }
+
+    ImGui::SameLine();
+
+    uint32_t value = x.value();
+    ImGui::SetNextItemWidth(std::min(80.f, ImGui::GetContentRegionAvailWidth()));
+    modified |= ImGui::InputScalar("value (h32)", ImGuiDataType_U32, &value, nullptr, nullptr, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+    x.value(value);
+
+    return modified;
+  }
+};
+
+} // namespace UI
+
 
 struct TweakDBID_widget
 {

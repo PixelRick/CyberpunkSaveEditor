@@ -7,4 +7,4 @@
 #include <csav/cnodes/CStatsPool.hpp>
 #include <csav/cnodes/CStats.hpp>
 #include <csav/cnodes/CPSData.hpp>
-
+#include <csav/cnodes/questSystem/FactsDB.hpp>

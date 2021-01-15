@@ -146,7 +146,7 @@ inline std::string TweakDBID::name() const
 
 struct CName
 {
-  uint64_t as_u64;
+  uint64_t as_u64 = 0;
 
   CName() = default;
 

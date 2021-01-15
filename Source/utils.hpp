@@ -98,6 +98,22 @@ constexpr uint64_t FNV1a(std::string_view str)
 }
 
 
+constexpr uint32_t FNV1a32(std::string_view str)
+{
+	constexpr uint32_t basis = 0X811C9DC5;
+	constexpr uint32_t prime = 0x01000193;
+
+	uint32_t hash = basis;
+	for (auto c : str)
+	{
+		hash ^= c;
+		hash *= prime;
+	}
+
+	return hash;
+}
+
+
 class span_istreambuf
 	: public std::streambuf
 {

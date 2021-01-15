@@ -16,7 +16,7 @@
 #include <csav/csystem/CPropertyBase.hpp>
 #include <csav/csystem/CPropertyFactory.hpp>
 #include <csav/csystem/CObject.hpp>
-#include <widgets/cnames_widget.hpp>
+#include <widgets/cpinternals.hpp>
 
 //------------------------------------------------------------------------------
 // BOOL

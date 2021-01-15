@@ -6,7 +6,7 @@
 
 namespace ImGui {
 
-	bool BetterCombo(
+	[[nodiscard]] bool BetterCombo(
 		const char* label, int* current_item,
 		bool(*items_getter)(void*, int, const char**), 
 		void* data, int items_count)
@@ -43,7 +43,8 @@ namespace ImGui {
 		if (IsKeyPressed(GetKeyIndex(ImGuiKey_Backspace)))
 		{
 			const size_t i = strnlen(word, 64);
-			word[i-1] = '\0';
+			if (i > 0)
+				word[i-1] = '\0';
 			time_since_last_update = 0.0f;
 			update_keyboard_match = true;
 		}

@@ -72,6 +72,24 @@
     <Filter Include="Source\archive">
       <UniqueIdentifier>{89e4ea18-4d76-4a53-80ae-012759a4f53f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\csav\serializables">
+      <UniqueIdentifier>{47867f42-1189-4be8-8153-e9886488ae84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\csav\cnodes\questSystem">
+      <UniqueIdentifier>{66433453-86b7-49fc-9d9c-f7a4ac698fa0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\csav\cnodes\questSystem\FactsDB">
+      <UniqueIdentifier>{862b7cee-97a5-4697-8906-df53933a6354}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\widgets\cnodes">
+      <UniqueIdentifier>{74d9989d-3c4a-4014-8530-aceed102977c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\widgets\cnodes\questSystem">
+      <UniqueIdentifier>{416f9bde-96d3-4fce-b070-5c0a61e77cef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\widgets\cpinternals">
+      <UniqueIdentifier>{5f787ab9-9632-4b37-a8e2-98bd466bb780}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AppLib\IApp.cpp">
@@ -142,6 +160,9 @@
     </ClCompile>
     <ClCompile Include="Source\archive\archive_test.cpp">
       <Filter>Source\archive</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\cpinternals\CFact.cpp">
+      <Filter>Source\cpinternals</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -251,9 +272,6 @@
       <Filter>Source\imgui_extras</Filter>
     </ClInclude>
     <ClInclude Include="Source\widgets\list_widget.hpp">
-      <Filter>Source\widgets</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\widgets\cnames_widget.hpp">
       <Filter>Source\widgets</Filter>
     </ClInclude>
     <ClInclude Include="Source\widgets\node_editors\Systems.hpp">
@@ -629,6 +647,24 @@
     <ClInclude Include="Source\archive\archive_test.hpp">
       <Filter>Source\archive</Filter>
     </ClInclude>
+    <ClInclude Include="Source\csav\cnodes\questSystem\FactsDB\FactsDB.hpp">
+      <Filter>Source\csav\cnodes\questSystem\FactsDB</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\cnodes\questSystem\FactsDB\FactsTable.hpp">
+      <Filter>Source\csav\cnodes\questSystem\FactsDB</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\CFact.hpp">
+      <Filter>Source\cpinternals</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\widgets\cpinternals.hpp">
+      <Filter>Source\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\widgets\cnodes\questSystem\WidFactsDB.hpp">
+      <Filter>Source\widgets\cnodes\questSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\csav\cnodes\questSystem\FactsDB.hpp">
+      <Filter>Source\csav\cnodes\questSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Resources\CNames.json">
@@ -647,6 +683,9 @@
   <ItemGroup>
     <None Include="Source\external\spdlog\fmt\bundled\LICENSE.rst">
       <Filter>Source\external\spdlog\fmt\bundled</Filter>
+    </None>
+    <None Include="Resources\CFacts.json">
+      <Filter>Resources</Filter>
     </None>
   </ItemGroup>
 </Project>

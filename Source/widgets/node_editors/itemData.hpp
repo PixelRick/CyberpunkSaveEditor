@@ -3,7 +3,7 @@
 #include <AppLib/IApp.hpp>
 #include <csav/cnodes/CItemData.hpp>
 #include <widgets/list_widget.hpp>
-#include <widgets/cnames_widget.hpp>
+#include <widgets/cpinternals.hpp>
 #include "node_editor.hpp"
 
 struct uk_thing_widget

@@ -19,6 +19,10 @@
 #include "cpinternals/cpnames.hpp"
 #include "hexeditor_windows_mgr.hpp"
 #include "node_editors.hpp"
+#include <widgets/cpinternals.hpp>
+// TODO: make package headers..
+#include <widgets/cnodes/questSystem/WidFactsDB.hpp>
+
 
 void ImGui::ShowDemoWindow(bool* p_open);
 
@@ -469,6 +473,13 @@ public:
         ImGui::EndTabItem();
       }
 
+      if (ImGui::BeginTabItem("Facts", 0, ImGuiTabItemFlags_None))
+      {
+        ImGui::BeginChild("current editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings);
+        modified |= UI::WidFactsDB::draw(m_csav->factsdb, "Facts");
+        ImGui::EndChild();
+        ImGui::EndTabItem();
+      }
 
       if (ImGui::BeginTabItem("Inventories", 0, ImGuiTabItemFlags_None))
       {

@@ -33,9 +33,11 @@
     <ClCompile Include="Source\AppLib\imgui_impl_dx11.cpp" />
     <ClCompile Include="Source\AppLib\imgui_impl_win32.cpp" />
     <ClCompile Include="Source\archive\archive_test.cpp" />
+    <ClCompile Include="Source\cpinternals\CFact.cpp" />
     <ClCompile Include="Source\cpinternals\cpenums.cpp" />
     <ClCompile Include="Source\cpinternals\cpnames.cpp" />
     <ClInclude Include="Source\archive\archive_test.hpp" />
+    <ClInclude Include="Source\cpinternals\CFact.hpp" />
     <ClInclude Include="Source\cpinternals\cpenums.hpp" />
     <ClInclude Include="Source\csav\cnodes.hpp" />
     <ClInclude Include="Source\csav\cnodes\CCharacterCustomization.hpp" />
@@ -45,6 +47,8 @@
     <ClInclude Include="Source\csav\cnodes\CStatsPool.hpp" />
     <ClInclude Include="Source\csav\cnodes\CGenericSystem.hpp" />
     <ClInclude Include="Source\csav\cnodes\CPSData.hpp" />
+    <ClInclude Include="Source\csav\cnodes\questSystem\FactsDB.hpp" />
+    <ClInclude Include="Source\csav\cnodes\questSystem\FactsDB\FactsDB.hpp" />
     <ClInclude Include="Source\csav\csav.hpp" />
     <ClInclude Include="Source\csav\serial_tree.hpp" />
     <ClInclude Include="Source\csav\csav_version.hpp" />
@@ -165,12 +169,14 @@
     <ClInclude Include="Source\external\fmt\ranges.h" />
     <ClInclude Include="Source\imgui_extras\cpp_imgui.hpp" />
     <ClInclude Include="Source\imgui_extras\imgui_stdlib.h" />
-    <ClInclude Include="Source\widgets\cnames_widget.hpp" />
+    <ClInclude Include="Source\widgets\cnodes\questSystem\WidFactsDB.hpp" />
+    <ClInclude Include="Source\widgets\cpinternals.hpp" />
     <ClInclude Include="Source\widgets\list_widget.hpp" />
     <ClInclude Include="Source\widgets\node_editors\CharacetrCustomization_Appearances.hpp" />
     <ClInclude Include="Source\widgets\node_editors\StatsSystem.hpp" />
     <ClInclude Include="Source\widgets\node_editors\Systems.hpp" />
     <ClInclude Include="Source\cserialization\csystem\CPropertyBase.hpp" />
+    <ClInclude Include="Source\csav\cnodes\questSystem\FactsDB\FactsTable.hpp" />
     <ClCompile Include="Source\csav\csav.cpp" />
     <ClCompile Include="Source\csav\csystem\CObjectBP.cpp" />
     <ClCompile Include="Source\csav\csystem\CObject.cpp" />
@@ -206,6 +212,9 @@
   <ItemGroup>
     <CopyFileToFolders Include="Resources\CNames.json">
       <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/db</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/db</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/db</DestinationFolders>
     </CopyFileToFolders>
     <CopyFileToFolders Include="Resources\CEnums.json">
       <FileType>Document</FileType>
@@ -220,6 +229,9 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
+    <CopyFileToFolders Include="Resources\CFactsDB.json">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
     <None Include="Source\external\spdlog\fmt\bundled\LICENSE.rst" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
