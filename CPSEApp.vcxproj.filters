@@ -679,13 +679,13 @@
     <CopyFileToFolders Include="Resources\CObjectBPs.json">
       <Filter>Resources</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="Resources\CFactsDB.json">
+      <Filter>Resources</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\external\spdlog\fmt\bundled\LICENSE.rst">
       <Filter>Source\external\spdlog\fmt\bundled</Filter>
-    </None>
-    <None Include="Resources\CFacts.json">
-      <Filter>Resources</Filter>
     </None>
   </ItemGroup>
 </Project>
