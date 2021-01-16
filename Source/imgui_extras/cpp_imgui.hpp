@@ -10,6 +10,48 @@ namespace ImGui
 {
   bool ListBox(std::string_view label, int* current_item, const std::vector<std::string>& items, int height_items = -1);
 
+  template <typename T>
+  struct VectorListBox
+  {
+    using ItemGetterFn = std::function<std::string(const T&)>;
+
+    VectorListBox(ItemGetterFn&& items_getter, const std::vector<T>& items)
+      : fn(std::forward<ItemGetterFn>(items_getter))
+      , items(items)
+    {
+    }
+
+    [[nodiscard]] bool draw(std::string_view label, int* current_item, int height_items = -1)
+    {
+      return ListBox(label.data(), current_item, &items_getter, (void*)this, (int)items.size(), height_items);
+    }
+
+  protected:
+    static inline bool items_getter(void* data, int idx, const char** out_pcstr)
+    {
+      const VectorListBox& vdata = *(const VectorListBox*)data;
+
+      if (idx < 0 || idx > vdata.items.size())
+        return false;
+
+      static std::string tmp;
+      tmp = vdata.fn(vdata.items[(size_t)idx]);
+      *out_pcstr = tmp.c_str();
+      return true;
+    }
+
+    ItemGetterFn fn;
+    const std::vector<T>& items;
+  };
+
+
+  template <typename T>
+  bool ListBox(std::string_view label, int* current_item, typename VectorListBox<T>::ItemGetterFn&& items_getter, const std::vector<T>& items, int height_items = -1)
+  {
+    VectorListBox<T> vlb(std::forward<typename VectorListBox<T>::ItemGetterFn>(items_getter), items);
+    return vlb.draw(label.data(), current_item, height_items);
+  }
+
   // returns true if data has been modified
   template <typename T, typename ItemNameGetFnT,
     std::enable_if_t<

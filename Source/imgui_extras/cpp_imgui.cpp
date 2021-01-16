@@ -15,6 +15,3 @@ bool ImGui::ListBox(std::string_view label, int* current_item, const std::vector
   return ImGui::ListBox(label.data(), current_item, ListBoxVectorGetter, (void*)&items, (int)items.size(), height_items);
 }
 
-
-
-
