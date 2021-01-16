@@ -12,7 +12,7 @@ namespace ImGui {
 		void* data, int items_count)
 	{
 		ImGuiContext& g = *ImGui::GetCurrentContext();
-		const float word_building_delay = 1.0f; // after this many seconds, typing will make a new search
+		const float word_building_delay = 5.0f; // after this many seconds, typing will make a new search
 	
 		const char* preview_value = NULL;
 		if (*current_item >= 0 && *current_item < items_count) {
