@@ -77,6 +77,7 @@ inline bool imgui_list_tree_widget(std::list<T>& l, GetTNameStringFn&& name_fn, 
     bool removed = imgui_close_button(close_button_id, ImVec2(button_x, button_y), height);
     */
     bool removed = false;
+    if (erasable_items)
     {
       //scoped_imgui_id _sii2("#smallremove");
       ImGui::SameLine();

@@ -62,10 +62,10 @@ struct cetr_uk_thing3_widget
 
     bool modified = false;
 
-    modified |= CName_widget::draw(x.cn, "some cname##cetr3");
+    modified |= CName_widget::draw(x.cn, "Entry's CName##cetr3");
 
-    modified |= ImGui::InputText("property value##cetr3", &x.uk0);
-    modified |= ImGui::InputText("property type##cetr3", &x.uk1);
+    modified |= ImGui::InputText("Property Value##cetr3", &x.uk0);
+    modified |= ImGui::InputText("Property Type##cetr3", &x.uk1);
 
     modified |= ImGui::InputScalar("uk_u32_1(hex)##cetr3", ImGuiDataType_U32, &x.uk2, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
     modified |= ImGui::InputScalar("uk_u32_2(hex)##cetr3", ImGuiDataType_U32, &x.uk3, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
@@ -87,16 +87,16 @@ struct cetr_uk_thing2_widget
 
     modified |= ImGui::InputText("name##cetr2", &x.uks);
 
-    if (ImGui::TreeNode("some array #1##cetr2"))
+    if (ImGui::TreeNode("Array #1##cetr2"))
     {
       static auto name_fn = [](const cetr_uk_thing3& y) { return y.cn.name(); };
-      modified |= imgui_list_tree_widget(x.vuk3, name_fn, &cetr_uk_thing3_widget::draw, 0, false, false);
+      modified |= imgui_list_tree_widget(x.vuk3, name_fn, &cetr_uk_thing3_widget::draw, 0, true, true);
       ImGui::TreePop();
     }
-    if (ImGui::TreeNode("some array #2##cetr2"))
+    if (ImGui::TreeNode("Array #2##cetr2"))
     {
       static auto name_fn = [](const cetr_uk_thing4& y) { return y.uk0; };
-      modified |= imgui_list_tree_widget(x.vuk4, name_fn, &cetr_uk_thing4_widget::draw, 0, false, false);
+      modified |= imgui_list_tree_widget(x.vuk4, name_fn, &cetr_uk_thing4_widget::draw, 0, true, true);
       ImGui::TreePop();
     }
 
@@ -107,7 +107,7 @@ struct cetr_uk_thing2_widget
 struct cetr_uk_thing1_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(cetr_uk_thing1& x)
+  [[nodiscard]] static inline bool draw(cetr_uk_thing1& x, bool editable_list = false)
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -116,7 +116,7 @@ struct cetr_uk_thing1_widget
     bool modified = false;
 
     static auto name_fn = [](const cetr_uk_thing2& y) { return y.uks; };
-    modified |= imgui_list_tree_widget(x.vuk2, name_fn, &cetr_uk_thing2_widget::draw);
+    modified |= imgui_list_tree_widget(x.vuk2, name_fn, &cetr_uk_thing2_widget::draw, 0, editable_list, editable_list);
 
     return modified;
   }
@@ -141,36 +141,36 @@ struct CCharacterCustomization_widget
     modified |= ImGui::InputScalar("unknown #2 (02X)##cetr", ImGuiDataType_U8,  &x.uk2, NULL, NULL, "%02X", ImGuiInputTextFlags_CharsHexadecimal);
     modified |= ImGui::InputScalar("unknown #3 (02X)##cetr", ImGuiDataType_U8,  &x.uk3, NULL, NULL, "%02X", ImGuiInputTextFlags_CharsHexadecimal);
 
-    if (ImGui::TreeNode("struct #1##cetr"))
+    if (ImGui::TreeNode("Struct #1##cetr"))
     {
       modified |= cetr_uk_thing1_widget::draw(x.ukt0);
       ImGui::TreePop();
     }
 
-    if (ImGui::TreeNode("struct #2##cetr"))
+    if (ImGui::TreeNode("Struct #2##cetr"))
     {
-      modified |= cetr_uk_thing1_widget::draw(x.ukt1);
+      modified |= cetr_uk_thing1_widget::draw(x.ukt1, true);
       ImGui::TreePop();
     }
 
-    if (ImGui::TreeNode("struct #3##cetr"))
+    if (ImGui::TreeNode("Struct #3##cetr"))
     {
-      modified |= cetr_uk_thing1_widget::draw(x.ukt2);
+      modified |= cetr_uk_thing1_widget::draw(x.ukt2, true);
       ImGui::TreePop();
     }
 
-    if (ImGui::TreeNode("array #1##cetr"))
+    if (ImGui::TreeNode("Array #1##cetr"))
     {
       static auto name_fn = [](const cetr_uk_thing5& y) { return std::string("unnamed"); };
-      modified |= imgui_list_tree_widget(x.ukt5, name_fn, &cetr_uk_thing5_widget::draw, 0, false, false);
+      modified |= imgui_list_tree_widget(x.ukt5, name_fn, &cetr_uk_thing5_widget::draw, 0, true, true);
       ImGui::TreePop();
     }
 
-    if (ImGui::TreeNode("array #2##cetr"))
+    if (ImGui::TreeNode("Array #2##cetr"))
     {
       static auto name_fn = [](const std::string& y) { return y; };
       static auto edit_fn = [](std::string& y) { return ImGui::InputText("string", &y); };
-      modified |= imgui_list_tree_widget(x.uk6s, name_fn, edit_fn, 0, false, false);
+      modified |= imgui_list_tree_widget(x.uk6s, name_fn, edit_fn, 0, true, true);
       ImGui::TreePop();
     }
 

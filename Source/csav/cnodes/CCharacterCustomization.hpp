@@ -63,7 +63,7 @@ struct cetr_uk_thing4
 // the real struct size is 0x28
 struct cetr_uk_thing3
 {
-  CName cn;
+  CName cn = {};
   std::string uk0;
   std::string uk1;
   uint32_t uk2 = 0;
