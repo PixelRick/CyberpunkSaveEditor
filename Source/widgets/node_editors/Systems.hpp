@@ -140,11 +140,12 @@ struct CPSData_widget
   {
     bool modified = false;
 
-    ImGui::BeginChild("TopList");
-    
-    modified |= psdata.m_vehicleGarageComponentPS->imgui_widget("aa", true);
-    
-    ImGui::EndChild();
+    if (psdata.m_vehicleGarageComponentPS)
+    {
+      ImGui::BeginChild("TopList");
+      modified |= psdata.m_vehicleGarageComponentPS->imgui_widget("aa", true);
+      ImGui::EndChild();
+    }
 
     //ImGui::Text("PSData");
     modified |= CSystem_widget::draw(psdata.system(), selected_object);
