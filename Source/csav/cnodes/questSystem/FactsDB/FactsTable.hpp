@@ -56,10 +56,15 @@ protected:
       size_t cnt = m_facts.size();
       writer << cp_packedint_ref((int64_t&)cnt);
 
+      std::vector<CP::CFact> copy = m_facts;
+      std::sort(copy.begin(), copy.end(), [](const CP::CFact& a, const CP::CFact& b) -> bool {
+        return a.hash() < b.hash();
+      });
+
       std::vector<uint32_t> m_arr1; m_arr1.reserve(cnt);
       std::vector<uint32_t> m_arr2; m_arr2.reserve(cnt);
       
-      for (auto& f : m_facts)
+      for (auto& f : copy)
       {
         m_arr1.emplace_back(f.hash());
         m_arr2.emplace_back(f.value());
