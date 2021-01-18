@@ -185,6 +185,7 @@ class CNameResolver
 {
   std::vector<std::string> s_full_list;
   std::unordered_map<uint64_t, std::string> s_cname_invmap;
+  std::unordered_map<uint32_t, std::string> s_cname_invmap32;
 
   CNameResolver();
   ~CNameResolver() = default;
@@ -206,6 +207,7 @@ public:
     if (s_cname_invmap.find(id) == s_cname_invmap.end())
     {
       s_cname_invmap[id] = name;
+      s_cname_invmap32[FNV1a32(name)] = name;
       insert_sorted(s_full_list, std::string(name));
     }
   }
@@ -237,6 +239,14 @@ public:
     if (it != s_cname_invmap.end())
       return it->second;
     return fmt::format("<cname:{:016X}>", hash);
+  }
+
+  std::string resolve(uint32_t hash32) const
+  {
+    auto it = s_cname_invmap32.find(hash32);
+    if (it != s_cname_invmap32.end())
+      return it->second;
+    return fmt::format("<cname32:{:08X}>", hash32);
   }
 
   const std::vector<std::string>& sorted_names() const { return s_full_list; }

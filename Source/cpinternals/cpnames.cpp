@@ -118,8 +118,8 @@ CNameResolver::CNameResolver()
   }
   for (auto& n : s_full_list)
   {
-    uint64_t id = FNV1a(n);
-    s_cname_invmap[id] = n;
+    s_cname_invmap[FNV1a(n)] = n;
+    s_cname_invmap32[FNV1a32(n)] = n;
   }
   std::sort(s_full_list.begin(), s_full_list.end());
 }
