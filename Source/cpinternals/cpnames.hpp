@@ -203,11 +203,11 @@ public:
 public:
   void register_name(std::string_view name)
   {
-    uint64_t id = FNV1a(name);
+    uint64_t id = fnv1a64(name);
     if (s_cname_invmap.find(id) == s_cname_invmap.end())
     {
       s_cname_invmap[id] = name;
-      s_cname_invmap32[FNV1a32(name)] = name;
+      s_cname_invmap32[fnv1a32(name)] = name;
       insert_sorted(s_full_list, std::string(name));
     }
   }
@@ -219,7 +219,7 @@ public:
 
   bool is_registered(std::string_view name) const
   {
-    uint64_t hash = FNV1a(name);
+    uint64_t hash = fnv1a64(name);
     return is_registered(hash);
   }
 

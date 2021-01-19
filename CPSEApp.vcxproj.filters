@@ -90,6 +90,27 @@
     <Filter Include="Source\widgets\cpinternals">
       <UniqueIdentifier>{5f787ab9-9632-4b37-a8e2-98bd466bb780}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\cpinternals\common">
+      <UniqueIdentifier>{3698b2d9-8fe3-4762-8434-2edc483d0481}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\cpinternals\tweakdb">
+      <UniqueIdentifier>{22691e45-30ed-4c2e-b9b2-b2ae3e4eeb34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\cpinternals\cr2w">
+      <UniqueIdentifier>{32b38e10-7e3d-41d1-aa1b-a775091345be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\cpinternals\csav">
+      <UniqueIdentifier>{db710764-70b8-4d46-a8a4-eed03168d60b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\cpinternals\scripting">
+      <UniqueIdentifier>{f308e8c7-0808-485d-956b-0c3b5385c7bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\cpinternals\csav\nodes">
+      <UniqueIdentifier>{88182e9b-3b43-4b9a-a045-820af8bbbd3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\cpinternals\csav\misc">
+      <UniqueIdentifier>{74b966bf-d6f5-499e-abba-12d63ff1f9a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AppLib\IApp.cpp">
@@ -163,6 +184,12 @@
     </ClCompile>
     <ClCompile Include="Source\cpinternals\CFact.cpp">
       <Filter>Source\cpinternals</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\cpinternals\common\iarchive.cpp">
+      <Filter>Source\cpinternals\common</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\cpinternals\csav\misc\serializable_stringpool.cpp">
+      <Filter>Source\cpinternals\csav\misc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -664,6 +691,33 @@
     </ClInclude>
     <ClInclude Include="Source\csav\cnodes\questSystem\FactsDB.hpp">
       <Filter>Source\csav\cnodes\questSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\tweakdb\tweakdb.hpp">
+      <Filter>Source\cpinternals\tweakdb</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\common\hashing.hpp">
+      <Filter>Source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\common\iserializable.hpp">
+      <Filter>Source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\common\byteswap.hpp">
+      <Filter>Source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\common.hpp">
+      <Filter>Source\cpinternals</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\common\stringpool.hpp">
+      <Filter>Source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\common\iarchive.hpp">
+      <Filter>Source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\csav\misc\serializable_stringpool.hpp">
+      <Filter>Source\cpinternals\csav\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\common\gname.hpp">
+      <Filter>Source\cpinternals\common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

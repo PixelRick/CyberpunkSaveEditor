@@ -21,7 +21,7 @@ namespace CP {
 
 CFact::CFact(CSysName name, uint32_t value)
 {
-  m_hash = FNV1a32(name.str());
+  m_hash = fnv1a32(name.str());
   CFactResolver::get().insert(name);
   // todo: export on newly discovered name..
 }
@@ -35,7 +35,7 @@ CSysName CFact::name() const
 void CFact::name(CSysName name) 
 {
   auto& resolver = CFactResolver::get();
-  m_hash = FNV1a32(name.str());
+  m_hash = fnv1a32(name.str());
   resolver.insert(name);
 }
 
@@ -66,7 +66,7 @@ CFactResolver::CFactResolver()
 
   for (auto& n : m_list)
   {
-    uint32_t hash = FNV1a32(n.str());
+    uint32_t hash = fnv1a32(n.str());
     m_invmap[hash] = n;
   }
 

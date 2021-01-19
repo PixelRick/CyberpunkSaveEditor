@@ -80,7 +80,7 @@ struct CFactResolver
 
   void insert(CSysName name)
   {
-    uint32_t id = FNV1a32(name.str());
+    uint32_t id = fnv1a32(name.str());
 
     auto it = m_invmap.emplace(id, name);
     if (it.second)
@@ -96,7 +96,7 @@ struct CFactResolver
 
   bool is_registered(CSysName name) const
   {
-    uint32_t hash = FNV1a32(name.str());
+    uint32_t hash = fnv1a32(name.str());
     return is_registered(hash);
   }
 

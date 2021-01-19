@@ -118,15 +118,15 @@ CNameResolver::CNameResolver()
   }
   for (auto& n : s_full_list)
   {
-    s_cname_invmap[FNV1a(n)] = n;
-    s_cname_invmap32[FNV1a32(n)] = n;
+    s_cname_invmap[fnv1a64(n)] = n;
+    s_cname_invmap32[fnv1a32(n)] = n;
   }
   std::sort(s_full_list.begin(), s_full_list.end());
 }
 
 CName::CName(std::string_view name)
 {
-  as_u64 = FNV1a(name);
+  as_u64 = fnv1a64(name);
   CNameResolver::get().register_name(name);
   // todo: export on newly discovered name..
 }
