@@ -10,6 +10,8 @@
 #include "utils.hpp"
 #include "csav_version.hpp"
 
+namespace cp::csav {
+
 class node_t;
 
 enum class node_event_e
@@ -209,8 +211,8 @@ public:
   }
 };
 
-// only to read at node level
-// buffer and position in the istream is only relevant between child nodes
+// Only to read at node level.
+// Buffer and position in the istream is only relevant between child nodes.
 class node_reader
   : public std::istream
 {
@@ -402,4 +404,6 @@ private:
   virtual bool from_node_impl(const std::shared_ptr<const node_t>& node, const csav_version& version) = 0;
   virtual std::shared_ptr<const node_t> to_node_impl(const csav_version& version) const = 0;
 };
+
+} // namespace cp::csav
 

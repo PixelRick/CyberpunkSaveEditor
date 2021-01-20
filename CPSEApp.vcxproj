@@ -45,8 +45,10 @@
     <ClInclude Include="Source\cpinternals\common\stringpool.hpp" />
     <ClInclude Include="Source\cpinternals\common\utils.hpp" />
     <ClInclude Include="Source\cpinternals\cpenums.hpp" />
+    <ClInclude Include="Source\cpinternals\csav.hpp" />
+    <ClInclude Include="Source\cpinternals\csav\node_tree.hpp" />
     <ClInclude Include="Source\cpinternals\csav\nodes.hpp" />
-    <ClInclude Include="Source\cpinternals\csav\csav.hpp" />
+    <ClInclude Include="Source\cpinternals\csav\savegame.hpp" />
     <ClInclude Include="Source\cpinternals\csav\csav_version.hpp" />
     <ClInclude Include="Source\cpinternals\csav\misc\serializable_stringpool.hpp" />
     <ClInclude Include="Source\cpinternals\csav\misc\system_serializer.hpp" />
@@ -68,6 +70,9 @@
     <ClInclude Include="Source\cpinternals\ctypes\CName.hpp" />
     <ClInclude Include="Source\cpinternals\ctypes\TweakDBID.hpp" />
     <ClInclude Include="Source\cpinternals\init.hpp" />
+    <ClInclude Include="Source\cpinternals\ioarchive\farchive.hpp" />
+    <ClInclude Include="Source\cpinternals\ioarchive\ofarchive.hpp" />
+    <ClInclude Include="Source\cpinternals\ioarchive\ifarchive.hpp" />
     <ClInclude Include="Source\cpinternals\scripting\cclass.hpp" />
     <ClInclude Include="Source\cpinternals\scripting\cobject.hpp" />
     <ClInclude Include="Source\cpinternals\scripting\cproperty.hpp" />
@@ -191,7 +196,7 @@
     <ClInclude Include="Source\widgets\node_editors\StatsSystem.hpp" />
     <ClInclude Include="Source\widgets\node_editors\Systems.hpp" />
     <ClInclude Include="Source\cserialization\csystem\CPropertyBase.hpp" />
-    <ClCompile Include="Source\cpinternals\csav\csav.cpp" />
+    <ClCompile Include="Source\cpinternals\csav\node_tree.cpp" />
     <ClCompile Include="Source\cpinternals\csav\misc\serializable_stringpool.cpp" />
     <ClCompile Include="Source\cpinternals\ctypes\CFact.cpp" />
     <ClCompile Include="Source\cpinternals\ctypes\CName.cpp" />

@@ -6,8 +6,7 @@
 #include "cpinternals/csav/node.hpp"
 #include "cpinternals/csav/serializers.hpp"
 
-
-namespace CSAV::Nodes {
+namespace cp::csav {
 
 struct FactsTable
   : public node_serializable
@@ -16,8 +15,8 @@ struct FactsTable
 
   std::string node_name() const override { return "FactsTable"; }
 
-  const std::vector<cp::CFact>& facts() const { return m_facts; }
-  std::vector<cp::CFact>& facts() { return m_facts; }
+  const std::vector<CFact>& facts() const { return m_facts; }
+  std::vector<CFact>& facts() { return m_facts; }
 
 protected:
   bool from_node_impl(const std::shared_ptr<const node_t>& node, const csav_version& version) override
@@ -57,8 +56,8 @@ protected:
       size_t cnt = m_facts.size();
       writer << cp_packedint_ref((int64_t&)cnt);
 
-      std::vector<cp::CFact> copy = m_facts;
-      std::sort(copy.begin(), copy.end(), [](const cp::CFact& a, const cp::CFact& b) -> bool {
+      std::vector<CFact> copy = m_facts;
+      std::sort(copy.begin(), copy.end(), [](const CFact& a, const CFact& b) -> bool {
         return a.hash() < b.hash();
       });
 
@@ -82,11 +81,11 @@ protected:
     return writer.finalize(node_name());
   }
 
-  std::vector<cp::CFact> m_facts;
+  std::vector<CFact> m_facts;
 
   // Temporary
   std::shared_ptr<const node_t> m_raw;
 };
 
-} // namespace CSAV::Nodes
+} // namespace cp::csav
 

@@ -8,6 +8,8 @@
 #include "cpinternals/scripting/csystem.hpp"
 #include "cpinternals/scripting/cproperty.hpp"
 
+namespace cp::csav {
+
 struct CStats
   : public node_serializable
   , public CObjectListener
@@ -168,4 +170,5 @@ public:
   }
 };
 
+} // namespace cp::csav
 

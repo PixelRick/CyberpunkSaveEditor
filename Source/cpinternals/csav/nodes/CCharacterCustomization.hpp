@@ -8,6 +8,8 @@
 #include "cpinternals/csav/node.hpp"
 #include "cpinternals/csav/serializers.hpp"
 
+namespace cp::csav {
+
 struct cetr_uk_thing5
 {
   std::string uk0;
@@ -293,4 +295,6 @@ struct CCharacterCustomization
     return writer.finalize(node_name());
   }
 };
+
+} // namespace cp::csav
 

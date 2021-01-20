@@ -13,8 +13,8 @@ class node_hexeditor
   bool m_write_event = false;
 
 public:
-  node_hexeditor(const std::shared_ptr<const node_t>& node)
-    : node_editor_widget(node, csav_version{})
+  node_hexeditor(const std::shared_ptr<const cp::csav::node_t>& node)
+    : node_editor_widget(node, cp::csav::csav_version{})
   {
     me.ReadFn = read_fn;
     me.WriteFn = write_fn;

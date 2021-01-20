@@ -7,6 +7,8 @@
 #include "cpinternals/csav/serializers.hpp"
 #include "cpinternals/scripting/csystem.hpp"
 
+namespace cp::csav {
+
 struct CGenericSystem
   : node_serializable
 {
@@ -48,4 +50,6 @@ public:
     return writer.finalize(node_name());
   }
 };
+
+} // namespace cp::csav
 

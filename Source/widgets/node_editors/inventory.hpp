@@ -13,7 +13,7 @@ struct CInventory_widget
   //static CItemData copied_item = ;
 
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(CInventory& inv, CStats* stats=nullptr)
+  [[nodiscard]] static inline bool draw(cp::csav::CInventory& inv, cp::csav::CStats* stats=nullptr)
   {
     if (!inv.has_valid_data)
       ImGui::Text("has invalid data");
@@ -47,7 +47,7 @@ struct CInventory_widget
       {
         if (ImGui::Button("Sort (alpha)", ImVec2(0, 30)))
         {
-          subinv.items.sort([](const CItemData& a, const CItemData& b){
+          subinv.items.sort([](const cp::csav::CItemData& a, const cp::csav::CItemData& b){
             return a.name() < b.name();
           });
         }
@@ -55,7 +55,7 @@ struct CInventory_widget
         if (ImGui::Button("Add dummy item (alcohol6)", ImVec2(0, 30)))
         {
           // todo: move that on the data side
-          CItemData item_data;
+          cp::csav::CItemData item_data;
           item_data.iid.nameid.as_u64 = 0x1859EA0850; // Alcohol6
           item_data.iid.uk.uk4 = 2;
           item_data.uk1_012 = 0x213ACD;
@@ -71,9 +71,9 @@ struct CInventory_widget
           modified = true;
         }
 
-        static auto name_fn = [](const CItemData& item) { return item.iid.shortname(); };
+        static auto name_fn = [](const cp::csav::CItemData& item) { return item.iid.shortname(); };
         modified |= imgui_list_tree_widget(subinv.items, name_fn,
-         [stats](CItemData& itemData) { return CItemData_widget::draw(itemData, stats); },
+         [stats](cp::csav::CItemData& itemData) { return CItemData_widget::draw(itemData, stats); },
          0, true, false);
 
         ImGui::TreePop();

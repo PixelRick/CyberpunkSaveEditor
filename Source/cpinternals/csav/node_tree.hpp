@@ -1,0 +1,45 @@
+#pragma once
+#include <filesystem>
+#include <vector>
+
+#include "node.hpp"
+#include "csav_version.hpp"
+#include "serial_tree.hpp"
+
+namespace cp {
+namespace csav {
+
+struct node_tree
+{
+  friend iarchive& operator<<(iarchive& ar, node_tree& x)
+  {
+    if (ar.is_reader())
+    {
+      x.serialize_in(ar);
+    }
+    else
+    {
+      x.serialize_out(ar);
+    }
+  }
+
+  op_status load(std::filesystem::path path);
+
+  // This one makes a backup!
+  op_status save(std::filesystem::path path);
+
+  csav_version version;
+  std::vector<serial_node_desc> original_descs;
+  std::shared_ptr<const node_t> root;
+
+protected:
+  void serialize_in(iarchive& ar);
+  void serialize_out(iarchive& ar);
+};
+
+} // namespace csav
+
+using csav_tree = csav::node_tree;
+
+} // namespace cp
+

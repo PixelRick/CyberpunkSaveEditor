@@ -5,10 +5,10 @@
 #include "cpinternals/common.hpp"
 #include "cpinternals/ctypes.hpp"
 #include "cpinternals/csav/node.hpp"
-#include "cpinternals/csav/serializers.hpp"
-#include "cpinternals/scripting/csystem.hpp"
-#include "cpinternals/scripting/cproperty.hpp"
 
+#include "cpinternals/csav/serializers.hpp"
+
+namespace cp::csav {
 
 struct serial_node_desc
 {
@@ -16,44 +16,30 @@ struct serial_node_desc
   int32_t next_idx, child_idx;
   uint32_t data_offset, data_size;
 
-  friend std::istream& operator>>(std::istream& is, serial_node_desc& ed)
+  friend iarchive& operator<<(iarchive& ar, serial_node_desc& x)
   {
-    is >> cp_plstring_ref(ed.name);
-    is >> cbytes_ref(ed.next_idx   ) >> cbytes_ref(ed.child_idx);
-    is >> cbytes_ref(ed.data_offset) >> cbytes_ref(ed.data_size);
-    return is;
-  }
-
-  friend std::ostream& operator<<(std::ostream& os, const serial_node_desc& ed)
-  {
-    os << cp_plstring_ref(ed.name);
-    os << cbytes_ref(ed.next_idx   ) << cbytes_ref(ed.child_idx);
-    os << cbytes_ref(ed.data_offset) << cbytes_ref(ed.data_size);
-    return os;
+    ar.serialize_str_lpfxd(x.name);
+    ar << x.next_idx << x.child_idx;
+    ar << x.data_offset << x.data_size;
+    return ar;
   }
 };
 
-
-class serial_tree
+struct serial_tree
 {
-public:
-  std::vector<serial_node_desc> descs;
-  std::vector<char> nodedata;
-
-public:
   serial_tree() = default;
 
-  bool from_node(const std::shared_ptr<const node_t>& node, uint32_t data_offset)
+  bool from_tree(const std::shared_ptr<const node_t>& root, uint32_t data_offset)
   {
     // yes that looks dumb, but cdpred use first data_offset = min_offset
     // so before creating the node descriptors i fill the buffer to min_offset
     nodedata.resize(data_offset);
 
-    uint32_t node_cnt = node->treecount();
+    uint32_t node_cnt = root->treecount();
 
     descs.resize(node_cnt);
     uint32_t next_idx = 0;
-    write_node_children(*node, next_idx);
+    write_node_children(*root, next_idx);
 
     // check that each blob starts with its node index (dword)
     size_t i = 0;
@@ -66,7 +52,7 @@ public:
     return true;
   }
 
-  std::shared_ptr<const node_t> to_node(uint32_t data_offset)
+  std::shared_ptr<const node_t> to_tree(uint32_t data_offset)
   {
     // check that each blob starts with its node index (dword)
     size_t i = 0;
@@ -81,6 +67,9 @@ public:
     serial_node_desc root_desc {"root", node_t::null_node_idx, 0, data_offset, data_size};
     return read_node(root_desc, node_t::root_node_idx);
   }
+
+  std::vector<serial_node_desc> descs;
+  std::vector<char> nodedata;
 
 protected:
   std::shared_ptr<const node_t> read_node(serial_node_desc& desc, int32_t idx)
@@ -190,3 +179,6 @@ protected:
       last_child_desc->next_idx = node_t::null_node_idx;
   }
 };
+
+} // namespace cp::csav
+

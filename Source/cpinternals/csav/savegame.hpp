@@ -4,82 +4,53 @@
 #include <fstream>
 #include <numeric>
 #include <cassert>
-#include <xlz4/lz4.h>
 
-#include "serializers.hpp"
-#include "node.hpp"
 #include "csav_version.hpp"
+#include "node_tree.hpp"
+#include "node.hpp"
 #include "nodes.hpp"
-#include "serial_tree.hpp"
 
-#define XLZ4_CHUNK_SIZE 0x40000
+namespace cp {
+namespace csav {
 
-struct compressed_chunk_desc
+struct savegame
 {
-  static const size_t serialized_size = 12;
+  using node_type = csav::node_t;
 
-  // data_size is uncompressed size
-  uint32_t offset, size, data_size, data_offset;
+  csav::node_tree tree;
+  std::shared_ptr<const node_type> root;
 
-  friend std::istream& operator>>(std::istream& is, compressed_chunk_desc& cd)
-  {
-    is >> cbytes_ref(cd.offset) >> cbytes_ref(cd.size) >> cbytes_ref(cd.data_size);
-    cd.data_offset = 0;
-    return is;
-  }
-
-  friend std::ostream& operator<<(std::ostream& os, const compressed_chunk_desc& cd)
-  {
-    os << cbytes_ref(cd.offset) << cbytes_ref(cd.size) << cbytes_ref(cd.data_size);
-    return os;
-  }
-};
-
-// todo, make a dedicated struct for the compressed serial tree functionality
-// loading systems isn't necessary to work on nodes only
-
-class csav
-{
-public:
   std::filesystem::path filepath;
-  csav_version ver;
-  uint32_t uk0, uk1;
-  std::string suk;
-
-  serial_tree stree;
-  std::shared_ptr<const node_t> root_node;
 
   // structures and systems
 
-  CInventory                inventory;
-  CCharacterCustomization   chtrcustom;
-  CGenericSystem            scriptables;
+  csav::CInventory                inventory;
+  csav::CCharacterCustomization   chtrcustom;
+  csav::CGenericSystem            scriptables;
 
-  CStatsPool                statspool;
-  CStats                    stats;
+  csav::CStatsPool                statspool;
+  csav::CStats                    stats;
 
-  CPSData                   psdata;
+  csav::CPSData                   psdata;
 
-  CSAV::Nodes::FactsDB      factsdb;
+  csav::FactsDB                   factsdb;
 
-  CGenericSystem            godmode;
+  csav::CGenericSystem            godmode;
 
   //CGenericSystem            scriptables;
-
-protected:
-  bool load_stree(std::filesystem::path path, bool dump_decompressed_data=false);
-  bool save_stree(std::filesystem::path path, bool dump_decompressed_data=false, bool ps4_weird_format=false);
 
 public:
   // reserialization test can only be done with file saved by the game
   // this is because although the order of the CProperties isn't important for the game
   // we don't want to keep the initial order for each object but rely on a standardized one (blueprint db)
   // the one the game uses
-  bool open_with_progress(std::filesystem::path path, progress_t& progress, bool dump_decompressed_data=false, bool tree_only=false, bool test=true)
+  op_status open_with_progress(std::filesystem::path path, progress_t& progress, bool dump_decompressed_data=false, bool tree_only=false, bool test=true)
   {
     progress.value = 0.00f;
-    if (!load_stree(path, dump_decompressed_data))
-      return false;
+    op_status status = tree.load(path);
+    if (!status)
+      return status;
+    root = tree.root;
 
     if (tree_only)
     {
@@ -108,7 +79,7 @@ public:
     return true;
   }
 
-  bool save_with_progress(std::filesystem::path path, progress_t& progress, bool dump_decompressed_data=false, bool ps4_weird_format=false)
+  op_status save_with_progress(std::filesystem::path path, progress_t& progress, bool dump_decompressed_data=false, bool ps4_weird_format=false)
   {
     progress.value = 0.00f;
 
@@ -124,15 +95,16 @@ public:
     try_save_node_data_struct(stats,        "StatsSystem"                           );  progress.value = 0.70f;
     try_save_node_data_struct(statspool,    "StatPoolsSystem"                       );  progress.value = 0.80f;
     
-
-    if (!save_stree(path, dump_decompressed_data, ps4_weird_format))
-      return false;
+    tree.version.ps4w = ps4_weird_format;
+    tree.root = root;
+    op_status status = tree.save(path);
     progress.value = 1.00f;
-    return true;
+
+    return status;
   }
 
 protected:
-  bool try_load_node_data_struct(node_serializable& var, std::string_view nodename, progress_t& progress, float end_progress, bool test=false)
+  bool try_load_node_data_struct(cp::csav::node_serializable& var, std::string_view nodename, progress_t& progress, float end_progress, bool test=false)
   {
     auto node = search_node(nodename);
     if (!node)
@@ -160,9 +132,9 @@ protected:
     return ok;
   }
 
-  bool test_reserialize(const std::shared_ptr<const node_t>& node, node_serializable& var)
+  bool test_reserialize(const std::shared_ptr<const node_type>& node, cp::csav::node_serializable& var)
   {
-    auto new_node = var.to_node(ver);
+    auto new_node = var.to_node(tree.version);
     if (!new_node)
       return false;
 
@@ -171,12 +143,12 @@ protected:
     {
       auto root = node_t::create_shared(node_t::root_node_idx, "root");
       root->nonconst().children_push_back(node);
-      stree1.from_node(root, 4);
+      stree1.from_tree(root, 4);
     }
     {
       auto root = node_t::create_shared(node_t::root_node_idx, "root");
       root->nonconst().children_push_back(new_node);
-      stree2.from_node(root, 4);
+      stree2.from_tree(root, 4);
     }
 
     if (stree1.nodedata.size() != stree2.nodedata.size()
@@ -215,7 +187,7 @@ protected:
   {
     try
     {
-      if (!var.from_node(node, ver))
+      if (!var.from_node(node, tree.version))
         return false;
     }
     catch (std::exception& e)
@@ -232,7 +204,7 @@ protected:
     auto node = search_node(nodename);
     if (!node)
       return false;
-    auto new_node = var.to_node(ver);
+    auto new_node = var.to_node(tree.version);
     if (!new_node)
       return false;
 
@@ -247,8 +219,8 @@ protected:
 public:
   std::shared_ptr<const node_t> search_node(std::string_view name) const
   {
-    if (root_node)
-      return search_node(root_node, name);
+    if (root)
+      return search_node(root, name);
 
     return nullptr;
   }
@@ -267,4 +239,10 @@ public:
     return nullptr;
   }
 };
+
+} // namespace csav
+
+using savegame = csav::savegame;
+
+} // namespace cp
 

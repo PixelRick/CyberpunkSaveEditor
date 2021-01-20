@@ -8,6 +8,7 @@
 #include "cpinternals/scripting/csystem.hpp"
 #include "cpinternals/scripting/cproperty.hpp"
 
+namespace cp::csav {
 
 struct CPSData
   : public node_serializable
@@ -112,4 +113,5 @@ public:
   }
 };
 
+} // namespace cp::csav
 

@@ -7,6 +7,7 @@
 #include "cpinternals/csav/node.hpp"
 #include "cpinternals/csav/serializers.hpp"
 
+namespace cp::csav {
 
 #pragma pack(push, 1)
 
@@ -256,4 +257,5 @@ struct CItemData
   }
 };
 
+} // namespace cp::csav
 

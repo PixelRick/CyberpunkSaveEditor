@@ -10,7 +10,7 @@ namespace UI {
 struct WidFactsTable
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(CSAV::Nodes::FactsTable& x, const char* label)
+  [[nodiscard]] static inline bool draw(cp::csav::FactsTable& x, const char* label)
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -88,7 +88,7 @@ struct WidFactsTable
 struct WidFactsDB
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(CSAV::Nodes::FactsDB& x, const char* label)
+  [[nodiscard]] static inline bool draw(cp::csav::FactsDB& x, const char* label)
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)

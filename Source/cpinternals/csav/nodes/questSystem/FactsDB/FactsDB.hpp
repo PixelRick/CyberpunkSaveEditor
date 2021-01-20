@@ -10,7 +10,7 @@
 
 #include "FactsTable.hpp"
 
-namespace CSAV::Nodes {
+namespace cp::csav {
 
 struct FactsDB
   : public node_serializable
@@ -84,5 +84,5 @@ protected:
   std::shared_ptr<const node_t> m_raw;
 };
 
-} // namespace CSAV::Nodes
+} // namespace cp::csav
 

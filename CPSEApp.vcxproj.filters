@@ -108,6 +108,9 @@
     <Filter Include="Source\cpinternals\ctypes">
       <UniqueIdentifier>{e8f2cdb8-bc0a-4056-bba2-cdd7bfe44fe3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\cpinternals\ioarchive">
+      <UniqueIdentifier>{51bf6c62-d0bb-4ce0-8d80-69f380db5422}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AppLib\IApp.cpp">
@@ -173,9 +176,6 @@
     <ClCompile Include="Source\cpinternals\init.cpp">
       <Filter>Source\cpinternals</Filter>
     </ClCompile>
-    <ClCompile Include="Source\cpinternals\csav\csav.cpp">
-      <Filter>Source\cpinternals\csav</Filter>
-    </ClCompile>
     <ClCompile Include="Source\cpinternals\scripting\cclass.cpp">
       <Filter>Source\cpinternals\scripting</Filter>
     </ClCompile>
@@ -193,6 +193,9 @@
     </ClCompile>
     <ClCompile Include="Source\cpinternals\ctypes\TweakDBID.cpp">
       <Filter>Source\cpinternals\ctypes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\cpinternals\csav\node_tree.cpp">
+      <Filter>Source\cpinternals\csav</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -653,9 +656,6 @@
     <ClInclude Include="Source\cpinternals\common\misc.hpp">
       <Filter>Source\cpinternals\common</Filter>
     </ClInclude>
-    <ClInclude Include="Source\cpinternals\csav\csav.hpp">
-      <Filter>Source\cpinternals\csav</Filter>
-    </ClInclude>
     <ClInclude Include="Source\cpinternals\csav\csav_version.hpp">
       <Filter>Source\cpinternals\csav</Filter>
     </ClInclude>
@@ -739,6 +739,24 @@
     </ClInclude>
     <ClInclude Include="Source\cpinternals\csav\nodes.hpp">
       <Filter>Source\cpinternals\csav</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\ioarchive\farchive.hpp">
+      <Filter>Source\cpinternals\ioarchive</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\ioarchive\ifarchive.hpp">
+      <Filter>Source\cpinternals\ioarchive</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\ioarchive\ofarchive.hpp">
+      <Filter>Source\cpinternals\ioarchive</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\csav\savegame.hpp">
+      <Filter>Source\cpinternals\csav</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\csav\node_tree.hpp">
+      <Filter>Source\cpinternals\csav</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\csav.hpp">
+      <Filter>Source\cpinternals</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

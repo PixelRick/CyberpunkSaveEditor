@@ -15,13 +15,33 @@ struct iarchive
 
   virtual ~iarchive() = default;
 
-  virtual bool is_reader() = 0;
+  virtual bool is_reader() const = 0;
 
-  virtual pos_type tell() = 0;
+  virtual pos_type tell() const = 0;
   virtual iarchive& seek(pos_type pos) = 0;
-  virtual iarchive& seek(off_type off, std::istream::off_type dir) = 0;
+  virtual iarchive& seek(off_type off, std::istream::seekdir dir) = 0;
 
   virtual iarchive& serialize(void* data, size_t len) = 0;
+
+  void set_error(std::string error)
+  {
+    m_error = error;
+  }
+
+  void clear_error()
+  {
+    m_error.clear();
+  }
+
+  bool has_error() const
+  {
+    return !m_error.empty();
+  }
+
+  std::string error() const
+  {
+    return m_error;
+  }
 
   iarchive& byte_order_serialize(void* value, uint64_t length)
   {
@@ -57,6 +77,8 @@ struct iarchive
 protected:
   int64_t read_int_packed();
   void write_int_packed(int64_t v);
+
+  std::string m_error;
 };
 
 

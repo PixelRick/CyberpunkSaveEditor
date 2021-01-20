@@ -20,16 +20,16 @@
 
 
 class node_editor_widget
-  : public node_listener_t
+  : public cp::csav::node_listener_t
 {
   friend class node_editor_window;
 
 private:
-  std::weak_ptr<const node_t> m_weaknode;
-  csav_version m_version;
+  std::weak_ptr<const cp::csav::node_t> m_weaknode;
+  cp::csav::csav_version m_version;
 
 public:
-  node_editor_widget(const std::shared_ptr<const node_t>& node, const csav_version& version)
+  node_editor_widget(const std::shared_ptr<const cp::csav::node_t>& node, const cp::csav::csav_version& version)
     : m_weaknode(node), m_version(version)
   {
     node->add_listener(this);
@@ -42,7 +42,7 @@ public:
       node->remove_listener(this);
   };
 
-  const csav_version& version() const { return m_version; }
+  const cp::csav::csav_version& version() const { return m_version; }
 
 private:
   bool m_is_drawing = false; // to filter events
@@ -50,7 +50,7 @@ private:
   bool m_has_unsaved_changes = false;
 
 protected:
-  void on_node_event(const std::shared_ptr<const node_t>& node, node_event_e evt) override
+  void on_node_event(const std::shared_ptr<const cp::csav::node_t>& node, cp::csav::node_event_e evt) override
   {
     if (m_is_drawing)
       m_has_unsaved_changes = true;
@@ -71,8 +71,8 @@ public:
     return "dead_node";
   }
 
-  std::shared_ptr<const node_t> node() const { return m_weaknode.lock(); }
-  std::shared_ptr<node_t> ncnode() { return std::const_pointer_cast<node_t>(m_weaknode.lock()); }
+  std::shared_ptr<const cp::csav::node_t> node() const { return m_weaknode.lock(); }
+  std::shared_ptr<cp::csav::node_t> ncnode() { return std::const_pointer_cast<cp::csav::node_t>(m_weaknode.lock()); }
 
   void draw_widget(const ImVec2& size = ImVec2(0, 0), bool with_save_buttons=true)
   {

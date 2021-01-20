@@ -18,8 +18,8 @@ void CName_resolver::register_name(gname name)
 {
   auto sv = name.strv();
 
-  auto it = insert_sorted_nodupe(m_full_list, name);
-  if (it == m_full_list.end())
+  auto p = insert_sorted_nodupe(m_full_list, name);
+  if (!p.second)
     return;
 
   CName id(name, false);

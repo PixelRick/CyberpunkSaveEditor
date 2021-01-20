@@ -13,7 +13,7 @@
 struct cetr_uk_thing5_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(cetr_uk_thing5& x)
+  [[nodiscard]] static inline bool draw(cp::csav::cetr_uk_thing5& x)
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -33,7 +33,7 @@ struct cetr_uk_thing5_widget
 struct cetr_uk_thing4_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(cetr_uk_thing4& x)
+  [[nodiscard]] static inline bool draw(cp::csav::cetr_uk_thing4& x)
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -54,7 +54,7 @@ struct cetr_uk_thing4_widget
 struct cetr_uk_thing3_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(cetr_uk_thing3& x)
+  [[nodiscard]] static inline bool draw(cp::csav::cetr_uk_thing3& x)
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -77,7 +77,7 @@ struct cetr_uk_thing3_widget
 struct cetr_uk_thing2_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(cetr_uk_thing2& x)
+  [[nodiscard]] static inline bool draw(cp::csav::cetr_uk_thing2& x)
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -89,13 +89,13 @@ struct cetr_uk_thing2_widget
 
     if (ImGui::TreeNode("Array #1##cetr2"))
     {
-      static auto name_fn = [](const cetr_uk_thing3& y) { return y.cn.name(); };
+      static auto name_fn = [](const cp::csav::cetr_uk_thing3& y) { return y.cn.name().string(); };
       modified |= imgui_list_tree_widget(x.vuk3, name_fn, &cetr_uk_thing3_widget::draw, 0, true, true);
       ImGui::TreePop();
     }
     if (ImGui::TreeNode("Array #2##cetr2"))
     {
-      static auto name_fn = [](const cetr_uk_thing4& y) { return y.uk0; };
+      static auto name_fn = [](const cp::csav::cetr_uk_thing4& y) { return y.uk0; };
       modified |= imgui_list_tree_widget(x.vuk4, name_fn, &cetr_uk_thing4_widget::draw, 0, true, true);
       ImGui::TreePop();
     }
@@ -107,7 +107,7 @@ struct cetr_uk_thing2_widget
 struct cetr_uk_thing1_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(cetr_uk_thing1& x, bool editable_list = false)
+  [[nodiscard]] static inline bool draw(cp::csav::cetr_uk_thing1& x, bool editable_list = false)
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -115,7 +115,7 @@ struct cetr_uk_thing1_widget
 
     bool modified = false;
 
-    static auto name_fn = [](const cetr_uk_thing2& y) { return y.uks; };
+    static auto name_fn = [](const cp::csav::cetr_uk_thing2& y) { return y.uks; };
     modified |= imgui_list_tree_widget(x.vuk2, name_fn, &cetr_uk_thing2_widget::draw, 0, editable_list, editable_list);
 
     return modified;
@@ -126,7 +126,7 @@ struct cetr_uk_thing1_widget
 struct CCharacterCustomization_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(CCharacterCustomization& x)
+  [[nodiscard]] static inline bool draw(cp::csav::CCharacterCustomization& x)
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -161,7 +161,7 @@ struct CCharacterCustomization_widget
 
     if (ImGui::TreeNode("Array #1##cetr"))
     {
-      static auto name_fn = [](const cetr_uk_thing5& y) { return std::string("unnamed"); };
+      static auto name_fn = [](const cp::csav::cetr_uk_thing5& y) { return std::string("unnamed"); };
       modified |= imgui_list_tree_widget(x.ukt5, name_fn, &cetr_uk_thing5_widget::draw, 0, true, true);
       ImGui::TreePop();
     }

@@ -229,7 +229,7 @@ protected:
 		auto& emgr = hexeditor_windows_mgr::get();
 		emgr.draw_windows();
 
-		static auto testnode = node_t::create_shared(123, "testnode");
+		static auto testnode = cp::csav::node_t::create_shared(123, "testnode");
 		if (test_hexeditor)
 			emgr.open_window(testnode);
 

@@ -3,11 +3,17 @@
 #include <string>
 #include <fmt/format.h>
 
+namespace cp::csav {
+
 struct csav_version
 {
   uint32_t v1 = 0;
   uint32_t v2 = 0;
   uint32_t v3 = 0;
+  uint32_t uk0 = 0;
+  uint32_t uk1 = 0;
+  std::string suk;
+  bool ps4w = false;
 
   std::string string() const
   {
@@ -24,4 +30,6 @@ inline bool operator!=(const csav_version& a, const csav_version& b)
 {
   return !(a == b);
 }
+
+} // namespace cp::csav
 

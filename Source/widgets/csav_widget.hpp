@@ -15,7 +15,7 @@
 
 #include "utils.hpp"
 #include <ps_json_storage.hpp>
-#include "cpinternals/csav/csav.hpp"
+#include "cpinternals/csav.hpp"
 #include "cpinternals/cpnames.hpp"
 #include "hexeditor_windows_mgr.hpp"
 #include "node_editors.hpp"
@@ -84,7 +84,7 @@ protected:
   ImGui::FileBrowser save_dialog;
   static inline loading_bar_job_widget save_job; // only one save job
 
-  std::shared_ptr<csav> m_csav;
+  std::shared_ptr<cp::savegame> m_csav;
   std::shared_ptr<AppImage> m_img;
   std::string m_pretty_name;
 
@@ -101,7 +101,7 @@ protected:
   std::array<char, 24     + 1> search_mask = {};
 
 public:
-  csav_collapsable_header(const std::shared_ptr<csav>& csav, const std::shared_ptr<AppImage>& img, std::string_view name = "")
+  csav_collapsable_header(const std::shared_ptr<cp::savegame>& csav, const std::shared_ptr<AppImage>& img, std::string_view name = "")
     : save_dialog(ImGuiFileBrowserFlags_EnterNewFilename | ImGuiFileBrowserFlags_CreateNewDir)
     , m_csav(csav), m_img(img)
   {
@@ -154,7 +154,7 @@ public:
 protected:
   void do_save()
   {
-    std::weak_ptr<csav> weak_csav = m_csav;
+    std::weak_ptr<cp::savegame> weak_csav = m_csav;
     save_job.start([weak_csav](progress_t& progress) -> bool {
       auto csav = weak_csav.lock();
       return csav->save_with_progress(csav->filepath, progress, s_dump_decompressed_data, s_use_ps4_weird_format);
@@ -183,8 +183,8 @@ public:
     return m_pretty_name;
   }
 
-  static inline std::shared_ptr<const node_t> appearance_src;
-  static inline csav_version appearance_version {};
+  static inline std::shared_ptr<const cp::savegame::node_type> appearance_src;
+  static inline cp::csav::csav_version appearance_version {};
 
   void draw()
   {
@@ -192,7 +192,7 @@ public:
     ImVec2 center(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.5f);
 
     std::string label = fmt::format("{} (csav {})",
-      m_csav->filepath.u8string(), m_csav->ver.string());
+      m_csav->filepath.u8string(), m_csav->tree.version.string());
 
     ImGuiStyle& style = ImGui::GetStyle();
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, style.ItemSpacing.y));
@@ -349,7 +349,7 @@ public:
     if (ImGui::ButtonEx("COPY SKIN##SAVE", ImVec2(100, 60)))
     {
       appearance_src = m_csav->search_node("CharacetrCustomization_Appearances");
-      appearance_version = m_csav->ver;
+      appearance_version = m_csav->tree.version;
     }
     if (ImGui::IsItemHovered())
       ImGui::SetTooltip("Copy skin in app clipboard.");
@@ -362,7 +362,7 @@ public:
       auto appearance_node = m_csav->search_node("CharacetrCustomization_Appearances");
       if (appearance_src && appearance_src != appearance_node)
       {
-        if (appearance_version != m_csav->ver)
+        if (appearance_version != m_csav->tree.version)
         {
           ImGui::OpenPopup("Error##TRANSFER");
         }
@@ -554,7 +554,7 @@ public:
         if (ImGui::BeginTabItem("Node Tree", 0, ImGuiTabItemFlags_None))
         {
           ImGui::BeginChild("current editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
-          draw_node_tree();
+          draw_csav_t();
           ImGui::EndChild();
           ImGui::EndTabItem();
         }
@@ -622,12 +622,12 @@ public:
       ImGui::TableHeadersRow();
 
       ImGuiListClipper clipper;
-      clipper.Begin((int)m_csav->stree.descs.size());
+      clipper.Begin((int)m_csav->tree.original_descs.size());
       while (clipper.Step())
       {
         for (int row = clipper.DisplayStart; row < clipper.DisplayEnd; row++)
         {
-          auto& desc = m_csav->stree.descs[row];
+          auto& desc = m_csav->tree.original_descs[row];
           scoped_imgui_id sii{&desc};
           ImGui::TableNextRow();
           ImGui::TableNextColumn(); ImGui::Text("0x%X", row);
@@ -642,11 +642,11 @@ public:
     }
   }
 
-  void draw_node_tree()
+  void draw_csav_t()
   {
-    ImGui::BeginChild("node_tree", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings);
-    if (m_csav->root_node)
-      for (const auto& n : m_csav->root_node->children())
+    ImGui::BeginChild("csav_t", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings);
+    if (m_csav->root)
+      for (const auto& n : m_csav->root->children())
         draw_tree_node(n);
     ImGui::EndChild();
   }
@@ -788,7 +788,7 @@ public:
 
 
 protected:
-  void draw_tree_node(const std::shared_ptr<const node_t>& node)
+  void draw_tree_node(const std::shared_ptr<const cp::savegame::node_type>& node)
   {
     if (!node)
     {
@@ -844,7 +844,7 @@ protected:
   // hex search.. 
 
   struct search_match {
-    std::shared_ptr<const node_t> n;
+    std::shared_ptr<const cp::savegame::node_type> n;
     size_t offset;
     size_t size;
   };
@@ -867,11 +867,11 @@ protected:
     */
     search_result.clear();
     if (m_csav and !std::all_of(needle.begin(), needle.end(), [](char i) { return i==0; })) // searching for zeroes is just.. the way to die
-      search_pattern_in_nodes_rec(search_result, m_csav->root_node, needle, mask);
+      search_pattern_in_nodes_rec(search_result, m_csav->root, needle, mask);
     return search_result;
   }
 
-  void search_pattern_in_nodes_rec(std::vector<search_match>& matches, const std::shared_ptr<const node_t> node, const std::string& needle, const std::string& mask)
+  void search_pattern_in_nodes_rec(std::vector<search_match>& matches, const std::shared_ptr<const cp::savegame::node_type> node, const std::string& needle, const std::string& mask)
   {
     auto& haystack = node->data();
     std::vector<uintptr_t> match_offsets;
@@ -892,7 +892,7 @@ protected:
   ImGui::FileBrowser open_dialog;
   loading_bar_job_widget open_job;
   std::filesystem::path open_filepath;
-  std::shared_ptr<csav> opened_save;
+  std::shared_ptr<cp::savegame> opened_save;
   std::shared_ptr<AppImage> opened_save_img;
 
   std::list<csav_collapsable_header> m_list;
@@ -991,7 +991,7 @@ public:
       opened_save_img = owning_app->load_texture_from_file(screenshot_path.string());
 
     open_job.start([this](progress_t& progress) -> bool {
-      auto cs = std::make_shared<csav>();
+      auto cs = std::make_shared<cp::savegame>();
       if (!cs->open_with_progress(open_filepath, progress, s_dump_decompressed_data))
         return false;
       opened_save = cs;

@@ -5,6 +5,8 @@
 #include <array>
 #include <codecvt>
 
+#pragma message("serializers.hpp must disappear")
+
 // because
 // os << cbytes_ref<T>(obj) << ...
 // looks better than
@@ -136,7 +138,7 @@ public:
     // cp's one does directly serialize into a buffer, without conversion
     // also the one used to serialize datum desc name is capped to a 512b buffer
     // BUT it does not seek to compensate for the short read.. nor limit the utf16 read to 256 (but 511 -> 1022bytes)
-    // so remember: long strings would probably corrupt a savegame!
+    // so remember: long strings would probably corrupt a csav!
     int64_t cnt = 0;
     is >> cp_packedint_ref(cnt);
     if (cnt < 0)

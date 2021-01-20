@@ -3,6 +3,8 @@
 
 class hexeditor_windows_mgr
 {
+  using node_type = cp::csav::node_t;
+
 public:
   static hexeditor_windows_mgr& get()
   {
@@ -19,13 +21,13 @@ private:
 
 private:
   std::map<
-    std::weak_ptr<const node_t>,
+    std::weak_ptr<const node_type>,
     std::shared_ptr<node_editor_window>,
-    std::owner_less<std::weak_ptr<const node_t>>
+    std::owner_less<std::weak_ptr<const node_type>>
   > m_windows;
 
 public:
-  node_editor_window* find_window(const std::shared_ptr<const node_t>& node) const
+  node_editor_window* find_window(const std::shared_ptr<const node_type>& node) const
   {
     auto it = m_windows.find(node);
     if (it != m_windows.end())
@@ -33,7 +35,7 @@ public:
     return nullptr;
   }
 
-  node_editor_window* open_window(const std::shared_ptr<const node_t>& node, bool take_focus = false)
+  node_editor_window* open_window(const std::shared_ptr<const node_type>& node, bool take_focus = false)
   {
     if (!node)
       return nullptr;

@@ -8,6 +8,7 @@
 #include "cpinternals/csav/serializers.hpp"
 #include "CItemData.hpp"
 
+namespace cp::csav {
 
 struct sub_inventory_t
 {
@@ -100,4 +101,6 @@ struct CInventory
     return writer.finalize(node_name());
   }
 };
+
+} // namespace cp::csav
 

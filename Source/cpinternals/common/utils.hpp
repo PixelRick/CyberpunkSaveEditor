@@ -24,13 +24,13 @@ insert_sorted(std::vector<T>& vec, const T& item)
 }
 
 template <typename T>
-typename std::vector<T>::iterator 
+std::pair<typename std::vector<T>::iterator, bool>
 insert_sorted_nodupe(std::vector<T>& vec, const T& item)
 {
 	auto it = std::lower_bound(vec.begin(), vec.end(), item);
-	if (*it == item)
-		return vec.end();
-	return vec.insert(it, item);
+	if (it != vec.end() && *it == item)
+		return std::make_pair(vec.end(), false);
+	return std::make_pair(vec.insert(it, item), true);
 }
 
 

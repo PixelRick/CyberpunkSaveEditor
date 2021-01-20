@@ -132,7 +132,7 @@ struct CPSData_widget
   }
 
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(CPSData& psdata, int* selected_object)
+  [[nodiscard]] static inline bool draw(cp::csav::CPSData& psdata, int* selected_object)
   {
     bool modified = false;
 
@@ -157,10 +157,10 @@ struct CPSData_widget
 class System_editor
   : public node_editor_widget
 {
-  CGenericSystem m_data;
+  cp::csav::CGenericSystem m_data;
 
 public:
-  System_editor(const std::shared_ptr<const node_t>& node, const csav_version& version)
+  System_editor(const std::shared_ptr<const cp::csav::node_t>& node, const cp::csav::csav_version& version)
     : node_editor_widget(node, version)
   {
     reload();
@@ -171,7 +171,7 @@ public:
 public:
   bool commit_impl() override
   {
-    std::shared_ptr<const node_t> rebuilt;
+    std::shared_ptr<const cp::csav::node_t> rebuilt;
     try
     {
       rebuilt = m_data.to_node(version());
@@ -222,10 +222,10 @@ protected:
 class PSData_editor
   : public node_editor_widget
 {
-  CPSData m_data;
+  cp::csav::CPSData m_data;
 
 public:
-  PSData_editor(const std::shared_ptr<const node_t>& node, const csav_version& version)
+  PSData_editor(const std::shared_ptr<const cp::csav::node_t>& node, const cp::csav::csav_version& version)
     : node_editor_widget(node, version)
   {
     reload();
@@ -236,7 +236,7 @@ public:
 public:
   bool commit_impl() override
   {
-    std::shared_ptr<const node_t> rebuilt;
+    std::shared_ptr<const cp::csav::node_t> rebuilt;
     try
     {
       rebuilt = m_data.to_node(version());

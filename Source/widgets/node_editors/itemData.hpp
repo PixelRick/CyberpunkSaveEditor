@@ -9,7 +9,7 @@
 struct uk_thing_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(uk_thing& x)
+  [[nodiscard]] static inline bool draw(cp::csav::uk_thing& x)
   {
     scoped_imgui_id _sii(&x);
     bool modified = false;
@@ -25,7 +25,7 @@ struct uk_thing_widget
 struct CItemID_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(CItemID& x, bool is_mod)
+  [[nodiscard]] static inline bool draw(cp::csav::CItemID& x, bool is_mod)
   {
     scoped_imgui_id _sii(&x);
     bool modified = false;
@@ -58,7 +58,7 @@ struct CItemID_widget
 struct CUk0ID_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(CUk0ID& x)
+  [[nodiscard]] static inline bool draw(cp::csav::CUk0ID& x)
   {
     scoped_imgui_id _sii(&x);
     bool modified = false;
@@ -75,12 +75,12 @@ struct CUk0ID_widget
 struct CItemMod_widget
 {
   // returns true if content has been edited
-  static inline bool draw_no_stats(CItemMod& item)
+  static inline bool draw_no_stats(cp::csav::CItemMod& item)
   {
     return draw(item, nullptr);
   }
 
-  [[nodiscard]] static inline bool draw(CItemMod& item, CStats* stats)
+  [[nodiscard]] static inline bool draw(cp::csav::CItemMod& item, cp::csav::CStats* stats)
   {
     scoped_imgui_id _sii(&item);
     bool modified = false;
@@ -119,7 +119,7 @@ struct CItemMod_widget
 
       ImGui::Text("slots/modifiers:");
 
-      static auto name_fn = [](const CItemMod& mod) { return fmt::format("mod: {}", mod.iid.shortname().strv()); };
+      static auto name_fn = [](const cp::csav::CItemMod& mod) { return fmt::format("mod: {}", mod.iid.shortname().strv()); };
       modified |= imgui_list_tree_widget(item.subs, name_fn, &CItemMod_widget::draw_no_stats, 0, true);
 
       ImGui::EndTable();
@@ -134,7 +134,7 @@ struct CItemMod_widget
 struct CItemData_widget
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(CItemData& item, CStats* stats=nullptr)
+  [[nodiscard]] static inline bool draw(cp::csav::CItemData& item, cp::csav::CStats* stats=nullptr)
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     ImGuiID id = window->GetID("itemData");
@@ -252,7 +252,7 @@ struct CItemData_widget
         if (ImGui::SmallButton("clear mods"))
         {
           modified = true;
-          item.root2 = CItemMod();
+          item.root2 = cp::csav::CItemMod();
         }
 
         ImGui::Text("MOD ROOT:");

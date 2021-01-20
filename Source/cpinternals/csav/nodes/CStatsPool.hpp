@@ -7,6 +7,8 @@
 #include "cpinternals/csav/serializers.hpp"
 #include "cpinternals/scripting/csystem.hpp"
 
+namespace cp::csav {
+
 struct CStatsPool
   : public node_serializable
 {
@@ -55,4 +57,5 @@ public:
   }
 };
 
+} // namespace cp::csav
 
