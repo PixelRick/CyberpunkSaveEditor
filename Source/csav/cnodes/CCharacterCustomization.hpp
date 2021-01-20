@@ -76,7 +76,7 @@ struct cetr_uk_thing3
       std::string s;
       reader >> cp_plstring_ref(s);
       x.cn = CName(s);
-      CNameResolver::get().resolve(x.cn);
+      CName_resolver::get().resolve(x.cn);
     }
     else
     {
@@ -94,13 +94,13 @@ struct cetr_uk_thing3
   {
     if (writer.version().v3 < 195)
     {
-      const auto& resolver = CNameResolver::get();
+      const auto& resolver = CName_resolver::get();
       if (!resolver.is_registered(x.cn))
       {
         writer.setstate(std::ios::badbit);
         return writer;
       }
-      auto cns = resolver.resolve(x.cn);
+      auto cns = std::string(resolver.resolve(x.cn));
       writer << cp_plstring_ref(cns);
     }
     else

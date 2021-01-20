@@ -48,6 +48,24 @@ struct stringpool
     return idx;
   }
 
+  // s must have static storage duration
+  uint32_t register_literal(const char* const s)
+  {
+    std::string_view sv(s);
+
+    auto it = m_viewsmap.find(sv);
+    if (it != m_viewsmap.end())
+    {
+      return it->second;
+    }
+
+    const uint32_t idx = static_cast<uint32_t>(m_views.size());
+    m_views.emplace_back(sv);
+    m_viewsmap.emplace(sv, idx);
+
+    return idx;
+  }
+
   std::optional<uint32_t> find(std::string_view s) const
   {
     auto it = m_viewsmap.find(s);
@@ -58,14 +76,14 @@ struct stringpool
     return std::nullopt;
   }
 
-  const std::string_view at(uint32_t idx) const
+  std::string_view at(uint32_t idx) const
   {
     return m_views[idx];
   }
 
   // These serialization methods are used by the CSAV's System nodes
-  bool serialize_in(iarchive& reader, uint32_t descs_size, uint32_t pool_size, uint32_t descs_offset = 0);
-  bool serialize_out(iarchive& writer, uint32_t& descs_size, uint32_t& pool_size);
+  //bool serialize_in(iarchive& reader, uint32_t descs_size, uint32_t pool_size, uint32_t descs_offset = 0);
+  //bool serialize_out(iarchive& writer, uint32_t& descs_size, uint32_t& pool_size);
 
 protected:
   bool allocate_block()

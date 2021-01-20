@@ -7,26 +7,31 @@ namespace cp {
 // One global name type to rule them all.
 struct gname
 {
-  gname()
+  constexpr gname() noexcept
+    : m_idx(0)
   {
-    m_idx = gnames_pool().register_string("<gname:uninitialized>");
   }
 
-  gname(const char* s)
+  explicit gname(const char* s)
     : gname(std::string_view(s)) {}
 
-  gname(std::string_view s)
+  explicit gname(std::string_view s)
   {
     m_idx = gnames_pool().register_string(s);
   }
 
-  gname(const std::string& s)
+  explicit gname(const std::string& s)
     : gname(std::string_view(s))
   {
   }
 
   gname(const gname&) = default;
   gname& operator=(const gname&) = default;
+
+  operator bool()
+  {
+    return !!m_idx;
+  }
 
   friend inline bool operator<(const gname& a, const gname& b) {
     return a.strv() < b.strv();
@@ -49,20 +54,31 @@ struct gname
   const char* c_str() const
   {
     // string_pool guarantees a null terminator after the view.
-    return gnames_pool().at(m_idx).data();
+    return strv().data();
   }
 
-  //std::string str() const
-  //{
-  //  return std::string(strv());
-  //}
+  operator std::string() const
+  {
+    return std::string(strv());
+  }
+
+  std::string string() const
+  {
+    return std::string(strv());
+  }
 
   uint32_t idx() const { return m_idx; }
 
 protected:
+  friend struct literal_gname;
+
   static stringpool& gnames_pool()
   {
     static stringpool instance;
+    static bool once = [](){
+      instance.register_literal("<gname:uninitialized>");
+      return true;
+    }();
     return instance;
   }
 
@@ -80,6 +96,29 @@ inline void from_json(const nlohmann::json& j, gname& csn)
   csn = gname(j.get<std::string>());
 }
 
+// TODO: rework this with C++20 (single static_gname per char* value)
+struct literal_gname
+{
+  constexpr explicit literal_gname(const char* const s)
+    : str(s)
+  {}
+
+  operator const gname&()
+  {
+    if (!gn)
+      gn.m_idx = gname::gnames_pool().register_literal(str);
+    return gn;
+  }
+
+protected:
+  const char* const str;
+  gname gn;
+};
+
+constexpr literal_gname operator""_gn(const char* str, std::size_t len)
+{
+  return literal_gname{str};
+}
 
 } // namespace cp
 

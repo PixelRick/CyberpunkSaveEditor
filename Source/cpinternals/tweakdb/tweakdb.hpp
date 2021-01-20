@@ -109,7 +109,7 @@ struct tweakdb
   tweakdb()
   {
     // Add some types to the CNames
-    auto& resolver = CNameResolver::get();
+    auto& resolver = CName_resolver::get();
     resolver.register_name("String");
     resolver.register_name("Quaternion");
     resolver.register_name("array:Bool");

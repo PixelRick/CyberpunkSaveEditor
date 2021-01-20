@@ -6,7 +6,6 @@
 #include <nlohmann/json.hpp>
 #include <fmt/format.h>
 #include "common.hpp"
-#include "tweakdb/TweakDBID.hpp"
 
 namespace cp {
 
@@ -46,6 +45,12 @@ bool init_cpinternals()
     std::vector<gname> names;
     load_from_json("./db/TweakDBIDs.json", names);
     TweakDBID_resolver::get().feed(names);
+  }
+
+  {
+    std::vector<gname> names;
+    load_from_json("./db/CNames.json", names);
+    CName_resolver::get().feed(names);
   }
 
   return true;

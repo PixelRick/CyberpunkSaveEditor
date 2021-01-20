@@ -658,11 +658,11 @@ public:
 
 
     static uint32_t hash32;
-    static std::string revhash32_str;
+    static gname revhash32_str;
     ImGui::PushItemWidth(200.f);
     bool revhash32 = ImGui::InputScalar("reverse fnv1a32 (hex)", ImGuiDataType_U32, &hash32, 0, 0, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
     if (revhash32) {
-      revhash32_str = CNameResolver::get().resolve(hash32);
+      revhash32_str = CName_resolver::get().resolve(hash32);
     }
     ImGui::SameLine();
     ImGui::Text("%s", revhash32_str.c_str());

@@ -128,9 +128,6 @@
     <ClCompile Include="Source\external\xlz4\lz4.c">
       <Filter>Source\external\xlz4</Filter>
     </ClCompile>
-    <ClCompile Include="Source\cpinternals\cpnames.cpp">
-      <Filter>Source\cpinternals</Filter>
-    </ClCompile>
     <ClCompile Include="Source\external\fmt\format.cc">
       <Filter>Source\external\fmt</Filter>
     </ClCompile>
@@ -199,6 +196,9 @@
     </ClCompile>
     <ClCompile Include="Source\cpinternals\init.cpp">
       <Filter>Source\cpinternals</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\cpinternals\common\CName.cpp">
+      <Filter>Source\cpinternals\common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -744,6 +744,9 @@
       <Filter>Source\cpinternals</Filter>
     </ClInclude>
     <ClInclude Include="Source\cpinternals\common\misc.hpp">
+      <Filter>Source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\common\CName.hpp">
       <Filter>Source\cpinternals\common</Filter>
     </ClInclude>
   </ItemGroup>

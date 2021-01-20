@@ -33,7 +33,7 @@ public:
       if (!m_vehicleGarageComponentPS)
         return false;
 
-      auto pdata = m_vehicleGarageComponentPS->get_prop_cast<CDynArrayProperty>("spawnedVehiclesData");
+      auto pdata = m_vehicleGarageComponentPS->get_prop_cast<CDynArrayProperty>("spawnedVehiclesData"_gn);
       if (!pdata)
         return false;
       for (auto& item : *pdata)
@@ -44,7 +44,7 @@ public:
         auto obj = objprop->obj();
         if (!obj)
           return false;
-        auto record = obj->get_prop_cast<CTweakDBIDProperty>("spawnRecordID");
+        auto record = obj->get_prop_cast<CTweakDBIDProperty>("spawnRecordID"_gn);
         if (!record)
           return false;
         record->m_id = tdbid;

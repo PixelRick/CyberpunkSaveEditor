@@ -8,10 +8,13 @@
 
 namespace cp {
 
+/////////////////////////////////////////
+// TweakDBID
+/////////////////////////////////////////
+
 struct TweakDBID
 {
   TweakDBID() = default;
-
   TweakDBID(const TweakDBID&) = default;
 
   explicit TweakDBID(uint32_t crc, size_t slen)
@@ -24,24 +27,19 @@ struct TweakDBID
   }
 
   explicit TweakDBID(uint64_t u64)
-  {
-    as_u64 = u64;
-  }
-
-  explicit TweakDBID(std::string_view name)
-    : as_u64(0)
-  {
-    crc = crc32(name);
-    slen = (uint8_t)name.size();
-  }
-
-  explicit TweakDBID(gname name)
-    : TweakDBID(name.strv())
+    : as_u64(u64)
   {
   }
 
-  explicit TweakDBID(const char* name)
-    : TweakDBID(std::string_view(name))
+  explicit TweakDBID(std::string_view name, bool add_to_resolver = true);
+
+  explicit TweakDBID(const char* name, bool add_to_resolver = true)
+    : TweakDBID(std::string_view(name), add_to_resolver)
+  {
+  }
+
+  explicit TweakDBID(gname name, bool add_to_resolver = true)
+    : TweakDBID(name.strv(), add_to_resolver)
   {
   }
 
@@ -108,6 +106,9 @@ enum class TweakDBID_category
   Unknown,
 };
 
+/////////////////////////////////////////
+// resolver
+/////////////////////////////////////////
 
 struct TweakDBID_resolver
 {
@@ -122,7 +123,7 @@ struct TweakDBID_resolver
 
   bool is_registered(std::string_view name) const
   {
-    return is_registered(TweakDBID(name));
+    return is_registered(TweakDBID(name, false));
   }
 
   bool is_registered(const TweakDBID& id) const
@@ -130,12 +131,19 @@ struct TweakDBID_resolver
     return m_tdbid_invmap.find(id.as_u64) != m_tdbid_invmap.end();
   }
 
+  void register_name(gname name);
+
+  void register_name(std::string_view name)
+  {
+    register_name(gname(name));
+  }
+
   gname resolve(const TweakDBID& id) const
   {
     auto it = m_tdbid_invmap.find(id.as_u64);
     if (it != m_tdbid_invmap.end())
       return it->second;
-    return fmt::format("<tdbid:{:08X}:{:02X}>", id.crc, id.slen);
+    return gname(fmt::format("<tdbid:{:08X}:{:02X}>", id.crc, id.slen));
   }
 
   const std::vector<gname>& sorted_names(TweakDBID_category cat = TweakDBID_category::Unknown) const
@@ -174,7 +182,7 @@ protected:
 inline gname TweakDBID::name() const
 {
   auto& resolver = TweakDBID_resolver::get();
-  return resolver.resolve(*this).strv();
+  return resolver.resolve(*this);
 }
 
 } // namespace cp

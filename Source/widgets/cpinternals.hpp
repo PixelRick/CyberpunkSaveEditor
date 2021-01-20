@@ -141,7 +141,7 @@ struct CName_widget
     scoped_imgui_id _sii(&x);
     bool modified = false;
 
-    auto& namelist = CNameResolver::get().sorted_names();
+    auto& namelist = CName_resolver::get().sorted_names();
 
     // tricky ;)
     int item_current = 0;
@@ -175,7 +175,7 @@ struct CName_widget
 
   static inline bool ItemGetter(void* data, int n, const char** out_str)
   { 
-    auto& namelist = CNameResolver::get().sorted_names();
+    auto& namelist = CName_resolver::get().sorted_names();
     if (n == 0)
       *out_str = (const char*)data;
     else

@@ -19,8 +19,18 @@ typename std::vector<T>::iterator
 insert_sorted(std::vector<T>& vec, const T& item)
 {
 	return vec.insert( 
-		std::upper_bound(vec.begin(), vec.end(), item),
+		std::lower_bound(vec.begin(), vec.end(), item),
 		item);
+}
+
+template <typename T>
+typename std::vector<T>::iterator 
+insert_sorted_nodupe(std::vector<T>& vec, const T& item)
+{
+	auto it = std::lower_bound(vec.begin(), vec.end(), item);
+	if (*it == item)
+		return vec.end();
+	return vec.insert(it, item);
 }
 
 

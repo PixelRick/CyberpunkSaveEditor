@@ -28,7 +28,7 @@ struct CFieldDesc
 };
 
 
-static_assert(sizeof(CFieldDesc) == sizeof(uint64_t));
+//static_assert(sizeof(CFieldDesc) == sizeof(uint64_t));
 
 
 class CFieldBP

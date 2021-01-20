@@ -857,7 +857,7 @@ public:
 
   virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
-    if (m_val_name == "<no_zero_name>")
+    if (m_val_name == "<no_zero_name>"_gn)
       throw std::logic_error("enum value must be skipped, 0 has no name");
 
     uint16_t strpool_idx = serctx.strpool.to_idx(m_val_name.strv());
@@ -992,7 +992,7 @@ public:
 
   virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
-    uint16_t strpool_idx = serctx.strpool.to_idx(m_id.str());
+    uint16_t strpool_idx = serctx.strpool.to_idx(m_id.name().strv());
     os << cbytes_ref(strpool_idx);
     return true;
   }

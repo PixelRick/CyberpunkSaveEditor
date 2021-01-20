@@ -55,7 +55,7 @@ public:
 
     // update seed->stats map
 
-    auto mapvalues = m_mapstruct->get_prop("values");
+    auto mapvalues = m_mapstruct->get_prop("values"_gn);
     auto m_stats_values_prop = dynamic_cast<CDynArrayProperty*>(mapvalues);
     if (!m_stats_values_prop)
       return true;
@@ -68,7 +68,7 @@ public:
         continue;
       auto obj = objprop->obj();
 
-      auto seedprop = dynamic_cast<CIntProperty*>(obj->get_prop("seed"));
+      auto seedprop = dynamic_cast<CIntProperty*>(obj->get_prop("seed"_gn));
       if (!seedprop)
         continue;
       uint32_t seed = seedprop->u32();
@@ -84,7 +84,7 @@ public:
     if (stats == m_seed_to_stats_obj_map.end())
       return nullptr;
 
-    auto modsarray = dynamic_cast<CDynArrayProperty*>(stats->second->get_prop("statModifiers"));
+    auto modsarray = dynamic_cast<CDynArrayProperty*>(stats->second->get_prop("statModifiers"_gn));
     if (!modsarray)
       return nullptr;
 
@@ -108,20 +108,20 @@ protected:
 public:
   CObjectSPtr add_combined_stats(CProperty* modifiers)
   {
-    return add_new_modifier(modifiers, "gameCombinedStatModifierData");
+    return add_new_modifier(modifiers, "gameCombinedStatModifierData"_gn);
   }
 
   CObjectSPtr add_curve_stats(CProperty* modifiers)
   {
-    return add_new_modifier(modifiers, "gameCurveStatModifierData");
+    return add_new_modifier(modifiers, "gameCurveStatModifierData"_gn);
   }
 
   CObjectSPtr add_constant_stats(CProperty* modifiers)
   {
-    auto a = add_new_modifier(modifiers, "gameConstantStatModifierData");
-    a->get_prop_cast<CEnumProperty>("modifierType")->set_value_by_idx(0);
-    a->get_prop_cast<CEnumProperty>("statType")->set_value_by_idx(0);
-    a->get_prop_cast<CFloatProperty>("value")->set_value(1.0f);
+    auto a = add_new_modifier(modifiers, "gameConstantStatModifierData"_gn);
+    a->get_prop_cast<CEnumProperty>("modifierType"_gn)->set_value_by_idx(0);
+    a->get_prop_cast<CEnumProperty>("statType"_gn)->set_value_by_idx(0);
+    a->get_prop_cast<CFloatProperty>("value"_gn)->set_value(1.0f);
     return a;
   }
 

@@ -127,9 +127,7 @@ struct CPSData_widget
     const auto& tn = *(std::vector<CName>*)data;
     if (idx < 0 || idx >= tn.size())
       return false;
-    static std::string dummy_str;
-    dummy_str = tn[idx].str();
-    *out = dummy_str.c_str();
+    *out = tn[idx].name().c_str();
     return true;
   }
 
