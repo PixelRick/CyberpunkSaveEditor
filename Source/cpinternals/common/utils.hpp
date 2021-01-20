@@ -14,5 +14,15 @@ constexpr uint32_t byteswap(uint32_t value) noexcept
 	return (tmp << 16) | (tmp >> 16);
 }
 
+template <typename T>
+typename std::vector<T>::iterator 
+insert_sorted(std::vector<T>& vec, const T& item)
+{
+	return vec.insert( 
+		std::upper_bound(vec.begin(), vec.end(), item),
+		item);
+}
+
+
 } // namespace cp
 

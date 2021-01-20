@@ -23,12 +23,12 @@ struct stringpool
     return m_viewsmap.find(s) != m_viewsmap.end();
   }
 
-  size_t size() const
+  uint32_t size() const
   {
-    return m_views.size();
+    return static_cast<uint32_t>(m_views.size());
   }
 
-  size_t register_string(std::string_view s)
+  uint32_t register_string(std::string_view s)
   {
     auto it = m_viewsmap.find(s);
     if (it != m_viewsmap.end())
@@ -37,22 +37,23 @@ struct stringpool
     }
 
     const size_t ssize = s.size();
-    auto new_view = allocate_view(ssize);
-    std::copy(s.begin(), s.end(), new_view.begin());
 
-    const size_t idx = m_views.size();
+    auto new_view = allocate_view(ssize);
+    std::copy(s.begin(), s.end(), const_cast<char*>(new_view.data()));
+
+    const uint32_t idx = static_cast<uint32_t>(m_views.size());
     m_views.emplace_back(new_view);
-    m_viewsmap.emplace(s, idx);
+    m_viewsmap.emplace(new_view, idx);
 
     return idx;
   }
 
-  std::optional<size_t> find(std::string_view s) const
+  std::optional<uint32_t> find(std::string_view s) const
   {
     auto it = m_viewsmap.find(s);
     if (it != m_viewsmap.end())
     {
-      return std::make_optional<size_t>(it->second);
+      return { it->second };
     }
     return std::nullopt;
   }
@@ -71,15 +72,18 @@ protected:
   {
     m_blocks.emplace_back(std::make_unique<block_type>());
     m_curpos = 0;
+    return true;
   }
 
+  // This also allocates a null character after the string_view range
+  // so that calling data() is equivalent to c_str()
   std::string_view allocate_view(size_t len)
   {
-    if (m_curpos + len > block_size)
+    if (m_curpos + len + 1 > block_size)
       allocate_block();
 
     const char* data = m_blocks.back()->data() + m_curpos;
-    m_curpos += len;
+    m_curpos += len + 1;
 
     return std::string_view(data, len);
   }
@@ -91,7 +95,7 @@ protected:
 
   // accelerated search
 
-  std::unordered_map<std::string_view, size_t> m_viewsmap;
+  std::unordered_map<std::string_view, uint32_t> m_viewsmap;
 };
 
 } // namespace cp

@@ -215,58 +215,7 @@ public:
 };
 
 // let's use a global pool
-class CSysName
-{
-  uint32_t m_idx;
+using CSysName = gname;
 
-public:
-  CSysName()
-  {
-    m_idx = CStringPool::get_global().to_idx("uninitialized");
-  }
 
-  CSysName(const char* s)
-    : CSysName(std::string_view(s)) {}
-
-  CSysName(std::string_view s)
-  {
-    m_idx = CStringPool::get_global().to_idx(s);
-  }
-
-  CSysName(const CSysName&) = default;
-  CSysName& operator=(const CSysName&) = default;
-
-  // todo: switch to string_view when CStringPool doesnot reallocate mem
-  std::string str() const
-  {
-    return CStringPool::get_global().from_idx(m_idx);
-  }
-
-  uint32_t idx() const { return m_idx; }
-
-  friend inline bool operator<(const CSysName& a, const CSysName& b) {
-    return a.m_idx < b.m_idx;
-  }
-
-  friend inline bool operator==(const CSysName& a, const CSysName& b) {
-    return a.m_idx == b.m_idx;
-  }
-
-  friend inline bool operator!=(const CSysName& a, const CSysName& b) {
-    return !(a == b);
-  }
-};
-
-namespace std {
-
-  template <>
-  struct hash<CSysName>
-  {
-    std::size_t operator()(const CSysName& k) const
-    {
-      return hash<uint32_t>()(k.idx());
-    }
-  };
-
-}
 

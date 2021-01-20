@@ -17,8 +17,7 @@ struct WidCFact
       *out_str = (const char*)data;
     else
     {
-      tmp = namelist[n-1].str();
-      *out_str = tmp.c_str();
+      *out_str = namelist[n-1].c_str();
     }
     return true;
   }
@@ -36,7 +35,7 @@ struct WidCFact
 
     const auto& curname = x.name();
     ImGui::SetNextItemWidth(std::min(380.f, ImGui::GetContentRegionAvailWidth() * 0.5f));
-    modified |= ImGui::BetterCombo("name, ", &current_item_idx, &ItemGetter, (void*)curname.str().c_str(), static_cast<int>(namelist.size() + 1));
+    modified |= ImGui::BetterCombo("name, ", &current_item_idx, &ItemGetter, (void*)curname.c_str(), static_cast<int>(namelist.size() + 1));
 
     if (current_item_idx > 0)
     {
@@ -62,17 +61,17 @@ struct TweakDBID_widget
 {
   struct ItemGetterData
   {
-    std::string cur_name;
-    const std::vector<std::string>& namelist;
+    gname cur_name;
+    const std::vector<gname>& namelist;
   };
 
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(TweakDBID& x, const char* label, TweakDBIDCategory cat = TweakDBIDCategory::All, bool advanced_edit=true)
+  [[nodiscard]] static inline bool draw(TweakDBID& x, const char* label, TweakDBID_category cat = TweakDBID_category::All, bool advanced_edit=true)
   {
     scoped_imgui_id _sii(&x);
     bool modified = false;
 
-    auto& namelist = TweakDBIDResolver::get().sorted_names(cat);
+    auto& namelist = TweakDBID_resolver::get().sorted_names(cat);
 
     // tricky ;)
     int item_current = 0;
@@ -116,14 +115,15 @@ struct TweakDBID_widget
       *out_str = dataref.cur_name.c_str();
     else
     {
-      auto& s = dataref.namelist[n-1];
-      auto cs = s.c_str();
+      auto& gn = dataref.namelist[n-1];
+      auto sv = gn.strv();
+      auto cs = gn.c_str();
 
-      if (s.rfind("Items.", 0) == 0)
+      if (sv.rfind("Items.", 0) == 0)
         *out_str = cs + 6;
-      else if (s.rfind("AttachmentSlots.", 0) == 0)
+      else if (sv.rfind("AttachmentSlots.", 0) == 0)
         *out_str = cs + 16;
-      else if (s.rfind("Vehicle.", 0) == 0)
+      else if (sv.rfind("Vehicle.", 0) == 0)
         *out_str = cs + 8;
       else
         *out_str = cs;

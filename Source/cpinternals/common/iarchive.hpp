@@ -30,6 +30,13 @@ struct iarchive
     return *this;
   }
 
+  template <typename T, typename = std::enable_if_t<std::is_arithmetic_v<T> && !std::is_const_v<T>>>
+  iarchive& operator<<(T& val)
+  {
+    byte_order_serialize(&val, sizeof(T));
+    return *this;
+  }
+
   template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
   iarchive& serialize_int_packed(T& v)
   {

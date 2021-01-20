@@ -44,9 +44,7 @@ struct CSystem_widget
 {
   static std::string object_name_getter(const CObjectSPtr& item)
   {
-    static std::string tmp;
-    tmp = item->ctypename().str();
-    return tmp;
+    return std::string(item->ctypename().strv());
   };
 
   // returns true if content has been edited
@@ -65,7 +63,7 @@ struct CSystem_widget
       ImGui::BeginChild("Object", ImVec2(-FLT_MIN, 0));
       auto& obj = objects[0];
       ImGui::PushItemWidth(300.f);
-      auto ctype = obj->ctypename().str();
+      auto ctype = obj->ctypename();
       ImGui::Text("object type: %s", ctype.c_str());
       ImGui::PopItemWidth();
       modified |= obj->imgui_widget(ctype.c_str(), true);
@@ -102,7 +100,7 @@ struct CSystem_widget
         {
           auto& obj = objects[object_idx];
           ImGui::PushItemWidth(300.f);
-          auto ctype = obj->ctypename().str();
+          auto ctype = obj->ctypename();
           ImGui::Text("object type: %s", ctype.c_str());
           ImGui::PopItemWidth();
           modified |= obj->imgui_widget(ctype.c_str(), true);

@@ -38,7 +38,7 @@ struct WidFactsTable
     if (ImGui::Button("Sort facts lexicographically ascending"))
     {
       std::sort(facts.begin(), facts.end(), [](const CP::CFact& a, const CP::CFact& b) -> bool {
-        return a.name().str() < b.name().str();
+        return a.name().strv() < b.name().strv();
       });
     }
 

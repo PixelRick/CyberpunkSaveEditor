@@ -80,7 +80,7 @@ struct CFactResolver
 
   void insert(CSysName name)
   {
-    uint32_t id = fnv1a32(name.str());
+    uint32_t id = fnv1a32(name.strv());
 
     auto it = m_invmap.emplace(id, name);
     if (it.second)
@@ -94,9 +94,9 @@ struct CFactResolver
     return is_registered(fact.hash());
   }
 
-  bool is_registered(CSysName name) const
+  bool is_registered(gname name) const
   {
-    uint32_t hash = fnv1a32(name.str());
+    uint32_t hash = fnv1a32(name.strv());
     return is_registered(hash);
   }
 
@@ -105,27 +105,27 @@ struct CFactResolver
     return m_invmap.find(hash) != m_invmap.end();
   }
 
-  CSysName resolve(const CFact& fact) const
+  gname resolve(const CFact& fact) const
   {
     return resolve(fact.hash());
   }
 
-  CSysName resolve(uint32_t hash) const
+  gname resolve(uint32_t hash) const
   {
     auto it = m_invmap.find(hash);
     if (it != m_invmap.end())
       return it->second;
-    return CSysName(fmt::format("<unknown_fact:{:08X}>", hash));
+    return gname(fmt::format("<unknown_fact:{:08X}>", hash));
   }
 
-  const std::vector<CSysName>& sorted_names() const { return m_list; }
+  const std::vector<gname>& sorted_names() const { return m_list; }
 
 protected:
   CFactResolver();
   ~CFactResolver() = default;
 
-  std::vector<CSysName> m_list;
-  std::unordered_map<uint32_t, CSysName> m_invmap;
+  std::vector<gname> m_list;
+  std::unordered_map<uint32_t, gname> m_invmap;
 };
 
 } // namespace CP

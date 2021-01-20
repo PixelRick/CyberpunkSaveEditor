@@ -156,7 +156,7 @@ protected:
       is.setstate(std::ios_base::badbit);
     }
 
-    to_implement_ctypenames.emplace(std::string(prop->ctypename().str()));
+    to_implement_ctypenames.emplace(std::string(prop->ctypename().c_str()));
 
     // try fall-back
     if (!is_unknown_prop && eof_is_end_of_prop)
@@ -286,7 +286,7 @@ public:
         {
           serctx.log(fmt::format(
             "serialized_in ({}) out of order {}::{} (ctype:{})",
-            i, this->ctypename().str(), fdesc.name.str(), fdesc.ctypename.str()));
+            i, this->ctypename().c_str(), fdesc.name.c_str(), fdesc.ctypename.c_str()));
         }
       }
       else
@@ -301,7 +301,7 @@ public:
         throw std::runtime_error(
           fmt::format(
             "CObject::serialize_in: serial field {}::{} is missing from bp fields",
-            this->ctypename().str(), fdesc.name.str())
+            this->ctypename().c_str(), fdesc.name.c_str())
         );
         return false;
       }
@@ -312,7 +312,7 @@ public:
         throw std::runtime_error(
           fmt::format(
             "CObject::serialize_in: serial field {} has different type ({}) than bp's ({})",
-            fdesc.name.str(), fdesc.ctypename.str(), field_it->prop->ctypename().str())
+            fdesc.name.c_str(), fdesc.ctypename.c_str(), field_it->prop->ctypename().c_str())
         );
         return false;
       }
@@ -335,14 +335,14 @@ public:
 
       serctx.log(fmt::format(
         "serialized_in ({}) {}::{} (ctype:{}) in {} bytes",
-        i, this->ctypename().str(), fdesc.name.str(), fdesc.ctypename.str(), ddesc.data_size));
+        i, this->ctypename().c_str(), fdesc.name.c_str(), fdesc.ctypename.c_str(), ddesc.data_size));
     }
 
     if (is.eof()) // tellg would fail if eofbit is set
       is.seekg(0, std::ios_base::end);
     uint32_t end_pos = (uint32_t)is.tellg();
 
-    serctx.log(fmt::format("serialized_in CObject {} in {} bytes", this->ctypename().str(), (size_t)(end_pos - start_pos)));
+    serctx.log(fmt::format("serialized_in CObject {} in {} bytes", this->ctypename().c_str(), (size_t)(end_pos - start_pos)));
 
     post_cobject_event(EObjectEvent::data_modified);
     return true;
@@ -394,20 +394,20 @@ public:
 
       const uint32_t data_offset = (uint32_t)(prop_start_pos - start_pos);
       descs.emplace_back(
-        strpool.to_idx(field.name.str()),
-        strpool.to_idx(field.prop->ctypename().str()),
+        strpool.to_idx(field.name.c_str()),
+        strpool.to_idx(field.prop->ctypename().c_str()),
         data_offset
       );
 
       if (!field.prop->serialize_out(os, serctx))
       {
-        serctx.log(fmt::format("couldn't serialize_out {}::{}", this->ctypename().str(), field.name.str()));
+        serctx.log(fmt::format("couldn't serialize_out {}::{}", this->ctypename().c_str(), field.name.c_str()));
         return false;
       }
 
       size_t prop_end_pos = (size_t)os.tellp();
 
-      serctx.log(fmt::format("serialized_out {}::{} in {} bytes", this->ctypename().str(), field.name.str(), prop_end_pos - prop_start_pos));
+      serctx.log(fmt::format("serialized_out {}::{} in {} bytes", this->ctypename().c_str(), field.name.c_str(), prop_end_pos - prop_start_pos));
     }
 
     auto end_pos = os.tellp();
@@ -416,7 +416,7 @@ public:
     os.seekp(descs_pos);
     os.write((char*)descs.data(), descs.size() * sizeof(serial_field_desc_t));
 
-    serctx.log(fmt::format("serialized_out CObject {} in {} bytes", this->ctypename().str(), (size_t)(end_pos - start_pos)));
+    serctx.log(fmt::format("serialized_out CObject {} in {} bytes", this->ctypename().c_str(), (size_t)(end_pos - start_pos)));
 
     os.seekp(end_pos);
     return true;
@@ -431,8 +431,7 @@ public:
   {
     // should be ok for rendering, only one value is used at a time
     static std::string tmp;
-    tmp = field.name.str();
-    return tmp;
+    return field.name.strv();
   };
 
   static inline bool show_field_types = false;
@@ -468,13 +467,13 @@ public:
 
         if (show_field_types)
         {
-          auto field_type = field.prop->ctypename().str();
+          auto field_type = field.prop->ctypename();
           ImGui::Text(field_type.c_str());
 
           ImGui::TableNextColumn();
         }
 
-        auto field_name = field.name.str();
+        auto field_name = field.name;
         ImGui::Text(field_name.c_str());
         //if (editable && ImGui::BeginPopupContextItem("item context menu"))
         //{

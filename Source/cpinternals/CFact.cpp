@@ -1,4 +1,3 @@
-#pragma once
 #include <cpinternals/CFact.hpp>
 
 #include <Windows.h>
@@ -7,21 +6,13 @@
 #include <nlohmann/json.hpp>
 #include <fmt/format.h>
 
-void to_json(nlohmann::json& j, const CSysName& csn)
-{
-  j = csn.str();
-}
-
-void from_json(const nlohmann::json& j, CSysName& csn)
-{
-  csn = CSysName(j.get<std::string>());
-}
-
 namespace CP {
+
+
 
 CFact::CFact(CSysName name, uint32_t value)
 {
-  m_hash = fnv1a32(name.str());
+  m_hash = fnv1a32(name.strv());
   CFactResolver::get().insert(name);
   // todo: export on newly discovered name..
 }
@@ -35,7 +26,7 @@ CSysName CFact::name() const
 void CFact::name(CSysName name) 
 {
   auto& resolver = CFactResolver::get();
-  m_hash = fnv1a32(name.str());
+  m_hash = fnv1a32(name.strv());
   resolver.insert(name);
 }
 
@@ -66,7 +57,7 @@ CFactResolver::CFactResolver()
 
   for (auto& n : m_list)
   {
-    uint32_t hash = fnv1a32(n.str());
+    uint32_t hash = fnv1a32(n.strv());
     m_invmap[hash] = n;
   }
 

@@ -64,12 +64,12 @@ struct CItemID
     return writer;
   }
 
-  std::string name() const
+  gname name() const
   {
     return nameid.name();
   }
 
-  std::string shortname() const
+  gname shortname() const
   {
     return nameid.name();
   }
@@ -102,12 +102,12 @@ struct CUk0ID
     return true;
   }
 
-  std::string name() const
+  gname name() const
   {
     return nameid.name();
   }
 
-  std::string shortname() const
+  gname shortname() const
   {
     return nameid.name();
   }
@@ -138,7 +138,7 @@ struct CItemMod // for CItemData kind 0, 2
     std::string s;
     reader >> cp_plstring_ref(s);
     strcpy_s(cn0, s.c_str());
-    reader >> tdbid1;
+    reader >> cbytes_ref(tdbid1.as_u64);
 
     size_t cnt = 0;
     reader >> cp_packedint_ref((int64_t&)cnt);
@@ -160,7 +160,7 @@ struct CItemMod // for CItemData kind 0, 2
 
     std::string s = cn0;
     writer << cp_plstring_ref(s);
-    writer << tdbid1;
+    writer << cbytes_ref(tdbid1.as_u64);
 
     const size_t cnt = subs.size();
     writer << cp_packedint_ref((int64_t&)cnt);
@@ -249,7 +249,7 @@ struct CItemData
     return writer.finalize(node_name());
   }
 
-  std::string name() const
+  gname name() const
   {
     return iid.name();
   }

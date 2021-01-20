@@ -37,9 +37,7 @@ public:
 
   static std::string object_name_getter(const CObjectSPtr& item)
   {
-    static std::string tmp;
-    tmp = item->ctypename().str();
-    return tmp;
+    return std::string(item->ctypename().strv());
   };
 
   bool imgui_draw()
@@ -100,7 +98,7 @@ public:
         {
           auto& obj = objects[object_idx];
           ImGui::PushItemWidth(300.f);
-          auto ctype = obj->ctypename().str();
+          auto ctype = obj->ctypename();
           ImGui::Text("object type: %s", ctype.c_str());
           ImGui::PopItemWidth();
           modified |= obj->imgui_widget(ctype.c_str(), true);

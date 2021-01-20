@@ -15,7 +15,7 @@ std::function<CPropertyUPtr(CPropertyOwner*)> build_prop_creator(Args&& ...args)
 
 std::function<CPropertyUPtr(CPropertyOwner*)> CPropertyFactory::get_creator(CSysName ctypename)
 {
-  std::string str_ctypename = ctypename.str();
+  std::string str_ctypename = ctypename.c_str();
 
   if (str_ctypename.size() && str_ctypename[0] == '[')
   {

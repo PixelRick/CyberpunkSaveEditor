@@ -14,6 +14,7 @@
 #include "widgets/csav_widget.hpp"
 #include "widgets/node_editors/hexedit.hpp"
 #include "archive/archive_test.hpp"
+#include "cpinternals/init.hpp"
 
 using namespace std::chrono_literals;
 
@@ -161,6 +162,9 @@ protected:
 		static bool test_hexeditor = false;
 		static bool imgui_demo = false;
 		static bool imgui_style_editor = false;
+
+
+		static bool cploaded = cp::init_cpinternals();
 
 		if (font != nullptr)
 		{

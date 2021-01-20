@@ -10,6 +10,7 @@
 //#pragma message ("deprecated header utils.hpp, include cpinternals/common.hpp instead")
 
 #include "cpinternals/common.hpp"
+
 using namespace cp;
 
 
@@ -20,12 +21,7 @@ using namespace cp;
 namespace std { using tcb::span; }
 #endif
 
-// really bad place
-struct progress_t
-{
-	float value = 0.f;
-	std::string comment;
-};
+
 
 
 class span_istreambuf
@@ -207,14 +203,7 @@ protected:
 	}
 };
 
-template <typename T>
-typename std::vector<T>::iterator 
-insert_sorted(std::vector<T>& vec, const T& item)
-{
-	return vec.insert( 
-		std::upper_bound(vec.begin(), vec.end(), item),
-		item);
-}
+
 
 
 void replace_all_in_str(std::string& s, const std::string& from, const std::string& to);

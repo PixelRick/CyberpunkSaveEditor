@@ -5,12 +5,18 @@
 
 namespace cp {
 
+namespace detail::crc32 {
+
+constexpr static std::array<uint32_t, 16> lut = {
+  0x00000000, 0x1DB71064, 0x3B6E20C8, 0x26D930AC, 0x76DC4190, 0x6B6B51F4, 0x4DB26158, 0x5005713C,
+  0xEDB88320, 0xF00F9344, 0xD6D6A3E8, 0xCB61B38C, 0x9B64C2B0, 0x86D3D2D4, 0xA00AE278, 0xBDBDF21C
+};
+
+} // namespace detail::crc32
+
 constexpr uint32_t crc32(const char* const data, size_t len, uint32_t seed = 0)
 {
-	constexpr std::array<uint32_t, 16> lut = {
-		0x00000000, 0x1DB71064, 0x3B6E20C8, 0x26D930AC, 0x76DC4190, 0x6B6B51F4, 0x4DB26158, 0x5005713C,
-		0xEDB88320, 0xF00F9344, 0xD6D6A3E8, 0xCB61B38C, 0x9B64C2B0, 0x86D3D2D4, 0xA00AE278, 0xBDBDF21C
-	};
+	using detail::crc32::lut;
 
 	uint32_t x = ~seed;
 	for (size_t i = 0; i < len; ++i)
@@ -18,8 +24,22 @@ constexpr uint32_t crc32(const char* const data, size_t len, uint32_t seed = 0)
     const uint8_t b = static_cast<uint8_t>(data[i]);
 		x = lut[(x ^ b) & 0x0F] ^ (x >> 4);
 		x = lut[(x ^ (b >> 4)) & 0x0F] ^ (x >> 4);
-	};
+	}
 	return ~x;
+}
+
+// This version isn't using the matrix trick and should be faster for small values of len.
+constexpr uint32_t crc32_small_combine(uint32_t a, uint32_t b, size_t len)
+{
+  using detail::crc32::lut;
+
+  uint32_t x = a;
+  for (size_t i = 0; i < len; ++i)
+  {
+    x = lut[x & 0x0F] ^ (x >> 4);
+    x = lut[x & 0x0F] ^ (x >> 4);
+  }
+  return x ^ b;
 }
 
 constexpr uint32_t crc32(std::string_view s, uint32_t seed = 0)
@@ -73,6 +93,7 @@ constexpr uint64_t operator""_fnv1a64(const char* const str, std::size_t len)
 {
 	return fnv1a64(std::string_view(str, len));
 }
+
 
 namespace detail::murmur3_32 {
 
@@ -167,7 +188,11 @@ constexpr uint32_t operator""_murmur3_32(const char* str, std::size_t len)
   return murmur3_32(std::string_view(str, len));
 }
 
+
 static_assert(0xE8F35A06 == "testing"_crc32, "constexpr crc32 failed");
+static_assert(0x3A6907F7 == crc32("testing", 7, 0xE8F35A06), "constexpr crc32 with seed failed");
+static_assert(0x3A6907F7 == crc32_small_combine(0xE8F35A06, 0xE8F35A06, 7), "constexpr crc32_small_combine failed");
+
 static_assert(0xEB5F499B == "testing"_fnv1a32, "constexpr fnv1a32 failed");
 static_assert(0xC2FE2FB77AE839BB == "testing"_fnv1a64, "constexpr fnv1a64 failed");
 static_assert(0xC5FC3C78 == "testing"_murmur3_32, "constexpr murmur3_32 failed");

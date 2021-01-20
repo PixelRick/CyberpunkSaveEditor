@@ -351,7 +351,7 @@ public:
   CArrayProperty(CPropertyOwner* owner, CSysName elt_ctypename, size_t size)
     : CProperty(owner, EPropertyKind::DynArray)
     , m_elt_ctypename(elt_ctypename)
-    , m_typename(fmt::format("[{}]{}", size, elt_ctypename.str()))
+    , m_typename(fmt::format("[{}]{}", size, elt_ctypename.strv()))
   {
     m_elts.resize(size);
     auto& factory = CPropertyFactory::get();
@@ -397,7 +397,7 @@ public:
     }
 
     size_t end_pos = is.tellg();
-    serctx.log(fmt::format("serialized_in {} in {} bytes", this->ctypename().str(), (size_t)(end_pos - start_pos)));
+    serctx.log(fmt::format("serialized_in {} in {} bytes", this->ctypename().strv(), (size_t)(end_pos - start_pos)));
 
     return is.good();
   }
@@ -416,7 +416,7 @@ public:
     }
 
     size_t end_pos = os.tellp();
-    serctx.log(fmt::format("serialized_in {} in {} bytes", this->ctypename().str(), (size_t)(end_pos - start_pos)));
+    serctx.log(fmt::format("serialized_in {} in {} bytes", this->ctypename().c_str(), (size_t)(end_pos - start_pos)));
 
     return true;
   }
@@ -515,7 +515,7 @@ public:
   CDynArrayProperty(CPropertyOwner* owner, CSysName elt_ctypename)
     : CProperty(owner, EPropertyKind::DynArray)
     , m_elt_ctypename(elt_ctypename)
-    , m_ctypename(std::string("array:") + elt_ctypename.str())
+    , m_ctypename(std::string("array:") + elt_ctypename.c_str())
   {
     auto& factory = CPropertyFactory::get();
     m_elt_create_fn = factory.get_creator(elt_ctypename);
@@ -768,7 +768,7 @@ public:
   CEnumProperty(CPropertyOwner* owner, CSysName enum_name)
     : CProperty(owner, EPropertyKind::Combo), m_enum_name(enum_name)
   {
-    m_p_enum_members = CEnumList::get().get_enum(enum_name.str());
+    m_p_enum_members = CEnumList::get().get_enum(enum_name.c_str());
     if (m_p_enum_members->size())
       m_val_name = CSysName(m_p_enum_members->at(m_bp_index));
     else
@@ -841,7 +841,7 @@ public:
     m_bp_index = (uint32_t)enum_members.size();
     for (size_t i = 0; i < enum_members.size(); ++i)
     {
-      if (enum_members[i] == m_val_name.str())
+      if (enum_members[i] == m_val_name.strv())
       {
         m_bp_index = (uint32_t)i;
         break;
@@ -849,7 +849,7 @@ public:
     }
     if (m_bp_index == enum_members.size())
     {
-      enum_members.push_back(m_val_name.str());
+      enum_members.push_back(m_val_name.c_str());
     }
 
     return is.good();
@@ -860,7 +860,7 @@ public:
     if (m_val_name == "<no_zero_name>")
       throw std::logic_error("enum value must be skipped, 0 has no name");
 
-    uint16_t strpool_idx = serctx.strpool.to_idx(m_val_name.str());
+    uint16_t strpool_idx = serctx.strpool.to_idx(m_val_name.strv());
     os << cbytes_ref(strpool_idx);
     return true;
   }
@@ -890,7 +890,7 @@ public:
     if (editable)
       ImGui::BetterCombo(label, &current_item, &enum_name_getter, (void*)&enum_members, (int)enum_members.size());
     else
-      ImGui::Text("%s: %s::%s", label, m_enum_name.str().c_str(), current_enum_name);
+      ImGui::Text("%s: %s::%s", label, m_enum_name.c_str(), current_enum_name);
     
     if (current_item == m_bp_index || current_item < 0)
       return false;
@@ -924,21 +924,21 @@ public:
 public:
   // overrides
 
-  CSysName ctypename() const override
+  gname ctypename() const override
   {
-    static CSysName sname("TweakDBID");
+    static gname sname("TweakDBID");
     return sname;
   };
 
   bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
   {
-    is >> m_id;
+    is >> cbytes_ref(m_id.as_u64);
     return is.good();
   }
 
   virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
-    os << m_id;
+    os << cbytes_ref(m_id.as_u64);
     return true;
   }
 
@@ -1083,7 +1083,7 @@ public:
   CHandleProperty(CPropertyOwner* owner, CSysName sub_ctypename)
     : CProperty(owner, EPropertyKind::Handle)
     , m_base_ctypename(sub_ctypename)
-    , m_ctypename(std::string("handle:") + m_base_ctypename.str())
+    , m_ctypename(std::string("handle:") + m_base_ctypename.c_str())
   {
     // let's not infinite loop...
     m_obj = nullptr; //std::make_shared<CObject>(m_base_ctypename);
@@ -1141,7 +1141,7 @@ public:
       return false;
     }
     //auto basetype = m_base_ctypename.str();
-    auto childtype = m_obj->ctypename().str();
+    auto childtype = m_obj->ctypename();
     ImGui::Text("shared %s (handle:%d)", childtype.c_str(), m_original_handle);
     return m_obj->imgui_widget(label, editable);
   }

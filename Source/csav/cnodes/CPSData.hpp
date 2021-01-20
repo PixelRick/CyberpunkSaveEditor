@@ -80,7 +80,7 @@ public:
     for (auto& obj : m_sys.objects())
     {
       auto cn = obj->ctypename();
-      m_obj_ctypenames.insert(cn.str());
+      m_obj_ctypenames.insert(cn.c_str());
       if (cn == vgcps)
         m_vehicleGarageComponentPS = obj;
     }

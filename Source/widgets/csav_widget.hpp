@@ -443,7 +443,7 @@ public:
         ImGui::Text("Change all your already spawned vehicles (near you):");
         
         ImGui::SetNextItemWidth(300.f);
-        std::ignore = TweakDBID_widget::draw(vehicle_tdbid, "##vehicle", TweakDBIDCategory::Vehicle, false);
+        std::ignore = TweakDBID_widget::draw(vehicle_tdbid, "##vehicle", TweakDBID_category::Vehicle, false);
         ImGui::SameLine();
         if (ImGui::Button("APPLY"))
         {

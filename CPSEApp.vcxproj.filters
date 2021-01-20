@@ -111,6 +111,9 @@
     <Filter Include="Source\cpinternals\csav\misc">
       <UniqueIdentifier>{74b966bf-d6f5-499e-abba-12d63ff1f9a2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\database">
+      <UniqueIdentifier>{a7cb0815-cd24-40e2-80d0-5c7ea27b3134}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AppLib\IApp.cpp">
@@ -190,6 +193,12 @@
     </ClCompile>
     <ClCompile Include="Source\cpinternals\csav\misc\serializable_stringpool.cpp">
       <Filter>Source\cpinternals\csav\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\cpinternals\tweakdb\TweakDBID.cpp">
+      <Filter>Source\cpinternals\tweakdb</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\cpinternals\init.cpp">
+      <Filter>Source\cpinternals</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -701,9 +710,6 @@
     <ClInclude Include="Source\cpinternals\common\iserializable.hpp">
       <Filter>Source\cpinternals\common</Filter>
     </ClInclude>
-    <ClInclude Include="Source\cpinternals\common\byteswap.hpp">
-      <Filter>Source\cpinternals\common</Filter>
-    </ClInclude>
     <ClInclude Include="Source\cpinternals\common.hpp">
       <Filter>Source\cpinternals</Filter>
     </ClInclude>
@@ -717,6 +723,27 @@
       <Filter>Source\cpinternals\csav\misc</Filter>
     </ClInclude>
     <ClInclude Include="Source\cpinternals\common\gname.hpp">
+      <Filter>Source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\scripting\cobject.hpp">
+      <Filter>Source\cpinternals\scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\scripting\iproperty.hpp">
+      <Filter>Source\cpinternals\scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\csav\misc\system_serializer.hpp">
+      <Filter>Source\cpinternals\csav\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\tweakdb\TweakDBID.hpp">
+      <Filter>Source\cpinternals\tweakdb</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\common\utils.hpp">
+      <Filter>Source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\init.hpp">
+      <Filter>Source\cpinternals</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\common\misc.hpp">
       <Filter>Source\cpinternals\common</Filter>
     </ClInclude>
   </ItemGroup>

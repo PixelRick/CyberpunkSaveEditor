@@ -256,7 +256,7 @@ public:
     {
       auto& obj = serctx.m_objects[i];
       const uint32_t tmp_offset = (uint32_t)ss.tellp();
-      const uint16_t name_idx = serctx.strpool.to_idx(obj->ctypename().str());
+      const uint16_t name_idx = serctx.strpool.to_idx(obj->ctypename().c_str());
       obj_descs.emplace_back(name_idx, tmp_offset);
       if (!obj->serialize_out(ss, serctx))
         return false;

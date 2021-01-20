@@ -9,7 +9,7 @@
 
 void to_json(nlohmann::json& j, const CFieldDesc& p)
 {
-  j = {{"name", p.name.str()}, {"ctypename", p.ctypename.str()}};
+  j = {{"name", p.name.c_str()}, {"ctypename", p.ctypename.c_str()}};
 }
 
 void from_json(const nlohmann::json& j, CFieldDesc& p)
@@ -59,7 +59,7 @@ CObjectBPSPtr read_class_bp(std::unordered_map<CSysName, CObjectBPSPtr>& classma
     auto parent_it = j.find(parent_name);
     if (parent_it == j.end())
     {
-      auto err = fmt::format("Incomplete DB, {} is missing parent def {}", ctypename.str(), parent_name);
+      auto err = fmt::format("Incomplete DB, {} is missing parent def {}", ctypename.c_str(), parent_name);
       MessageBoxA(0, err.c_str(), "CObjectBPList Error", 0);
       throw std::runtime_error(err);
     }
