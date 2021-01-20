@@ -6,6 +6,7 @@
 #include <nlohmann/json.hpp>
 #include <fmt/format.h>
 #include "common.hpp"
+#include "ctypes.hpp"
 
 namespace cp {
 
@@ -51,6 +52,12 @@ bool init_cpinternals()
     std::vector<gname> names;
     load_from_json("./db/CNames.json", names);
     CName_resolver::get().feed(names);
+  }
+
+  {
+    std::vector<gname> names;
+    load_from_json("./db/CFacts.json", names);
+    CFact_resolver::get().feed(names);
   }
 
   return true;

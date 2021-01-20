@@ -11,7 +11,7 @@
 #include "node_editor.hpp"
 #include "hexedit.hpp"
 
-#include <csav/cnodes.hpp>
+#include "cpinternals/csav/nodes.hpp"
 
 // to be used with CScriptObjProperty struct
 struct CProperty_widget

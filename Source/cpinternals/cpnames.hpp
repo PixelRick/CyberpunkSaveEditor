@@ -2,7 +2,6 @@
 
 
 #include "common.hpp"
-#include "tweakdb/TweakDBID.hpp"
-#include "common/CName.hpp"
+#include "ctypes.hpp"
 using namespace cp;
 

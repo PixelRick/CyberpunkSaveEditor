@@ -1,9 +1,9 @@
 #pragma once
 #include <inttypes.h>
 #include <AppLib/IApp.hpp>
-#include <csav/cnodes/CItemData.hpp>
-#include <widgets/list_widget.hpp>
-#include <widgets/cpinternals.hpp>
+#include "cpinternals/csav/nodes/CItemData.hpp"
+#include "widgets/list_widget.hpp"
+#include "widgets/cpinternals.hpp"
 #include "node_editor.hpp"
 
 struct uk_thing_widget
@@ -191,7 +191,7 @@ struct CItemData_widget
             for (auto& o : *modifiers)
             {
               auto stat = dynamic_cast<CHandleProperty*>(o.get())->obj();
-              if (stat->ctypename() != CSysName("gameConstantStatModifierData"))
+              if (stat->ctypename() != gname("gameConstantStatModifierData"))
                 continue;
               if (stat->get_prop_cast<CEnumProperty>("statType"_gn)->value_name() == "Quality"_gn)
               {

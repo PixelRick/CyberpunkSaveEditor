@@ -5,7 +5,7 @@
 #include "utils.hpp"
 #include "node_editor.hpp"
 #include "cpinternals/cpnames.hpp"
-#include "csav/cnodes/CCharacterCustomization.hpp"
+#include "cpinternals/csav/nodes/CCharacterCustomization.hpp"
 #include "hexedit.hpp"
 #include "imgui_extras/imgui_stdlib.h"
 

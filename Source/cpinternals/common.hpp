@@ -8,6 +8,5 @@
 #include "common/gname.hpp"
 #include "common/misc.hpp"
 
-#include "common/CName.hpp"
-#include "tweakdb/TweakDBID.hpp"
+#include "ctypes.hpp"
 

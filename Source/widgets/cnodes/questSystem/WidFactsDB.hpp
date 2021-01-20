@@ -2,7 +2,7 @@
 #include <inttypes.h>
 #include <AppLib/IApp.hpp>
 #include <imgui_extras/imgui_better_combo.hpp>
-#include <csav/cnodes/questSystem/FactsDB.hpp>
+#include "cpinternals/csav/nodes/questSystem/FactsDB.hpp"
 #include <widgets/cpinternals.hpp>
 
 namespace UI {
@@ -37,7 +37,7 @@ struct WidFactsTable
     ImGui::SameLine();
     if (ImGui::Button("Sort facts lexicographically ascending"))
     {
-      std::sort(facts.begin(), facts.end(), [](const CP::CFact& a, const CP::CFact& b) -> bool {
+      std::sort(facts.begin(), facts.end(), [](const cp::CFact& a, const cp::CFact& b) -> bool {
         return a.name().strv() < b.name().strv();
       });
     }

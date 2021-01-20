@@ -2,8 +2,13 @@
 #include <inttypes.h>
 #include <AppLib/IApp.hpp>
 #include <imgui_extras/imgui_better_combo.hpp>
-#include <cpinternals/cpnames.hpp>
-#include <cpinternals/CFact.hpp>
+
+#include "cpinternals/common.hpp"
+#include "cpinternals/ctypes.hpp"
+#include "cpinternals/csav/node.hpp"
+#include "cpinternals/csav/serializers.hpp"
+#include "cpinternals/scripting/csystem.hpp"
+#include "cpinternals/scripting/cproperty.hpp"
 
 namespace UI {
 
@@ -12,7 +17,7 @@ struct WidCFact
   static inline bool ItemGetter(void* data, int n, const char** out_str)
   { 
     static std::string tmp;
-    auto& namelist = CP::CFactResolver::get().sorted_names();
+    auto& namelist = cp::CFact_resolver::get().sorted_names();
     if (n == 0)
       *out_str = (const char*)data;
     else
@@ -23,12 +28,12 @@ struct WidCFact
   }
 
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(CP::CFact& x)
+  [[nodiscard]] static inline bool draw(cp::CFact& x)
   {
     scoped_imgui_id _sii(&x);
     bool modified = false;
 
-    auto& namelist = CP::CFactResolver::get().sorted_names();
+    auto& namelist = cp::CFact_resolver::get().sorted_names();
 
     // tricky ;)
     int current_item_idx = 0;

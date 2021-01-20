@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <numeric>
-#include <csav/csystem/CSystem.hpp>
+#include "cpinternals/scripting/csystem.hpp"
 
 
 class archive_test
@@ -270,7 +270,7 @@ public:
       if (desc.data_offset < m_header.objdata_offset)
         return false;
 
-      auto obj_ctypename = CSysName(strpool.from_idx(desc.name_idx));
+      auto obj_ctypename = gname(strpool.from_idx(desc.name_idx));
       auto new_obj = std::make_shared<CObject>(obj_ctypename, true); // todo: static create method
       m_serctx.m_objects.push_back(new_obj);
     }
