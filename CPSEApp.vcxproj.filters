@@ -119,9 +119,6 @@
     <ClCompile Include="Source\utils.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\main.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Source\external\xlz4\lz4.c">
       <Filter>Source\external\xlz4</Filter>
     </ClCompile>
@@ -307,7 +304,6 @@
     <ClInclude Include="Source\widgets\node_editors\Systems.hpp">
       <Filter>Source\widgets\node_editors</Filter>
     </ClInclude>
-    <ClInclude Include="Source\cserialization\csystem\CPropertyBase.hpp" />
     <ClInclude Include="Source\AppLib\imgui_impl_dx11.h">
       <Filter>Source\AppLib</Filter>
     </ClInclude>
@@ -760,6 +756,9 @@
     </ClInclude>
     <ClInclude Include="Source\cpinternals\ctypes\CEnum.hpp">
       <Filter>Source\cpinternals\ctypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\solution_version.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

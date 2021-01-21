@@ -9,10 +9,20 @@
 #include "cpinternals/common.hpp"
 #include "cpinternals/ctypes.hpp"
 #include "cpinternals/scripting.hpp"
-
-
+#include "cpinternals/ioarchive/farchive.hpp"
 
 namespace cp::tdb {
+
+
+
+#pragma pack (push, 1)
+struct alignas(4) pool_desc_t
+{
+  CName ctypename;
+  uint32_t len;
+};
+#pragma pack (pop)
+
 
 struct tweakdb
 {
@@ -45,57 +55,20 @@ struct tweakdb
 
   bool open(std::filesystem::path path)
   {
-    std::ifstream ifs;
-    ifs.open(path, ifs.in | ifs.binary);
-    if (ifs.fail())
-    {
-      std::string err = strerror(errno);
-      std::cerr << "Error: " << err;
-      return false;
-    }
+    ifarchive ifa(path);
 
-    ifs.seekg(0, std::ios_base::end);
-    uint32_t blob_size = (uint32_t)ifs.tellg();
-    ifs.seekg(0, std::ios_base::beg);
+    ifa.seek(0, std::ios_base::end);
+    uint32_t blob_size = (uint32_t)ifa.tell();
+    ifa.seek(0, std::ios_base::beg);
 
-    if (!serialize_in(ifs, blob_size))
-      return false;
+    op_status status = serialize_in(ifa, blob_size);
 
-    opened = true;
-    return true;
+    return status;
   }
 
-protected:
-  static std::string object_name_getter(const CObjectSPtr& item)
+  const std::vector<pool_desc_t>& pools_descs() const
   {
-    static std::string tmp;
-    tmp = item->ctypename().str();
-    return tmp;
-  };
-  int selected = -1;
-
-public:
-  bool imgui_draw()
-  {
-    bool modified = false;
-
-    if (opened)
-    {
-      ImGui::Begin("tweadb test", &opened);
-
-      ImGui::BeginGroup();
-      {
-        ImGui::Text("pool descs:");
-        ImGui::ListBox("pool descs", &selected, [](const pool_desc_t& pd) -> std::string {
-          return fmt::format("{}[{}]", pd.ctypename.str(), pd.len);
-        }, m_pools_descs);
-      }
-      ImGui::EndGroup();
-
-      ImGui::End();
-    }
-
-    return modified;
+    return m_pools_descs;
   }
 
 protected:
@@ -111,26 +84,18 @@ protected:
     uint32_t packages_offset      = 0;
   };
 
-#pragma pack (push, 1)
-  struct alignas(4) pool_desc_t
-  {
-    CName ctypename;
-    uint32_t len;
-  };
-#pragma pack (pop)
-
   static_assert(sizeof(pool_desc_t) == 0xC);
   static_assert(alignof(pool_desc_t) == 0x4);
 
 public:
-  bool serialize_in(std::istream& reader, size_t blob_size)
+  op_status serialize_in(iarchive& ar, size_t blob_size)
   {
     // let's get our header start position
-    size_t start_pos = (size_t)reader.tellg();
+    size_t start_pos = (size_t)ar.tell();
 
-    reader >> cbytes_ref(m_header);
+    ar.serialize_pod_raw(m_header);
 
-    auto blob_spos = reader.tellg();
+    auto blob_spos = ar.tell();
 
     // check header
     if (m_header.five != 5 || m_header.four != 4)
@@ -145,22 +110,20 @@ public:
       return false;
 
     uint32_t arrays_cnt = 0;
-    reader >> cbytes_ref(arrays_cnt);
+    ar << arrays_cnt;
 
     m_pools_descs.resize(arrays_cnt);
-    reader.read((char*)m_pools_descs.data(), arrays_cnt * sizeof(pool_desc_t));
+    ar.serialize((char*)m_pools_descs.data(), arrays_cnt * sizeof(pool_desc_t));
 
     // pools data (prefixed again with size)
     // TODO
 
-    size_t new_pos = (size_t)reader.tellg();
+    size_t new_pos = (size_t)ar.tell();
 
     return true;
   }
 
 private:
-  bool opened = false;
-
   header_t m_header;
   std::vector<pool_desc_t> m_pools_descs;
 };

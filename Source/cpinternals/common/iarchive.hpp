@@ -57,6 +57,13 @@ struct iarchive
     return *this;
   }
 
+  template <typename T>
+  iarchive& serialize_pod_raw(T& value)
+  {
+    serialize(&value, sizeof(T));
+    return *this;
+  }
+
   template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
   iarchive& serialize_int_packed(T& v)
   {

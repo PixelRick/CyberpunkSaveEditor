@@ -189,13 +189,13 @@
     <ClInclude Include="Source\external\fmt\ranges.h" />
     <ClInclude Include="Source\imgui_extras\cpp_imgui.hpp" />
     <ClInclude Include="Source\imgui_extras\imgui_stdlib.h" />
+    <ClInclude Include="Source\solution_version.h" />
     <ClInclude Include="Source\widgets\cnodes\questSystem\WidFactsDB.hpp" />
     <ClInclude Include="Source\widgets\cpinternals.hpp" />
     <ClInclude Include="Source\widgets\list_widget.hpp" />
     <ClInclude Include="Source\widgets\node_editors\CharacetrCustomization_Appearances.hpp" />
     <ClInclude Include="Source\widgets\node_editors\StatsSystem.hpp" />
     <ClInclude Include="Source\widgets\node_editors\Systems.hpp" />
-    <ClInclude Include="Source\cserialization\csystem\CPropertyBase.hpp" />
     <ClCompile Include="Source\cpinternals\csav\node_tree.cpp" />
     <ClCompile Include="Source\cpinternals\csav\misc\serializable_stringpool.cpp" />
     <ClCompile Include="Source\cpinternals\ctypes\CEnum.cpp" />
@@ -231,7 +231,6 @@
     <ClInclude Include="Source\external\xlz4\lz4.h" />
     <ClInclude Include="Source\imgui_extras\imgui_filebrowser.hpp" />
     <ClInclude Include="Source\imgui_extras\imgui_memory_editor.hpp" />
-    <ClCompile Include="Source\main.cpp" />
     <ClInclude Include="Source\utils.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -264,25 +263,26 @@
     <RootNamespace>CPSEApp</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectGuid>{BB6106AA-32C4-4F09-B978-27C527F0B3B7}</ProjectGuid>
+    <ProjectName>CP77Formats</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>$(ProjectName)_debug</TargetName>
-    <OutDir>$(SolutionDir)bin\</OutDir>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)build\$(Configuration)\$(ProjectName)\</IntDir>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>$(ProjectName)</TargetName>
-    <OutDir>$(SolutionDir)bin\</OutDir>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)build\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">
-    <TargetName>$(ProjectName)_reldeb</TargetName>
-    <OutDir>$(SolutionDir)bin\</OutDir>
+    <TargetName>$(ProjectName)</TargetName>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)build\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -291,7 +291,7 @@
     </RequiredLibs>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -301,7 +301,7 @@
     </RequiredLibs>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -331,11 +331,11 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\Source\AppLib\imgui;$(ProjectDir)\Source;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Source;$(ProjectDir)\Source\AppLib\imgui;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_UNICODE;UNICODE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <DebugInformationFormat>None</DebugInformationFormat>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -346,7 +346,6 @@
       </IgnoreSpecificDefaultLibraries>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>$(OutDir)$(TargetName)_rel.pdb</ProgramDatabaseFile>
     </Link>
     <CopyFileToFolders>
       <DestinationFolders>$(OutDir)/db</DestinationFolders>
@@ -360,9 +359,10 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\Source\AppLib\imgui;$(ProjectDir)\Source;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Source;$(ProjectDir)\Source\AppLib\imgui;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -383,9 +383,10 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\Source\AppLib\imgui;$(ProjectDir)\Source;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Source;$(ProjectDir)\Source\AppLib\imgui;$(ProjectDir)\Source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_UNICODE;UNICODE;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
