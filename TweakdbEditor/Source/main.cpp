@@ -204,8 +204,6 @@ protected:
       ImGui::ShowStyleEditor();
       ImGui::End();
     }
-
-    
   }
 
   bool has_file_drop() const override { return true; }

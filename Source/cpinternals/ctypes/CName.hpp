@@ -36,10 +36,7 @@ struct CName
 
   CName& operator=(const CName&) = default;
 
-  friend iarchive& operator<<(iarchive& ar, CName& id)
-  {
-    return ar << id.as_u64;
-  }
+  friend iarchive& operator<<(iarchive& ar, CName& id);
 
   friend bool operator==(const CName& a, const CName& b)
   {
@@ -49,6 +46,11 @@ struct CName
   friend bool operator!=(const CName& a, const CName& b)
   {
     return !(a == b);
+  }
+
+  friend bool operator<(const CName& a, const CName& b)
+  {
+    return a.as_u64 < b.as_u64;
   }
 
   gname name() const;
@@ -142,6 +144,33 @@ inline gname CName::name() const
 {
   auto& resolver = CName_resolver::get();
   return resolver.resolve(*this);
+}
+
+inline iarchive& operator<<(iarchive& ar, CName& id)
+{
+  if (ar.flags() & armanip::cnamehash)
+  {
+    return ar << id.as_u64;
+  }
+
+  if (ar.is_reader())
+  {
+    std::string s;
+    ar << s;
+    id = CName(s);
+  }
+  else
+  {
+    auto& resolver = CName_resolver::get();
+    if (!resolver.is_registered(id))
+    {
+      throw std::runtime_error("trying to serialize an unknown cname as string!");
+    }
+    std::string s = id.name().string();
+    ar << s;
+  }
+
+  return ar;
 }
 
 } // namespace cp

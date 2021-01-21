@@ -63,6 +63,19 @@ struct value_pool
     return m_values;
   }
 
+  friend iarchive& operator<<(iarchive& ar, value_pool& x)
+  {
+    return ar << x.m_values;
+    if (!ar.is_reader())
+    {
+      x.m_sorted_indices.resize(x.m_values.size());
+      std::iota(x.m_sorted_indices.begin(), x.m_sorted_indices.end(), 0);
+      std::sort(x.m_sorted_indices.begin(), x.m_sorted_indices.end(), [&x](const size_t& a, const size_t& b) -> bool {
+        return x.m_values[a] < x.m_values[b];
+      });
+    }
+  }
+
 protected:
   std::vector<value_type> m_values;
 

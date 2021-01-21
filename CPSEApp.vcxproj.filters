@@ -60,9 +60,6 @@
     <Filter Include="Source\external\spdlog\cfg">
       <UniqueIdentifier>{390f4e55-3cf1-4615-875a-107c76a63f90}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\archive">
-      <UniqueIdentifier>{89e4ea18-4d76-4a53-80ae-012759a4f53f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\widgets\cnodes">
       <UniqueIdentifier>{74d9989d-3c4a-4014-8530-aceed102977c}</UniqueIdentifier>
     </Filter>
@@ -110,6 +107,9 @@
     </Filter>
     <Filter Include="Source\cpinternals\scripting\reminder that this needs a rewrite">
       <UniqueIdentifier>{40a24e7b-34af-4cb2-8367-163609214c1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\archive">
+      <UniqueIdentifier>{89e4ea18-4d76-4a53-80ae-012759a4f53f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

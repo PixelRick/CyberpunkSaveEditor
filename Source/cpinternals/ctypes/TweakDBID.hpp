@@ -71,7 +71,14 @@ struct TweakDBID
 
   friend iarchive& operator<<(iarchive& ar, TweakDBID& id)
   {
+    constexpr uint64_t mask = (1ull << 40) - 1;
+    id.as_u64 &= mask;
     return ar << id.as_u64;
+  }
+
+  friend bool operator<(const TweakDBID& a, const TweakDBID& b)
+  {
+    return a.as_u64 < b.as_u64;
   }
 
   gname name() const;
