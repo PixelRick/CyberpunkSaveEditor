@@ -3,7 +3,7 @@
 #include <string>
 #include <functional>
 
-#include "cpinternals/cpenums.hpp"
+#include "cpinternals/ctypes.hpp"
 #include "cproperty.hpp"
 
 
@@ -68,7 +68,7 @@ std::function<CPropertyUPtr(CPropertyOwner*)> CPropertyFactory::get_creator(gnam
   {
     return build_prop_creator<CNodeRefProperty>();
   }
-  else if (CEnumList::get().is_registered(str_ctypename))
+  else if (CEnum_resolver::get().is_registered(gname(str_ctypename)))
   {
     return build_prop_creator<CEnumProperty>(ctypename);
   }

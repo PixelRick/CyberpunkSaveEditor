@@ -7,7 +7,7 @@
 #include <imgui_extras/cpp_imgui.hpp>
 #include <imgui_extras/imgui_stdlib.h>
 #include <utils.hpp>
-#include <cpinternals/cpnames.hpp>
+#include <cpinternals/ctypes.hpp>
 #include "node_editor.hpp"
 #include "hexedit.hpp"
 

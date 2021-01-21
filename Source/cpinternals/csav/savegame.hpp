@@ -10,15 +10,15 @@
 #include "node.hpp"
 #include "nodes.hpp"
 
-namespace cp {
-namespace csav {
+namespace cp::csav {
 
 struct savegame
 {
   using node_type = csav::node_t;
+  using shared_node_type = std::shared_ptr<const node_type>;
 
   csav::node_tree tree;
-  std::shared_ptr<const node_type> root;
+  shared_node_type root;
 
   std::filesystem::path filepath;
 
@@ -46,6 +46,8 @@ public:
   // the one the game uses
   op_status open_with_progress(std::filesystem::path path, progress_t& progress, bool dump_decompressed_data=false, bool tree_only=false, bool test=true)
   {
+    filepath = path;
+
     progress.value = 0.00f;
     op_status status = tree.load(path);
     if (!status)
@@ -75,7 +77,7 @@ public:
 
     try_load_node_data_struct(stats,        "StatsSystem"                         , progress, 0.90f, test);
     try_load_node_data_struct(statspool,    "StatPoolsSystem"                     , progress, 1.00f, test);
-    
+
     return true;
   }
 
@@ -132,7 +134,7 @@ protected:
     return ok;
   }
 
-  bool test_reserialize(const std::shared_ptr<const node_type>& node, cp::csav::node_serializable& var)
+  bool test_reserialize(const shared_node_type& node, cp::csav::node_serializable& var)
   {
     auto new_node = var.to_node(tree.version);
     if (!new_node)
@@ -183,7 +185,7 @@ protected:
     return true;
   }
 
-  bool load_node_data_struct(const std::shared_ptr<const node_t>& node, node_serializable& var)
+  bool load_node_data_struct(const shared_node_type& node, node_serializable& var)
   {
     try
     {
@@ -217,7 +219,7 @@ protected:
 
 
 public:
-  std::shared_ptr<const node_t> search_node(std::string_view name) const
+  shared_node_type search_node(std::string_view name) const
   {
     if (root)
       return search_node(root, name);
@@ -225,7 +227,7 @@ public:
     return nullptr;
   }
 
-  std::shared_ptr<const node_t> search_node(const std::shared_ptr<const node_t>& node, std::string_view name) const
+  std::shared_ptr<const node_t> search_node(const shared_node_type& node, std::string_view name) const
   {
     if (node->name() == name)
       return node;
@@ -240,9 +242,5 @@ public:
   }
 };
 
-} // namespace csav
-
-using savegame = csav::savegame;
-
-} // namespace cp
+} // namespace cp::csav
 

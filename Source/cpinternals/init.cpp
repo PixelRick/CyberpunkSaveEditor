@@ -39,8 +39,8 @@ bool load_from_json(std::filesystem::path path, T& out)
   return true;
 }
 
-
-bool init_cpinternals()
+// TODO: rename this an add progress param
+op_status init_cpinternals()
 {
   {
     std::vector<gname> names;
@@ -60,8 +60,12 @@ bool init_cpinternals()
     CFact_resolver::get().feed(names);
   }
 
+  {
+    load_from_json("./db/CEnums.json", CEnum_resolver::get());
+  }
+
   return true;
 }
 
-}
+} // namespace cp
 

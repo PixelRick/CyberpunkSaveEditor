@@ -34,7 +34,6 @@
     <ClCompile Include="Source\AppLib\imgui_impl_win32.cpp" />
     <ClCompile Include="Source\archive\archive_test.cpp" />
     <ClCompile Include="Source\cpinternals\common\iarchive.cpp" />
-    <ClCompile Include="Source\cpinternals\cpenums.cpp" />
     <ClInclude Include="Source\archive\archive_test.hpp" />
     <ClInclude Include="Source\cpinternals\common.hpp" />
     <ClInclude Include="Source\cpinternals\common\gname.hpp" />
@@ -44,7 +43,6 @@
     <ClInclude Include="Source\cpinternals\common\misc.hpp" />
     <ClInclude Include="Source\cpinternals\common\stringpool.hpp" />
     <ClInclude Include="Source\cpinternals\common\utils.hpp" />
-    <ClInclude Include="Source\cpinternals\cpenums.hpp" />
     <ClInclude Include="Source\cpinternals\csav.hpp" />
     <ClInclude Include="Source\cpinternals\csav\node_tree.hpp" />
     <ClInclude Include="Source\cpinternals\csav\nodes.hpp" />
@@ -66,6 +64,7 @@
     <ClInclude Include="Source\cpinternals\csav\serializers.hpp" />
     <ClInclude Include="Source\cpinternals\csav\serial_tree.hpp" />
     <ClInclude Include="Source\cpinternals\ctypes.hpp" />
+    <ClInclude Include="Source\cpinternals\ctypes\CEnum.hpp" />
     <ClInclude Include="Source\cpinternals\ctypes\CFact.hpp" />
     <ClInclude Include="Source\cpinternals\ctypes\CName.hpp" />
     <ClInclude Include="Source\cpinternals\ctypes\TweakDBID.hpp" />
@@ -73,6 +72,7 @@
     <ClInclude Include="Source\cpinternals\ioarchive\farchive.hpp" />
     <ClInclude Include="Source\cpinternals\ioarchive\ofarchive.hpp" />
     <ClInclude Include="Source\cpinternals\ioarchive\ifarchive.hpp" />
+    <ClInclude Include="Source\cpinternals\scripting.hpp" />
     <ClInclude Include="Source\cpinternals\scripting\cclass.hpp" />
     <ClInclude Include="Source\cpinternals\scripting\cobject.hpp" />
     <ClInclude Include="Source\cpinternals\scripting\cproperty.hpp" />
@@ -83,6 +83,7 @@
     <ClInclude Include="Source\cpinternals\scripting\fwd.hpp" />
     <ClInclude Include="Source\cpinternals\scripting\iproperty.hpp" />
     <ClInclude Include="Source\cpinternals\tweakdb\tweakdb.hpp" />
+    <ClInclude Include="Source\cpinternals\tweakdb\value_pool.hpp" />
     <ClInclude Include="Source\external\spdlog\async.h" />
     <ClInclude Include="Source\external\spdlog\async_logger-inl.h" />
     <ClInclude Include="Source\external\spdlog\async_logger.h" />
@@ -174,7 +175,6 @@
     <ClInclude Include="Source\external\spdlog\tweakme.h" />
     <ClInclude Include="Source\external\spdlog\version.h" />
     <ClInclude Include="Source\ps_json_storage.hpp" />
-    <ClInclude Include="Source\cpinternals\cpnames.hpp" />
     <ClInclude Include="Source\external\fmt\chrono.h" />
     <ClInclude Include="Source\external\fmt\color.h" />
     <ClInclude Include="Source\external\fmt\compile.h" />
@@ -198,6 +198,7 @@
     <ClInclude Include="Source\cserialization\csystem\CPropertyBase.hpp" />
     <ClCompile Include="Source\cpinternals\csav\node_tree.cpp" />
     <ClCompile Include="Source\cpinternals\csav\misc\serializable_stringpool.cpp" />
+    <ClCompile Include="Source\cpinternals\ctypes\CEnum.cpp" />
     <ClCompile Include="Source\cpinternals\ctypes\CFact.cpp" />
     <ClCompile Include="Source\cpinternals\ctypes\CName.cpp" />
     <ClCompile Include="Source\cpinternals\ctypes\TweakDBID.cpp" />

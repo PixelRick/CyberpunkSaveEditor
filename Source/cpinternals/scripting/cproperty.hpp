@@ -11,7 +11,7 @@
 #include "cpinternals/common.hpp"
 #include "cpinternals/ctypes.hpp"
 
-#include "cpinternals/cpenums.hpp"
+#include "cpinternals/ctypes.hpp"
 
 #include "fwd.hpp"
 #include "CStringPool.hpp"
@@ -764,15 +764,16 @@ protected:
   gname m_enum_name;
   uint32_t m_bp_index = 0;
   gname m_val_name;
-  CEnumList::enum_members_sptr m_p_enum_members;
+  CEnum_resolver::enum_desc_sptr m_enum_desc;
 
 public:
   CEnumProperty(CPropertyOwner* owner, gname enum_name)
     : CProperty(owner, EPropertyKind::Combo), m_enum_name(enum_name)
   {
-    m_p_enum_members = CEnumList::get().get_enum(enum_name.c_str());
-    if (m_p_enum_members->size())
-      m_val_name = gname(m_p_enum_members->at(m_bp_index));
+    m_enum_desc = CEnum_resolver::get().get_enum(enum_name);
+    auto& members = m_enum_desc->members();
+    if (members.size())
+      m_val_name = members.at(m_bp_index).name();
     else
       m_val_name = gname("empty enum");
   }
@@ -796,10 +797,10 @@ public:
     bool success = false;
     if (name != m_val_name)
     {
-      auto& enum_members = *m_p_enum_members;
+      auto& enum_members = m_enum_desc->members();
       for (size_t i = 0; i < enum_members.size(); ++i)
       {
-        if (gname(enum_members[i]) == name)
+        if (enum_members[i].name() == name)
         {
           m_bp_index = (uint32_t)i;
           m_val_name = name;
@@ -816,11 +817,11 @@ public:
   bool set_value_by_idx(size_t idx)
   {
     bool success = false;
-    auto& enum_members = *m_p_enum_members;
+    auto& enum_members = m_enum_desc->members();
     if (idx < enum_members.size())
     {
       m_bp_index = (uint32_t)idx;
-      m_val_name = gname(enum_members[idx]);
+      m_val_name = enum_members[idx].name();
       success = true;
     }
     // whatever happens.. because we don't really know the default values
@@ -839,11 +840,11 @@ public:
     if (strpool_idx >= serctx.strpool.size())
       return false;
     m_val_name = gname(serctx.strpool.from_idx(strpool_idx));
-    auto& enum_members = *m_p_enum_members;
+    auto& enum_members = m_enum_desc->members();
     m_bp_index = (uint32_t)enum_members.size();
     for (size_t i = 0; i < enum_members.size(); ++i)
     {
-      if (enum_members[i] == m_val_name.strv())
+      if (enum_members[i].name() == m_val_name)
       {
         m_bp_index = (uint32_t)i;
         break;
@@ -851,7 +852,8 @@ public:
     }
     if (m_bp_index == enum_members.size())
     {
-      enum_members.push_back(m_val_name.c_str());
+      // TODO: Ensure the db is correct to avoid this. The value is unknown..
+      enum_members.emplace_back(m_val_name, 0);
     }
 
     return is.good();
@@ -871,21 +873,21 @@ public:
 
   static bool enum_name_getter(void* data, int idx, const char** out_str)
   {
-    auto& enum_members = *(CEnumList::enum_members_t*)data;
+    auto& enum_members = *(std::vector<CEnum_member>*)data;
     if (idx < 0 || idx >= enum_members.size())
       return false;
-    *out_str = enum_members[idx].c_str();
+    *out_str = enum_members[idx].name().c_str();
     return true;
   }
 
   [[nodiscard]] bool imgui_widget_impl(const char* label, bool editable) override
   {
-    auto& enum_members = *m_p_enum_members;
+    auto& enum_members = m_enum_desc->members();
     int current_item = m_bp_index;
 
     auto current_enum_name = fmt::format("unknown enum value {}", current_item);
     if (current_item >= 0 && current_item < enum_members.size())
-      current_enum_name = enum_members[current_item];
+      current_enum_name = enum_members[current_item].name().string();
     else
       ImGui::Text(fmt::format("unknown enum value %d", current_item).c_str());
 
@@ -898,7 +900,7 @@ public:
       return false;
 
     m_bp_index = (uint16_t)current_item;
-    m_val_name = gname(enum_members[m_bp_index]);
+    m_val_name = enum_members[m_bp_index].name();
     return true;
   }
 

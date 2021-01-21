@@ -102,14 +102,14 @@
     <Filter Include="Source\cpinternals\csav\nodes\questSystem\FactsDB">
       <UniqueIdentifier>{348e53d2-60b4-4c7b-8c18-d299dfa0ed02}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\cpinternals\scripting\natives">
-      <UniqueIdentifier>{40a24e7b-34af-4cb2-8367-163609214c1b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\cpinternals\ctypes">
       <UniqueIdentifier>{e8f2cdb8-bc0a-4056-bba2-cdd7bfe44fe3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\cpinternals\ioarchive">
       <UniqueIdentifier>{51bf6c62-d0bb-4ce0-8d80-69f380db5422}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\cpinternals\scripting\reminder that this needs a rewrite">
+      <UniqueIdentifier>{40a24e7b-34af-4cb2-8367-163609214c1b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -139,9 +139,6 @@
     </ClCompile>
     <ClCompile Include="Source\imgui_extras\cpp_imgui.cpp">
       <Filter>Source\imgui_extras</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\cpinternals\cpenums.cpp">
-      <Filter>Source\cpinternals</Filter>
     </ClCompile>
     <ClCompile Include="Source\AppLib\imgui_impl_dx11.cpp">
       <Filter>Source\AppLib</Filter>
@@ -196,6 +193,9 @@
     </ClCompile>
     <ClCompile Include="Source\cpinternals\csav\node_tree.cpp">
       <Filter>Source\cpinternals\csav</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\cpinternals\ctypes\CEnum.cpp">
+      <Filter>Source\cpinternals\ctypes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -283,9 +283,6 @@
     <ClInclude Include="Source\external\fmt\ranges.h">
       <Filter>Source\external\fmt</Filter>
     </ClInclude>
-    <ClInclude Include="Source\cpinternals\cpnames.hpp">
-      <Filter>Source\cpinternals</Filter>
-    </ClInclude>
     <ClInclude Include="Source\widgets\node_editors\itemData.hpp">
       <Filter>Source\widgets\node_editors</Filter>
     </ClInclude>
@@ -311,9 +308,6 @@
       <Filter>Source\widgets\node_editors</Filter>
     </ClInclude>
     <ClInclude Include="Source\cserialization\csystem\CPropertyBase.hpp" />
-    <ClInclude Include="Source\cpinternals\cpenums.hpp">
-      <Filter>Source\cpinternals</Filter>
-    </ClInclude>
     <ClInclude Include="Source\AppLib\imgui_impl_dx11.h">
       <Filter>Source\AppLib</Filter>
     </ClInclude>
@@ -757,6 +751,15 @@
     </ClInclude>
     <ClInclude Include="Source\cpinternals\csav.hpp">
       <Filter>Source\cpinternals</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\scripting.hpp">
+      <Filter>Source\cpinternals</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\tweakdb\value_pool.hpp">
+      <Filter>Source\cpinternals\tweakdb</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\ctypes\CEnum.hpp">
+      <Filter>Source\cpinternals\ctypes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

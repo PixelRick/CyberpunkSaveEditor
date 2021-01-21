@@ -86,15 +86,16 @@ protected:
 };
 
 
-inline void to_json(nlohmann::json& j, const gname& csn)
+inline void to_json(nlohmann::json& j, const gname& x)
 {
-  j = csn.strv();
+  j = x.strv();
 }
 
-inline void from_json(const nlohmann::json& j, gname& csn)
+inline void from_json(const nlohmann::json& j, gname& x)
 {
-  csn = gname(j.get<std::string>());
+  x = gname(j.get<std::string>());
 }
+
 
 // TODO: rework this with C++20 (single static_gname per char* value)
 struct literal_gname

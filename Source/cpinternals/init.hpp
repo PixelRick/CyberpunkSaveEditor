@@ -1,8 +1,9 @@
 #pragma once
+#include "common.hpp"
 
 namespace cp {
 
-bool init_cpinternals();
+op_status init_cpinternals();
 
 }
 

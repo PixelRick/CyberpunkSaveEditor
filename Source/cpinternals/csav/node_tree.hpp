@@ -11,6 +11,9 @@ namespace csav {
 
 struct node_tree
 {
+  using node_type = node_t;
+  using shared_node_type = std::shared_ptr<const node_t>;
+
   friend iarchive& operator<<(iarchive& ar, node_tree& x)
   {
     if (ar.is_reader())
@@ -30,7 +33,7 @@ struct node_tree
 
   csav_version version;
   std::vector<serial_node_desc> original_descs;
-  std::shared_ptr<const node_t> root;
+  shared_node_type root;
 
 protected:
   void serialize_in(iarchive& ar);

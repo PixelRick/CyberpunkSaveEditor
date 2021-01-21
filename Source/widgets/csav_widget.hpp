@@ -16,7 +16,7 @@
 #include "utils.hpp"
 #include <ps_json_storage.hpp>
 #include "cpinternals/csav.hpp"
-#include "cpinternals/cpnames.hpp"
+#include "cpinternals/ctypes.hpp"
 #include "hexeditor_windows_mgr.hpp"
 #include "node_editors.hpp"
 #include <widgets/cpinternals.hpp>
