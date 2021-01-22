@@ -1,6 +1,7 @@
 #pragma once
 #include <inttypes.h>
 #include <string>
+#include <algorithm>
 
 namespace cp {
 

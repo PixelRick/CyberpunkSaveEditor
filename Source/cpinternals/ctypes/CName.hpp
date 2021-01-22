@@ -17,7 +17,7 @@ struct CName
   CName() = default;
   CName(const CName&) = default;
 
-  explicit CName(uint64_t u64)
+  constexpr explicit CName(uint64_t u64)
     : as_u64(u64)
   {
   }

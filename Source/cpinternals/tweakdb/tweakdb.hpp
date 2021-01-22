@@ -237,6 +237,7 @@ public:
   pool_t<std::vector<CName>> pool_array_cname;
   pool_t<std::vector<int32_t>> pool_array_i32;
 
+  // thinking about a less verbose way to do this.
 
   //resolver.register_name("array:raRef:CResource");
   //resolver.register_name("array:Vector2");

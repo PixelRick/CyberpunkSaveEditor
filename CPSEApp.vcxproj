@@ -68,10 +68,17 @@
     <ClInclude Include="Source\cpinternals\ctypes\CFact.hpp" />
     <ClInclude Include="Source\cpinternals\ctypes\CName.hpp" />
     <ClInclude Include="Source\cpinternals\ctypes\TweakDBID.hpp" />
+    <ClInclude Include="Source\cpinternals\exploit_poc\string_exploit.hpp" />
     <ClInclude Include="Source\cpinternals\init.hpp" />
     <ClInclude Include="Source\cpinternals\ioarchive\farchive.hpp" />
     <ClInclude Include="Source\cpinternals\ioarchive\ofarchive.hpp" />
     <ClInclude Include="Source\cpinternals\ioarchive\ifarchive.hpp" />
+    <ClInclude Include="Source\cpinternals\rtdt\dyn_array.hpp" />
+    <ClInclude Include="Source\cpinternals\rtdt\dyn_vector.hpp" />
+    <ClInclude Include="Source\cpinternals\rtdt\idynamic.hpp" />
+    <ClInclude Include="Source\cpinternals\rtdt\native.hpp" />
+    <ClInclude Include="Source\cpinternals\rtdt\itype.hpp" />
+    <ClInclude Include="Source\cpinternals\rtdt\Simple.hpp" />
     <ClInclude Include="Source\cpinternals\scripting.hpp" />
     <ClInclude Include="Source\cpinternals\scripting\cclass.hpp" />
     <ClInclude Include="Source\cpinternals\scripting\cobject.hpp" />
@@ -203,6 +210,7 @@
     <ClCompile Include="Source\cpinternals\ctypes\CName.cpp" />
     <ClCompile Include="Source\cpinternals\ctypes\TweakDBID.cpp" />
     <ClCompile Include="Source\cpinternals\init.cpp" />
+    <ClInclude Include="Source\cpinternals\rtdt\dyn_class.hpp" />
     <ClCompile Include="Source\cpinternals\scripting\cclass.cpp" />
     <ClCompile Include="Source\cpinternals\scripting\cobject.cpp" />
     <ClCompile Include="Source\cpinternals\scripting\cproperty_factory.cpp" />

@@ -1,7 +1,20 @@
 #pragma once
 #include <inttypes.h>
+#include <vector>
 
 namespace cp {
+
+template <int LSB, int Size, typename T>
+T read_bitfield(T& v) 
+{
+	return (v >> LSB) & ((1 << Size) - 1);
+} 
+
+template <int LSB, typename T>
+T read_bitfield(T& v) 
+{
+	return read_bitfield<LSB, 1>(v);
+}
 
 constexpr uint16_t byteswap(uint16_t value) noexcept
 {

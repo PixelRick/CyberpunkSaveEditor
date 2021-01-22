@@ -90,9 +90,6 @@
     <Filter Include="Source\cpinternals\csav\misc">
       <UniqueIdentifier>{74b966bf-d6f5-499e-abba-12d63ff1f9a2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\database">
-      <UniqueIdentifier>{a7cb0815-cd24-40e2-80d0-5c7ea27b3134}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\cpinternals\csav\nodes\questSystem">
       <UniqueIdentifier>{42b0a48f-ef59-4045-a11c-887cb39a44e8}</UniqueIdentifier>
     </Filter>
@@ -110,6 +107,12 @@
     </Filter>
     <Filter Include="Source\archive">
       <UniqueIdentifier>{89e4ea18-4d76-4a53-80ae-012759a4f53f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\cpinternals\rtdt">
+      <UniqueIdentifier>{1297ecf9-2df3-4a8e-b94d-ff9799ad4260}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\exploit_poc">
+      <UniqueIdentifier>{9639ca1e-01e8-4a9c-a6ec-0f4d1e720ffa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -759,6 +762,30 @@
     </ClInclude>
     <ClInclude Include="Source\solution_version.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\rtdt\native.hpp">
+      <Filter>Source\cpinternals\rtdt</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\rtdt\itype.hpp">
+      <Filter>Source\cpinternals\rtdt</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\rtdt\dyn_array.hpp">
+      <Filter>Source\cpinternals\rtdt</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\rtdt\dyn_vector.hpp">
+      <Filter>Source\cpinternals\rtdt</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\rtdt\idynamic.hpp">
+      <Filter>Source\cpinternals\rtdt</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\rtdt\dyn_class.hpp">
+      <Filter>Source\cpinternals\rtdt</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\rtdt\Simple.hpp">
+      <Filter>Source\cpinternals\rtdt</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\cpinternals\exploit_poc\string_exploit.hpp">
+      <Filter>Source\exploit_poc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

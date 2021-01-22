@@ -37,6 +37,13 @@ struct iarchive
 
   virtual iarchive& serialize(void* data, size_t len) = 0;
 
+  // Allows for overrides (csav serialization != others)
+  virtual iarchive& serialize(iserializable& x)
+  {
+    x.serialize(*this);
+    return *this;
+  }
+
   void set_error(std::string error)
   {
     m_error = error;
@@ -110,6 +117,12 @@ struct iarchive
     uint8_t u8 = val ? 1 : 0;
     serialize(&u8, 1);
     val = !!u8;
+    return *this;
+  }
+
+  iarchive& operator<<(iserializable& x)
+  {
+    serialize(x);
     return *this;
   }
 
