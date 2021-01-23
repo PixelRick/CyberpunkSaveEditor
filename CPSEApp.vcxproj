@@ -68,7 +68,6 @@
     <ClInclude Include="Source\cpinternals\ctypes\CFact.hpp" />
     <ClInclude Include="Source\cpinternals\ctypes\CName.hpp" />
     <ClInclude Include="Source\cpinternals\ctypes\TweakDBID.hpp" />
-    <ClInclude Include="Source\cpinternals\exploit_poc\string_exploit.hpp" />
     <ClInclude Include="Source\cpinternals\init.hpp" />
     <ClInclude Include="Source\cpinternals\ioarchive\farchive.hpp" />
     <ClInclude Include="Source\cpinternals\ioarchive\ofarchive.hpp" />

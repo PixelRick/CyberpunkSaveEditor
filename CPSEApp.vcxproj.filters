@@ -111,9 +111,6 @@
     <Filter Include="Source\cpinternals\rtdt">
       <UniqueIdentifier>{1297ecf9-2df3-4a8e-b94d-ff9799ad4260}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\exploit_poc">
-      <UniqueIdentifier>{9639ca1e-01e8-4a9c-a6ec-0f4d1e720ffa}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\AppLib\IApp.cpp">
@@ -783,9 +780,6 @@
     </ClInclude>
     <ClInclude Include="Source\cpinternals\rtdt\Simple.hpp">
       <Filter>Source\cpinternals\rtdt</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\cpinternals\exploit_poc\string_exploit.hpp">
-      <Filter>Source\exploit_poc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
