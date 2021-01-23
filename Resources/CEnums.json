@@ -5739,9 +5739,13 @@
     "CP77_PatchDay0_Hotfix2",
     "CP77_PatchDay0_Hotfix2_V2",
     "CP77_PatchDay0_Hotfix3",
-    "CP77_PatchDay0_Hotfix4",
+    "CP77_PatchDay0_ChristmasHotfix",
+    "CP77_PatchDay0_Hotfix4_Internal",
+    "CP77_Patch_1_Internal",
+    "CP77_Patch_1_1",
     "Current",
-    "CP77_Patch1"
+    "CP77_Patch_1_2",
+    "CP77_Patch_1_3"
   ],
   "gameGameplayEventFlag": [
     "<no_zero_name>",

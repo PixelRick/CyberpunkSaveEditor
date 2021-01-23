@@ -47,7 +47,7 @@ protected:
 public:
   CPTEApp()
   {
-    m_wndname = L"Cyberpunk 2077\u2122 TweakDB Editor " VERSION_STRING " (CP_v1.06)";
+    m_wndname = L"Cyberpunk 2077\u2122 TweakDB Editor " VERSION_STRING;
     m_display_width = 1600;
     m_display_height = 900;
   }
