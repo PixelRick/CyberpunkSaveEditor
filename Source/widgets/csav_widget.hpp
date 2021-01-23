@@ -370,6 +370,9 @@ public:
         {
           auto& src_buf = appearance_src->data();
           appearance_node->nonconst().assign_data(src_buf.begin(), src_buf.end());
+
+          // RELOAD the editor data
+          m_csav->reload_character_customization();
         }
       }
     }

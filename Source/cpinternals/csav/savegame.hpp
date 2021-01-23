@@ -81,6 +81,12 @@ public:
     return true;
   }
 
+  bool reload_character_customization()
+  {
+    progress_t dummy;
+    return try_load_node_data_struct(chtrcustom,   "CharacetrCustomization_Appearances"  , dummy, 0.f, true);
+  }
+
   op_status save_with_progress(std::filesystem::path path, progress_t& progress, bool dump_decompressed_data=false, bool ps4_weird_format=false)
   {
     progress.value = 0.00f;
