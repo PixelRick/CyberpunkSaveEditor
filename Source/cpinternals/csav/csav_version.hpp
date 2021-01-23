@@ -17,7 +17,7 @@ struct csav_version
 
   std::string string() const
   {
-    return fmt::format("v{}-{}.{}", v1, v2, v3);
+    return fmt::format("v{}-{}.{}{}", v1, v2, v3, (ps4w ? "(PS4W)" : ""));
   }
 };
 

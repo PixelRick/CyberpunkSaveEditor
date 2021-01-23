@@ -201,7 +201,7 @@ void node_tree::serialize_in(iarchive& ar)
   nodedata.clear();
   nodedata.resize(nodedata_size);
 
-  bool is_ps4 = false;
+  version.ps4w = false;
   for (int i = 0; i < chunk_descs.size(); ++i)
   {
     auto& cd = chunk_descs[i];
@@ -241,7 +241,7 @@ void node_tree::serialize_in(iarchive& ar)
     }
   }
 
-  if (is_ps4)
+  if (version.ps4w)
   {
     size_t offset = chunk_descs[0].offset;
     ar.seek(offset);
