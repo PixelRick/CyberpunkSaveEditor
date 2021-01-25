@@ -107,7 +107,7 @@ struct CItemMod_widget
       //  default: break;
       //}
 
-      ImGui::InputText("unknown string", item.cn0, sizeof(item.cn0));
+      ImGui::InputText("skin/variant name", item.cn0, sizeof(item.cn0));
 
       modified |= ImGui::InputScalar("field u32 (hex)##uk2",   ImGuiDataType_U32, &item.uk2, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
 
