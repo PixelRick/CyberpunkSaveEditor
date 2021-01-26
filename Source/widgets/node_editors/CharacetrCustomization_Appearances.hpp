@@ -138,7 +138,7 @@ struct CCharacterCustomization_widget
 
     modified |= ImGui::InputScalar("unknown #0 (08X)##cetr", ImGuiDataType_U32, &x.uk0, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
     modified |= ImGui::InputScalar("unknown #1 (08X)##cetr", ImGuiDataType_U32, &x.uk1, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
-    modified |= ImGui::InputScalar("unknown #2 (02X)##cetr", ImGuiDataType_U8,  &x.uk2, NULL, NULL, "%02X", ImGuiInputTextFlags_CharsHexadecimal);
+    //modified |= ImGui::InputScalar("unknown #2 (02X)##cetr", ImGuiDataType_U8,  &x.uk2, NULL, NULL, "%02X", ImGuiInputTextFlags_CharsHexadecimal);
 
     bool voice = x.uk3;
     modified |= ImGui::Checkbox("male voice", &voice);
