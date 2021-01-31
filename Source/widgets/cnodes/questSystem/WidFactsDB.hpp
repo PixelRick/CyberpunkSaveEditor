@@ -51,6 +51,8 @@ struct WidFactsTable
       int i = 0;
       for (auto& fact : facts)
       {
+        scoped_imgui_id __sii(&fact);
+
         ImGui::TableNextRow();
         ImGui::TableNextColumn();
 
