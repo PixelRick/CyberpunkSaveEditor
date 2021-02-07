@@ -7,6 +7,9 @@
     <Filter Include="source\detail">
       <UniqueIdentifier>{4779d39e-ddff-433e-8264-e78b1515b769}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\pch">
+      <UniqueIdentifier>{12e20696-8e02-4f2f-ac5c-6daca50baf87}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\source\external\rttr\registration">
@@ -105,9 +108,6 @@
       <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\external\rttr\detail\base\core_prerequisites.h">
-      <Filter>source\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\external\rttr\detail\base\pch.h">
       <Filter>source\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\external\rttr\detail\base\version.h">
@@ -440,6 +440,9 @@
     <ClInclude Include="..\..\source\external\rttr\detail\construct\constructor_wrapper_defaults.h">
       <Filter>source\detail</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\base\pch.h">
+      <Filter>source\pch</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\external\rttr\constructor.cpp">
@@ -537,6 +540,9 @@
     </ClCompile>
     <ClCompile Include="..\..\source\external\rttr\detail\construct\constructor_wrapper_base.cpp">
       <Filter>source\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\detail\base\pch.cpp">
+      <Filter>source\pch</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
