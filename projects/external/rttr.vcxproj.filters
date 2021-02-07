@@ -1,0 +1,542 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="source">
+      <UniqueIdentifier>{f93d40cc-0de3-466c-ab6e-b112734f5a11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\detail">
+      <UniqueIdentifier>{4779d39e-ddff-433e-8264-e78b1515b769}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\source\external\rttr\registration">
+      <Filter>source</Filter>
+    </None>
+    <None Include="..\..\source\external\rttr\registration_friend">
+      <Filter>source</Filter>
+    </None>
+    <None Include="..\..\source\external\rttr\type">
+      <Filter>source</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\source\external\rttr\access_levels.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\argument.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\array_range.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\associative_mapper.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\constructor.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\destructor.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\enum_flags.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\enumeration.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\filter_item.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\instance.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\library.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\method.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\parameter_info.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\policy.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\property.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\registration.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\registration_friend.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\rttr_cast.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\rttr_enable.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\sequential_mapper.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\string_view.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\type.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\type_list.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\variant.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\variant_associative_view.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\variant_sequential_view.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\visitor.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\wrapper_mapper.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\base\core_prerequisites.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\base\pch.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\base\version.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\comparison\comparable_types.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\comparison\compare_array_equal.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\comparison\compare_array_equal_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\comparison\compare_array_less.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\comparison\compare_array_less_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\comparison\compare_equal.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\comparison\compare_equal_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\comparison\compare_less.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\comparison\compare_less_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\conversion\number_conversion.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\conversion\std_conversion_functions.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\default_arguments\default_arguments.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\default_arguments\invoke_with_defaults.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\destructor\destructor_wrapper.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\destructor\destructor_wrapper_base.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\enumeration\enumeration_helper.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\enumeration\enumeration_wrapper.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\enumeration\enumeration_wrapper_base.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\enumeration\enum_data.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\filter\filter_item_funcs.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\impl\argument_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\impl\array_range_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\impl\associative_mapper_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\impl\enum_flags_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\impl\instance_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\impl\rttr_cast_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\impl\sequential_mapper_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\impl\string_view_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\impl\wrapper_mapper_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\library\library_p.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\metadata\metadata.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\metadata\metadata_handler.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\method\method_accessor.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\method\method_invoker.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\method\method_wrapper.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\method\method_wrapper_base.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\misc\argument_extractor.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\misc\argument_wrapper.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\misc\class_item_mapper.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\misc\data_address_container.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\misc\flat_map.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\misc\flat_multimap.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\misc\function_traits.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\misc\iterator_wrapper.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\misc\misc_type_traits.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\misc\register_wrapper_mapper_conversion.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\misc\sequential_container_type_traits.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\misc\std_type_traits.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\misc\template_type_trait.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\misc\template_type_trait_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\misc\utility.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\parameter_info\parameter_infos.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\parameter_info\parameter_infos_compare.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\parameter_info\parameter_info_wrapper.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\parameter_info\parameter_info_wrapper_base.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\parameter_info\parameter_names.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\policies\ctor_policies.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\policies\meth_policies.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\policies\prop_policies.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\property\property_accessor.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\property\property_wrapper.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\property\property_wrapper_base.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\property\property_wrapper_func.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\property\property_wrapper_member_func.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\property\property_wrapper_member_object.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\property\property_wrapper_object.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\registration\bind_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\registration\bind_types.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\registration\register_base_class_from_accessor.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\registration\registration_executer.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\registration\registration_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\registration\registration_manager.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\registration\registration_state_saver.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\type\accessor_type.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\type\base_classes.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\type\get_create_variant_func.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\type\get_derived_info_func.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\type\type_comparator.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\type\type_converter.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\type\type_data.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\type\type_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\type\type_name.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\type\type_register.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\type\type_register_p.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\type\type_string_utils.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\variant\variant_compare.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\variant\variant_data.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\variant\variant_data_converter.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\variant\variant_data_policy.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\variant\variant_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\variant_associative_view\variant_associative_view_creator.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\variant_associative_view\variant_associative_view_creator_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\variant_associative_view\variant_associative_view_private.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\variant_sequential_view\variant_sequential_view_creator.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\variant_sequential_view\variant_sequential_view_creator_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\variant_sequential_view\variant_sequential_view_private.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\visitor\constructor_visitor_invoker.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\visitor\create_type_visitor_func.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\visitor\create_type_visitor_func_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\visitor\method_visitor_invoker.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\visitor\property_visitor_invoker.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\visitor\type_visitor_invoker.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\visitor\visitor_impl.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\visitor\visitor_iterator.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\visitor\visitor_registration.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\construct\constructor_invoker.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\construct\constructor_wrapper.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\construct\constructor_wrapper_base.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\detail\construct\constructor_wrapper_defaults.h">
+      <Filter>source\detail</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\source\external\rttr\constructor.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\destructor.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\enumeration.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\library.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\method.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\parameter_info.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\policy.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\property.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\registration.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\type.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\variant.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\variant_associative_view.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\variant_sequential_view.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\visitor.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\detail\comparison\compare_equal.cpp">
+      <Filter>source\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\detail\comparison\compare_less.cpp">
+      <Filter>source\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\detail\conversion\std_conversion_functions.cpp">
+      <Filter>source\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\detail\destructor\destructor_wrapper_base.cpp">
+      <Filter>source\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\detail\enumeration\enumeration_helper.cpp">
+      <Filter>source\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\detail\enumeration\enumeration_wrapper_base.cpp">
+      <Filter>source\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\detail\library\library_unix.cpp">
+      <Filter>source\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\detail\library\library_win.cpp">
+      <Filter>source\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\detail\method\method_wrapper_base.cpp">
+      <Filter>source\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\detail\misc\standard_types.cpp">
+      <Filter>source\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\detail\parameter_info\parameter_info_wrapper_base.cpp">
+      <Filter>source\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\detail\property\property_wrapper_base.cpp">
+      <Filter>source\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\detail\registration\registration_executer.cpp">
+      <Filter>source\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\detail\registration\registration_state_saver.cpp">
+      <Filter>source\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\detail\type\type_data.cpp">
+      <Filter>source\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\detail\type\type_register.cpp">
+      <Filter>source\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\detail\variant\variant_compare.cpp">
+      <Filter>source\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\rttr\detail\construct\constructor_wrapper_base.cpp">
+      <Filter>source\detail</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDeb|x64">
+      <Configuration>RelWithDeb</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectGuid>{BB6106AA-32C4-4F09-B978-27C527F0B3B7}</ProjectGuid>
+    <ProjectName>cpinternals</ProjectName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\source\cpinternals\common.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\common\gname.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\common\iarchive.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\common\hashing.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\common\iserializable.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\common\misc.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\common\stringpool.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\common\utils.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav\node_tree.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav\savegame.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav\csav_version.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav\misc\serializable_stringpool.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav\misc\system_serializer.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav\node.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes\CCharacterCustomization.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes\CGenericSystem.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes\CInventory.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes\CItemData.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes\CPSData.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes\CStats.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes\CStatsPool.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes\questSystem\FactsDB.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes\questSystem\FactsDB\FactsDB.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes\questSystem\FactsDB\FactsTable.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav\serializers.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav\serial_tree.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\ctypes.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\ctypes\CEnum.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\ctypes\CFact.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\ctypes\CName.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\ctypes\TweakDBID.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\init.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\ioarchive\farchive.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\ioarchive\ofarchive.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\ioarchive\ifarchive.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\rtdt\container.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\rtdt\dynamic.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\rtdt\native.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\rtdt\itype.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\rtdt\Simple.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\scripting.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\scripting\cclass.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\scripting\cobject.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\scripting\cproperty.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\scripting\cproperty_factory.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\scripting\CStringPool.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\scripting\csystem.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\scripting\csystem_serctx.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\scripting\fwd.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\scripting\iproperty.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\tmp\archive_test.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\tweakdb\tweakdb.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\tweakdb\value_pool.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\utils.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\source\cpinternals\common\iarchive.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\csav\node_tree.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\csav\misc\serializable_stringpool.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\ctypes\CEnum.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\ctypes\CFact.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\ctypes\CName.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\ctypes\TweakDBID.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\init.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\scripting\cclass.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\scripting\cobject.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\scripting\cproperty_factory.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\tmp\archive_test.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\utils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\..\assets\CNames.json">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\CEnums.json">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\TweakDBIDs.json">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\CObjectBPs.json">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\CFacts.json">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)intermediate\$(Configuration)\$(ProjectName)\</IntDir>
+    <TargetName>$(ProjectName)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>$(ProjectName)</TargetName>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)intermediate\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">
+    <TargetName>$(ProjectName)</TargetName>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)intermediate\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <LibsPathsPropsDir>$(SolutionDir)</LibsPathsPropsDir>
+    <RequiredLibs>
+    </RequiredLibs>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <LibsPathsPropsDir>$(SolutionDir)</LibsPathsPropsDir>
+    <RequiredLibs>
+    </RequiredLibs>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <LibsPathsPropsDir>$(SolutionDir)</LibsPathsPropsDir>
+    <RequiredLibs>TomCrypt</RequiredLibs>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)\source;$(SolutionDir)\source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_UNICODE;UNICODE;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>dcomp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <CopyFileToFolders>
+      <DestinationFolders>$(OutDir)/db</DestinationFolders>
+    </CopyFileToFolders>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)\source;$(SolutionDir)\source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>dcomp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <CopyFileToFolders>
+      <DestinationFolders>$(OutDir)/db</DestinationFolders>
+    </CopyFileToFolders>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)\source;$(SolutionDir)\source\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_UNICODE;UNICODE;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <AdditionalDependencies>dcomp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <CopyFileToFolders>
+      <DestinationFolders>$(OutDir)/db</DestinationFolders>
+    </CopyFileToFolders>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+</Project>

@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="source">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;hpp;h;cxx;asm</Extensions>
+    </Filter>
+    <Filter Include="source\cpinternals">
+      <UniqueIdentifier>{09b1fce1-30a3-4684-b834-7bac9fa99a4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="assets">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>json</Extensions>
+    </Filter>
+    <Filter Include="source\cpinternals\common">
+      <UniqueIdentifier>{3698b2d9-8fe3-4762-8434-2edc483d0481}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\cpinternals\tweakdb">
+      <UniqueIdentifier>{22691e45-30ed-4c2e-b9b2-b2ae3e4eeb34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\cpinternals\cr2w">
+      <UniqueIdentifier>{32b38e10-7e3d-41d1-aa1b-a775091345be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\cpinternals\csav">
+      <UniqueIdentifier>{db710764-70b8-4d46-a8a4-eed03168d60b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\cpinternals\scripting">
+      <UniqueIdentifier>{f308e8c7-0808-485d-956b-0c3b5385c7bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\cpinternals\csav\nodes">
+      <UniqueIdentifier>{88182e9b-3b43-4b9a-a045-820af8bbbd3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\cpinternals\csav\misc">
+      <UniqueIdentifier>{74b966bf-d6f5-499e-abba-12d63ff1f9a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\cpinternals\csav\nodes\questSystem">
+      <UniqueIdentifier>{42b0a48f-ef59-4045-a11c-887cb39a44e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\cpinternals\csav\nodes\questSystem\FactsDB">
+      <UniqueIdentifier>{348e53d2-60b4-4c7b-8c18-d299dfa0ed02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\cpinternals\ctypes">
+      <UniqueIdentifier>{e8f2cdb8-bc0a-4056-bba2-cdd7bfe44fe3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\cpinternals\ioarchive">
+      <UniqueIdentifier>{51bf6c62-d0bb-4ce0-8d80-69f380db5422}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\cpinternals\scripting\reminder that this needs a rewrite">
+      <UniqueIdentifier>{40a24e7b-34af-4cb2-8367-163609214c1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\cpinternals\rtdt">
+      <UniqueIdentifier>{1297ecf9-2df3-4a8e-b94d-ff9799ad4260}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\cpinternals\tmp">
+      <UniqueIdentifier>{a0a9252c-0b0a-41c4-870d-2d766c2bdd0f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\source\cpinternals\common\iarchive.cpp">
+      <Filter>source\cpinternals\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\csav\misc\serializable_stringpool.cpp">
+      <Filter>source\cpinternals\csav\misc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\init.cpp">
+      <Filter>source\cpinternals</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\scripting\cclass.cpp">
+      <Filter>source\cpinternals\scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\scripting\cobject.cpp">
+      <Filter>source\cpinternals\scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\scripting\cproperty_factory.cpp">
+      <Filter>source\cpinternals\scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\ctypes\CFact.cpp">
+      <Filter>source\cpinternals\ctypes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\ctypes\CName.cpp">
+      <Filter>source\cpinternals\ctypes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\ctypes\TweakDBID.cpp">
+      <Filter>source\cpinternals\ctypes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\csav\node_tree.cpp">
+      <Filter>source\cpinternals\csav</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\ctypes\CEnum.cpp">
+      <Filter>source\cpinternals\ctypes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\tmp\archive_test.cpp">
+      <Filter>source\cpinternals\tmp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\utils.cpp">
+      <Filter>source\cpinternals</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\source\cpinternals\tweakdb\tweakdb.hpp">
+      <Filter>source\cpinternals\tweakdb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\common\hashing.hpp">
+      <Filter>source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\common\iserializable.hpp">
+      <Filter>source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\common.hpp">
+      <Filter>source\cpinternals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\common\stringpool.hpp">
+      <Filter>source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\common\iarchive.hpp">
+      <Filter>source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\csav\misc\serializable_stringpool.hpp">
+      <Filter>source\cpinternals\csav\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\common\gname.hpp">
+      <Filter>source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\csav\misc\system_serializer.hpp">
+      <Filter>source\cpinternals\csav\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\common\utils.hpp">
+      <Filter>source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\init.hpp">
+      <Filter>source\cpinternals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\common\misc.hpp">
+      <Filter>source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\csav\csav_version.hpp">
+      <Filter>source\cpinternals\csav</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\csav\node.hpp">
+      <Filter>source\cpinternals\csav</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\csav\serial_tree.hpp">
+      <Filter>source\cpinternals\csav</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\csav\serializers.hpp">
+      <Filter>source\cpinternals\csav</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\scripting\cclass.hpp">
+      <Filter>source\cpinternals\scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\scripting\cobject.hpp">
+      <Filter>source\cpinternals\scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\scripting\cproperty.hpp">
+      <Filter>source\cpinternals\scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\scripting\cproperty_factory.hpp">
+      <Filter>source\cpinternals\scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\scripting\CStringPool.hpp">
+      <Filter>source\cpinternals\scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\scripting\csystem.hpp">
+      <Filter>source\cpinternals\scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\scripting\csystem_serctx.hpp">
+      <Filter>source\cpinternals\scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\scripting\fwd.hpp">
+      <Filter>source\cpinternals\scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\scripting\iproperty.hpp">
+      <Filter>source\cpinternals\scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes\CCharacterCustomization.hpp">
+      <Filter>source\cpinternals\csav\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes\CGenericSystem.hpp">
+      <Filter>source\cpinternals\csav\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes\CInventory.hpp">
+      <Filter>source\cpinternals\csav\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes\CItemData.hpp">
+      <Filter>source\cpinternals\csav\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes\CPSData.hpp">
+      <Filter>source\cpinternals\csav\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes\CStats.hpp">
+      <Filter>source\cpinternals\csav\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes\CStatsPool.hpp">
+      <Filter>source\cpinternals\csav\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes\questSystem\FactsDB.hpp">
+      <Filter>source\cpinternals\csav\nodes\questSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes\questSystem\FactsDB\FactsDB.hpp">
+      <Filter>source\cpinternals\csav\nodes\questSystem\FactsDB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes\questSystem\FactsDB\FactsTable.hpp">
+      <Filter>source\cpinternals\csav\nodes\questSystem\FactsDB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\ctypes\CFact.hpp">
+      <Filter>source\cpinternals\ctypes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\ctypes\CName.hpp">
+      <Filter>source\cpinternals\ctypes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\ctypes\TweakDBID.hpp">
+      <Filter>source\cpinternals\ctypes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\ctypes.hpp">
+      <Filter>source\cpinternals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\csav\nodes.hpp">
+      <Filter>source\cpinternals\csav</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\ioarchive\farchive.hpp">
+      <Filter>source\cpinternals\ioarchive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\ioarchive\ifarchive.hpp">
+      <Filter>source\cpinternals\ioarchive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\ioarchive\ofarchive.hpp">
+      <Filter>source\cpinternals\ioarchive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\csav\savegame.hpp">
+      <Filter>source\cpinternals\csav</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\csav\node_tree.hpp">
+      <Filter>source\cpinternals\csav</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\csav.hpp">
+      <Filter>source\cpinternals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\scripting.hpp">
+      <Filter>source\cpinternals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\tweakdb\value_pool.hpp">
+      <Filter>source\cpinternals\tweakdb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\ctypes\CEnum.hpp">
+      <Filter>source\cpinternals\ctypes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\rtdt\itype.hpp">
+      <Filter>source\cpinternals\rtdt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\rtdt\Simple.hpp">
+      <Filter>source\cpinternals\rtdt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\rtdt\native.hpp">
+      <Filter>source\cpinternals\rtdt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\rtdt\dynamic.hpp">
+      <Filter>source\cpinternals\rtdt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\rtdt\container.hpp">
+      <Filter>source\cpinternals\rtdt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\tmp\archive_test.hpp">
+      <Filter>source\cpinternals\tmp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\utils.hpp">
+      <Filter>source\cpinternals</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\..\assets\CNames.json">
+      <Filter>Assets</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\TweakDBIDs.json">
+      <Filter>Assets</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\CEnums.json">
+      <Filter>Assets</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\CObjectBPs.json">
+      <Filter>Assets</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\CFacts.json">
+      <Filter>Assets</Filter>
+    </CopyFileToFolders>
+  </ItemGroup>
+</Project>

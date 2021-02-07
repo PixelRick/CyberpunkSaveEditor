@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="source">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;hpp;h;cxx;asm</Extensions>
+    </Filter>
+    <Filter Include="source\widgets">
+      <UniqueIdentifier>{81298ac5-fe42-4ab1-827b-b5312ea945d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\widgets\cnodes">
+      <UniqueIdentifier>{0e6cc1f3-d292-4856-9b38-df4f357ed52e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\widgets\node_editors">
+      <UniqueIdentifier>{189626dc-7d81-41aa-b4e0-aa26a221b3a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\widgets\cnodes\questSystem">
+      <UniqueIdentifier>{40f3a0d5-b820-47b7-b7ce-818066e0bb99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\extras">
+      <UniqueIdentifier>{6b1d2696-acee-48a7-9b08-029238fc411c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\source\appbase\app_version.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\ps_json_storage.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\widgets\cpinternals.hpp">
+      <Filter>source\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\widgets\csav_experimental.hpp">
+      <Filter>source\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\widgets\csav_widget.hpp">
+      <Filter>source\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\widgets\hexeditor_windows_mgr.hpp">
+      <Filter>source\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\widgets\list_widget.hpp">
+      <Filter>source\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\widgets\node_editors.hpp">
+      <Filter>source\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\widgets\node_editors\CharacetrCustomization_Appearances.hpp">
+      <Filter>source\widgets\node_editors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\widgets\node_editors\hexedit.hpp">
+      <Filter>source\widgets\node_editors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\widgets\node_editors\inventory.hpp">
+      <Filter>source\widgets\node_editors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\widgets\node_editors\itemData.hpp">
+      <Filter>source\widgets\node_editors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\widgets\node_editors\node_editor.hpp">
+      <Filter>source\widgets\node_editors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\widgets\node_editors\StatsSystem.hpp">
+      <Filter>source\widgets\node_editors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\widgets\node_editors\Systems.hpp">
+      <Filter>source\widgets\node_editors</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\widgets\cnodes\questSystem\WidFactsDB.hpp">
+      <Filter>source\widgets\cnodes\questSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\IApp.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\imgui_impl_dx11.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\imgui_impl_win32.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\pch.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\stb_image.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\extras\cpp_imgui.hpp">
+      <Filter>source\extras</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\extras\imgui_better_combo.hpp">
+      <Filter>source\extras</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\extras\imgui_filebrowser.hpp">
+      <Filter>source\extras</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\extras\imgui_memory_editor.hpp">
+      <Filter>source\extras</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\appbase\extras\imgui_stdlib.h">
+      <Filter>source\extras</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\source\appbase\IApp.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\appbase\imgui_impl_dx11.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\appbase\imgui_impl_win32.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\appbase\extras\cpp_imgui.cpp">
+      <Filter>source\extras</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\appbase\extras\imgui_better_combo.cpp">
+      <Filter>source\extras</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\appbase\extras\imgui_stdlib.cpp">
+      <Filter>source\extras</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
