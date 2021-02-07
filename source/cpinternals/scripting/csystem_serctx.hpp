@@ -2,7 +2,7 @@
 #include <vector>
 #include <memory>
 #include <fstream>
-#include <fmt/format.h>
+#include <spdlog/spdlog.h>
 
 #include "fwd.hpp"
 #include "CStringPool.hpp"

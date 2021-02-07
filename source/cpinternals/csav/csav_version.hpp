@@ -1,7 +1,7 @@
 #pragma once
 #include <inttypes.h>
 #include <string>
-#include <fmt/format.h>
+#include <spdlog/spdlog.h>
 
 namespace cp::csav {
 

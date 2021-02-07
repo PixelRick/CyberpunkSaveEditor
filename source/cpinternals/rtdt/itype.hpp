@@ -8,8 +8,8 @@ namespace cp::rtdt {
 
 enum typekind
 {
-  native,       // includes vector<native>
-  Simple,       // not iscriptable, simple collection of properties
+  fundamental,  //
+  Simple,       // not iscriptable, simple collection of properties in native
   Class,        //     iscriptable
   Array,        // dynamic size array
   Enum,
@@ -61,6 +61,25 @@ protected:
   gname m_name;
   CName m_cname;
 };
+
+struct types_mgr
+{
+  static types_mgr& instance()
+  {
+    static types_mgr s;
+    return s;
+  }
+
+  types_mgr(const types_mgr&) = delete;
+  types_mgr& operator=(const types_mgr&) = delete;
+
+private:
+  types_mgr() {}
+  ~types_mgr() {}
+
+  std::unordered_map<gname, std::unique_ptr<itype>> m_types;
+};
+
 
 } // namespace cp::rtdt
 

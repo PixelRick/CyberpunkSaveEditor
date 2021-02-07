@@ -18,7 +18,9 @@
 #include "iproperty.hpp"
 #include "cproperty_factory.hpp"
 #include "cobject.hpp"
-#include "widgets/cpinternals.hpp"
+
+// todo: move the ui part out of this lib
+#include "appbase/widgets/cpinternals.hpp"
 
 //------------------------------------------------------------------------------
 // BOOL

@@ -8,13 +8,16 @@
 #include <set>
 #include <unordered_map>
 #include <algorithm>
-#include <fmt/format.h>
-#include <utils.hpp>
+
+#include <spdlog/spdlog.h>
 #include <nlohmann/json.hpp>
+
 #include "fwd.hpp"
+#include "cpinternals/utils.hpp"
 #include "iproperty.hpp"
 #include "cproperty_factory.hpp"
 #include "CStringPool.hpp"
+
 
 struct CFieldDesc
 {

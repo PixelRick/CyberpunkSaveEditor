@@ -7,7 +7,7 @@
 #include <numeric>
 #include <sstream>
 #include <set>
-#include "utils.hpp"
+#include "cpinternals/utils.hpp"
 #include "csav_version.hpp"
 
 namespace cp::csav {

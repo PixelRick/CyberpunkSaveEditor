@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include <fmt/format.h>
+#include <spdlog/spdlog.h>
 #include "cpinternals/common.hpp"
 
 namespace cp {

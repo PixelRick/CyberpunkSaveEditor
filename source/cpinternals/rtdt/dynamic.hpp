@@ -29,27 +29,31 @@ protected:
 };
 
 
-struct idynamic_type
+struct dynamic_type
   : itype
 {
   using itype::itype;
-
-protected:
-  // friend..
 
   const std::vector<attribute>& attr()
   {
     return m_attrs;
   }
 
+  itype* base_type()
+  {
+    return m_base;
+  }
+
+protected:
+  itype* m_base = nullptr;
   std::vector<attribute> m_attrs;
 };
 
-// All considered dynamic types are serializable.
-struct idynamic
+
+struct iscriptable
   : iserializable
 {
-  ~idynamic() override = default;
+  ~iscriptable() override = default;
 
   virtual itype* native_type() const = 0;
 };

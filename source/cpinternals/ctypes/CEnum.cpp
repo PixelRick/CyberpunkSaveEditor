@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <nlohmann/json.hpp>
-#include <fmt/format.h>
+#include <spdlog/spdlog.h>
 
 namespace cp {
 

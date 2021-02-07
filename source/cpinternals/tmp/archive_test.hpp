@@ -192,8 +192,8 @@ public:
 
     uint16_t uk1 = 0;
     reader >> cbytes_ref(uk1);
-    if (uk1 != 0)
-      throw std::exception("uk1 != 0, cool :)");
+    //if (uk1 != 0)
+    //  throw std::exception("uk1 != 0, cool :)");
 
     uint16_t ids_cnt = 0;
     reader >> cbytes_ref(ids_cnt);

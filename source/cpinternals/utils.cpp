@@ -8,7 +8,7 @@
 #include <sstream>
 #include <iomanip>
 #include <vector>
-#include "fmt/format.h"
+#include "spdlog/spdlog.h"
 
 void replace_all_in_str(std::string& s, const std::string& from, const std::string& to)
 {
@@ -78,7 +78,7 @@ std::vector<uintptr_t> sse2_strstr_masked(const unsigned char* s, size_t m, cons
   memcpy(needle_copy, needle, n);
   for (int i = 0, rem = (int)n - 2; i < nchunks; ++i, rem -= 16)
   {
-    const int ej = min(rem, 16);
+    const int ej = std::min(rem, 16);
     for (size_t j = 0; j < ej; ++j) {
       if (mask[16 * i + j + 1] == 'x')
         needle_chunks[i].mask |= 1 << j;

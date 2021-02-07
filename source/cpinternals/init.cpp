@@ -4,7 +4,7 @@
 #include <fstream>
 #include <vector>
 #include <nlohmann/json.hpp>
-#include <fmt/format.h>
+#include <spdlog/spdlog.h>
 #include "common.hpp"
 #include "ctypes.hpp"
 

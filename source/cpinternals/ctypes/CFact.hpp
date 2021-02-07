@@ -4,7 +4,7 @@
 #include <map>
 #include <unordered_map>
 #include <algorithm>
-#include <fmt/format.h>
+#include <spdlog/spdlog.h>
 #include "cpinternals/common.hpp"
 
 namespace cp {

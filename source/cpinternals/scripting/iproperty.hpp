@@ -16,9 +16,9 @@
 #include "csystem_serctx.hpp"
 
 #ifndef DISABLE_CP_IMGUI_WIDGETS
-#include <widgets/list_widget.hpp>
-#include <imgui_extras/cpp_imgui.hpp>
-#include <imgui_extras/imgui_stdlib.h>
+#include <appbase/widgets/list_widget.hpp>
+#include <appbase/extras/cpp_imgui.hpp>
+#include <appbase/extras/imgui_stdlib.h>
 #endif
 
 enum class EPropertyKind

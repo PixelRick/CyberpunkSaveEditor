@@ -3,12 +3,15 @@
 
 namespace cp::rtdt {
 
-template <typename T, const char* Name>
+// todo later if necessary: make it inative_type and specialize by kind to not have to store m_kind..
+
+template <typename T>
 struct native_type
   : itype
 {
-  native_type()
-    : itype(gname(Name))
+  native_type(gname name, typekind kind)
+    : itype(name)
+    , m_kind(kind)
   {
   }
 
@@ -16,7 +19,7 @@ struct native_type
 
   typekind kind() const override
   {
-    return typekind::native;
+    return m_kind;
   }
 
   size_t size() const override
@@ -48,6 +51,9 @@ struct native_type
   {
     ar << *static_cast<T*>(p);
   }
+
+protected:
+  typekind m_kind;
 };
 
 } // namespace cp::rtdt

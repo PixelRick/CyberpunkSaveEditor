@@ -5,7 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <nlohmann/json.hpp>
-#include <fmt/format.h>
+#include <spdlog/spdlog.h>
 
 void to_json(nlohmann::json& j, const CFieldDesc& p)
 {
