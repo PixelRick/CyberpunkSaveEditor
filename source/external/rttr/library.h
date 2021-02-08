@@ -108,7 +108,7 @@ public:
      * It is recommend to omit the file suffix, the library class will automatically look for a file
      * with the native library suffix/prefix ( e.g. `lib`, `.so` on Unix, `.dylib` on macOS and iOS, and `.dll` on Windows)
      */
-    library(string_view file_name, string_view version = string_view());
+    library(std::string_view file_name, std::string_view version =std::string_view ());
 
      /*!
       * \brief Destroys the library instance.
@@ -171,7 +171,7 @@ public:
       *
       * \see load(), unload()
       */
-     string_view get_file_name() const RTTR_NOEXCEPT;
+     std::string_view get_file_name() const RTTR_NOEXCEPT;
 
      /*!
       * \brief Returns a text string with the description of the last error that occurred.
@@ -181,7 +181,7 @@ public:
       *
       * \see load(), unload()
       */
-     string_view get_error_string() const RTTR_NOEXCEPT;
+     std::string_view get_error_string() const RTTR_NOEXCEPT;
 
      /*!
       * \brief A range of all registered type in this library.

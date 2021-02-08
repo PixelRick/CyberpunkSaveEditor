@@ -39,7 +39,7 @@ static type_data& get_invalid_type_data_impl() RTTR_NOEXCEPT
 {
     static type_data instance{ nullptr, nullptr,
                                nullptr,
-                               std::string(""), string_view(),
+                               std::string(""),std::string_view (),
                                0, 0,
                                &create_invalid_variant_policy::create_variant,
                                &base_classes<void>::get_types,

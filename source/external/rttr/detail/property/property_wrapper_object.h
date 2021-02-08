@@ -37,7 +37,7 @@ class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        property_wrapper(string_view name,
+        property_wrapper(std::string_view name,
                          C* pointer, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
         :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
@@ -86,7 +86,7 @@ class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        property_wrapper(string_view name,
+        property_wrapper(std::string_view name,
                          C* pointer, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
         :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)
@@ -131,7 +131,7 @@ class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        property_wrapper(string_view name,
+        property_wrapper(std::string_view name,
                          C* pointer, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
         :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)
@@ -186,7 +186,7 @@ class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        property_wrapper(string_view name,
+        property_wrapper(std::string_view name,
                          C* pointer, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
         :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)
@@ -231,7 +231,7 @@ class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, get_as_re
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        property_wrapper(string_view name,
+        property_wrapper(std::string_view name,
                          C* pointer, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
         :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)
@@ -281,7 +281,7 @@ class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, get_as_re
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        property_wrapper(string_view name,
+        property_wrapper(std::string_view name,
                          C* pointer, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
         :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)

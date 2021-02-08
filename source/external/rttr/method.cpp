@@ -48,7 +48,7 @@ method create_item(const method_wrapper_base* wrapper)
 template<>
 method create_invalid_item()
 {
-    static const method_wrapper_base invalid_wrapper(string_view(), detail::get_invalid_type());
+    static const method_wrapper_base invalid_wrapper(std::string_view (), detail::get_invalid_type());
     return method(&invalid_wrapper);
 }
 
@@ -78,7 +78,7 @@ method::operator bool() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view method::get_name() const RTTR_NOEXCEPT
+std::string_view method::get_name() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_name();
 }
@@ -120,7 +120,7 @@ array_range<parameter_info> method::get_parameter_infos() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view method::get_signature() const RTTR_NOEXCEPT
+std::string_view method::get_signature() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_signature();
 }

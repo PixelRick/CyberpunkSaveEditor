@@ -33,10 +33,10 @@
 #include "rttr/detail/enumeration/enum_data.h"
 #include "rttr/argument.h"
 #include "rttr/variant.h"
-#include "rttr/string_view.h"
 
 #include <utility>
 #include <type_traits>
+#include <string_view>
 
 namespace rttr
 {
@@ -66,9 +66,9 @@ class enumeration_wrapper : public enumeration_wrapper_base, public metadata_han
         type get_type() const RTTR_NOEXCEPT { return type::get<Enum_Type>(); }
         type get_underlying_type() const RTTR_NOEXCEPT { return type::get<typename std::underlying_type<Enum_Type>::type>(); }
 
-        array_range<string_view> get_names() const RTTR_NOEXCEPT
+        array_range<std::string_view> get_names() const RTTR_NOEXCEPT
         {
-            return array_range<string_view>(m_enum_names.data(), N);
+            return array_range<std::string_view>(m_enum_names.data(), N);
         }
 
         array_range<variant> get_values() const RTTR_NOEXCEPT
@@ -76,12 +76,12 @@ class enumeration_wrapper : public enumeration_wrapper_base, public metadata_han
             return array_range<variant>(m_enum_variant_values.data(), N);
         }
 
-        string_view value_to_name(argument& value) const
+        std::string_view value_to_name(argument& value) const
         {
             if (!value.is_type<Enum_Type>() &&
                 !value.is_type<typename std::underlying_type<Enum_Type>::type>())
             {
-                return string_view();
+                return std::string_view();
             }
 
             const Enum_Type enum_value = value.get_value<Enum_Type>();
@@ -94,10 +94,10 @@ class enumeration_wrapper : public enumeration_wrapper_base, public metadata_han
                 ++index;
             }
 
-            return string_view();
+            return std::string_view();
         }
 
-        variant name_to_value(string_view name) const
+        variant name_to_value(std::string_view name) const
         {
             int index = 0;
             for (const auto& item : m_enum_names)
@@ -113,7 +113,7 @@ class enumeration_wrapper : public enumeration_wrapper_base, public metadata_han
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
     private:
-        std::array< string_view, N >    m_enum_names;
+        std::array< std::string_view, N >    m_enum_names;
         std::array< Enum_Type, N >      m_enum_values;
         std::array< variant, N >        m_enum_variant_values;
 };

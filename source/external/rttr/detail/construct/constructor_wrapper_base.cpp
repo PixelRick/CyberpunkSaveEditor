@@ -61,7 +61,7 @@ void constructor_wrapper_base::init() RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view constructor_wrapper_base::get_signature() const RTTR_NOEXCEPT
+std::string_view constructor_wrapper_base::get_signature() const RTTR_NOEXCEPT
 {
     return m_signature_view;
 }
@@ -77,12 +77,12 @@ void constructor_wrapper_base::create_signature_string() RTTR_NOEXCEPT
         return;
 
     auto param_info_list = get_parameter_infos();
-    m_signature = get_instantiated_type().get_raw_type().get_name().to_string() + "( ";
+    m_signature = std::string(get_instantiated_type().get_raw_type().get_name()) + "( ";
     auto ref_list = get_is_reference();
     auto const_list = get_is_const();
     for (const auto& param : param_info_list)
     {
-        m_signature += param.get_type().get_name() + string(is_const_list[const_list[param.get_index()]]) + string(is_ref_list[ref_list[param.get_index()]]);
+        m_signature += std::string(param.get_type().get_name()) + string(is_const_list[const_list[param.get_index()]]) + string(is_ref_list[ref_list[param.get_index()]]);
         if (param.get_index() < param_info_list.size() - 1)
             m_signature += ", ";
     }

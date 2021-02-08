@@ -33,10 +33,10 @@
 #include "rttr/parameter_info.h"
 #include "rttr/access_levels.h"
 #include "rttr/array_range.h"
-#include "rttr/string_view.h"
 
 #include <string>
 #include <vector>
+#include <string_view>
 
 namespace rttr
 {
@@ -59,7 +59,7 @@ class RTTR_API constructor_wrapper_base
     public:
         constructor_wrapper_base() RTTR_NOEXCEPT;
         virtual ~constructor_wrapper_base();
-        string_view get_signature() const RTTR_NOEXCEPT;
+        std::string_view get_signature() const RTTR_NOEXCEPT;
 
         virtual bool is_valid() const RTTR_NOEXCEPT;
         virtual type get_declaring_type() const RTTR_NOEXCEPT;
@@ -88,7 +88,7 @@ class RTTR_API constructor_wrapper_base
     private:
         void create_signature_string() RTTR_NOEXCEPT;
     private:
-        string_view m_signature_view;
+        std::string_view m_signature_view;
         std::string m_signature;
 };
 

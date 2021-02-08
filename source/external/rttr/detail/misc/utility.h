@@ -499,6 +499,16 @@ public:
     }
 };
 
+template <>
+struct hash<std::string_view>
+{
+public:
+    size_t operator()(const std::string_view& text) const
+    {
+        return generate_hash(text.data(), text.length());
+    }
+};
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>

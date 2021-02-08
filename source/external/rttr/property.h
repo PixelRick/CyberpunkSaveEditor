@@ -32,9 +32,9 @@
 #include "rttr/detail/misc/class_item_mapper.h"
 #include "rttr/parameter_info.h"
 #include "rttr/access_levels.h"
-#include "rttr/string_view.h"
 
 #include <string>
+#include <string_view>
 
 namespace rttr
 {
@@ -182,11 +182,11 @@ class RTTR_API property
         /*!
          * \brief Returns the name of this property.
          *
-         * \remark When the property is not valid, this function will return an empty string_view.
+         * \remark When the property is not valid, this function will return an empty std::string_view.
          *
          * \return Name of the property.
          */
-        string_view get_name() const RTTR_NOEXCEPT;
+        std::string_view get_name() const RTTR_NOEXCEPT;
 
         /*!
          * \brief Returns the underlying \ref type object of this property.

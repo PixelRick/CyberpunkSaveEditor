@@ -1313,7 +1313,7 @@ struct RTTR_API convert_from<std::string>
 
     static RTTR_INLINE bool to_enum(const std::string& from, argument& to)
     {
-        return to_enumeration(string_view(from), to);
+        return to_enumeration(std::string_view (from), to);
     }
 
 };

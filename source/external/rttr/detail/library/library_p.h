@@ -29,7 +29,6 @@
 #define RTTR_LIBRARY_P_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/string_view.h"
 
 #include "rttr/type.h"
 #include "rttr/property.h"
@@ -41,6 +40,7 @@
 #endif
 
 #include <atomic>
+#include <string_view>
 
 namespace rttr
 {
@@ -54,7 +54,7 @@ namespace detail
 class RTTR_LOCAL library_private
 {
 public:
-    library_private(string_view file_name, string_view version)
+    library_private(std::string_view file_name, std::string_view version)
     :   m_file_name(file_name),
         m_version(version),
         m_load_count(0),
@@ -114,9 +114,9 @@ public:
 
 
     bool is_loaded() const RTTR_NOEXCEPT { return (m_handle != nullptr); }
-    string_view get_error_string() const RTTR_NOEXCEPT { return m_error_string; }
-    string_view get_file_name() const RTTR_NOEXCEPT { return m_file_name; }
-    string_view get_qualified_filename() const RTTR_NOEXCEPT { return m_qualifed_file_name; }
+    std::string_view get_error_string() const RTTR_NOEXCEPT { return m_error_string; }
+    std::string_view get_file_name() const RTTR_NOEXCEPT { return m_file_name; }
+    std::string_view get_qualified_filename() const RTTR_NOEXCEPT { return m_qualifed_file_name; }
 
     /////////////////////////////////////////////////////////////
 

@@ -30,7 +30,7 @@
 
 #include "rttr/detail/base/core_prerequisites.h"
 
-#include "rttr/string_view.h"
+#include <string_view>
 
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -107,9 +107,9 @@ RTTR_LOCAL RTTR_INLINE std::size_t get_size(const char* s) RTTR_NOEXCEPT
 /////////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-RTTR_LOCAL RTTR_INLINE string_view get_type_name() RTTR_NOEXCEPT
+RTTR_LOCAL RTTR_INLINE std::string_view get_type_name() RTTR_NOEXCEPT
 {
-    return string_view(f<T>(), get_size(f<T>()));
+    return std::string_view(f<T>(), get_size(f<T>()));
 }
 
 /////////////////////////////////////////////////////////////////////////////////

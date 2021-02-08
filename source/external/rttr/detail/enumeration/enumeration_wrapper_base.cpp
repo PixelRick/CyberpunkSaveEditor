@@ -83,9 +83,9 @@ type enumeration_wrapper_base::get_type() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-array_range<string_view> enumeration_wrapper_base::get_names() const RTTR_NOEXCEPT
+array_range<std::string_view> enumeration_wrapper_base::get_names() const RTTR_NOEXCEPT
 {
-    return array_range<string_view>();
+    return array_range<std::string_view>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -97,14 +97,14 @@ array_range<variant> enumeration_wrapper_base::get_values() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view enumeration_wrapper_base::value_to_name(argument& value) const
+std::string_view enumeration_wrapper_base::value_to_name(argument& value) const
 {
-    return string_view();
+    return std::string_view();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant enumeration_wrapper_base::name_to_value(string_view name) const
+variant enumeration_wrapper_base::name_to_value(std::string_view name) const
 {
     return variant();
 }

@@ -69,7 +69,7 @@ std::string convert_utf16_to_utf8(const std::wstring& source)
 std::string error_string(int error_code = -1)
 {
     std::string result;
-    rttr::string_view std_error_msg;
+    std::string_view std_error_msg;
 
     if (error_code == -1)
     {
@@ -113,7 +113,7 @@ std::string error_string(int error_code = -1)
     }
 
     if (!std_error_msg.empty())
-        result = std_error_msg.to_string();
+        result = std_error_msg;
 
     return result;
 }

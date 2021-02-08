@@ -29,10 +29,10 @@
 #define RTTR_TYPE_REGISTER_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/string_view.h"
 
 #include <memory>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace rttr
@@ -103,7 +103,7 @@ public:
     static bool register_enumeration(enumeration_wrapper_base* enum_data);
     static bool unregister_enumeration(enumeration_wrapper_base* enum_data);
 
-    static void custom_name(type& t, string_view name);
+    static void custom_name(type& t, std::string_view name);
 
     static void metadata( const type& t, std::vector<metadata> data);
 

@@ -34,7 +34,7 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-property_wrapper_base::property_wrapper_base(string_view name, type declaring_type) RTTR_NOEXCEPT
+property_wrapper_base::property_wrapper_base(std::string_view name, type declaring_type) RTTR_NOEXCEPT
 :   m_name(name),
     m_declaring_type(declaring_type)
 {
@@ -62,7 +62,7 @@ bool property_wrapper_base::is_valid() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view property_wrapper_base::get_name() const RTTR_NOEXCEPT
+std::string_view property_wrapper_base::get_name() const RTTR_NOEXCEPT
 {
     return m_name;
 }

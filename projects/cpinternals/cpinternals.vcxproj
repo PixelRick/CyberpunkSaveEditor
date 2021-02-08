@@ -58,8 +58,8 @@
     <ClInclude Include="..\..\source\cpinternals\ioarchive\farchive.hpp" />
     <ClInclude Include="..\..\source\cpinternals\ioarchive\ofarchive.hpp" />
     <ClInclude Include="..\..\source\cpinternals\ioarchive\ifarchive.hpp" />
-    <ClInclude Include="..\..\source\cpinternals\rtdt\container.hpp" />
     <ClInclude Include="..\..\source\cpinternals\rtdt\dynamic.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\rtdt\rttr_helpers.hpp" />
     <ClInclude Include="..\..\source\cpinternals\rtdt\native.hpp" />
     <ClInclude Include="..\..\source\cpinternals\rtdt\itype.hpp" />
     <ClInclude Include="..\..\source\cpinternals\rtdt\Simple.hpp" />
@@ -87,6 +87,7 @@
     <ClCompile Include="..\..\source\cpinternals\ctypes\CName.cpp" />
     <ClCompile Include="..\..\source\cpinternals\ctypes\TweakDBID.cpp" />
     <ClCompile Include="..\..\source\cpinternals\init.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\rtdt\Source.cpp" />
     <ClCompile Include="..\..\source\cpinternals\scripting\cclass.cpp" />
     <ClCompile Include="..\..\source\cpinternals\scripting\cobject.cpp" />
     <ClCompile Include="..\..\source\cpinternals\scripting\cproperty_factory.cpp" />

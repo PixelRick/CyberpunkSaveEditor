@@ -49,12 +49,12 @@ template<typename Param_Type, std::size_t Param_Index, typename Default_Type>
 class parameter_info_wrapper<Param_Type, Param_Index, has_param_name, Default_Type>: public parameter_info_wrapper_base
 {
     public:
-        parameter_info_wrapper(string_view name) RTTR_NOEXCEPT
+        parameter_info_wrapper(std::string_view name) RTTR_NOEXCEPT
         :   m_default_value(nullptr), m_name(name)
         {
         }
 
-        string_view get_name() const        RTTR_NOEXCEPT   { return m_name; }
+        std::string_view get_name() const        RTTR_NOEXCEPT   { return m_name; }
         type get_type() const               RTTR_NOEXCEPT   { return type::get<Param_Type>(); }
         bool has_default_value() const      RTTR_NOEXCEPT   { return true; }
         variant get_default_value() const                   { return variant(*m_default_value); }
@@ -62,7 +62,7 @@ class parameter_info_wrapper<Param_Type, Param_Index, has_param_name, Default_Ty
         uint32_t get_index() const          RTTR_NOEXCEPT   { return static_cast<uint32_t>(Param_Index); }
     private:
         const Default_Type* m_default_value;
-        string_view         m_name;
+        std::string_view         m_name;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ class parameter_info_wrapper<Param_Type, Param_Index, no_param_name, Default_Typ
         {
         }
 
-        string_view get_name() const        RTTR_NOEXCEPT   { return string_view(); }
+        std::string_view get_name() const        RTTR_NOEXCEPT   { return std::string_view(); }
         type get_type() const               RTTR_NOEXCEPT   { return type::get<Param_Type>(); }
         bool has_default_value() const      RTTR_NOEXCEPT   { return true; }
         variant get_default_value() const                   { return variant(*m_default_value); }
@@ -94,18 +94,18 @@ template<typename Param_Type, std::size_t Param_Index>
 class parameter_info_wrapper<Param_Type, Param_Index, has_param_name, void> : public parameter_info_wrapper_base
 {
     public:
-        parameter_info_wrapper(string_view name) RTTR_NOEXCEPT
+        parameter_info_wrapper(std::string_view name) RTTR_NOEXCEPT
         :   m_name(name)
         {
         }
 
-        string_view get_name() const        RTTR_NOEXCEPT   { return m_name; }
+        std::string_view get_name() const        RTTR_NOEXCEPT   { return m_name; }
         type get_type() const               RTTR_NOEXCEPT   { return type::get<Param_Type>(); }
         bool has_default_value() const      RTTR_NOEXCEPT   { return false; }
         variant get_default_value() const                   { return variant(); }
         uint32_t get_index() const          RTTR_NOEXCEPT   { return static_cast<uint32_t>(Param_Index); }
     private:
-        string_view m_name;
+        std::string_view m_name;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -116,7 +116,7 @@ class parameter_info_wrapper<Param_Type, Param_Index, no_param_name, void> : pub
     public:
         parameter_info_wrapper() RTTR_NOEXCEPT {}
 
-        string_view get_name() const        RTTR_NOEXCEPT   { return string_view(); }
+        std::string_view get_name() const        RTTR_NOEXCEPT   { return std::string_view(); }
         type get_type() const               RTTR_NOEXCEPT   { return type::get<Param_Type>(); }
         bool has_default_value() const      RTTR_NOEXCEPT   { return false; }
         variant get_default_value() const                   { return variant(); }

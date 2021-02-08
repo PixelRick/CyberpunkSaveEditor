@@ -87,11 +87,11 @@ bool file_exist(const std::string& fileName)
     }
 }
 
-static rttr::string_view get_error()
+static rttr::std::string_view get_error()
 {
     using namespace rttr;
     auto err = dlerror();
-    return err ? string_view(err): string_view();
+    return err ?std::string_view (err):std::string_view ();
 }
 
 } // end namespace anonymous

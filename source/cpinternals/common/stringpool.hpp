@@ -4,7 +4,6 @@
 #include <vector>
 #include <array>
 #include <unordered_map>
-#include "iarchive.hpp"
 
 namespace cp {
 
@@ -80,10 +79,6 @@ struct stringpool
   {
     return m_views[idx];
   }
-
-  // These serialization methods are used by the csav's System nodes
-  //bool serialize_in(iarchive& reader, uint32_t descs_size, uint32_t pool_size, uint32_t descs_offset = 0);
-  //bool serialize_out(iarchive& writer, uint32_t& descs_size, uint32_t& pool_size);
 
 protected:
   bool allocate_block()

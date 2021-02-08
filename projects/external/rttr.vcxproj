@@ -15,9 +15,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\source\external\rttr\registration" />
-    <None Include="..\..\source\external\rttr\registration_friend" />
-    <None Include="..\..\source\external\rttr\type" />
+    <ClInclude Include="..\..\source\external\rttr\registration">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\registration_friend">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\type">
+      <FileType>Document</FileType>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\external\rttr\access_levels.h" />
@@ -60,7 +66,6 @@
     <ClInclude Include="..\..\source\external\rttr\detail\impl\instance_impl.h" />
     <ClInclude Include="..\..\source\external\rttr\detail\impl\rttr_cast_impl.h" />
     <ClInclude Include="..\..\source\external\rttr\detail\impl\sequential_mapper_impl.h" />
-    <ClInclude Include="..\..\source\external\rttr\detail\impl\string_view_impl.h" />
     <ClInclude Include="..\..\source\external\rttr\detail\impl\wrapper_mapper_impl.h" />
     <ClInclude Include="..\..\source\external\rttr\detail\library\library_p.h" />
     <ClInclude Include="..\..\source\external\rttr\detail\metadata\metadata.h" />
@@ -152,7 +157,6 @@
     <ClInclude Include="..\..\source\external\rttr\rttr_cast.h" />
     <ClInclude Include="..\..\source\external\rttr\rttr_enable.h" />
     <ClInclude Include="..\..\source\external\rttr\sequential_mapper.h" />
-    <ClInclude Include="..\..\source\external\rttr\string_view.h" />
     <ClInclude Include="..\..\source\external\rttr\type.h" />
     <ClInclude Include="..\..\source\external\rttr\type_list.h" />
     <ClInclude Include="..\..\source\external\rttr\variant.h" />

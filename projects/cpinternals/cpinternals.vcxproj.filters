@@ -95,6 +95,9 @@
     <ClCompile Include="..\..\source\cpinternals\utils.cpp">
       <Filter>source\cpinternals</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\rtdt\Source.cpp">
+      <Filter>source\cpinternals\rtdt</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\cpinternals\tweakdb\tweakdb.hpp">
@@ -256,14 +259,14 @@
     <ClInclude Include="..\..\source\cpinternals\rtdt\dynamic.hpp">
       <Filter>source\cpinternals\rtdt</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\cpinternals\rtdt\container.hpp">
-      <Filter>source\cpinternals\rtdt</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\cpinternals\tmp\archive_test.hpp">
       <Filter>source\cpinternals\tmp</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cpinternals\utils.hpp">
       <Filter>source\cpinternals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\rtdt\rttr_helpers.hpp">
+      <Filter>source\cpinternals\rtdt</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -41,7 +41,7 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-method_wrapper_base::method_wrapper_base(string_view name, type declaring_type) RTTR_NOEXCEPT
+method_wrapper_base::method_wrapper_base(std::string_view name, type declaring_type) RTTR_NOEXCEPT
 :   m_name(name),
     m_declaring_type(declaring_type)
 {
@@ -65,7 +65,7 @@ void method_wrapper_base::init() RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view method_wrapper_base::get_name() const RTTR_NOEXCEPT
+std::string_view method_wrapper_base::get_name() const RTTR_NOEXCEPT
 {
     return m_name;
 }
@@ -79,7 +79,7 @@ type method_wrapper_base::get_declaring_type() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view method_wrapper_base::get_signature() const RTTR_NOEXCEPT
+std::string_view method_wrapper_base::get_signature() const RTTR_NOEXCEPT
 {
     return m_signature_view;
 }
@@ -100,7 +100,7 @@ void method_wrapper_base::create_signature_string() RTTR_NOEXCEPT
     auto const_list = get_is_const();
     for (const auto& param : param_list)
     {
-        m_signature += param.get_type().get_name().to_string() + string(is_const_list[const_list[param.get_index()]]) + string(is_ref_list[ref_list[param.get_index()]]);
+        m_signature += std::string(param.get_type().get_name()) + string(is_const_list[const_list[param.get_index()]]) + string(is_ref_list[ref_list[param.get_index()]]);
         if (param.get_index() < param_list.size() - 1)
             m_signature += ", ";
     }

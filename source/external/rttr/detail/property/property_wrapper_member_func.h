@@ -41,7 +41,7 @@ class property_wrapper<member_func_ptr, Declaring_Typ, Getter, Setter, Acc_Level
     using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_wrapper(string_view name,
+        property_wrapper(std::string_view name,
                          Getter get, Setter set,
                          std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
         :   property_wrapper_base(name, type::get<Declaring_Typ>()),
@@ -105,7 +105,7 @@ class property_wrapper<member_func_ptr, Declaring_Typ, Getter, void, Acc_Level, 
     using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_wrapper(string_view name,
+        property_wrapper(std::string_view name,
                          Getter get, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
         :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
@@ -161,7 +161,7 @@ class property_wrapper<member_func_ptr, Declaring_Typ, Getter, Setter, Acc_Level
     using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_wrapper(string_view name,
+        property_wrapper(std::string_view name,
                          Getter get, Setter set,
                          std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
         :   property_wrapper_base(name, type::get<Declaring_Typ>()),
@@ -231,7 +231,7 @@ class property_wrapper<member_func_ptr, Declaring_Typ, Getter, void, Acc_Level, 
     using policy_type   = add_pointer_t<add_const_t<remove_reference_t<return_type>>>;
 
     public:
-        property_wrapper(string_view name,
+        property_wrapper(std::string_view name,
                          Getter get,
                          std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
         :   property_wrapper_base(name, type::get<Declaring_Typ>()),
@@ -289,7 +289,7 @@ class property_wrapper<member_func_ptr, Declaring_Typ, Getter, Setter, Acc_Level
     using class_type    = typename function_traits<Getter>::class_type;
 
     public:
-        property_wrapper(string_view name,
+        property_wrapper(std::string_view name,
                          Getter get, Setter set,
                          std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
         :   property_wrapper_base(name, type::get<Declaring_Typ>()),
@@ -359,7 +359,7 @@ class property_wrapper<member_func_ptr, Declaring_Typ, Getter, void, Acc_Level, 
     using policy_type   = std::reference_wrapper<add_const_t<remove_reference_t<return_type>>>;
 
     public:
-        property_wrapper(string_view name,
+        property_wrapper(std::string_view name,
                          Getter get,
                          std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
         :   property_wrapper_base(name, type::get<Declaring_Typ>()),

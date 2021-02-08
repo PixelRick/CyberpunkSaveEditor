@@ -46,12 +46,12 @@ namespace detail
 class library_manager
 {
     public:
-        static std::shared_ptr<library_private> create_or_find_library(string_view file_name, string_view version)
+        static std::shared_ptr<library_private> create_or_find_library(std::string_view file_name, std::string_view version)
         {
             auto& manager = get_instance();
             std::lock_guard<std::mutex> lock(manager.m_library_mutex);
 
-            auto file_as_string = file_name.to_string();
+            auto file_as_string = std::string(file_name);
             auto itr = manager.m_library_map.find(file_as_string);
             if (itr != manager.m_library_map.end())
                 return itr->second;
@@ -73,7 +73,7 @@ class library_manager
             auto& manager = get_instance();
             std::lock_guard<std::mutex> lock(manager.m_library_mutex);
 
-            auto itr = manager.m_library_map.find(item->get_file_name().to_string()); // because we use string_view to find the item
+            auto itr = manager.m_library_map.find(std::string(item->get_file_name())); // because we use std::string_view to find the item
             if (itr != manager.m_library_map.end())
                 manager.m_library_map.erase(itr);
         }
@@ -100,7 +100,7 @@ class library_manager
             }
         }
 
-        // use std::less in order to use string_view for finding the item
+        // use std::less in order to use std::string_view for finding the item
         std::map<std::string, std::shared_ptr<library_private>> m_library_map;
         std::mutex m_library_mutex;
 };
@@ -108,7 +108,7 @@ class library_manager
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-library::library(string_view file_name, string_view version)
+library::library(std::string_view file_name, std::string_view version)
 :   m_pimpl(detail::library_manager::create_or_find_library(file_name, version)),
     m_is_loaded(false)
 {
@@ -160,7 +160,7 @@ bool library::is_loaded() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view library::get_file_name() const RTTR_NOEXCEPT
+std::string_view library::get_file_name() const RTTR_NOEXCEPT
 {
     return m_pimpl->get_qualified_filename().empty() ? m_pimpl->get_file_name() :
                                                        m_pimpl->get_qualified_filename();
@@ -168,7 +168,7 @@ string_view library::get_file_name() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view library::get_error_string() const RTTR_NOEXCEPT
+std::string_view library::get_error_string() const RTTR_NOEXCEPT
 {
     return m_pimpl->get_error_string();
 }

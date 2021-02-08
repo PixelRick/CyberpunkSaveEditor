@@ -46,6 +46,5 @@ insert_sorted_nodupe(std::vector<T>& vec, const T& item)
 	return std::make_pair(vec.insert(it, item), true);
 }
 
-
 } // namespace cp
 

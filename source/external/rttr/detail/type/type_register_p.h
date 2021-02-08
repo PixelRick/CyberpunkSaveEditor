@@ -35,10 +35,9 @@
 #include "rttr/variant.h"
 #include "rttr/detail/metadata/metadata.h"
 
-#include "rttr/string_view.h"
-
 #include <memory>
 #include <string>
+#include <string_view>
 #include <vector>
 #include <mutex>
 
@@ -87,11 +86,11 @@ public:
     bool register_global_method(const method_wrapper_base* meth);
     bool unregister_global_method(const method_wrapper_base* meth);
 
-    void register_custom_name(type& t, string_view custom_name);
+    void register_custom_name(type& t, std::string_view custom_name);
 
     /////////////////////////////////////////////////////////////////////////////////////
-    flat_multimap<string_view, ::rttr::property>& get_global_property_storage();
-    flat_multimap<string_view, ::rttr::method>& get_global_method_storage();
+    flat_multimap<std::string_view, ::rttr::property>& get_global_property_storage();
+    flat_multimap<std::string_view, ::rttr::method>& get_global_method_storage();
     /////////////////////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -102,7 +101,7 @@ public:
 
     std::vector<type_data*>& get_type_data_storage();
     std::vector<type>& get_type_storage();
-    flat_map<string_view, type>& get_orig_name_to_id();
+    flat_map<std::string_view, type>& get_orig_name_to_id();
     flat_map<std::string, type, hash>& get_custom_name_to_id();
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -176,8 +175,8 @@ private:
     static const type_comparator_base* get_type_comparator_impl(const type& t,
                                                                 const std::vector<data_container<const type_comparator_base*>>& comparator_list);
 
-    static ::rttr::property get_type_property(const type& t, string_view name);
-    static ::rttr::method get_type_method(const type& t, string_view name,
+    static ::rttr::property get_type_property(const type& t, std::string_view name);
+    static ::rttr::method get_type_method(const type& t, std::string_view name,
                                           const std::vector<type>& type_list);
 
     template<typename T>
@@ -214,12 +213,12 @@ private:
     std::set<registration_manager*>                             m_registration_manager_list;
 
     flat_map<std::string, type, hash>                           m_custom_name_to_id;
-    flat_map<string_view, type>                                 m_orig_name_to_id;
+    flat_map<std::string_view, type>                                 m_orig_name_to_id;
     std::vector<type>                                           m_type_list;
     std::vector<type_data*>                                     m_type_data_storage;
 
-    flat_multimap<string_view, ::rttr::property>                m_global_property_stroage;
-    flat_multimap<string_view, ::rttr::method>                  m_global_method_stroage;
+    flat_multimap<std::string_view, ::rttr::property>                m_global_property_stroage;
+    flat_multimap<std::string_view, ::rttr::method>                  m_global_method_stroage;
     std::vector<::rttr::property>                               m_global_properties;
     std::vector<::rttr::method>                                 m_global_methods;
 

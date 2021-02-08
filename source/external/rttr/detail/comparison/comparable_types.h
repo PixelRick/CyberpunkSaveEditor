@@ -29,9 +29,9 @@
 #define RTTR_COMPARABLE_TYPES_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/string_view.h"
 
 #include <type_traits>
+#include <string_view>
 
 namespace rttr
 {
@@ -42,7 +42,7 @@ namespace detail
 
 template<typename T>
 using is_comparable_type = std::integral_constant<bool, std::is_same<T, std::string>::value ||
-                                                        std::is_same<T, string_view>::value ||
+                                                        std::is_same<T, std::string_view>::value ||
                                                         std::is_arithmetic<T>::value ||
                                                         std::is_enum<T>::value ||
                                                         std::is_same<T, std::nullptr_t>::value ||

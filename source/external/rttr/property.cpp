@@ -50,7 +50,7 @@ property create_item(const property_wrapper_base* wrapper)
 template<>
 property create_invalid_item()
 {
-    static const detail::property_wrapper_base invalid_wrapper(string_view(), detail::get_invalid_type());
+    static const detail::property_wrapper_base invalid_wrapper(std::string_view (), detail::get_invalid_type());
     return property(&invalid_wrapper);
 }
 
@@ -114,7 +114,7 @@ enumeration property::get_enumeration() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view property::get_name() const RTTR_NOEXCEPT
+std::string_view property::get_name() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_name();
 }

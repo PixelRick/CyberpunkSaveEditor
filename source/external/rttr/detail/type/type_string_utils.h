@@ -31,8 +31,8 @@
 #include "rttr/detail/base/core_prerequisites.h"
 
 #include <string>
+#include <string_view>
 #include <cctype>
-#include "rttr/string_view.h"
 
 
 /////////////////////////////////////////////////////////////////////////////////

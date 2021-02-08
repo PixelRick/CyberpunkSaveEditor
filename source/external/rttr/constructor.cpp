@@ -100,7 +100,7 @@ type constructor::get_declaring_type() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-string_view constructor::get_signature() const RTTR_NOEXCEPT
+std::string_view constructor::get_signature() const RTTR_NOEXCEPT
 {
     return m_wrapper->get_signature();
 }

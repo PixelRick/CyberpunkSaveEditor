@@ -155,14 +155,14 @@ RTTR_INLINE type type::get_raw_array_type() const RTTR_NOEXCEPT
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE string_view type::get_name() const RTTR_NOEXCEPT
+RTTR_INLINE std::string_view type::get_name() const RTTR_NOEXCEPT
 {
     return m_type_data->name;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-RTTR_INLINE string_view type::get_full_name() const RTTR_NOEXCEPT
+RTTR_INLINE std::string_view type::get_full_name() const RTTR_NOEXCEPT
 {
     return m_type_data->type_name;
 }

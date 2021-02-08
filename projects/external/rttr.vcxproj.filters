@@ -12,17 +12,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\source\external\rttr\registration">
-      <Filter>source</Filter>
-    </None>
-    <None Include="..\..\source\external\rttr\registration_friend">
-      <Filter>source</Filter>
-    </None>
-    <None Include="..\..\source\external\rttr\type">
-      <Filter>source</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\..\source\external\rttr\access_levels.h">
       <Filter>source</Filter>
     </ClInclude>
@@ -81,9 +70,6 @@
       <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\external\rttr\sequential_mapper.h">
-      <Filter>source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\external\rttr\string_view.h">
       <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\external\rttr\type.h">
@@ -192,9 +178,6 @@
       <Filter>source\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\external\rttr\detail\impl\sequential_mapper_impl.h">
-      <Filter>source\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\external\rttr\detail\impl\string_view_impl.h">
       <Filter>source\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\external\rttr\detail\impl\wrapper_mapper_impl.h">
@@ -443,6 +426,9 @@
     <ClInclude Include="..\..\source\external\rttr\detail\base\pch.h">
       <Filter>source\pch</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\external\rttr\registration" />
+    <ClInclude Include="..\..\source\external\rttr\registration_friend" />
+    <ClInclude Include="..\..\source\external\rttr\type" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\external\rttr\constructor.cpp">
