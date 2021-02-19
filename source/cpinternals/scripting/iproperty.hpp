@@ -33,6 +33,7 @@ enum class EPropertyKind
   Array,
   DynArray,
   Handle,
+  RaRef,
   Object,
   TweakDBID,
   CName,

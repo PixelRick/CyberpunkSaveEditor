@@ -263,11 +263,11 @@ public:
     }
 
     // time to write strpool
-    uint32_t strpool_pool_size = 0;
-    if (!serctx.strpool.serialize_out(writer, new_header.strpool_data_offset, strpool_pool_size))
+    uint32_t strpool_data_size = 0;
+    if (!serctx.strpool.serialize_out(writer, new_header.strpool_data_offset, strpool_data_size))
       return false;
 
-    new_header.obj_descs_offset = new_header.strpool_data_offset + strpool_pool_size;
+    new_header.obj_descs_offset = new_header.strpool_data_offset + strpool_data_size;
 
     // reoffset offsets
     const uint32_t obj_descs_size = (uint32_t)(obj_descs.size() * sizeof(obj_desc_t));

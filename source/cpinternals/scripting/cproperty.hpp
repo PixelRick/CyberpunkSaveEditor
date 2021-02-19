@@ -1014,6 +1014,56 @@ public:
 };
 
 //------------------------------------------------------------------------------
+// raRef
+//------------------------------------------------------------------------------
+
+class CRaRefProperty
+  : public CProperty
+{
+protected:
+  gname m_base_ctypename;
+  gname m_ctypename;
+  uint16_t m_ref;
+
+public:
+  CRaRefProperty(CPropertyOwner* owner, gname sub_ctypename)
+    : CProperty(owner, EPropertyKind::RaRef)
+    , m_base_ctypename(sub_ctypename)
+    , m_ctypename(std::string("raRef:") + m_base_ctypename.c_str())
+  {
+  }
+
+  ~CRaRefProperty() override = default;
+
+public:
+  // overrides
+
+  gname ctypename() const override { return m_ctypename; }
+
+  bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
+  {
+    is >> cbytes_ref(m_ref);
+    return true;
+  }
+
+  virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
+  {
+    os << cbytes_ref(m_ref);
+    return true;
+  }
+
+#ifndef DISABLE_CP_IMGUI_WIDGETS
+
+  [[nodiscard]] bool imgui_widget_impl(const char* label, bool editable) override
+  {
+    return ImGui::InputScalar(label, ImGuiDataType_U16, &m_ref, 0, 0, "%04X",
+      ImGuiInputTextFlags_CharsHexadecimal | (editable ? 0 : ImGuiInputTextFlags_ReadOnly));
+  }
+
+#endif
+};
+
+//------------------------------------------------------------------------------
 // CRUID
 //------------------------------------------------------------------------------
 

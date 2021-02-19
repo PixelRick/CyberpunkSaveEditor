@@ -200,18 +200,20 @@ public:
     return true;
   }
 
-  bool serialize_out(std::ostream& writer, uint32_t& descs_size, uint32_t& pool_size)
+  bool serialize_out(std::ostream& writer, uint32_t& descs_size, uint32_t& data_size, uint32_t descs_offset = 0)
   {
     descs_size = (uint32_t)(m_descs.size() * sizeof(CRangeDesc));
+
+    const uint32_t data_offset = descs_offset + descs_size;
 
     std::vector<CRangeDesc> new_descs = m_descs;
     // reoffset offsets
     for (auto& desc : new_descs)
-      desc.offset(desc.offset() + descs_size);
+      desc.offset(desc.offset() + data_offset);
 
     writer.write((char*)new_descs.data(), descs_size);
-    pool_size = (uint32_t)m_buffer.size();
-    writer.write((char*)m_buffer.data(), pool_size);
+    data_size = (uint32_t)m_buffer.size();
+    writer.write((char*)m_buffer.data(), data_size);
     return true;
   }
 };

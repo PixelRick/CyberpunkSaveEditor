@@ -10,9 +10,17 @@ class archive_test
 {
   bool opened = false;
 
+  std::filesystem::path m_path;
+  bool saved = false;
+  bool save_failed = false;
+
 public:
   bool open(std::filesystem::path path)
   {
+    opened = false;
+    saved = false;
+    m_path = path;
+
     std::ifstream ifs;
     ifs.open(path, ifs.in | ifs.binary);
     if (ifs.fail())
@@ -33,6 +41,27 @@ public:
     return true;
   }
 
+  bool save()
+  {
+    saved = true;
+    if (!opened)
+      return false;
+
+    std::ofstream ofs;
+    ofs.open(m_path, ofs.out | ofs.binary);
+    if (ofs.fail())
+    {
+      std::string err = strerror(errno);
+      std::cerr << "Error: " << err;
+      return false;
+    }
+
+    if (!serialize_out(ofs))
+      return false;
+
+    return true;
+  }
+
   int selected = -1;
 
   static std::string object_name_getter(const CObjectSPtr& item)
@@ -46,6 +75,7 @@ public:
 
     if (opened)
     {
+
       ImGui::Begin("archive_test", &opened);
       ImGuiWindow* window = ImGui::GetCurrentWindow();
       if (window->SkipItems)
@@ -53,7 +83,17 @@ public:
 
       auto& objects = m_objects;
 
-      ImGui::Text("embedded filename: %s", m_filename.c_str());
+      if (ImGui::Button("SAVE"))
+      {
+        save_failed = !save();
+      }
+      if (saved)
+      {
+        ImGui::SameLine();
+        ImGui::Text(save_failed ? "failed" : "ok");
+      }
+
+      ImGui::Text("section 2 (sometimes filename): %s", m_filename.c_str());
 
       ImGui::BeginGroup();
       {
@@ -123,7 +163,7 @@ public:
     uint16_t uk2                  = 0; // sections count apparently
     uint32_t ids_cnt              = 0;
     // test file has 7 sections
-    uint32_t uk3                  = 0; // array of u32
+    uint32_t u32arr_offset                  = 0; // array of u32
     uint32_t filename_offset      = 0;
     uint32_t strpool_descs_offset = 0;
     uint32_t strpool_data_offset  = 0;
@@ -145,6 +185,7 @@ public:
 
 private:
   header_t m_header;
+  uint16_t m_uk1;
 
   std::vector<uint64_t> m_ids;
   std::vector<uint32_t> m_u32_array;
@@ -175,7 +216,7 @@ public:
     reader >> cbytes_ref(m_header);
 
     // check header
-    if (m_header.uk3 > m_header.filename_offset)
+    if (m_header.u32arr_offset > m_header.filename_offset)
       return false;
     if (m_header.filename_offset > m_header.strpool_descs_offset)
       return false;
@@ -186,12 +227,10 @@ public:
     if (m_header.obj_descs_offset > m_header.objdata_offset)
       return false;
 
-    if (m_header.uk3 != 0)
-      throw std::exception("m_header.uk3 != 0, not cool :(");
+    if (m_header.u32arr_offset != 0)
+      throw std::exception("m_header.u32arr_offset != 0, not cool :(");
 
-
-    uint16_t uk1 = 0;
-    reader >> cbytes_ref(uk1);
+    reader >> cbytes_ref(m_uk1);
     //if (uk1 != 0)
     //  throw std::exception("uk1 != 0, cool :)");
 
@@ -208,7 +247,7 @@ public:
     const size_t base_offset = (size_t)reader.tellg() - start_pos;
 
     // section 1: array of u32
-    const size_t sec1_size = m_header.filename_offset - m_header.uk3;
+    const size_t sec1_size = m_header.filename_offset - m_header.u32arr_offset;
     if (sec1_size % 4)
       throw std::exception("sec1_size % 4, not cool :(");
     const size_t sec1_len = sec1_size / 4;
@@ -220,7 +259,7 @@ public:
     m_filename.resize(sec2_size);
     reader.read(m_filename.data(), sec2_size);
 
-    // section 3+4:  string pool
+    // section 3+4: string pool
     const uint32_t strpool_descs_size = m_header.strpool_data_offset - m_header.strpool_descs_offset;
     const uint32_t strpool_data_size = m_header.obj_descs_offset - m_header.strpool_data_offset;
 
@@ -242,7 +281,7 @@ public:
 
     const size_t obj_descs_cnt = obj_descs_size / sizeof(obj_desc_t);
     if (obj_descs_cnt == 0)
-      return true;
+      return m_header.objdata_offset + base_offset == blob_size; // could be empty
 
     std::vector<obj_desc_t> obj_descs(obj_descs_cnt);
     reader.read((char*)obj_descs.data(), obj_descs_size);
@@ -295,6 +334,110 @@ public:
 
     const auto& serobjs = m_serctx.m_objects;
     m_objects.assign(serobjs.begin(), serobjs.end());
+
+    return true;
+  }
+
+  bool serialize_out(std::ostream& writer) const
+  {
+    // let's not do too many copies
+
+    auto start_spos = writer.tellp();
+    uint32_t blob_size = 0; // we don't know it yet
+    
+    writer << cbytes_ref(m_header); 
+
+    header_t new_header = m_header;
+
+    // ----------------------------------------------
+
+    writer << cbytes_ref(m_uk1);
+
+    uint16_t ids_cnt = (uint16_t)m_ids.size();
+    writer << cbytes_ref(ids_cnt);
+    writer.write((char*)m_ids.data(), ids_cnt * 8);
+
+    new_header.ids_cnt = ids_cnt;
+
+    // end of header
+
+    const size_t base_spos = (size_t)writer.tellp();
+    const size_t base_offset = (size_t)writer.tellp() - start_spos;
+
+    // section 1: array of u32
+    new_header.u32arr_offset = 0;
+
+    writer.write((char*)m_u32_array.data(), m_u32_array.size() * 4);
+
+    // section 2: filename
+    const size_t filename_offset = (size_t)writer.tellp() - base_spos;
+    new_header.filename_offset = filename_offset;
+
+    const size_t fname_size = m_filename.size();
+    writer.write(m_filename.data(), fname_size);
+
+    // section 3+4: string pool
+    const size_t strpool_descs_offset = (size_t)writer.tellp() - base_spos;
+    new_header.strpool_descs_offset = strpool_descs_offset;
+
+    // ----------------------------------------------
+
+    //CStringPool strpool;
+    CSystemSerCtx& serctx = const_cast<CSystemSerCtx&>(m_serctx);
+    // here we can't really remove handle-objects because there might be hidden handles in unsupported types
+    serctx.m_objects.assign(m_objects.begin(), m_objects.end());
+    serctx.m_objects.insert(serctx.m_objects.end(), m_handle_objects.begin(), m_handle_objects.end());
+    serctx.rebuild_handlemap();
+
+    std::ostringstream ss;
+    std::vector<obj_desc_t> obj_descs;
+    obj_descs.reserve(serctx.m_objects.size()); // ends up higher in the presence of handles
+
+    // serctx.m_objects is extended during object serialization (handles)
+    for (size_t i = 0; i < serctx.m_objects.size(); ++i)
+    {
+      auto& obj = serctx.m_objects[i];
+      const uint32_t tmp_offset = (uint32_t)ss.tellp();
+      const uint16_t name_idx = serctx.strpool.to_idx(obj->ctypename().c_str());
+      obj_descs.emplace_back(name_idx, tmp_offset);
+      if (!obj->serialize_out(ss, serctx))
+        return false;
+    }
+
+    // time to write strpool
+    uint32_t strpool_data_size = 0;
+    uint32_t strpool_descs_size = 0;
+    if (!serctx.strpool.serialize_out(writer, strpool_descs_size, strpool_data_size, strpool_descs_offset))
+      return false;
+
+    new_header.strpool_data_offset = strpool_descs_offset + strpool_descs_size;
+
+    new_header.obj_descs_offset = new_header.strpool_data_offset + strpool_data_size;
+
+    // reoffset offsets
+    const uint32_t obj_descs_size = (uint32_t)(obj_descs.size() * sizeof(obj_desc_t));
+    const uint32_t objdata_offset = new_header.obj_descs_offset + obj_descs_size;
+
+    new_header.objdata_offset = objdata_offset;
+
+    // reoffset offsets
+    for (auto& desc : obj_descs)
+      desc.data_offset += objdata_offset;
+
+    // write obj descs + data
+    writer.write((char*)obj_descs.data(), obj_descs_size);
+    auto objdata = ss.str(); // not optimal but didn't want to depend on boost and no time to dev a mem stream for now
+    writer.write(objdata.data(), objdata.size());
+    auto end_spos = writer.tellp();
+
+    // at this point data should be correct except blob_size and header
+    // so let's rewrite them
+
+    writer.seekp(start_spos);
+    writer << cbytes_ref(new_header); 
+
+    // return to end of data
+    writer.seekp(end_spos);
 
     return true;
   }

@@ -42,7 +42,7 @@ template <typename T, std::enable_if_t<sizeof(T) <= 4, int> = 0>
 inline unsigned ctz(const T value)
 {
   assert(value != 0);
-  DWORD trailing_zero = 0;
+  unsigned long trailing_zero = 0;
   return _BitScanForward(&trailing_zero, value) ? trailing_zero : sizeof(T) * 8;
 }
 
@@ -79,7 +79,7 @@ std::vector<uintptr_t> sse2_strstr_masked(const unsigned char* s, size_t m, cons
   for (int i = 0, rem = (int)n - 2; i < nchunks; ++i, rem -= 16)
   {
     const int ej = std::min(rem, 16);
-    for (size_t j = 0; j < ej; ++j) {
+    for (int j = 0; j < ej; ++j) {
       if (mask[16 * i + j + 1] == 'x')
         needle_chunks[i].mask |= 1 << j;
     }
@@ -94,7 +94,7 @@ std::vector<uintptr_t> sse2_strstr_masked(const unsigned char* s, size_t m, cons
     if (pos + n + 15 > m) // avoid access violation case
       pos = m - n - 15;
 
-    const BYTE* pc = s + pos;
+    const uint8_t* pc = s + pos;
 
     uint16_t bitmask = candidates_lookup(headblk, tailblk, pc, pc + n - 1);
     while (bitmask != 0)
@@ -144,7 +144,7 @@ std::vector<uintptr_t> sse2_strstr(const unsigned char* s, size_t m, const unsig
     if (pos + n + 15 > m) // avoid access violation case
       pos = m - n - 15;
 
-    const BYTE* pc = s + pos;
+    const uint8_t* pc = s + pos;
 
     uint16_t bitmask = candidates_lookup(headblk, tailblk, pc, pc + n - 1);
     while (bitmask != 0)

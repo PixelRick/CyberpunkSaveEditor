@@ -48,6 +48,11 @@ std::function<CPropertyUPtr(CPropertyOwner*)> CPropertyFactory::get_creator(gnam
     gname sub_ctypename(str_ctypename.substr(sizeof("handle:") - 1));
     return build_prop_creator<CHandleProperty>(sub_ctypename);
   }
+  else if (str_ctypename.rfind("raRef:", 0) == 0)
+  {
+    gname sub_ctypename(str_ctypename.substr(sizeof("raRef:") - 1));
+    return build_prop_creator<CRaRefProperty>(sub_ctypename);
+  }
   else if (str_ctypename == "Bool")
   {
     return build_prop_creator<CBoolProperty>();
