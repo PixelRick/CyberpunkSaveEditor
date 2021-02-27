@@ -245,7 +245,7 @@ public:
 
     //auto label = ctypename() + "##CIntProperty";
     ImGuiDataType dtype = ImGuiDataType_U64;
-    auto dfmt = "%016X";
+    auto dfmt = "%016llX";
 
     switch (m_int_kind)
     {
@@ -255,8 +255,8 @@ public:
       case EIntKind::I16: dtype = ImGuiDataType_U16; dfmt = "%04X";  break;
       case EIntKind::U32: dtype = ImGuiDataType_U32; dfmt = "%08X";  break;
       case EIntKind::I32: dtype = ImGuiDataType_U32; dfmt = "%08X";  break;
-      case EIntKind::U64: dtype = ImGuiDataType_U64; dfmt = "%016X"; break;
-      case EIntKind::I64: dtype = ImGuiDataType_U64; dfmt = "%016X"; break;
+      case EIntKind::U64: dtype = ImGuiDataType_U64; dfmt = "%016llX"; break;
+      case EIntKind::I64: dtype = ImGuiDataType_U64; dfmt = "%016llX"; break;
       default: break;
     }
 
@@ -1106,7 +1106,7 @@ public:
 
   [[nodiscard]] bool imgui_widget_impl(const char* label, bool editable) override
   {
-    return ImGui::InputScalar(label, ImGuiDataType_U64, &m_id, 0, 0, "%016X",
+    return ImGui::InputScalar(label, ImGuiDataType_U64, &m_id, 0, 0, "%016llX",
       ImGuiInputTextFlags_CharsHexadecimal | (editable ? 0 : ImGuiInputTextFlags_ReadOnly));
   }
 
