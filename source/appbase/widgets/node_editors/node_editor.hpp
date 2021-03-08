@@ -9,7 +9,7 @@
 
 #include "appbase/IApp.hpp"
 #include "cpinternals/csav/node.hpp"
-#include "cpinternals/csav/csav_version.hpp"
+#include "cpinternals/csav/version.hpp"
 #include "spdlog/spdlog.h"
 
 #define NODE_EDITOR__DEFAULT_LEAF_EDITOR_NAME "<default_editor>"
@@ -26,10 +26,10 @@ class node_editor_widget
 
 private:
   std::weak_ptr<const cp::csav::node_t> m_weaknode;
-  cp::csav::csav_version m_version;
+  cp::csav::version m_version;
 
 public:
-  node_editor_widget(const std::shared_ptr<const cp::csav::node_t>& node, const cp::csav::csav_version& version)
+  node_editor_widget(const std::shared_ptr<const cp::csav::node_t>& node, const cp::csav::version& version)
     : m_weaknode(node), m_version(version)
   {
     node->add_listener(this);
@@ -42,7 +42,7 @@ public:
       node->remove_listener(this);
   };
 
-  const cp::csav::csav_version& version() const { return m_version; }
+  const cp::csav::version& version() const { return m_version; }
 
 private:
   bool m_is_drawing = false; // to filter events

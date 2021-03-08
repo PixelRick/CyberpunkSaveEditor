@@ -136,7 +136,7 @@
     <ClInclude Include="..\..\source\cpinternals\common\misc.hpp">
       <Filter>source\cpinternals\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\cpinternals\csav\csav_version.hpp">
+    <ClInclude Include="..\..\source\cpinternals\csav\version.hpp">
       <Filter>source\cpinternals\csav</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cpinternals\csav\node.hpp">

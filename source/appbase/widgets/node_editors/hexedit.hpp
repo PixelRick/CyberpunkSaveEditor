@@ -14,7 +14,7 @@ class node_hexeditor
 
 public:
   node_hexeditor(const std::shared_ptr<const cp::csav::node_t>& node)
-    : node_editor_widget(node, cp::csav::csav_version{})
+    : node_editor_widget(node, cp::csav::version{})
   {
     me.ReadFn = read_fn;
     me.WriteFn = write_fn;

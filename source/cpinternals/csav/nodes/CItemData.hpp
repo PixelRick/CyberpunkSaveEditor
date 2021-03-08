@@ -88,7 +88,7 @@ struct CUk0ID
   {
   }
 
-  bool serialize_in(std::istream& reader, const csav_version& ver)
+  bool serialize_in(std::istream& reader, const version& ver)
   {
     reader >> cbytes_ref(nameid.as_u64);
     reader >> cbytes_ref(uk0);
@@ -96,7 +96,7 @@ struct CUk0ID
     return true;
   }
 
-  bool serialize_out(std::ostream& writer, const csav_version& ver) const
+  bool serialize_out(std::ostream& writer, const version& ver) const
   {
     writer << cbytes_ref(nameid.as_u64);
     writer << cbytes_ref(uk0);
@@ -133,7 +133,7 @@ struct CItemMod // for CItemData kind 0, 2
     std::fill(cn0, cn0 + sizeof(cn0), 0);
   }
 
-  bool serialize_in(std::istream& reader, const csav_version& ver)
+  bool serialize_in(std::istream& reader, const version& ver)
   {
     reader >> iid;
 
@@ -156,7 +156,7 @@ struct CItemMod // for CItemData kind 0, 2
     return true;
   }
 
-  bool serialize_out(std::ostream& writer, const csav_version& ver) const
+  bool serialize_out(std::ostream& writer, const version& ver) const
   {
     writer << iid;
 
@@ -202,7 +202,7 @@ struct CItemData
 
   std::string node_name() const override { return "itemData"; }
 
-  bool from_node_impl(const std::shared_ptr<const node_t>& node, const csav_version& version) override
+  bool from_node_impl(const std::shared_ptr<const node_t>& node, const version& version) override
   {
     if (!node)
       return false;
@@ -230,7 +230,7 @@ struct CItemData
     return true;
   }
 
-  std::shared_ptr<const node_t> to_node_impl(const csav_version& version) const override
+  std::shared_ptr<const node_t> to_node_impl(const version& version) const override
   {
     node_writer writer(version);
     writer << iid;

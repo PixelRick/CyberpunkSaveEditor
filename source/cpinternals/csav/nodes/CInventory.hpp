@@ -23,7 +23,7 @@ struct CInventory
 
   std::string node_name() const override { return "inventory"; }
 
-  bool from_node_impl(const std::shared_ptr<const node_t>& node, const csav_version& version) override
+  bool from_node_impl(const std::shared_ptr<const node_t>& node, const version& version) override
   {
     if (!node)
       return false;
@@ -73,7 +73,7 @@ struct CInventory
     return reader.at_end();
   }
 
-  std::shared_ptr<const node_t> to_node_impl(const csav_version& version) const override
+  std::shared_ptr<const node_t> to_node_impl(const version& version) const override
   {
     node_writer writer(version);
 

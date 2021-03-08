@@ -1,8 +1,7 @@
 #pragma once
-
-#include "csav/node.hpp"
-#include "csav/node_tree.hpp"
-#include "csav/savegame.hpp"
+#include <cpinternals/csav/node.hpp>
+#include <cpinternals/csav/node_tree.hpp>
+#include <cpinternals/csav/savegame.hpp>
 
 namespace cp {
 

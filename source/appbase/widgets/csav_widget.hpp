@@ -184,7 +184,7 @@ public:
   }
 
   static inline std::shared_ptr<const cp::savegame::node_type> appearance_src;
-  static inline cp::csav::csav_version appearance_version {};
+  static inline cp::csav::version appearance_version {};
 
   void draw()
   {
@@ -192,7 +192,7 @@ public:
     ImVec2 center(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.5f);
 
     std::string label = fmt::format("{} (csav {})",
-      m_csav->filepath.u8string(), m_csav->tree.version.string());
+      m_csav->filepath.u8string(), m_csav->tree.ver().string());
 
     ImGuiStyle& style = ImGui::GetStyle();
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, style.ItemSpacing.y));
@@ -349,7 +349,7 @@ public:
     if (ImGui::ButtonEx("COPY SKIN##SAVE", ImVec2(100, 60)))
     {
       appearance_src = m_csav->search_node("CharacetrCustomization_Appearances");
-      appearance_version = m_csav->tree.version;
+      appearance_version = m_csav->tree.ver();
     }
     if (ImGui::IsItemHovered())
       ImGui::SetTooltip("Copy skin in app clipboard.");
@@ -362,7 +362,7 @@ public:
       auto appearance_node = m_csav->search_node("CharacetrCustomization_Appearances");
       if (appearance_src && appearance_src != appearance_node)
       {
-        if (appearance_version != m_csav->tree.version)
+        if (appearance_version != m_csav->tree.ver())
         {
           ImGui::OpenPopup("Error##TRANSFER");
         }

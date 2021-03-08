@@ -160,7 +160,7 @@ class System_editor
   cp::csav::CGenericSystem m_data;
 
 public:
-  System_editor(const std::shared_ptr<const cp::csav::node_t>& node, const cp::csav::csav_version& version)
+  System_editor(const std::shared_ptr<const cp::csav::node_t>& node, const cp::csav::version& version)
     : node_editor_widget(node, version)
   {
     reload();
@@ -225,7 +225,7 @@ class PSData_editor
   cp::csav::CPSData m_data;
 
 public:
-  PSData_editor(const std::shared_ptr<const cp::csav::node_t>& node, const cp::csav::csav_version& version)
+  PSData_editor(const std::shared_ptr<const cp::csav::node_t>& node, const cp::csav::version& version)
     : node_editor_widget(node, version)
   {
     reload();

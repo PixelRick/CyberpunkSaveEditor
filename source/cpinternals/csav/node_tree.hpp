@@ -2,17 +2,31 @@
 #include <filesystem>
 #include <vector>
 
-#include "node.hpp"
-#include "csav_version.hpp"
-#include "serial_tree.hpp"
+#include <cpinternals/csav/node.hpp>
+#include <cpinternals/csav/version.hpp>
+#include <cpinternals/csav/serial_tree.hpp>
 
-namespace cp {
-namespace csav {
+namespace cp::csav {
 
 struct node_tree
 {
   using node_type = node_t;
   using shared_node_type = std::shared_ptr<const node_t>;
+
+  version& ver()
+  {
+    return m_ver;
+  }
+
+  const version& ver() const
+  {
+    return m_ver;
+  }
+
+  op_status load(std::filesystem::path path);
+
+  // This one makes a backup!
+  op_status save(std::filesystem::path path);
 
   friend streambase& operator<<(streambase& ar, node_tree& x)
   {
@@ -26,21 +40,21 @@ struct node_tree
     }
   }
 
-  op_status load(std::filesystem::path path);
-
-  // This one makes a backup!
-  op_status save(std::filesystem::path path);
-
-  csav_version version;
   std::vector<serial_node_desc> original_descs;
   shared_node_type root;
 
 protected:
+
   void serialize_in(streambase& ar);
   void serialize_out(streambase& ar);
+
+  version m_ver;
 };
 
-} // namespace csav
+} // namespace cp::csav
+
+
+namespace cp {
 
 using csav_tree = csav::node_tree;
 

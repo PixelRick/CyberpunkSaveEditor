@@ -34,7 +34,7 @@
     <ClInclude Include="..\..\source\cpinternals\csav\node_tree.hpp" />
     <ClInclude Include="..\..\source\cpinternals\csav\nodes.hpp" />
     <ClInclude Include="..\..\source\cpinternals\csav\savegame.hpp" />
-    <ClInclude Include="..\..\source\cpinternals\csav\csav_version.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\csav\version.hpp" />
     <ClInclude Include="..\..\source\cpinternals\csav\misc\serializable_stringpool.hpp" />
     <ClInclude Include="..\..\source\cpinternals\csav\misc\system_serializer.hpp" />
     <ClInclude Include="..\..\source\cpinternals\csav\node.hpp" />

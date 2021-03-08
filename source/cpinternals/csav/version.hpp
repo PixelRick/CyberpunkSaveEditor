@@ -5,7 +5,7 @@
 
 namespace cp::csav {
 
-struct csav_version
+struct version
 {
   uint32_t v1 = 0;
   uint32_t v2 = 0;
@@ -21,12 +21,12 @@ struct csav_version
   }
 };
 
-inline bool operator==(const csav_version& a, const csav_version& b)
+inline bool operator==(const version& a, const version& b)
 {
   return (&a == &b) || (a.v1 == b.v1 && a.v2 == b.v2 && a.v3 == b.v3);
 }
 
-inline bool operator!=(const csav_version& a, const csav_version& b)
+inline bool operator!=(const version& a, const version& b)
 {
   return !(a == b);
 }

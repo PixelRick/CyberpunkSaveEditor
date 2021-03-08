@@ -5,7 +5,7 @@
 #include <numeric>
 #include <cassert>
 
-#include "csav_version.hpp"
+#include "version.hpp"
 #include "node_tree.hpp"
 #include "node.hpp"
 #include "nodes.hpp"
@@ -103,7 +103,7 @@ public:
     try_save_node_data_struct(stats,        "StatsSystem"                           );  progress.value = 0.70f;
     try_save_node_data_struct(statspool,    "StatPoolsSystem"                       );  progress.value = 0.80f;
     
-    tree.version.ps4w = ps4_weird_format;
+    tree.ver().ps4w = ps4_weird_format;
     tree.root = root;
     op_status status = tree.save(path);
     progress.value = 1.00f;
@@ -142,7 +142,7 @@ protected:
 
   bool test_reserialize(const shared_node_type& node, cp::csav::node_serializable& var)
   {
-    auto new_node = var.to_node(tree.version);
+    auto new_node = var.to_node(tree.ver());
     if (!new_node)
       return false;
 
@@ -195,7 +195,7 @@ protected:
   {
     try
     {
-      if (!var.from_node(node, tree.version))
+      if (!var.from_node(node, tree.ver()))
         return false;
     }
     catch (std::exception& e)
@@ -212,7 +212,7 @@ protected:
     auto node = search_node(nodename);
     if (!node)
       return false;
-    auto new_node = var.to_node(tree.version);
+    auto new_node = var.to_node(tree.ver());
     if (!new_node)
       return false;
 

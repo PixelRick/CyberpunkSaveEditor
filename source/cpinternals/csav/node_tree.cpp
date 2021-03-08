@@ -1,8 +1,8 @@
 #include "node_tree.hpp"
 
 #include <xlz4/lz4.h>
-#include "cpinternals/stream/fstream.hpp"
-#include "serial_tree.hpp"
+#include <cpinternals/stream/fstream.hpp>
+#include <cpinternals/csav/serial_tree.hpp>
 
 #define XLZ4_CHUNK_SIZE 0x40000
 
@@ -50,7 +50,7 @@ void node_tree::serialize_in(streambase& ar)
 {
   if (!ar.is_reader())
   {
-    ar.set_error("serialize_in cannot be used with output archive");
+    ar.set_error("serialize_in cannot be used with output stream");
     return;
   }
 
@@ -65,7 +65,7 @@ void node_tree::serialize_in(streambase& ar)
   std::vector<char>& nodedata = stree.nodedata;
 
   // --------------------------------------------------------
-  //  HEADER (magic, version..)
+  //  HEADER (magic, m_ver..)
   // --------------------------------------------------------
 
   ar << magic;
@@ -75,32 +75,32 @@ void node_tree::serialize_in(streambase& ar)
     return;
   }
 
-  ar << version.v1;
-  ar << version.v2;
+  ar << m_ver.v1;
+  ar << m_ver.v2;
 
   // DISABLED VERSION TEST
   //if (v1 > 193 or v2 > 9 or v1 < 125)
   //  return false;
 
-  ar.serialize_str_lpfxd(version.suk);
+  ar.serialize_str_lpfxd(m_ver.suk);
 
   // there is a weird if v1 >= 5 check, but previous if already ensured it
-  ar << version.uk0;
-  ar << version.uk1;
+  ar << m_ver.uk0;
+  ar << m_ver.uk1;
 
-  if (version.v1 <= 168 and version.v2 == 4)
+  if (m_ver.v1 <= 168 and m_ver.v2 == 4)
   {
-    ar.set_error("unsuppported csav version.v1/v2");
+    ar.set_error("unsuppported csav m_ver.v1/v2");
     return;
   }
 
-  version.v3 = 192;
-  if (version.v1 >= 83)
+  m_ver.v3 = 192;
+  if (m_ver.v1 >= 83)
   {
-    ar << version.v3;
-    if (version.v3 > 195) // will change soon i guess
+    ar << m_ver.v3;
+    if (m_ver.v3 > 195) // will change soon i guess
     {
-      ar.set_error("unsuppported csav version.v3");
+      ar.set_error("unsuppported csav m_ver.v3");
       return;
     }
   }
@@ -201,7 +201,7 @@ void node_tree::serialize_in(streambase& ar)
   nodedata.clear();
   nodedata.resize(nodedata_size);
 
-  version.ps4w = false;
+  m_ver.ps4w = false;
   for (int i = 0; i < chunk_descs.size(); ++i)
   {
     auto& cd = chunk_descs[i];
@@ -216,7 +216,7 @@ void node_tree::serialize_in(streambase& ar)
         return;
       }
 
-      version.ps4w = true;
+      m_ver.ps4w = true;
       break;
     }
 
@@ -241,7 +241,7 @@ void node_tree::serialize_in(streambase& ar)
     }
   }
 
-  if (version.ps4w)
+  if (m_ver.ps4w)
   {
     size_t offset = chunk_descs[0].offset;
     ar.seek(offset);
@@ -285,7 +285,7 @@ void node_tree::serialize_out(streambase& ar)
 {
   if (ar.is_reader())
   {
-    ar.set_error("serialize_out cannot be used with input archive");
+    ar.set_error("serialize_out cannot be used with input stream");
     return;
   }
 
@@ -303,20 +303,20 @@ void node_tree::serialize_out(streambase& ar)
   std::vector<compressed_chunk_desc> chunk_descs;
 
   // --------------------------------------------------------
-  //  HEADER (magic, version..)
+  //  HEADER (magic, m_ver..)
   // --------------------------------------------------------
 
   magic = 'CSAV';
   ar << magic;
 
-  ar << version.v1;
-  ar << version.v2;
-  ar.serialize_str_lpfxd(version.suk);
-  ar << version.uk0;
-  ar << version.uk1;
+  ar << m_ver.v1;
+  ar << m_ver.v2;
+  ar.serialize_str_lpfxd(m_ver.suk);
+  ar << m_ver.uk0;
+  ar << m_ver.uk1;
 
-  if (version.v1 >= 83)
-    ar << version.v3;
+  if (m_ver.v1 >= 83)
+    ar << m_ver.v3;
 
   // --------------------------------------------------------
   //  WEIRD PREP
@@ -368,7 +368,7 @@ void node_tree::serialize_out(streambase& ar)
 
     int srcsize = (int)(pend - pcur);
 
-    if (version.ps4w)
+    if (m_ver.ps4w)
     {
       srcsize = std::min(srcsize, XLZ4_CHUNK_SIZE);
       // write decompressed chunk

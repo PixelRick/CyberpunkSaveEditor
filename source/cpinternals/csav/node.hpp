@@ -8,7 +8,7 @@
 #include <sstream>
 #include <set>
 #include "cpinternals/utils.hpp"
-#include "csav_version.hpp"
+#include "version.hpp"
 
 namespace cp::csav {
 
@@ -219,11 +219,11 @@ class node_reader
   std::shared_ptr<const node_t> m_node;
   vector_istreambuf m_sbuf;
   size_t m_cur_idx;
-  csav_version m_ver;
+  version m_ver;
   bool m_missed_data = false;
 
 public:
-  explicit node_reader(const std::shared_ptr<const node_t>& root, const csav_version& version)
+  explicit node_reader(const std::shared_ptr<const node_t>& root, const version& version)
     : m_node(root), m_ver(version), m_cur_idx(0), std::istream(&m_sbuf)
   {
     this->exceptions(std::ios::failbit | std::ios::badbit);
@@ -234,7 +234,7 @@ public:
 
   virtual ~node_reader() = default;
 
-  const csav_version& version() const { return m_ver; }
+  const version& version() const { return m_ver; }
 
   bool has_missed_data() { return m_missed_data; }
 
@@ -329,15 +329,15 @@ class node_writer
   : public std::ostringstream
 {
   std::vector<std::shared_ptr<const node_t>> m_new_children;
-  csav_version m_ver;
+  version m_ver;
 
 public:
-  explicit node_writer(const csav_version& ver)
+  explicit node_writer(const version& ver)
     : m_ver(ver) {}
 
   virtual ~node_writer() = default;
 
-  const csav_version& version() const { return m_ver; }
+  const version& version() const { return m_ver; }
 
 protected:
   void blobize_pending_data_if_any()
@@ -387,13 +387,13 @@ struct node_serializable
 
   virtual std::string node_name() const = 0;
 
-  bool from_node(const std::shared_ptr<const node_t>& node, const csav_version& version)
+  bool from_node(const std::shared_ptr<const node_t>& node, const version& version)
   {
     has_valid_data = from_node_impl(node, version);
     return has_valid_data;
   }
 
-  std::shared_ptr<const node_t> to_node(const csav_version& version) const
+  std::shared_ptr<const node_t> to_node(const version& version) const
   {
     if (has_valid_data)
       return to_node_impl(version);
@@ -401,8 +401,8 @@ struct node_serializable
   }
 
 private:
-  virtual bool from_node_impl(const std::shared_ptr<const node_t>& node, const csav_version& version) = 0;
-  virtual std::shared_ptr<const node_t> to_node_impl(const csav_version& version) const = 0;
+  virtual bool from_node_impl(const std::shared_ptr<const node_t>& node, const version& version) = 0;
+  virtual std::shared_ptr<const node_t> to_node_impl(const version& version) const = 0;
 };
 
 } // namespace cp::csav
