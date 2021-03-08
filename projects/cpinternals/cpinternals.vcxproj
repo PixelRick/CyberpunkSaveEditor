@@ -28,6 +28,7 @@
     <ClInclude Include="..\..\source\cpinternals\common\iserializable.hpp" />
     <ClInclude Include="..\..\source\cpinternals\common\misc.hpp" />
     <ClInclude Include="..\..\source\cpinternals\common\stringpool.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\common\tstamp.hpp" />
     <ClInclude Include="..\..\source\cpinternals\common\utils.hpp" />
     <ClInclude Include="..\..\source\cpinternals\csav.hpp" />
     <ClInclude Include="..\..\source\cpinternals\csav\node_tree.hpp" />

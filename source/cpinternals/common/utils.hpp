@@ -4,6 +4,11 @@
 
 namespace cp {
 
+constexpr uint32_t rotl32(uint32_t x, int8_t r)
+{
+  return (x << r) | (x >> (32 - r));
+}
+
 template <int LSB, int Size, typename T>
 T read_bitfield(T& v) 
 {
@@ -42,7 +47,17 @@ insert_sorted_nodupe(std::vector<T>& vec, const T& item)
 {
 	auto it = std::lower_bound(vec.begin(), vec.end(), item);
 	if (it != vec.end() && *it == item)
-		return std::make_pair(vec.end(), false);
+		return std::make_pair(it, false);
+	return std::make_pair(vec.insert(it, item), true);
+}
+
+template <typename T>
+std::pair<typename std::vector<T>::iterator, bool>
+insert_sorted_nodupe(std::vector<T>& vec, typename std::vector<T>::iterator start, const T& item)
+{
+	auto it = std::lower_bound(start, vec.end(), item);
+	if (it != vec.end() && *it == item)
+		return std::make_pair(it, false);
 	return std::make_pair(vec.insert(it, item), true);
 }
 

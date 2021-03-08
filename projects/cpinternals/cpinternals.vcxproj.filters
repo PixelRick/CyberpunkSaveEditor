@@ -268,6 +268,9 @@
     <ClInclude Include="..\..\source\cpinternals\rtdt\rttr_helpers.hpp">
       <Filter>source\cpinternals\rtdt</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\common\tstamp.hpp">
+      <Filter>source\cpinternals\common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\..\assets\CNames.json">
