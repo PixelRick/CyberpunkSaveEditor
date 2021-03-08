@@ -3,6 +3,7 @@
 #include <stdexcept>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#include "imgui/extras/ImGuizmo.h"
 
 void ShowD3DError(HRESULT hr)
 {
@@ -123,6 +124,7 @@ int IApp::run()
 			ImGui_ImplDX11_NewFrame();
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
+			ImGuizmo::BeginFrame();
 
 			update();
 

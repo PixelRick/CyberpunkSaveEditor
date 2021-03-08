@@ -4,6 +4,9 @@
     <Filter Include="source">
       <UniqueIdentifier>{f2f7790a-be6a-4777-8688-eccfc8c9b6e4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\extras">
+      <UniqueIdentifier>{0f4bb5b6-2a2e-48cd-949e-12006067fa2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\external\imgui\imconfig.h">
@@ -24,6 +27,21 @@
     <ClInclude Include="..\..\source\external\imgui\imstb_truetype.h">
       <Filter>source</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\external\imgui\extras\ImCurveEdit.h">
+      <Filter>source\extras</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\imgui\extras\ImGradient.h">
+      <Filter>source\extras</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\imgui\extras\ImGuizmo.h">
+      <Filter>source\extras</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\imgui\extras\ImSequencer.h">
+      <Filter>source\extras</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\external\imgui\extras\ImZoomSlider.h">
+      <Filter>source\extras</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\external\imgui\imgui.cpp">
@@ -40,6 +58,18 @@
     </ClCompile>
     <ClCompile Include="..\..\source\external\imgui\imgui_widgets.cpp">
       <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\imgui\extras\ImCurveEdit.cpp">
+      <Filter>source\extras</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\imgui\extras\ImGradient.cpp">
+      <Filter>source\extras</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\imgui\extras\ImGuizmo.cpp">
+      <Filter>source\extras</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\external\imgui\extras\ImSequencer.cpp">
+      <Filter>source\extras</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

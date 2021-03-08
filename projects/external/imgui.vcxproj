@@ -15,6 +15,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\source\external\imgui\extras\ImCurveEdit.h" />
+    <ClInclude Include="..\..\source\external\imgui\extras\ImGradient.h" />
+    <ClInclude Include="..\..\source\external\imgui\extras\ImGuizmo.h" />
+    <ClInclude Include="..\..\source\external\imgui\extras\ImSequencer.h" />
+    <ClInclude Include="..\..\source\external\imgui\extras\ImZoomSlider.h" />
     <ClInclude Include="..\..\source\external\imgui\imconfig.h" />
     <ClInclude Include="..\..\source\external\imgui\imgui.h" />
     <ClInclude Include="..\..\source\external\imgui\imgui_internal.h" />
@@ -23,6 +28,10 @@
     <ClInclude Include="..\..\source\external\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\external\imgui\extras\ImCurveEdit.cpp" />
+    <ClCompile Include="..\..\source\external\imgui\extras\ImGradient.cpp" />
+    <ClCompile Include="..\..\source\external\imgui\extras\ImGuizmo.cpp" />
+    <ClCompile Include="..\..\source\external\imgui\extras\ImSequencer.cpp" />
     <ClCompile Include="..\..\source\external\imgui\imgui.cpp" />
     <ClCompile Include="..\..\source\external\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\..\source\external\imgui\imgui_draw.cpp" />
