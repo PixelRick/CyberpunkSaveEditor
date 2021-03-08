@@ -63,7 +63,7 @@ struct value_pool
     return m_values;
   }
 
-  friend iarchive& operator<<(iarchive& ar, value_pool& x)
+  friend streambase& operator<<(streambase& ar, value_pool& x)
   {
     return ar << x.m_values;
     if (!ar.is_reader())

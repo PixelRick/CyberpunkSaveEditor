@@ -53,7 +53,7 @@ struct itype
   virtual void destroy(void* p) const = 0;
   virtual void* allocate() const = 0;
 
-  virtual bool serialize(iarchive& ar, void* p) const = 0;
+  virtual bool serialize(streambase& ar, void* p) const = 0;
 
   virtual bool hash(void* p) const = 0;
 

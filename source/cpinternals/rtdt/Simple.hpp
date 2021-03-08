@@ -41,7 +41,7 @@ struct Simple_type
   {
   }
 
-  bool serialize(iarchive& ar, void* p) const override
+  bool serialize(streambase& ar, void* p) const override
   {
   }
 

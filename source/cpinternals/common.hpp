@@ -6,7 +6,7 @@
 
 #include <cpinternals/common/utils.hpp>
 #include <cpinternals/common/hashing.hpp>
-#include "common/iarchive.hpp"
+#include <cpinternals/common/streambase.hpp>
 #include <cpinternals/common/iserializable.hpp>
 #include <cpinternals/common/stringpool.hpp>
 #include <cpinternals/common/gname.hpp>

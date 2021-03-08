@@ -14,7 +14,7 @@ struct node_tree
   using node_type = node_t;
   using shared_node_type = std::shared_ptr<const node_t>;
 
-  friend iarchive& operator<<(iarchive& ar, node_tree& x)
+  friend streambase& operator<<(streambase& ar, node_tree& x)
   {
     if (ar.is_reader())
     {
@@ -36,8 +36,8 @@ struct node_tree
   shared_node_type root;
 
 protected:
-  void serialize_in(iarchive& ar);
-  void serialize_out(iarchive& ar);
+  void serialize_in(streambase& ar);
+  void serialize_out(streambase& ar);
 };
 
 } // namespace csav

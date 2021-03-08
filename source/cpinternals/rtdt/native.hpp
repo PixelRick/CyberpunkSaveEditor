@@ -47,7 +47,7 @@ struct native_type
     return new T();
   }
 
-  bool serialize(iarchive& ar, void* p) const override
+  bool serialize(streambase& ar, void* p) const override
   {
     ar << *static_cast<T*>(p);
   }

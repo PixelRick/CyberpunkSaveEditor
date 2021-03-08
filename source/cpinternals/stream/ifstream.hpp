@@ -1,27 +1,27 @@
 #pragma once
 #include <fstream>
 #include <filesystem>
-#include "cpinternals/common.hpp"
+#include <cpinternals/common.hpp>
 
 namespace cp {
 
 // Input binary file archive
-struct ifarchive
-  : iarchive
+struct ifstream
+  : streambase
 {
-  ifarchive() = default;
+  ifstream() = default;
 
-  ifarchive(std::filesystem::path path)
+  ifstream(std::filesystem::path path)
     : m_ifs(path, std::ios_base::binary)
   {
   }
 
-  ifarchive(const char* filename)
+  ifstream(const char* filename)
     : m_ifs(filename, std::ios_base::binary)
   {
   }
 
-  ~ifarchive() override = default;
+  ~ifstream() override = default;
 
   void open(std::filesystem::path path)
   {
@@ -48,22 +48,27 @@ struct ifarchive
     return m_ifs.tellg();
   }
 
-  iarchive& seek(pos_type pos) override
+  streambase& seek(pos_type pos) override
   {
     m_ifs.seekg(pos);
     return *this;
   }
 
-  iarchive& seek(off_type off, std::istream::seekdir dir) override
+  streambase& seek(off_type off, std::istream::seekdir dir) override
   {
     m_ifs.seekg(off, dir);
     return *this;
   }
 
-  iarchive& serialize(void* data, size_t len) override
+  streambase& serialize(void* data, size_t len) override
   {
     m_ifs.read(static_cast<char*>(data), len);
     return *this;
+  }
+
+  void swap(std::ifstream& other)
+  {
+    m_ifs.swap(other);
   }
 
 protected:

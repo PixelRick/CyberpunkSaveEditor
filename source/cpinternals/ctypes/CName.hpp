@@ -36,7 +36,7 @@ struct CName
 
   CName& operator=(const CName&) = default;
 
-  friend iarchive& operator<<(iarchive& ar, CName& id);
+  friend streambase& operator<<(streambase& ar, CName& id);
 
   friend bool operator==(const CName& a, const CName& b)
   {
@@ -146,7 +146,7 @@ inline gname CName::name() const
   return resolver.resolve(*this);
 }
 
-inline iarchive& operator<<(iarchive& ar, CName& id)
+inline streambase& operator<<(streambase& ar, CName& id)
 {
   if (ar.flags() & armanip::cnamehash)
   {

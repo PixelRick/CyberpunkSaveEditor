@@ -1,7 +1,7 @@
 #include "node_tree.hpp"
 
 #include <xlz4/lz4.h>
-#include "cpinternals/ioarchive/farchive.hpp"
+#include "cpinternals/stream/fstream.hpp"
 #include "serial_tree.hpp"
 
 #define XLZ4_CHUNK_SIZE 0x40000
@@ -15,7 +15,7 @@ struct compressed_chunk_desc
   // data_size is uncompressed size
   uint32_t offset, size, data_size, data_offset;
 
-  friend iarchive& operator<<(iarchive& ar, compressed_chunk_desc& cd)
+  friend streambase& operator<<(streambase& ar, compressed_chunk_desc& cd)
   {
     return ar << cd.offset << cd.size << cd.data_size;
   }
@@ -23,7 +23,7 @@ struct compressed_chunk_desc
 
 op_status node_tree::load(std::filesystem::path path)
 {
-  ifarchive ar(path);
+  ifstream ar(path);
   serialize_in(ar);
 
   return op_status(ar.error());
@@ -40,13 +40,13 @@ op_status node_tree::save(std::filesystem::path path)
       std::filesystem::copy(path, oldpath);
   }
 
-  ofarchive ar(path);
+  ofstream ar(path);
   serialize_out(ar);
 
   return op_status(ar.error());
 }
 
-void node_tree::serialize_in(iarchive& ar)
+void node_tree::serialize_in(streambase& ar)
 {
   if (!ar.is_reader())
   {
@@ -281,7 +281,7 @@ void node_tree::serialize_in(iarchive& ar)
   original_descs = stree.descs;
 }
 
-void node_tree::serialize_out(iarchive& ar)
+void node_tree::serialize_out(streambase& ar)
 {
   if (ar.is_reader())
   {

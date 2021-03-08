@@ -23,7 +23,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\source\cpinternals\common.hpp" />
     <ClInclude Include="..\..\source\cpinternals\common\gname.hpp" />
-    <ClInclude Include="..\..\source\cpinternals\common\iarchive.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\common\streambase.hpp" />
     <ClInclude Include="..\..\source\cpinternals\common\hashing.hpp" />
     <ClInclude Include="..\..\source\cpinternals\common\iserializable.hpp" />
     <ClInclude Include="..\..\source\cpinternals\common\misc.hpp" />
@@ -56,9 +56,6 @@
     <ClInclude Include="..\..\source\cpinternals\ctypes\CName.hpp" />
     <ClInclude Include="..\..\source\cpinternals\ctypes\TweakDBID.hpp" />
     <ClInclude Include="..\..\source\cpinternals\init.hpp" />
-    <ClInclude Include="..\..\source\cpinternals\ioarchive\farchive.hpp" />
-    <ClInclude Include="..\..\source\cpinternals\ioarchive\ofarchive.hpp" />
-    <ClInclude Include="..\..\source\cpinternals\ioarchive\ifarchive.hpp" />
     <ClInclude Include="..\..\source\cpinternals\rtdt\dynamic.hpp" />
     <ClInclude Include="..\..\source\cpinternals\rtdt\rttr_helpers.hpp" />
     <ClInclude Include="..\..\source\cpinternals\rtdt\native.hpp" />
@@ -74,13 +71,17 @@
     <ClInclude Include="..\..\source\cpinternals\scripting\csystem_serctx.hpp" />
     <ClInclude Include="..\..\source\cpinternals\scripting\fwd.hpp" />
     <ClInclude Include="..\..\source\cpinternals\scripting\iproperty.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\stream\fstream.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\stream\ifstream.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\stream\stdstream_wrapper.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\stream\ofstream.hpp" />
     <ClInclude Include="..\..\source\cpinternals\tmp\archive_test.hpp" />
     <ClInclude Include="..\..\source\cpinternals\tweakdb\tweakdb.hpp" />
     <ClInclude Include="..\..\source\cpinternals\tweakdb\value_pool.hpp" />
     <ClInclude Include="..\..\source\cpinternals\utils.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\source\cpinternals\common\iarchive.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\common\streambase.cpp" />
     <ClCompile Include="..\..\source\cpinternals\csav\node_tree.cpp" />
     <ClCompile Include="..\..\source\cpinternals\csav\misc\serializable_stringpool.cpp" />
     <ClCompile Include="..\..\source\cpinternals\ctypes\CEnum.cpp" />

@@ -9,7 +9,7 @@
 #include "cpinternals/common.hpp"
 #include "cpinternals/ctypes.hpp"
 #include "cpinternals/scripting.hpp"
-#include "cpinternals/ioarchive/farchive.hpp"
+#include "cpinternals/ioarchive/fstream.hpp"
 #include "value_pool.hpp"
 
 namespace cp::tdb {
@@ -36,7 +36,7 @@ struct QuatElem
   std::string type;
   uint64_t uk;
 
-  friend iarchive& operator<<(iarchive& ar, QuatElem& x)
+  friend streambase& operator<<(streambase& ar, QuatElem& x)
   {
     return ar << x.name << x.type << x.uk;
   }
@@ -53,7 +53,7 @@ struct Quaternion
   QuatElem x, y, z, w;
   std::string uk1;
 
-  friend iarchive& operator<<(iarchive& ar, Quaternion& x)
+  friend streambase& operator<<(streambase& ar, Quaternion& x)
   {
     ar << x.uk0;
     ar << x.x << x.y << x.z << x.w;
@@ -72,7 +72,7 @@ struct pool_desc_t
   CName ctypename;
   uint32_t len;
 
-  friend iarchive& operator<<(iarchive& ar, pool_desc_t& x)
+  friend streambase& operator<<(streambase& ar, pool_desc_t& x)
   {
     ar << armanip::cnamehash;
     ar << x.ctypename << x.len;
@@ -86,7 +86,7 @@ struct pool_key_t
   TweakDBID key;
   uint32_t idx;
 
-  friend iarchive& operator<<(iarchive& ar, pool_key_t& x)
+  friend streambase& operator<<(streambase& ar, pool_key_t& x)
   {
     return ar << x.key << x.idx;
   }
@@ -98,7 +98,7 @@ struct pool_t
   value_pool<T> vpool;
   std::vector<pool_key_t> keys;
 
-  friend iarchive& operator<<(iarchive& ar, pool_t& x)
+  friend streambase& operator<<(streambase& ar, pool_t& x)
   {
     return ar << x.vpool << x.keys;
   }
@@ -178,7 +178,7 @@ struct tweakdb
 
   bool open(std::filesystem::path path)
   {
-    ifarchive ifa(path);
+    ifstream ifa(path);
 
     ifa.seek(0, std::ios_base::end);
     uint32_t blob_size = (uint32_t)ifa.tell();
@@ -195,7 +195,7 @@ struct tweakdb
   }
 
 public:
-  op_status serialize_in(iarchive& ar, size_t blob_size)
+  op_status serialize_in(streambase& ar, size_t blob_size)
   {
     // let's get our header start position
     size_t start_pos = (size_t)ar.tell();

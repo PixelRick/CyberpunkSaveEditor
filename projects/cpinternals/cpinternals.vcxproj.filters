@@ -42,9 +42,6 @@
     <Filter Include="source\cpinternals\ctypes">
       <UniqueIdentifier>{e8f2cdb8-bc0a-4056-bba2-cdd7bfe44fe3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\cpinternals\ioarchive">
-      <UniqueIdentifier>{51bf6c62-d0bb-4ce0-8d80-69f380db5422}</UniqueIdentifier>
-    </Filter>
     <Filter Include="source\cpinternals\scripting\reminder that this needs a rewrite">
       <UniqueIdentifier>{40a24e7b-34af-4cb2-8367-163609214c1b}</UniqueIdentifier>
     </Filter>
@@ -54,9 +51,12 @@
     <Filter Include="source\cpinternals\tmp">
       <UniqueIdentifier>{a0a9252c-0b0a-41c4-870d-2d766c2bdd0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\cpinternals\stream">
+      <UniqueIdentifier>{51bf6c62-d0bb-4ce0-8d80-69f380db5422}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\source\cpinternals\common\iarchive.cpp">
+    <ClCompile Include="..\..\source\cpinternals\common\streambase.cpp">
       <Filter>source\cpinternals\common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cpinternals\csav\misc\serializable_stringpool.cpp">
@@ -115,7 +115,7 @@
     <ClInclude Include="..\..\source\cpinternals\common\stringpool.hpp">
       <Filter>source\cpinternals\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\cpinternals\common\iarchive.hpp">
+    <ClInclude Include="..\..\source\cpinternals\common\streambase.hpp">
       <Filter>source\cpinternals\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cpinternals\csav\misc\serializable_stringpool.hpp">
@@ -220,15 +220,6 @@
     <ClInclude Include="..\..\source\cpinternals\csav\nodes.hpp">
       <Filter>source\cpinternals\csav</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\cpinternals\ioarchive\farchive.hpp">
-      <Filter>source\cpinternals\ioarchive</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\cpinternals\ioarchive\ifarchive.hpp">
-      <Filter>source\cpinternals\ioarchive</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\cpinternals\ioarchive\ofarchive.hpp">
-      <Filter>source\cpinternals\ioarchive</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\cpinternals\csav\savegame.hpp">
       <Filter>source\cpinternals\csav</Filter>
     </ClInclude>
@@ -268,8 +259,20 @@
     <ClInclude Include="..\..\source\cpinternals\rtdt\rttr_helpers.hpp">
       <Filter>source\cpinternals\rtdt</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\stream\fstream.hpp">
+      <Filter>source\cpinternals\stream</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\stream\ifstream.hpp">
+      <Filter>source\cpinternals\stream</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\stream\ofstream.hpp">
+      <Filter>source\cpinternals\stream</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\source\cpinternals\common\tstamp.hpp">
       <Filter>source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\stream\stdstream_wrapper.hpp">
+      <Filter>source\cpinternals\stream</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

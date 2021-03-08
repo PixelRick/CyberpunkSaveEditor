@@ -1,26 +1,27 @@
 #pragma once
 #include <fstream>
-#include "cpinternals/common.hpp"
+#include <filesystem>
+#include <cpinternals/common.hpp>
 
 namespace cp {
 
 // Output binary file archive
-struct ofarchive
-  : iarchive
+struct ofstream
+  : streambase
 {
-  ofarchive() = default;
+  ofstream() = default;
 
-  ofarchive(std::filesystem::path path)
+  ofstream(std::filesystem::path path)
     : m_ofs(path, std::ios_base::binary)
   {
   }
 
-  ofarchive(const char* filename)
+  ofstream(const char* filename)
     : m_ofs(filename, std::ios_base::binary)
   {
   }
 
-  ~ofarchive() override = default;
+  ~ofstream() override = default;
 
   void open(std::filesystem::path path)
   {
@@ -47,19 +48,19 @@ struct ofarchive
     return m_ofs.tellp();
   }
 
-  virtual iarchive& seek(pos_type pos) override
+  virtual streambase& seek(pos_type pos) override
   {
     m_ofs.seekp(pos);
     return *this;
   }
 
-  virtual iarchive& seek(off_type off, std::istream::seekdir dir) override
+  virtual streambase& seek(off_type off, std::istream::seekdir dir) override
   {
     m_ofs.seekp(off, dir);
     return *this;
   }
 
-  virtual iarchive& serialize(void* data, size_t len) override
+  virtual streambase& serialize(void* data, size_t len) override
   {
     m_ofs.write(static_cast<char*>(data), len);
     return *this;

@@ -21,24 +21,24 @@ enum arflags_t : uint32_t
 
 } // namespace armanip
 
-struct iarchive
+struct streambase
 {
   using pos_type = std::streamoff;
   using off_type = std::streampos;
   using flags_type = armanip::arflags_t;
 
-  virtual ~iarchive() = default;
+  virtual ~streambase() = default;
 
   virtual bool is_reader() const = 0;
 
   virtual pos_type tell() const = 0;
-  virtual iarchive& seek(pos_type pos) = 0;
-  virtual iarchive& seek(off_type off, std::istream::seekdir dir) = 0;
+  virtual streambase& seek(pos_type pos) = 0;
+  virtual streambase& seek(off_type off, std::istream::seekdir dir) = 0;
 
-  virtual iarchive& serialize(void* data, size_t len) = 0;
+  virtual streambase& serialize(void* data, size_t len) = 0;
 
   // Allows for overrides (csav serialization != others)
-  virtual iarchive& serialize(iserializable& x)
+  virtual streambase& serialize(iserializable& x)
   {
     x.serialize(*this);
     return *this;
@@ -69,7 +69,7 @@ struct iarchive
     return m_flags;
   }
 
-  iarchive& operator<<(flags_type flags)
+  streambase& operator<<(flags_type flags)
   {
     // TODO: needs custom logic helpers for incompatible manipulators
     //       mask table ?
@@ -98,7 +98,7 @@ struct iarchive
     return m_error;
   }
 
-  iarchive& byte_order_serialize(void* value, uint64_t length)
+  streambase& byte_order_serialize(void* value, uint64_t length)
   {
     // To be implemented if necessary
     serialize(value, length);
@@ -106,13 +106,13 @@ struct iarchive
   }
 
   template <typename T, typename = std::enable_if_t<std::is_arithmetic_v<T> && !std::is_const_v<T> && !std::is_same_v<T, bool>>>
-  iarchive& operator<<(T& val)
+  streambase& operator<<(T& val)
   {
     byte_order_serialize(&val, sizeof(T));
     return *this;
   }
 
-  iarchive& operator<<(bool& val)
+  streambase& operator<<(bool& val)
   {
     uint8_t u8 = val ? 1 : 0;
     serialize(&u8, 1);
@@ -120,14 +120,14 @@ struct iarchive
     return *this;
   }
 
-  iarchive& operator<<(iserializable& x)
+  streambase& operator<<(iserializable& x)
   {
     serialize(x);
     return *this;
   }
 
   template <typename T, typename = std::enable_if_t<!std::is_same_v<T, bool>>>
-  iarchive& operator<<(std::vector<T>& vec)
+  streambase& operator<<(std::vector<T>& vec)
   {
     uint32_t cnt = static_cast<uint32_t>(vec.size());
     *this << cnt;
@@ -143,7 +143,7 @@ struct iarchive
     return *this;
   }
 
-  iarchive& operator<<(std::vector<bool>& vec)
+  streambase& operator<<(std::vector<bool>& vec)
   {
     uint32_t cnt = static_cast<uint32_t>(vec.size());
     *this << cnt;
@@ -159,20 +159,20 @@ struct iarchive
     return *this;
   }
 
-  iarchive& operator<<(std::string& s)
+  streambase& operator<<(std::string& s)
   {
     return serialize_str_lpfxd(s);
   }
 
   template <typename T>
-  iarchive& serialize_pod_raw(T& value)
+  streambase& serialize_pod_raw(T& value)
   {
     serialize(&value, sizeof(T));
     return *this;
   }
 
   template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
-  iarchive& serialize_int_packed(T& v)
+  streambase& serialize_int_packed(T& v)
   {
     if (is_reader())
     {
@@ -186,7 +186,7 @@ struct iarchive
   }
 
   // TODO: overload for std::u16string
-  iarchive& serialize_str_lpfxd(std::string& s);
+  streambase& serialize_str_lpfxd(std::string& s);
 
 protected:
   int64_t read_int_packed();

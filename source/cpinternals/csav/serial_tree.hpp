@@ -16,7 +16,7 @@ struct serial_node_desc
   int32_t next_idx, child_idx;
   uint32_t data_offset, data_size;
 
-  friend iarchive& operator<<(iarchive& ar, serial_node_desc& x)
+  friend streambase& operator<<(streambase& ar, serial_node_desc& x)
   {
     ar.serialize_str_lpfxd(x.name);
     ar << x.next_idx << x.child_idx;

@@ -4,13 +4,13 @@
 
 namespace cp {
 
-struct iarchive;
+struct streambase;
 
 struct iserializable
 {
   virtual ~iserializable() = default;
 
-  virtual bool serialize(iarchive& ar) = 0;
+  virtual bool serialize(streambase& ar) = 0;
 };
 
 } // namespace cp

@@ -1,4 +1,4 @@
-#include "iarchive.hpp"
+#include "streambase.hpp"
 
 #ifndef _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
 #define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
@@ -7,7 +7,7 @@
 
 namespace cp {
 
-iarchive& iarchive::serialize_str_lpfxd(std::string& s)
+streambase& streambase::serialize_str_lpfxd(std::string& s)
 {
   if (is_reader())
   {
@@ -43,7 +43,7 @@ iarchive& iarchive::serialize_str_lpfxd(std::string& s)
   return *this;
 }
 
-int64_t iarchive::read_int_packed()
+int64_t streambase::read_int_packed()
 {
   uint8_t a = 0;
   serialize(&a, 1);
@@ -72,7 +72,7 @@ int64_t iarchive::read_int_packed()
   return sign ? -value : value;
 }
 
-void iarchive::write_int_packed(int64_t v)
+void streambase::write_int_packed(int64_t v)
 {
   std::array<uint8_t, 5> packed {};
   uint8_t cnt = 1;
