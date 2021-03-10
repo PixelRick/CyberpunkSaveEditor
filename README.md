@@ -1,3 +1,5 @@
+To read about the game vulnerability (patched in v1.12): https://github.com/PixelRick/CyberpunkSaveEditor/blob/main/XPLOIT.md
+
 # CyberpunkSaveEditor
 A tool to edit Cyberpunk 2077 sav.dat files (join the CP modding discord: https://discord.gg/cp77modding)
 
