@@ -13,17 +13,6 @@
 
 using namespace cp;
 
-
-#if __has_include(<span>) && (!defined(_HAS_CXX20) or _HAS_CXX20)
-#include <span>
-#else
-#include "span.hpp"
-namespace std { using tcb::span; }
-#endif
-
-
-
-
 class span_istreambuf
 	: public std::streambuf
 {
@@ -204,16 +193,11 @@ protected:
 };
 
 
-
-
 void replace_all_in_str(std::string& s, const std::string& from, const std::string& to);
 
 std::string u64_to_cpp(uint64_t val);
 
 std::string bytes_to_hex(const void* buf, size_t len);
-
-std::vector<uintptr_t> sse2_strstr_masked(const unsigned char* s, size_t m, const unsigned char* needle, size_t n, const char* mask, size_t maxcnt = 0);
-std::vector<uintptr_t> sse2_strstr(const unsigned char* s, size_t m, const unsigned char* needle, size_t n, size_t maxcnt = 0);
 
 std::optional<std::filesystem::path> find_user_saved_games();
 

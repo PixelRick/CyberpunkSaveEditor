@@ -92,11 +92,14 @@
     <ClCompile Include="..\..\source\cpinternals\tmp\archive_test.cpp">
       <Filter>source\cpinternals\tmp</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\cpinternals\utils.cpp">
+    <ClCompile Include="..\..\source\cpinternals\utils2.cpp">
       <Filter>source\cpinternals</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cpinternals\rtdt\Source.cpp">
       <Filter>source\cpinternals\rtdt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\common\utils.cpp">
+      <Filter>source\cpinternals\common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\cpinternals\common\streambase.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\common\utils.cpp" />
     <ClCompile Include="..\..\source\cpinternals\csav\node_tree.cpp" />
     <ClCompile Include="..\..\source\cpinternals\csav\misc\serializable_stringpool.cpp" />
     <ClCompile Include="..\..\source\cpinternals\ctypes\CEnum.cpp" />
@@ -94,7 +95,7 @@
     <ClCompile Include="..\..\source\cpinternals\scripting\cobject.cpp" />
     <ClCompile Include="..\..\source\cpinternals\scripting\cproperty_factory.cpp" />
     <ClCompile Include="..\..\source\cpinternals\tmp\archive_test.cpp" />
-    <ClCompile Include="..\..\source\cpinternals\utils.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\utils2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\..\assets\CNames.json">
