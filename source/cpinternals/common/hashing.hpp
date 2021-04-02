@@ -3,57 +3,348 @@
 #include <array>
 #include <string>
 #include <cpinternals/common/utils.hpp>
+#include <cpinternals/common/hashing_tables.hpp>
 
 namespace cp {
 
 //--------------------------------------------------------
-//  CRC32
+//  CRC32 (poly:0x04C11DB7, reflected:0xEDB88320)
 
-namespace detail::crc32 {
+struct crc32_builder
+{
+  crc32_builder() = default;
 
-constexpr static std::array<uint32_t, 16> lut = {
-  0x00000000, 0x1DB71064, 0x3B6E20C8, 0x26D930AC, 0x76DC4190, 0x6B6B51F4, 0x4DB26158, 0x5005713C,
-  0xEDB88320, 0xF00F9344, 0xD6D6A3E8, 0xCB61B38C, 0x9B64C2B0, 0x86D3D2D4, 0xA00AE278, 0xBDBDF21C
+  void init(uint32_t seed = 0)
+  {
+    m_x = ~seed;
+  }
+
+  void update(const void* data, size_t len)
+  {
+    using detail::crc32::s8lut;
+  
+    uint32_t x = m_x;
+
+    uint32_t* pd = (uint32_t*)data;
+    while (len >= 8)
+    {
+      const uint32_t a = *pd++ ^ x;
+      const uint32_t b = *pd++;
+      x = s8lut[7][ a        & 0xFF]
+        ^ s8lut[6][(a >>  8) & 0xFF]
+        ^ s8lut[5][(a >> 16) & 0xFF]
+        ^ s8lut[4][(a >> 24)       ]
+        ^ s8lut[3][ b        & 0xFF]
+        ^ s8lut[2][(b >>  8) & 0xFF]
+        ^ s8lut[1][(b >> 16) & 0xFF]
+        ^ s8lut[0][(b >> 24)       ];
+      len -= 8;
+    }
+  
+    uint8_t* pc = (uint8_t*)pd;
+    while (len--)
+    {
+      x = (x >> 8) ^ s8lut[0][static_cast<uint8_t>(x ^ *pc++)];
+    }
+
+    m_x = x;
+  }
+
+  uint32_t finalize()
+  {
+    return ~m_x;
+  }
+
+protected:
+
+  uint32_t m_x = 0;
 };
 
-} // namespace detail::crc32
+inline uint32_t crc32_bigdata(const char* const data, size_t len, uint32_t seed = 0)
+{
+  crc32_builder b;
+  b.init(seed);
+  b.update(data, len);
+  return b.finalize();
+}
 
 constexpr uint32_t crc32(const char* const data, size_t len, uint32_t seed = 0)
 {
-	using detail::crc32::lut;
+  using detail::crc32::s8lut;
+  const auto& lut = s8lut[0];
 
-	uint32_t x = ~seed;
-	for (size_t i = 0; i < len; ++i)
-	{
-    const uint8_t b = static_cast<uint8_t>(data[i]);
-		x = lut[(x ^ b) & 0x0F] ^ (x >> 4);
-		x = lut[(x ^ (b >> 4)) & 0x0F] ^ (x >> 4);
-	}
-	return ~x;
-}
+  uint32_t x = ~seed;
 
-// This m_ver isn't using the matrix trick and should be faster for small values of len.
-constexpr uint32_t crc32_small_combine(uint32_t a, uint32_t b, size_t len)
-{
-  using detail::crc32::lut;
-
-  uint32_t x = a;
-  for (size_t i = 0; i < len; ++i)
+  const char* pc = data;
+  while (len--)
   {
-    x = lut[x & 0x0F] ^ (x >> 4);
-    x = lut[x & 0x0F] ^ (x >> 4);
+    x = (x >> 8) ^ s8lut[0][static_cast<uint8_t>(x ^ *pc++)];
   }
-  return x ^ b;
+
+  return ~x;
 }
 
-constexpr uint32_t crc32(std::string_view s, uint32_t seed = 0)
+constexpr uint32_t crc32_str(std::string_view s, uint32_t seed = 0)
 {
-	return crc32(s.data(), s.size(), seed);
+  return crc32(s.data(), s.size(), seed);
 }
 
 constexpr uint32_t operator""_crc32(const char* const str, std::size_t len)
 {
-	return crc32(std::string_view(str, len));
+  return crc32_str(std::string_view(str, len));
+}
+
+template <typename UIntType>
+constexpr UIntType gf2_matrix_times(const std::array<UIntType, sizeof(UIntType) * 8>& mat, UIntType vec)
+{
+  UIntType sum = 0;
+  UIntType i = 0;
+  while (vec)
+  {
+    if (vec & 1)
+    {
+        sum ^= mat[i];
+    }
+    vec >>= 1;
+    i++;
+  }
+  return sum;
+}
+
+template <typename UIntType>
+constexpr void gf2_matrix_square(std::array<UIntType, sizeof(UIntType) * 8>& square, const std::array<UIntType, sizeof(UIntType) * 8>& mat)
+{
+  for (int n = 0; n < sizeof(UIntType) * 8; n++)
+  {
+    square[n] = gf2_matrix_times<UIntType>(mat, mat[n]);
+  }
+}
+
+constexpr uint32_t crc32_combine_bigdata(uint32_t crc1, uint32_t crc2, size_t len2)
+{
+  if (!len2)
+  {
+    return crc1;
+  }
+
+  // even-power-of-two zeros operator
+  std::array<uint32_t, 32> even = {
+    0x76DC4190, 0xEDB88320, 0x00000001, 0x00000002, 0x00000004, 0x00000008, 0x00000010, 0x00000020,
+    0x00000040, 0x00000080, 0x00000100, 0x00000200, 0x00000400, 0x00000800, 0x00001000, 0x00002000,
+    0x00004000, 0x00008000, 0x00010000, 0x00020000, 0x00040000, 0x00080000, 0x00100000, 0x00200000,
+    0x00400000, 0x00800000, 0x01000000, 0x02000000, 0x04000000, 0x08000000, 0x10000000, 0x20000000
+  };
+
+  // odd-power-of-two zeros operator
+  std::array<uint32_t, 32> odd = {
+    0x1DB71064, 0x3B6E20C8, 0x76DC4190, 0xEDB88320, 0x00000001, 0x00000002, 0x00000004, 0x00000008,
+    0x00000010, 0x00000020, 0x00000040, 0x00000080, 0x00000100, 0x00000200, 0x00000400, 0x00000800,
+    0x00001000, 0x00002000, 0x00004000, 0x00008000, 0x00010000, 0x00020000, 0x00040000, 0x00080000,
+    0x00100000, 0x00200000, 0x00400000, 0x00800000, 0x01000000, 0x02000000, 0x04000000, 0x08000000
+  };
+
+  // apply len2 zeros to crc1
+  do
+  {
+      gf2_matrix_square<uint32_t>(even, odd);
+      if (len2 & 1)
+          crc1 = gf2_matrix_times<uint32_t>(even, crc1);
+      len2 >>= 1;
+
+      if (len2 == 0)
+          break;
+
+      gf2_matrix_square<uint32_t>(odd, even);
+      if (len2 & 1)
+          crc1 = gf2_matrix_times<uint32_t>(odd, crc1);
+      len2 >>= 1;
+
+  } while (len2 != 0);
+
+  return crc1 ^ crc2;
+}
+
+// Tries to use the matrix version only if is worth it.
+constexpr uint32_t crc32_combine(uint32_t crc1, uint32_t crc2, size_t len2)
+{
+  using detail::crc32::s8lut;
+  const auto& lut = s8lut[0];
+
+  // bigdata ops ~= 8*32 * k ops * [log2(len2)]
+  // current ops ~= k ops * len2
+  if (len2 > 3000) // a benchmark would be great 
+  {
+    return crc32_combine_bigdata(crc1, crc2, len2);
+  }
+
+  uint32_t x = crc1;
+  while (len2--)
+  {
+    x = (x >> 8) ^ s8lut[0][static_cast<uint8_t>(x)];
+  }
+
+  return x ^ crc2;
+}
+
+//--------------------------------------------------------
+//  CRC64 (poly:0x42F0E1EBA9EA3693, reflected:0xC96C5795D7870F42)
+
+struct crc64_builder
+{
+  crc64_builder() = default;
+
+  void init(uint64_t seed = 0)
+  {
+    m_x = ~seed;
+  }
+
+  void update(const void* data, size_t len)
+  {
+    using detail::crc64::s8lut;
+  
+    uint64_t x = m_x;
+
+    uint64_t* pd = (uint64_t*)data;
+    while (len >= 8)
+    {
+      const uint64_t a = *pd++ ^ x;
+      const uint64_t b = *pd++;
+      x = s8lut[7][ a        & 0xFF]
+        ^ s8lut[6][(a >>  8) & 0xFF]
+        ^ s8lut[5][(a >> 16) & 0xFF]
+        ^ s8lut[4][(a >> 24)       ]
+        ^ s8lut[3][ b        & 0xFF]
+        ^ s8lut[2][(b >>  8) & 0xFF]
+        ^ s8lut[1][(b >> 16) & 0xFF]
+        ^ s8lut[0][(b >> 24)       ];
+      len -= 8;
+    }
+  
+    uint8_t* pc = (uint8_t*)pd;
+    while (len--)
+    {
+      x = (x >> 8) ^ s8lut[0][static_cast<uint8_t>(x ^ *pc++)];
+    }
+
+    m_x = x;
+  }
+
+  uint64_t finalize()
+  {
+    return ~m_x;
+  }
+
+protected:
+
+  uint64_t m_x = 0;
+};
+
+inline uint64_t crc64_bigdata(const char* const data, size_t len, uint64_t seed = 0)
+{
+  crc64_builder b;
+  b.init(seed);
+  b.update(data, len);
+  return b.finalize();
+}
+
+constexpr uint64_t crc64(const char* const data, size_t len, uint64_t seed = 0)
+{
+  using detail::crc64::s8lut;
+  const auto& lut = s8lut[0];
+
+  uint64_t x = ~seed;
+
+  const char* pc = data;
+  while (len--)
+  {
+    x = (x >> 8) ^ lut[static_cast<uint8_t>(x ^ *pc++)];
+  }
+
+  return ~x;
+}
+
+constexpr uint64_t crc64_str(std::string_view s, uint64_t seed = 0)
+{
+  return crc64(s.data(), s.size(), seed);
+}
+
+constexpr uint64_t operator""_crc64(const char* const str, std::size_t len)
+{
+  return crc64_str(std::string_view(str, len));
+}
+
+constexpr uint64_t crc64_combine_bigdata(uint64_t crc1, uint64_t crc2, size_t len2)
+{
+  if (!len2)
+  {
+    return crc1;
+  }
+
+  // even-power-of-two zeros operator
+  std::array<uint64_t, 64> even = {
+    0x64B62BCAEBC387A1, 0xC96C5795D7870F42, 0x0000000000000001, 0x0000000000000002, 0x0000000000000004, 0x0000000000000008, 0x0000000000000010, 0x0000000000000020,
+    0x0000000000000040, 0x0000000000000080, 0x0000000000000100, 0x0000000000000200, 0x0000000000000400, 0x0000000000000800, 0x0000000000001000, 0x0000000000002000,
+    0x0000000000004000, 0x0000000000008000, 0x0000000000010000, 0x0000000000020000, 0x0000000000040000, 0x0000000000080000, 0x0000000000100000, 0x0000000000200000,
+    0x0000000000400000, 0x0000000000800000, 0x0000000001000000, 0x0000000002000000, 0x0000000004000000, 0x0000000008000000, 0x0000000010000000, 0x0000000020000000,
+    0x0000000040000000, 0x0000000080000000, 0x0000000100000000, 0x0000000200000000, 0x0000000400000000, 0x0000000800000000, 0x0000001000000000, 0x0000002000000000,
+    0x0000004000000000, 0x0000008000000000, 0x0000010000000000, 0x0000020000000000, 0x0000040000000000, 0x0000080000000000, 0x0000100000000000, 0x0000200000000000,
+    0x0000400000000000, 0x0000800000000000, 0x0001000000000000, 0x0002000000000000, 0x0004000000000000, 0x0008000000000000, 0x0010000000000000, 0x0020000000000000,
+    0x0040000000000000, 0x0080000000000000, 0x0100000000000000, 0x0200000000000000, 0x0400000000000000, 0x0800000000000000, 0x1000000000000000, 0x2000000000000000
+  };
+
+  // odd-power-of-two zeros operator
+  std::array<uint64_t, 64> odd = {
+    0x7D9BA13851336649, 0xFB374270A266CC92, 0x64B62BCAEBC387A1, 0xC96C5795D7870F42, 0x0000000000000001, 0x0000000000000002, 0x0000000000000004, 0x0000000000000008,
+    0x0000000000000010, 0x0000000000000020, 0x0000000000000040, 0x0000000000000080, 0x0000000000000100, 0x0000000000000200, 0x0000000000000400, 0x0000000000000800,
+    0x0000000000001000, 0x0000000000002000, 0x0000000000004000, 0x0000000000008000, 0x0000000000010000, 0x0000000000020000, 0x0000000000040000, 0x0000000000080000,
+    0x0000000000100000, 0x0000000000200000, 0x0000000000400000, 0x0000000000800000, 0x0000000001000000, 0x0000000002000000, 0x0000000004000000, 0x0000000008000000,
+    0x0000000010000000, 0x0000000020000000, 0x0000000040000000, 0x0000000080000000, 0x0000000100000000, 0x0000000200000000, 0x0000000400000000, 0x0000000800000000,
+    0x0000001000000000, 0x0000002000000000, 0x0000004000000000, 0x0000008000000000, 0x0000010000000000, 0x0000020000000000, 0x0000040000000000, 0x0000080000000000,
+    0x0000100000000000, 0x0000200000000000, 0x0000400000000000, 0x0000800000000000, 0x0001000000000000, 0x0002000000000000, 0x0004000000000000, 0x0008000000000000,
+    0x0010000000000000, 0x0020000000000000, 0x0040000000000000, 0x0080000000000000, 0x0100000000000000, 0x0200000000000000, 0x0400000000000000, 0x0800000000000000,
+  };
+
+  // apply len2 zeros to crc1
+  do
+  {
+      gf2_matrix_square<uint64_t>(even, odd);
+      if (len2 & 1)
+          crc1 = gf2_matrix_times<uint64_t>(even, crc1);
+      len2 >>= 1;
+
+      if (len2 == 0)
+          break;
+
+      gf2_matrix_square<uint64_t>(odd, even);
+      if (len2 & 1)
+          crc1 = gf2_matrix_times<uint64_t>(odd, crc1);
+      len2 >>= 1;
+
+  } while (len2 != 0);
+
+  return crc1 ^ crc2;
+}
+
+// Tries to use the matrix version only if is worth it.
+constexpr uint64_t crc64_combine(uint64_t crc1, uint64_t crc2, size_t len2)
+{
+  using detail::crc64::s8lut;
+  const auto& lut = s8lut[0];
+
+  // bigdata ops ~= 8*64 * k ops * [log2(len2)]
+  // current ops ~= k ops * len2
+  if (len2 > 6500) // a benchmark would be great 
+  {
+    return crc64_combine_bigdata(crc1, crc2, len2);
+  }
+
+  uint64_t x = crc1;
+  while (len2--)
+  {
+    x = (x >> 8) ^ s8lut[0][static_cast<uint8_t>(x)];
+  }
+
+  return x ^ crc2;
 }
 
 //--------------------------------------------------------
@@ -61,22 +352,22 @@ constexpr uint32_t operator""_crc32(const char* const str, std::size_t len)
 
 constexpr uint32_t fnv1a32(std::string_view str)
 {
-	constexpr uint32_t basis = 0X811C9DC5;
-	constexpr uint32_t prime = 0x01000193;
+  constexpr uint32_t basis = 0X811C9DC5;
+  constexpr uint32_t prime = 0x01000193;
 
-	uint32_t hash = basis;
-	for (auto c : str)
-	{
-		hash ^= c;
-		hash *= prime;
-	}
+  uint32_t hash = basis;
+  for (auto c : str)
+  {
+    hash ^= c;
+    hash *= prime;
+  }
 
-	return hash;
+  return hash;
 }
 
 constexpr uint32_t operator""_fnv1a32(const char* const str, std::size_t len)
 {
-	return fnv1a32(std::string_view(str, len));
+  return fnv1a32(std::string_view(str, len));
 }
 
 //--------------------------------------------------------
@@ -84,22 +375,22 @@ constexpr uint32_t operator""_fnv1a32(const char* const str, std::size_t len)
 
 constexpr uint64_t fnv1a64(std::string_view str)
 {
-	constexpr uint64_t basis = 0xCBF29CE484222325;
-	constexpr uint64_t prime = 0x00000100000001B3;
+  constexpr uint64_t basis = 0xCBF29CE484222325;
+  constexpr uint64_t prime = 0x00000100000001B3;
 
-	uint64_t hash = basis;
-	for (auto c : str)
-	{
-		hash ^= c;
-		hash *= prime;
-	}
+  uint64_t hash = basis;
+  for (auto c : str)
+  {
+    hash ^= c;
+    hash *= prime;
+  }
 
-	return hash;
+  return hash;
 }
 
 constexpr uint64_t operator""_fnv1a64(const char* const str, std::size_t len)
 {
-	return fnv1a64(std::string_view(str, len));
+  return fnv1a64(std::string_view(str, len));
 }
 
 //--------------------------------------------------------
@@ -146,11 +437,11 @@ constexpr uint32_t murmur3_32(const char* const data, size_t len, uint32_t seed 
     uint32_t k1 = get_block(data, i);
 
     k1 *= c1;
-    k1 = rotl32(k1, 15);
+    k1 = rol(k1, 15);
     k1 *= c2;
 
     h1 ^= k1;
-    h1 = rotl32(h1, 13);
+    h1 = rol(h1, 13);
     h1 = h1 * 5 + 0xE6546B64;
   }
 
@@ -170,7 +461,7 @@ constexpr uint32_t murmur3_32(const char* const data, size_t len, uint32_t seed 
     case 1:
       k1 ^= (uint8_t)tail[0];
       k1 *= c1;
-      k1 = rotl32(k1, 15);
+      k1 = rol(k1, 15);
       k1 *= c2;
       h1 ^= k1;
   };
@@ -200,7 +491,7 @@ namespace detail::sha1 {
 
 constexpr uint32_t blk(uint32_t block[16], size_t i)
 {
-  return rotl32(
+  return rol(
     block[(i + 13) & 0xF] ^
     block[(i +  8) & 0xF] ^
     block[(i +  2) & 0xF] ^
@@ -210,36 +501,36 @@ constexpr uint32_t blk(uint32_t block[16], size_t i)
 
 inline void r0(uint32_t block[16], uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, std::size_t i)
 {
-  z += 0x5A827999 + block[i] + rotl32(v, 5) + ((w & (x ^ y)) ^ y) ;
-  w = rotl32(w, 30);
+  z += 0x5A827999 + block[i] + rol(v, 5) + ((w & (x ^ y)) ^ y) ;
+  w = rol(w, 30);
 }
 
 inline void r1(uint32_t block[16], uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, std::size_t i)
 {
   block[i] = blk(block, i);
-  z += block[i] + 0x5A827999 + rotl32(v, 5) + ((w & (x ^ y)) ^ y);
-  w = rotl32(w, 30);
+  z += block[i] + 0x5A827999 + rol(v, 5) + ((w & (x ^ y)) ^ y);
+  w = rol(w, 30);
 }
 
 inline void r2(uint32_t block[16], uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, std::size_t i)
 {
   block[i] = blk(block, i);
-  z += block[i] + 0x6ED9EBA1 + rotl32(v, 5) + (w ^ x ^ y);
-  w = rotl32(w, 30);
+  z += block[i] + 0x6ED9EBA1 + rol(v, 5) + (w ^ x ^ y);
+  w = rol(w, 30);
 }
 
 inline void r3(uint32_t block[16], uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, std::size_t i)
 {
   block[i] = blk(block, i);
-  z += block[i] + 0x8F1BBCDC + rotl32(v, 5) + (((w | x) & y) | (w & x));
-  w = rotl32(w, 30);
+  z += block[i] + 0x8F1BBCDC + rol(v, 5) + (((w | x) & y) | (w & x));
+  w = rol(w, 30);
 }
 
 inline void r4(uint32_t block[16], uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, std::size_t i)
 {
   block[i] = blk(block, i);
-  z += block[i] + 0xCA62C1D6 + rotl32(v, 5) + (w ^ x ^ y);
-  w = rotl32(w, 30);
+  z += block[i] + 0xCA62C1D6 + rol(v, 5) + (w ^ x ^ y);
+  w = rol(w, 30);
 }
 
 inline void make_block(uint8_t const* pb, uint32_t block[16])
@@ -298,7 +589,7 @@ struct sha1_builder
     }
   }
 
-  sha1_digest final()
+  sha1_digest finalize()
   {
     using namespace detail::sha1;
     sha1_digest out;
@@ -445,7 +736,7 @@ inline sha1_digest sha1(const char* const data, size_t len)
   sha1_builder b;
   b.init();
   b.update(data, len);
-  return b.final();
+  return b.finalize();
 }
 
 inline sha1_digest sha1(std::string_view s)
@@ -457,8 +748,18 @@ inline sha1_digest sha1(std::string_view s)
 //  CHECKS
 
 static_assert(0xE8F35A06 == "testing"_crc32, "constexpr crc32 failed");
-static_assert(0x3A6907F7 == crc32("testing", 7, 0xE8F35A06), "constexpr crc32 with seed failed");
-static_assert(0x3A6907F7 == crc32_small_combine(0xE8F35A06, 0xE8F35A06, 7), "constexpr crc32_small_combine failed");
+static_assert(0xC032DDBA == "somestring"_crc32, "constexpr crc32 failed");
+static_assert(0x6BFB9DCC == "testingsomestring"_crc32, "constexpr crc32 failed");
+static_assert(0x6BFB9DCC == crc32("somestring", 10, 0xE8F35A06), "constexpr crc32 with seed failed");
+static_assert(0x6BFB9DCC == crc32_combine(0xE8F35A06, 0xC032DDBA, 10), "constexpr crc32_combine failed");
+static_assert(0x6BFB9DCC == crc32_combine_bigdata(0xE8F35A06, 0xC032DDBA, 10), "constexpr crc32_combine_bigdata failed");
+
+static_assert(0x0C12B945415B900F == "testing"_crc64, "constexpr crc64 failed");
+static_assert(0xFAEC849CAC48EAF1 == "somestring"_crc64, "constexpr crc64 failed");
+static_assert(0x8463A431DE14344F == "testingsomestring"_crc64, "constexpr crc64 failed");
+static_assert(0x8463A431DE14344F == crc64("somestring", 10, 0x0C12B945415B900F), "constexpr crc64 with seed failed");
+static_assert(0x8463A431DE14344F == crc64_combine(0x0C12B945415B900F, 0xFAEC849CAC48EAF1, 10), "constexpr crc64_combine failed");
+static_assert(0x8463A431DE14344F == crc64_combine_bigdata(0x0C12B945415B900F, 0xFAEC849CAC48EAF1, 10), "constexpr crc64_combine_bigdata failed");
 
 static_assert(0xEB5F499B == "testing"_fnv1a32, "constexpr fnv1a32 failed");
 static_assert(0xC2FE2FB77AE839BB == "testing"_fnv1a64, "constexpr fnv1a64 failed");

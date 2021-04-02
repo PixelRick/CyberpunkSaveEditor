@@ -277,6 +277,9 @@
     <ClInclude Include="..\..\source\cpinternals\stream\stdstream_wrapper.hpp">
       <Filter>source\cpinternals\stream</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\common\hashing_tables.hpp">
+      <Filter>source\cpinternals\common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\..\assets\CNames.json">

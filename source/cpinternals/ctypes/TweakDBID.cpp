@@ -11,7 +11,7 @@ TweakDBID::TweakDBID(std::string_view name, bool add_to_resolver)
   if (ssize > 0xFF)
     throw std::length_error("TweakDBID's length overflow");
 
-  crc = crc32(name);
+  crc = crc32_str(name);
   slen = static_cast<uint8_t>(ssize);
   if (add_to_resolver)
   {

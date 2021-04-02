@@ -47,14 +47,14 @@ struct TweakDBID
 
   TweakDBID& operator+=(const TweakDBID& rhs)
   {
-    crc = crc32_small_combine(crc, rhs.crc, rhs.slen);
+    crc = crc32_combine(crc, rhs.crc, rhs.slen);
     slen += rhs.slen;
     return *this;
   }
 
   TweakDBID& operator+=(std::string_view name)
   {
-    crc = crc32(name, crc);
+    crc = crc32_str(name, crc);
     if (slen + name.size() > 0xFF)
       throw std::length_error("TweakDBID's length overflow");
     slen += static_cast<uint8_t>(name.size());

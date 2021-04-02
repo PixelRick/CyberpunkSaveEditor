@@ -81,6 +81,7 @@
     <ClInclude Include="..\..\source\cpinternals\utils.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\source\cpinternals\common\hashing_tables.hpp" />
     <ClCompile Include="..\..\source\cpinternals\common\streambase.cpp" />
     <ClCompile Include="..\..\source\cpinternals\common\utils.cpp" />
     <ClCompile Include="..\..\source\cpinternals\csav\node_tree.cpp" />
