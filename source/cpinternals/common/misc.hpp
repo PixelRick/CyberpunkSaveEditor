@@ -1,6 +1,7 @@
 #pragma once
 #include <inttypes.h>
 #include <string>
+#include <memory>
 #include <algorithm>
 
 namespace cp {
@@ -28,17 +29,18 @@ public:
 		stack.emplace_back(sub_progress{ subp.comment, m_value, clamped });
 	}
 
-	void pop_max(float value)
+	float pop_max()
 	{
 		if (stack.size())
 		{
 			m_value = stack.back().max;
 			stack.pop_back();
+			return m_value;
 		}
 		// should throw
 	}
 
-	void set_comment(std::string_view comment)
+	void set_comment(std::string comment)
 	{
 		auto& subp = current_sub_progress();
 		subp.comment = comment;
@@ -63,6 +65,7 @@ public:
 	}
 
 protected:
+
 	sub_progress& current_sub_progress()
 	{
 		if (stack.size())
@@ -71,6 +74,8 @@ protected:
 		}
 		return main;
 	}
+
+protected:
 
 	float m_value = 0.f;
 	std::vector<sub_progress> stack;
