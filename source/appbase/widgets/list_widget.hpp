@@ -40,7 +40,7 @@ inline bool imgui_list_tree_widget(std::list<T>& l, GetTNameStringFn&& name_fn, 
 
   bool modified = false;
 
-  if (default_insertable && ImGui::SmallButton("add new entry"))
+  if (default_insertable && ImGui::SmallButton("prepend new"))
   {
     modified = true;
     l.push_front(T{}); // todo: CreateNewTFn parameter
@@ -98,6 +98,12 @@ inline bool imgui_list_tree_widget(std::list<T>& l, GetTNameStringFn&& name_fn, 
     }
     else
       ++it;
+  }
+
+  if (default_insertable && ImGui::SmallButton("append new"))
+  {
+    modified = true;
+    l.push_back(T{}); // todo: CreateNewTFn parameter
   }
 
   return modified;
