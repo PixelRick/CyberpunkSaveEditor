@@ -9,10 +9,15 @@ namespace cp {
 
 streambase& streambase::serialize_str_lpfxd(std::string& s)
 {
+  if (has_error())
+  {
+    return *this;
+  }
+
   if (is_reader())
   {
     // cp's one does directly serialize into a buffer, without conversion
-    // also the one used to serialize datum desc name is capped to a 512b buffer
+    // also the one used to serialize datum desc gname is capped to a 512b buffer
     // BUT it does not seek to compensate for the short read.. nor limit the utf16 read to 256 (but 511 -> 1022bytes)
     // so remember: long strings would probably corrupt some files!
     int64_t cnt = read_int_packed();

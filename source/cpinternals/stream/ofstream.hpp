@@ -5,7 +5,7 @@
 
 namespace cp {
 
-// Output binary file archive
+// Output binary file stream
 struct ofstream
   : streambase
 {
@@ -54,19 +54,20 @@ struct ofstream
     return *this;
   }
 
-  virtual streambase& seek(off_type off, std::istream::seekdir dir) override
+  virtual streambase& seek(off_type off, seekdir dir) override
   {
     m_ofs.seekp(off, dir);
     return *this;
   }
 
-  virtual streambase& serialize(void* data, size_t len) override
+  virtual streambase& serialize(void* data, size_t size) override
   {
-    m_ofs.write(static_cast<char*>(data), len);
+    m_ofs.write(static_cast<char*>(data), size);
     return *this;
   }
 
 protected:
+
   mutable std::ofstream m_ofs;
 };
 

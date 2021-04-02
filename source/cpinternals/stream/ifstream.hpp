@@ -5,7 +5,7 @@
 
 namespace cp {
 
-// Input binary file archive
+// Input binary file stream
 struct ifstream
   : streambase
 {
@@ -54,24 +54,25 @@ struct ifstream
     return *this;
   }
 
-  streambase& seek(off_type off, std::istream::seekdir dir) override
+  streambase& seek(off_type off, seekdir dir) override
   {
     m_ifs.seekg(off, dir);
     return *this;
   }
 
-  streambase& serialize(void* data, size_t len) override
+  streambase& serialize(void* data, size_t size) override
   {
-    m_ifs.read(static_cast<char*>(data), len);
+    m_ifs.read(static_cast<char*>(data), size);
     return *this;
   }
 
-  void swap(std::ifstream& other)
+  void swap_underlying_stream(std::ifstream& other)
   {
     m_ifs.swap(other);
   }
 
 protected:
+
   mutable std::ifstream m_ifs;
 };
 

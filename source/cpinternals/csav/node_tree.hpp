@@ -38,6 +38,8 @@ struct node_tree
     {
       x.serialize_out(ar);
     }
+
+    return ar;
   }
 
   std::vector<serial_node_desc> original_descs;

@@ -25,6 +25,12 @@ struct streambase
 {
   using pos_type = std::streamoff;
   using off_type = std::streampos;
+
+  using seekdir = std::istream::seekdir;
+  static constexpr auto beg = std::istream::beg;
+  static constexpr auto cur = std::istream::cur;
+  static constexpr auto end = std::istream::end;
+
   using flags_type = armanip::arflags_t;
 
   virtual ~streambase() = default;
@@ -33,9 +39,9 @@ struct streambase
 
   virtual pos_type tell() const = 0;
   virtual streambase& seek(pos_type pos) = 0;
-  virtual streambase& seek(off_type off, std::istream::seekdir dir) = 0;
+  virtual streambase& seek(off_type off, seekdir dir) = 0;
 
-  virtual streambase& serialize(void* data, size_t len) = 0;
+  virtual streambase& serialize(void* data, size_t size) = 0;
 
   // Allows for overrides (csav serialization != others)
   virtual streambase& serialize(iserializable& x)
@@ -46,7 +52,11 @@ struct streambase
 
   void set_error(std::string error)
   {
-    m_error = error;
+    // keep first error
+    if (!has_error())
+    {
+      m_error = error;
+    }
   }
 
   void clear_error()
@@ -100,6 +110,11 @@ struct streambase
 
   streambase& byte_order_serialize(void* value, uint64_t length)
   {
+    if (has_error())
+    {
+      return *this;
+    }
+
     // To be implemented if necessary
     serialize(value, length);
     return *this;
@@ -108,12 +123,22 @@ struct streambase
   template <typename T, typename = std::enable_if_t<std::is_arithmetic_v<T> && !std::is_const_v<T> && !std::is_same_v<T, bool>>>
   streambase& operator<<(T& val)
   {
+    if (has_error())
+    {
+      return *this;
+    }
+
     byte_order_serialize(&val, sizeof(T));
     return *this;
   }
 
   streambase& operator<<(bool& val)
   {
+    if (has_error())
+    {
+      return *this;
+    }
+
     uint8_t u8 = val ? 1 : 0;
     serialize(&u8, 1);
     val = !!u8;
@@ -122,6 +147,11 @@ struct streambase
 
   streambase& operator<<(iserializable& x)
   {
+    if (has_error())
+    {
+      return *this;
+    }
+
     serialize(x);
     return *this;
   }
@@ -129,10 +159,20 @@ struct streambase
   template <typename T, typename = std::enable_if_t<!std::is_same_v<T, bool>>>
   streambase& operator<<(std::vector<T>& vec)
   {
+    if (has_error())
+    {
+      return *this;
+    }
+
     uint32_t cnt = static_cast<uint32_t>(vec.size());
     *this << cnt;
+
     if (cnt > 0x40000)
-      throw std::range_error("serialized vector size is too big");
+    {
+      set_error("serialized vector size is too big");
+      return;
+    }
+
     vec.resize(cnt);
 
     for (T& it : vec)
@@ -145,6 +185,11 @@ struct streambase
 
   streambase& operator<<(std::vector<bool>& vec)
   {
+    if (has_error())
+    {
+      return *this;
+    }
+
     uint32_t cnt = static_cast<uint32_t>(vec.size());
     *this << cnt;
     vec.resize(cnt);
@@ -167,13 +212,35 @@ struct streambase
   template <typename T>
   streambase& serialize_pod_raw(T& value)
   {
+    if (has_error())
+    {
+      return *this;
+    }
+
     serialize(&value, sizeof(T));
+    return *this;
+  }
+
+  template <typename T, typename = std::enable_if_t<!std::is_same_v<T, bool>>>
+  streambase& serialize_pods_array_raw(T* data, size_t cnt)
+  {
+    if (has_error())
+    {
+      return *this;
+    }
+
+    serialize(data, cnt * sizeof(T));
     return *this;
   }
 
   template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
   streambase& serialize_int_packed(T& v)
   {
+    if (has_error())
+    {
+      return *this;
+    }
+
     if (is_reader())
     {
       v = static_cast<T>(read_int_packed());
