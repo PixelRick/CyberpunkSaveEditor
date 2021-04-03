@@ -63,6 +63,21 @@ protected:
 protected:
   void startup() override
   {
+
+#ifdef _DEBUG
+
+    AllocConsole();
+    SetConsoleCtrlHandler(nullptr, true);
+
+    FILE* stream;
+    freopen_s(&stream, "CONOUT$", "a+", stdout);
+
+    spdlog::set_level(spdlog::level::debug);
+
+    SPDLOG_DEBUG("hello!");
+
+#endif
+
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
