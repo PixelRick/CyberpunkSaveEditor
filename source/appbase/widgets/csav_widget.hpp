@@ -659,16 +659,17 @@ public:
     int line_width = (int)ImGui::GetContentRegionAvail().x;
     float slider_width = (float)std::max(line_width - 300, 100);
 
-
+    /*
     static uint32_t hash32;
     static gname revhash32_str;
     ImGui::PushItemWidth(200.f);
     bool revhash32 = ImGui::InputScalar("reverse fnv1a32 (hex)", ImGuiDataType_U32, &hash32, 0, 0, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
     if (revhash32) {
-      revhash32_str = CName_resolver::get().resolve(hash32);
+      revhash32_str = ...
     }
-    ImGui::SameLine();
+     ImGui::SameLine();
     ImGui::Text("%s", revhash32_str.c_str());
+    */
 
     static char search_text[256];
     const bool text_search = ImGui::Button("search text", ImVec2(150, 0)); ImGui::SameLine();

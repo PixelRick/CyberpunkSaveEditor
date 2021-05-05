@@ -140,39 +140,35 @@ struct TweakDBID_widget
 
 struct CName_widget
 {
+  [[nodiscard]] static inline bool draw_(CName& x)
+  {
+    return draw(x, "");
+  }
+
   // returns true if content has been edited
   [[nodiscard]] static inline bool draw(CName& x, const char* label)
   {
     scoped_imgui_id _sii(&x);
     bool modified = false;
 
+    ImGui::SetNextItemWidth(120.f);
+
+    modified |= ImGui::InputScalar("##raw u64 hex", ImGuiDataType_U64, &x.hash,  NULL, NULL, "%016llX", ImGuiInputTextFlags_CharsHexadecimal);
+
+    ImGui::SameLine();
+
     auto& namelist = CName_resolver::get().sorted_names();
 
     // tricky ;)
     int item_current = 0;
 
-    const auto& curname = x.name();
+    const auto& curname = x.string();
     ImGui::BetterCombo(label, &item_current, &ItemGetter, (void*)curname.c_str(), (int)namelist.size()+1);
 
     if (item_current != 0)
     {
       x = CName(namelist[item_current-1]);
       modified = true;
-    }
-
-    bool namehash_opened = ImGui::TreeNode("> cname hash");
-
-    {
-      scoped_imgui_style_color _stc(ImGuiCol_Text, ImColor::HSV(0.f, 1.f, 0.7f, 1.f).Value);
-      ImGui::SameLine();
-      ImGui::Text("(CName's DB is not complete yet !)"); // you can enter its hash manually too meanwhile
-    }
-
-    if (namehash_opened)
-    {
-      modified |= ImGui::InputScalar("raw u64 hex",  ImGuiDataType_U64, &x.as_u64,  NULL, NULL, "%016llX", ImGuiInputTextFlags_CharsHexadecimal);
-      ImGui::Text("resolved name: %s", x.name().c_str());
-      ImGui::TreePop();
     }
 
     return modified;

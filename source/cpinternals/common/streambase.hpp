@@ -5,7 +5,8 @@
 #include <array>
 #include <cmath>
 
-#include "iserializable.hpp"
+#include <cpinternals/common/iserializable.hpp>
+#include <cpinternals/common/utils.hpp>
 
 namespace cp {
 
@@ -41,7 +42,18 @@ struct streambase
   virtual streambase& seek(pos_type pos) = 0;
   virtual streambase& seek(off_type off, seekdir dir) = 0;
 
-  virtual streambase& serialize(void* data, size_t size) = 0;
+  virtual streambase& serialize_bytes(void* data, size_t size) = 0;
+
+  streambase& serialize_span(const std::span<char>& span)
+  {
+    return serialize_bytes(span.data(), span.size());
+  }
+
+  template <typename T, typename = std::enable_if_t<sizeof(T) == 1>>
+  streambase& serialize_byte(T* pb)
+  {
+    return serialize_bytes(pb, 1);
+  }
 
   // Allows for overrides (csav serialization != others)
   virtual streambase& serialize(iserializable& x)
@@ -116,7 +128,7 @@ struct streambase
     }
 
     // To be implemented if necessary
-    serialize(value, length);
+    serialize_bytes(value, length);
     return *this;
   }
 
@@ -140,7 +152,7 @@ struct streambase
     }
 
     uint8_t u8 = val ? 1 : 0;
-    serialize(&u8, 1);
+    serialize_bytes(&u8, 1);
     val = !!u8;
     return *this;
   }
@@ -217,7 +229,7 @@ struct streambase
       return *this;
     }
 
-    serialize(&value, sizeof(T));
+    serialize_bytes(&value, sizeof(T));
     return *this;
   }
 
@@ -229,7 +241,7 @@ struct streambase
       return *this;
     }
 
-    serialize(data, cnt * sizeof(T));
+    serialize_bytes(data, cnt * sizeof(T));
     return *this;
   }
 

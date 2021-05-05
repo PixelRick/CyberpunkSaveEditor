@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <algorithm>
+#include <spdlog/spdlog.h>
 
 namespace cp {
 
@@ -94,15 +95,16 @@ struct op_status
 {
 	op_status() noexcept = default;
 
-	op_status(std::string_view err)
-		: m_err(err)
-	{
-	}
+	op_status(const std::string_view& err)
+		: m_err(err) {}
+
+	op_status(std::string err)
+		: m_err(err) {}
 
 	op_status(bool ok)
-		: m_err(ok ? "" : "uncommented error")
-	{
-	}
+		: m_err(ok ? "" : "uncommented error") {}
+
+	op_status& operator=(const op_status& other) = default;
 
 	operator bool() const
 	{

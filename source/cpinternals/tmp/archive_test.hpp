@@ -3,8 +3,11 @@
 #include <iostream>
 #include <fstream>
 #include <numeric>
+#include <list>
+#include <appbase/widgets/cpinternals.hpp>
 #include "cpinternals/scripting/csystem.hpp"
-
+#include <cpinternals/common.hpp>
+#include <cpinternals/stream/stdstream_wrapper.hpp>
 
 class archive_test
 {
@@ -93,64 +96,93 @@ public:
         ImGui::Text(save_failed ? "failed" : "ok");
       }
 
-      ImGui::Text("section 2 (sometimes filename): %s", m_filename.c_str());
+      //ImGui::Text("section 2 (sometimes filename): %s", m_filename.c_str());
+      ImGui::Text(fmt::format("m_uk1: {:04X}", m_uk1).c_str());
+
 
       ImGui::BeginGroup();
+
       {
         ImGui::Text("embedded cruids:");
         for (auto& cruid : m_ids)
           ImGui::Text(fmt::format(" {:016X}", cruid).c_str());
       }
-      {
-        ImGui::Text("u32 array:");
-        for (auto& u32 : m_u32_array)
-          ImGui::Text(fmt::format(" {:08X}", u32).c_str());
-      }
+
       ImGui::EndGroup();
       ImGui::SameLine();
+      ImGui::BeginGroup();
 
-      static ImGuiTableFlags tbl_flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV
+      static ImGuiTabBarFlags tab_bar_flags =
+      //ImGuiTabBarFlags_Reorderable |
+      //ImGuiTabBarFlags_AutoSelectNewTabs |
+      ImGuiTabBarFlags_FittingPolicyResizeDown;
+
+      if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags))
+      {
+        
+        if (ImGui::BeginTabItem("rarefs", 0, ImGuiTabItemFlags_None))
+        {
+          //ImGui::BeginChild("current editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
+
+          static auto name_fn = [](const cp::cname& y) { return y.string(); };
+          imgui_list_tree_widget(m_rarefs, name_fn, &CName_widget::draw_, 0, true, true);
+
+          //ImGui::EndChild();
+          ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("objects", 0, ImGuiTabItemFlags_None))
+        {
+          static ImGuiTableFlags tbl_flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV
         | ImGuiTableFlags_Resizable;
 
-      ImVec2 size = ImVec2(-FLT_MIN, ImGui::GetContentRegionAvail().y);
-      if (ImGui::BeginTable("##props", 2, tbl_flags, size))
-      {
-        ImGui::TableSetupScrollFreeze(0, 1);
-        ImGui::TableSetupColumn("objects", ImGuiTableColumnFlags_WidthFixed, 230.f);
-        ImGui::TableSetupColumn("selected object", ImGuiTableColumnFlags_WidthStretch);
-        ImGui::TableHeadersRow();
+          ImVec2 size = ImVec2(-FLT_MIN, -FLT_MIN);
+          if (ImGui::BeginTable("##props", 2, tbl_flags, size))
+          {
+            ImGui::TableSetupScrollFreeze(0, 1);
+            ImGui::TableSetupColumn("objects", ImGuiTableColumnFlags_WidthFixed, 230.f);
+            ImGui::TableSetupColumn("selected object", ImGuiTableColumnFlags_WidthStretch);
+            ImGui::TableHeadersRow();
 
-        ImGui::TableNextRow();
-        ImGui::TableNextColumn();
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
 
-        //ImGui::PushItemWidth(150.f);
-        ImGui::BeginChild("Objects", ImVec2(-FLT_MIN, 0));
-        modified |= ImGui::ErasableListBox("##CSystem::objects", &selected, &object_name_getter, objects, true, true);
-        ImGui::EndChild();
-        //ImGui::PopItemWidth();
+            //ImGui::PushItemWidth(150.f);
+            ImGui::BeginChild("Objects", ImVec2(-FLT_MIN, 0));
+            modified |= ImGui::ErasableListBox("##CSystem::objects", &selected, &object_name_getter, objects, true, true);
+            ImGui::EndChild();
+            //ImGui::PopItemWidth();
 
-        ImGui::TableNextColumn();
+            ImGui::TableNextColumn();
 
-        ImGui::BeginChild("Selected Object");
+            ImGui::BeginChild("Selected Object");
 
-        int object_idx = selected;
-        if (object_idx >= 0 && object_idx < objects.size())
-        {
-          auto& obj = objects[object_idx];
-          ImGui::PushItemWidth(300.f);
-          auto ctype = obj->ctypename();
-          ImGui::Text("object type: %s", ctype.c_str());
-          ImGui::PopItemWidth();
-          modified |= obj->imgui_widget(ctype.c_str(), true);
+            int object_idx = selected;
+            if (object_idx >= 0 && object_idx < objects.size())
+            {
+              auto& obj = objects[object_idx];
+              ImGui::PushItemWidth(300.f);
+              auto ctype = obj->ctypename();
+              ImGui::Text("object type: %s", ctype.c_str());
+              ImGui::PopItemWidth();
+              modified |= obj->imgui_widget(ctype.c_str(), true);
+            }
+            else
+              ImGui::Text("no selected object");
+
+            ImGui::EndChild();
+
+            ImGui::EndTable();
+          }
+
+          ImGui::EndTabItem();
         }
-        else
-          ImGui::Text("no selected object");
 
-        ImGui::EndChild();
-
-        ImGui::EndTable();
+        ImGui::EndTabBar();
       }
-      
+
+      ImGui::EndGroup();
+
       ImGui::End();
     }
 
@@ -159,17 +191,17 @@ public:
 
   struct header_t
   {
-    uint16_t uk1                  = 0;
-    uint16_t uk2                  = 0; // sections count apparently
-    uint32_t ids_cnt              = 0;
+    uint16_t uk1                    = 0;
+    uint16_t uk2                    = 0; // sections count apparently
+    uint32_t ids_cnt                = 0;
     // test file has 7 sections
-    uint32_t u32arr_offset                  = 0; // array of u32
-    uint32_t filename_offset      = 0;
-    uint32_t strpool_descs_offset = 0;
-    uint32_t strpool_data_offset  = 0;
-    uint32_t obj_descs_offset     = 0;
+    uint32_t rarefpool_descs_offset = 0;
+    uint32_t rarefpool_data_offset  = 0;
+    uint32_t strpool_descs_offset   = 0;
+    uint32_t strpool_data_offset    = 0;
+    uint32_t obj_descs_offset       = 0;
     // tricky: obj offsets are relative to the strpool base
-    uint32_t objdata_offset       = 0; 
+    uint32_t objdata_offset         = 0; 
   };
 
   struct obj_desc_t
@@ -188,8 +220,8 @@ private:
   uint16_t m_uk1;
 
   std::vector<uint64_t> m_ids;
-  std::vector<uint32_t> m_u32_array;
-  std::string m_filename;
+
+  std::list<cname> m_rarefs;
 
   CSystemSerCtx m_serctx; // strpool + handles
 
@@ -201,12 +233,51 @@ public:
   std::vector<CObjectSPtr>& objects()       { return m_objects; }
 
 public:
+
+  // this is redundant, should make stringpool serializable with template descriptor..
+  class path_desc
+  {
+    uint32_t m_meta = 0;
+  
+  public:
+    constexpr static size_t serial_size = sizeof(uint32_t);
+  
+    path_desc() = default;
+  
+    path_desc(uint32_t offset, uint32_t len)
+    {
+      this->offset(offset);
+      this->len(len);
+    }
+  
+    uint32_t offset() const { return m_meta & 0xFFFF; }
+    uint32_t len() const { return (m_meta >> 23) & 0x1FF; }
+  
+    uint32_t end_offset() const { return offset() + len(); }
+  
+    void offset(uint32_t value)
+    {
+      if (value > 0xFFFF)
+        throw std::range_error("path_desc: offset is too big");
+      m_meta = value | (m_meta & 0xFFFF0000);
+    }
+  
+    void len(uint32_t value)
+    {
+      if (value > 0x1FF)
+        throw std::range_error("path_desc: len is too big");
+      m_meta = (value << 23) | (m_meta & 0x007FFFFF);
+    }
+  
+    uint32_t as_u32() const { return m_meta; }
+  };
+
   bool serialize_in(std::istream& reader, size_t blob_size)
   {
     size_t start_pos = (size_t)reader.tellg();
 
     m_ids.clear();
-    m_u32_array.clear();
+    m_rarefs.clear();
     m_objects.clear();
     m_handle_objects.clear();
 
@@ -216,9 +287,9 @@ public:
     reader >> cbytes_ref(m_header);
 
     // check header
-    if (m_header.u32arr_offset > m_header.filename_offset)
+    if (m_header.rarefpool_descs_offset > m_header.rarefpool_data_offset)
       return false;
-    if (m_header.filename_offset > m_header.strpool_descs_offset)
+    if (m_header.rarefpool_data_offset > m_header.strpool_descs_offset)
       return false;
     if (m_header.strpool_descs_offset > m_header.strpool_data_offset)
       return false;
@@ -227,8 +298,9 @@ public:
     if (m_header.obj_descs_offset > m_header.objdata_offset)
       return false;
 
-    if (m_header.u32arr_offset != 0)
+    if (m_header.rarefpool_descs_offset != 0)
       throw std::exception("m_header.u32arr_offset != 0, not cool :(");
+
 
     reader >> cbytes_ref(m_uk1);
     //if (uk1 != 0)
@@ -246,18 +318,42 @@ public:
     // end of header
     const size_t base_offset = (size_t)reader.tellg() - start_pos;
 
-    // section 1: array of u32
-    const size_t sec1_size = m_header.filename_offset - m_header.u32arr_offset;
-    if (sec1_size % 4)
-      throw std::exception("sec1_size % 4, not cool :(");
-    const size_t sec1_len = sec1_size / 4;
-    m_u32_array.resize(sec1_len);
-    reader.read((char*)m_u32_array.data(), sec1_size);
+    // rarefs
+    
+    const uint32_t rarefpool_descs_size = m_header.rarefpool_data_offset - m_header.rarefpool_descs_offset;
+    const uint32_t rarefpool_data_size = m_header.strpool_descs_offset - m_header.rarefpool_data_offset;
 
-    // section 2: filename
-    const size_t sec2_size = m_header.strpool_descs_offset - m_header.filename_offset;
-    m_filename.resize(sec2_size);
-    reader.read(m_filename.data(), sec2_size);
+    cp::stdstream_wrapper<std::istream> ar(reader);
+
+    // std::vector<std::string> m_rarefs_strs;
+    // std::vector<CName> m_rarefs_hashes;
+
+    if (m_uk1 == 0) // cname as strings
+    {
+      cnameset np;
+      np.serialize_in<9>(ar, m_header.rarefpool_descs_offset, rarefpool_descs_size, rarefpool_data_size);
+
+      //m_rarefs.reserve(np.size());
+      for (auto& cn : np)
+      {
+        m_rarefs.emplace_back(cn);
+      }
+    }
+    else // cname as hashes (but pooled.. lol)
+    {
+      const size_t descs_cnt = rarefpool_descs_size / 4;
+      std::vector<uint32_t> descs(descs_cnt);
+      ar.serialize_pods_array_raw(descs.data(), descs_cnt);
+
+      std::vector<uint64_t> hashes(descs_cnt);
+      ar.serialize_pods_array_raw(hashes.data(), descs_cnt);
+
+      for (auto& hash : hashes)
+      {
+        cname cn(hash);
+        m_rarefs.emplace_back(hash);
+      }
+    }
 
     // section 3+4: string pool
     const uint32_t strpool_descs_size = m_header.strpool_data_offset - m_header.strpool_descs_offset;
@@ -283,7 +379,9 @@ public:
     if (obj_descs_cnt == 0)
       return m_header.objdata_offset + base_offset == blob_size; // could be empty
 
+    //std::vector<obj_desc_t> obj_descs(obj_descs_cnt);
     std::vector<obj_desc_t> obj_descs(obj_descs_cnt);
+
     reader.read((char*)obj_descs.data(), obj_descs_size);
 
     // read objdata
@@ -364,21 +462,54 @@ public:
     const size_t base_spos = (size_t)writer.tellp();
     const size_t base_offset = (size_t)writer.tellp() - start_spos;
 
-    // section 1: array of u32
-    new_header.u32arr_offset = 0;
+    // rarefs
 
-    writer.write((char*)m_u32_array.data(), m_u32_array.size() * 4);
+    new_header.rarefpool_descs_offset = 0;
 
-    // section 2: filename
-    const size_t filename_offset = (size_t)writer.tellp() - base_spos;
-    new_header.filename_offset = filename_offset;
+    cp::stdstream_wrapper<std::ostream> ar(writer);
 
-    const size_t fname_size = m_filename.size();
-    writer.write(m_filename.data(), fname_size);
+    uint32_t rarefpool_descs_size = 0;
+    uint32_t rarefpool_data_size = 0;
+
+    cnameset np;
+
+    for (auto& cn : m_rarefs)
+    {
+      np.insert(cn);
+    }
+
+    if (m_uk1 == 0)
+    {
+      np.serialize_out<9>(ar, new_header.rarefpool_descs_offset, rarefpool_descs_size, rarefpool_data_size);
+    }
+    else // cname as hashes (but pooled.. lol)
+    {
+      const uint32_t descs_cnt = static_cast<uint32_t>(m_rarefs.size());
+      rarefpool_descs_size = descs_cnt * 4;
+      rarefpool_data_size = descs_cnt * 8;
+
+      std::vector<uint32_t> descs; descs.reserve(descs_cnt);
+      std::vector<uint64_t> hashes; hashes.reserve(descs_cnt);
+
+      uint32_t off = new_header.rarefpool_descs_offset + rarefpool_descs_size;
+
+      for (auto& cn : m_rarefs)
+      {
+        constexpr uint32_t desc_size_component = (8 << (32 - 9));
+        descs.emplace_back(desc_size_component | off);
+        off += 8;
+        hashes.emplace_back(cn.hash);
+      }
+
+      ar.serialize_pods_array_raw(descs.data(), descs_cnt);
+      ar.serialize_pods_array_raw(hashes.data(), descs_cnt);
+    }
+
+    new_header.rarefpool_data_offset = new_header.rarefpool_descs_offset + rarefpool_descs_size;
 
     // section 3+4: string pool
-    const size_t strpool_descs_offset = (size_t)writer.tellp() - base_spos;
-    new_header.strpool_descs_offset = strpool_descs_offset;
+    const uint32_t strpool_descs_offset = (uint32_t)((size_t)writer.tellp() - base_spos);
+    new_header.strpool_descs_offset = (uint32_t)strpool_descs_offset;
 
     // ----------------------------------------------
 

@@ -23,6 +23,11 @@
   <ItemGroup>
     <ClCompile Include="..\..\source\tools\rtti_dumper\main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\cpinternals\cpinternals.vcxproj">
+      <Project>{bb6106aa-32c4-4f09-b978-27c527f0b3b7}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>

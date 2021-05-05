@@ -39,8 +39,41 @@ bool load_from_json(std::filesystem::path path, T& out)
   return true;
 }
 
+bool load_names_from_txt(std::filesystem::path path, std::vector<gname>& out)
+{
+  auto relpath = std::filesystem::relative(path);
+
+  std::ifstream ifs(path);
+  if (ifs.is_open())
+  {
+    try
+    {
+      std::string line;
+      while (std::getline(ifs, line))
+      {
+          if (line.size())
+          {
+            out.emplace_back(line);
+          }
+      }
+    }
+    catch (std::exception&)
+    {
+      MessageBox(0, fmt::format(L"{} has unexpected content", relpath.wstring()).c_str(), L"corrupt resource file", 0);
+      return false;
+    }
+  }
+  else
+  {
+    MessageBox(0, fmt::format(L"{} is missing", relpath.wstring()).c_str(), L"missing resource file", 0);
+    return false;
+  }
+
+  return true;
+}
+
 // TODO: rename this an add progress param
-op_status init_cpinternals()
+op_status init_cpinternals(bool with_archive_names)
 {
   {
     std::vector<gname> names;
@@ -50,7 +83,18 @@ op_status init_cpinternals()
 
   {
     std::vector<gname> names;
-    load_from_json("./db/CNames.json", names);
+    load_names_from_txt("./db/internal_names.txt", names);
+
+    if (0 && with_archive_names)
+    {
+      load_names_from_txt("./db/archive_names.txt", names);
+
+      if (std::filesystem::exists("./db/custom_archive_names.txt"))
+      {
+        load_names_from_txt("./db/custom_archive_names.txt", names);
+      }
+    }
+
     CName_resolver::get().feed(names);
   }
 

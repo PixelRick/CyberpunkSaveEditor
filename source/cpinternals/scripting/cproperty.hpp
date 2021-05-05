@@ -21,6 +21,7 @@
 
 // todo: move the ui part out of this lib
 #include "appbase/widgets/cpinternals.hpp"
+#include "imgui/extras/ImGuizmo.h"
 
 //------------------------------------------------------------------------------
 // BOOL
@@ -743,7 +744,10 @@ public:
     return m_object->imgui_widget(label, editable);
   }
 
-  bool imgui_is_one_liner() override { return false; }
+  bool imgui_is_one_liner() override
+  {
+    return m_obj_ctypename == "WorldPosition"_gn || m_obj_ctypename == "Quaternion"_gn;
+  }
 
 #endif
 
@@ -793,7 +797,7 @@ public:
 
   gname value_name() const { return m_val_name; }
 
-  // returns true if name exists
+  // returns true if gname exists
   bool set_value_by_name(gname name)
   {
     bool success = false;
@@ -864,7 +868,7 @@ public:
   virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
     if (m_val_name == "<no_zero_name>"_gn)
-      throw std::logic_error("enum value must be skipped, 0 has no name");
+      throw std::logic_error("enum value must be skipped, 0 has no gname");
 
     uint16_t strpool_idx = serctx.strpool.to_idx(m_val_name.strv());
     os << cbytes_ref(strpool_idx);
@@ -998,7 +1002,7 @@ public:
 
   virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
-    uint16_t strpool_idx = serctx.strpool.to_idx(m_id.name().strv());
+    uint16_t strpool_idx = serctx.strpool.to_idx(m_id.gstr().strv());
     os << cbytes_ref(strpool_idx);
     return true;
   }

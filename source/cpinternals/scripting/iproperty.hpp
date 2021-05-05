@@ -140,14 +140,16 @@ protected:
 public:
   virtual bool imgui_is_one_liner() { return true; }
 
-  static inline bool imgui_show_skipped = false;
+  static inline bool imgui_show_skipped = true;
 
   [[nodiscard]] bool imgui_widget(const char* label, bool editable)
   {
     //if (imgui_show_skipped && is_skippable_in_serialization())
     //  ImGui::Text("(default, may be skipped during serialization)");
-    if (has_construction_value() && !m_is_unskippable)
-      ImGui::Text("unknown default value: won't be serialized until you edit it");
+    if (imgui_show_skipped && (has_construction_value() && !m_is_unskippable))
+    {
+      ImGui::Text("(!)"); ImGui::SameLine();
+    }
     bool modified = imgui_widget_impl(label, editable);
     if (modified)
       post_cproperty_event(EPropertyEvent::data_edited);

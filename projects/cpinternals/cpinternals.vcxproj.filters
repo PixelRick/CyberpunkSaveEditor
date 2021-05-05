@@ -18,9 +18,6 @@
     <Filter Include="source\cpinternals\tweakdb">
       <UniqueIdentifier>{22691e45-30ed-4c2e-b9b2-b2ae3e4eeb34}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\cpinternals\cr2w">
-      <UniqueIdentifier>{32b38e10-7e3d-41d1-aa1b-a775091345be}</UniqueIdentifier>
-    </Filter>
     <Filter Include="source\cpinternals\csav">
       <UniqueIdentifier>{db710764-70b8-4d46-a8a4-eed03168d60b}</UniqueIdentifier>
     </Filter>
@@ -77,9 +74,6 @@
     <ClCompile Include="..\..\source\cpinternals\ctypes\CFact.cpp">
       <Filter>source\cpinternals\ctypes</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\cpinternals\ctypes\CName.cpp">
-      <Filter>source\cpinternals\ctypes</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\cpinternals\ctypes\TweakDBID.cpp">
       <Filter>source\cpinternals\ctypes</Filter>
     </ClCompile>
@@ -99,6 +93,9 @@
       <Filter>source\cpinternals\rtdt</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cpinternals\common\utils.cpp">
+      <Filter>source\cpinternals\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\common\windowz.cpp">
       <Filter>source\cpinternals\common</Filter>
     </ClCompile>
   </ItemGroup>
@@ -274,17 +271,41 @@
     <ClInclude Include="..\..\source\cpinternals\common\tstamp.hpp">
       <Filter>source\cpinternals\common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\radr.hpp">
+      <Filter>source\cpinternals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\common\cname.hpp">
+      <Filter>source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\common\cnameset.hpp">
+      <Filter>source\cpinternals\common</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\source\cpinternals\stream\stdstream_wrapper.hpp">
       <Filter>source\cpinternals\stream</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cpinternals\common\hashing_tables.hpp">
       <Filter>source\cpinternals\common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\stream\imemstream.hpp">
+      <Filter>source\cpinternals\stream</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\common\gstring.hpp">
+      <Filter>source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\common\stringpoolsb.hpp">
+      <Filter>source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\common\gstrid.hpp">
+      <Filter>source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\common\windowz.hpp">
+      <Filter>source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\common\platform.hpp">
+      <Filter>source\cpinternals\common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="..\..\assets\CNames.json">
-      <Filter>Assets</Filter>
-    </CopyFileToFolders>
     <CopyFileToFolders Include="..\..\assets\TweakDBIDs.json">
       <Filter>Assets</Filter>
     </CopyFileToFolders>
@@ -296,6 +317,9 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\..\assets\CFacts.json">
       <Filter>Assets</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\internal_names.txt">
+      <Filter>assets</Filter>
     </CopyFileToFolders>
   </ItemGroup>
 </Project>

@@ -77,11 +77,10 @@ struct cetr_uk_thing3
       std::string s;
       reader >> cp_plstring_ref(s);
       x.cn = CName(s);
-      CName_resolver::get().resolve(x.cn);
     }
     else
     {
-      reader >> cbytes_ref(x.cn.as_u64);
+      reader >> cbytes_ref(x.cn.hash);
     }
     reader >> cp_plstring_ref(x.uk0);
     // if (v1 >= 168)
@@ -101,12 +100,12 @@ struct cetr_uk_thing3
         writer.setstate(std::ios::badbit);
         return writer;
       }
-      auto cns = std::string(resolver.resolve(x.cn));
+      auto cns = x.cn.string();
       writer << cp_plstring_ref(cns);
     }
     else
     {
-      writer << cbytes_ref(x.cn.as_u64);
+      writer << cbytes_ref(x.cn.hash);
     }
     writer << cp_plstring_ref(x.uk0);
     // if (v1 >= 168)

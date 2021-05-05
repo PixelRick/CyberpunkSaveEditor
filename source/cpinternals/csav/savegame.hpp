@@ -120,13 +120,13 @@ protected:
 
     bool ok = false;
 
-    progress.comment.assign(fmt::format("Loading node {}", node->name()));
+    progress.comment.assign(fmt::format("Loading node_t {}", node->name()));
     if (load_node_data_struct(node, var))
     {
       if (test)
       {
         progress.value = 0.5f * (end_progress + progress.value);
-        progress.comment.assign(fmt::format("Testing reserialization of node {}", node->name()));
+        progress.comment.assign(fmt::format("Testing reserialization of node_t {}", node->name()));
         if (test_reserialize(node, var))
           ok = true;
       }
@@ -174,7 +174,7 @@ protected:
       MessageBoxA(
         0,
         fmt::format(
-          "Reserialized \"{}\" node differs from original\n"
+          "Reserialized \"{}\" node_t differs from original\n"
           "\n"
           "If your save has been edited with an older version of CPSE,\n"
           "please make the game save it again.\n"
@@ -200,7 +200,7 @@ protected:
     }
     catch (std::exception& e)
     {
-      MessageBoxA(0, fmt::format("couldn't load node {}\nreason: {}", node->name(), e.what()).c_str(), "error", 0);
+      MessageBoxA(0, fmt::format("couldn't load node_t {}\nreason: {}", node->name(), e.what()).c_str(), "error", 0);
       return false;
     }
 

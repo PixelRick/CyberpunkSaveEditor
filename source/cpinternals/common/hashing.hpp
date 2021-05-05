@@ -208,15 +208,14 @@ struct crc64_builder
     while (len >= 8)
     {
       const uint64_t a = *pd++ ^ x;
-      const uint64_t b = *pd++;
       x = s8lut[7][ a        & 0xFF]
         ^ s8lut[6][(a >>  8) & 0xFF]
         ^ s8lut[5][(a >> 16) & 0xFF]
-        ^ s8lut[4][(a >> 24)       ]
-        ^ s8lut[3][ b        & 0xFF]
-        ^ s8lut[2][(b >>  8) & 0xFF]
-        ^ s8lut[1][(b >> 16) & 0xFF]
-        ^ s8lut[0][(b >> 24)       ];
+        ^ s8lut[4][(a >> 24) & 0xFF]
+        ^ s8lut[3][(a >> 32) & 0xFF]
+        ^ s8lut[2][(a >> 40) & 0xFF]
+        ^ s8lut[1][(a >> 48) & 0xFF]
+        ^ s8lut[0][(a >> 56)       ];
       len -= 8;
     }
   
@@ -350,12 +349,10 @@ constexpr uint64_t crc64_combine(uint64_t crc1, uint64_t crc2, size_t len2)
 //--------------------------------------------------------
 //  FNV1A32
 
-constexpr uint32_t fnv1a32(std::string_view str)
+constexpr uint32_t fnv1a32_continue(uint32_t hash, std::string_view str)
 {
-  constexpr uint32_t basis = 0X811C9DC5;
   constexpr uint32_t prime = 0x01000193;
 
-  uint32_t hash = basis;
   for (auto c : str)
   {
     hash ^= c;
@@ -363,6 +360,13 @@ constexpr uint32_t fnv1a32(std::string_view str)
   }
 
   return hash;
+}
+
+constexpr uint32_t fnv1a32(std::string_view str)
+{
+  constexpr uint32_t basis = 0X811C9DC5;
+
+  return fnv1a32_continue(basis, str);
 }
 
 constexpr uint32_t operator""_fnv1a32(const char* const str, std::size_t len)
@@ -373,12 +377,10 @@ constexpr uint32_t operator""_fnv1a32(const char* const str, std::size_t len)
 //--------------------------------------------------------
 //  FNV1A64
 
-constexpr uint64_t fnv1a64(std::string_view str)
+constexpr uint64_t fnv1a64_continue(uint64_t hash, std::string_view str)
 {
-  constexpr uint64_t basis = 0xCBF29CE484222325;
   constexpr uint64_t prime = 0x00000100000001B3;
 
-  uint64_t hash = basis;
   for (auto c : str)
   {
     hash ^= c;
@@ -388,10 +390,19 @@ constexpr uint64_t fnv1a64(std::string_view str)
   return hash;
 }
 
+constexpr uint64_t fnv1a64(std::string_view str)
+{
+  constexpr uint64_t basis = 0xCBF29CE484222325;
+
+  return fnv1a64_continue(basis, str);
+}
+
 constexpr uint64_t operator""_fnv1a64(const char* const str, std::size_t len)
 {
   return fnv1a64(std::string_view(str, len));
 }
+
+
 
 //--------------------------------------------------------
 //  MURMUR3_32
@@ -725,9 +736,9 @@ protected:
 
 protected:
 
-  uint64_t  m_cb;
+  uint64_t  m_cb = 0;
   uint32_t  m_digest[5];
-  uint32_t  m_len;
+  uint32_t  m_len = 0;
   uint8_t   m_buf[64];
 };
 

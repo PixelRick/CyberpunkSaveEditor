@@ -25,15 +25,15 @@ void from_json(const nlohmann::json& j, CFieldDesc& p)
   "props": [
     {
       "ctypename": "NodeRef",
-      "name": "targetOverrideNodeRef"
+      "gname": "targetOverrideNodeRef"
     },
     {
       "ctypename": "gameEntityReference",
-      "name": "targetOverridePuppetRef"
+      "gname": "targetOverridePuppetRef"
     },
     {
       "ctypename": "Float",
-      "name": "duration"
+      "gname": "duration"
     }
   ]
 },

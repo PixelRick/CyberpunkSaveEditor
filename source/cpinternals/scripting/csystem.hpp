@@ -120,6 +120,8 @@ public:
       if (cnames_cnt != m_header.cnames_cnt)
         return false;
 
+      static_assert(sizeof(CName) == 8);
+
       m_subsys_names.resize(cnames_cnt);
       reader.read((char*)m_subsys_names.data(), m_header.cnames_cnt * sizeof(CName));
     }

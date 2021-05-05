@@ -10,6 +10,7 @@ struct ifstream
   : streambase
 {
   ifstream() = default;
+  ~ifstream() override = default;
 
   ifstream(std::filesystem::path path)
     : m_ifs(path, std::ios_base::binary)
@@ -21,7 +22,24 @@ struct ifstream
   {
   }
 
-  ~ifstream() override = default;
+  ifstream(ifstream&& other)
+    : m_ifs(std::move(other.m_ifs))
+  {
+  }
+
+  ifstream& operator=(ifstream&& rhs)
+  {
+    m_ifs = std::move(rhs.m_ifs);
+    return *this;
+  }
+
+  void swap(ifstream& other)
+  {
+    if (this != &other)
+    {
+        m_ifs.swap(other.m_ifs);
+    }
+  }
 
   void open(std::filesystem::path path)
   {
@@ -31,6 +49,11 @@ struct ifstream
   void open(const char* filename)
   {
     m_ifs.open(filename, std::ios_base::binary);
+  }
+
+  bool is_open() const
+  {
+    return m_ifs.is_open();
   }
 
   void close()
@@ -60,7 +83,7 @@ struct ifstream
     return *this;
   }
 
-  streambase& serialize(void* data, size_t size) override
+  streambase& serialize_bytes(void* data, size_t size) override
   {
     m_ifs.read(static_cast<char*>(data), size);
     return *this;

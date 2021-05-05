@@ -2,6 +2,8 @@
 #include <inttypes.h>
 #include <intrin.h>
 #include <vector>
+#include <algorithm>
+#include <type_traits>
 
 #if __has_include(<span>) && (!defined(_HAS_CXX20) or _HAS_CXX20)
 #include <span>
@@ -10,6 +12,8 @@
 namespace std { using tcb::span; }
 #endif
 
+#include <spdlog/spdlog.h>
+
 namespace cp {
 
 inline bool starts_with(const std::string& str, const std::string& with)
@@ -17,6 +21,122 @@ inline bool starts_with(const std::string& str, const std::string& with)
   return with.length() <= str.length()
     && std::equal(with.begin(), with.end(), str.begin());
 }
+
+template <typename T, typename = std::enable_if_t<std::is_arithmetic_v<T>>>
+struct integer_range
+{
+  using integer_type = T;
+
+  integer_range() = default;
+
+  // if end < beg, then end == beg and a warning is logged
+  integer_range(integer_type beg, integer_type end)
+    : m_beg(beg)
+    , m_end(end)
+  {
+    if (m_end < m_beg)
+    {
+      SPDLOG_WARN("m_end < m_beg");
+      m_end = m_beg;
+    }
+  }
+
+  integer_type size() const
+  {
+    return m_end - m_beg;
+  }
+
+  bool empty() const
+  {
+    return m_end == m_beg;
+  }
+
+  integer_type beg() const
+  {
+    return m_beg;
+  }
+
+  integer_type end() const
+  {
+    return m_end;
+  }
+
+  integer_type operator[](integer_type idx) const
+  {
+    if (idx > size())
+    {
+      SPDLOG_ERROR("idx > size()");
+      return m_end;
+    }
+
+    return m_beg + idx;
+  }
+
+  integer_range offset(integer_type offset)
+  {
+    // todo: add overflow checks
+    return {m_beg + offset, m_end + offset};
+  }
+
+  bool is_subrange(integer_range other) const
+  {
+    return (other.beg() >= m_beg) && (other.beg() <= other.end()) && (other.end() <= m_end);
+  }
+
+  bool is_valid_subrange(integer_type offset, integer_type count = integer_type(-1)) const
+  {
+    return is_subrange( subrange_unchecked(offset, count) );
+  }
+
+  integer_range subrange(integer_type offset, integer_type count = integer_type(-1)) const
+  {
+    const integer_range ret = subrange_unchecked(offset, count);
+
+    if (!is_subrange(ret))
+    {
+      SPDLOG_ERROR("invalid parameters");
+      return integer_range();
+    }
+
+    return ret;
+  }
+
+  template <typename T>
+  std::span<T>
+  slice(std::vector<T>& v) const
+  {
+    const auto& it = v.begin() + m_beg;
+    return std::span<T>(&*it, &*it + size());
+  }
+
+  template <typename T>
+  std::span<const T>
+  slice(const std::vector<T>& v) const
+  {
+    const auto& it = v.begin() + m_beg;
+    return std::span<const T>(&*it, &*it + size());
+  }
+
+protected:
+
+  integer_range subrange_unchecked(integer_type offset, integer_type count = integer_type(-1)) const
+  {
+    const integer_type beg_index = m_beg + offset;
+    const integer_type end_index = (count == integer_type(-1)) ? m_end : m_beg + offset + count;
+
+    return integer_range(beg_index, end_index);
+  }
+
+private:
+
+  integer_type m_beg = 0;
+  integer_type m_end = 0;
+};
+
+using u32range = integer_range<uint32_t>;
+using u64range = integer_range<uint64_t>;
+using i32range = integer_range<int32_t>;
+using i64range = integer_range<int64_t>;
 
 template <typename T>
 constexpr T ror(T x, int16_t n)

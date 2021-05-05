@@ -60,7 +60,7 @@ struct ofstream
     return *this;
   }
 
-  virtual streambase& serialize(void* data, size_t size) override
+  virtual streambase& serialize_bytes(void* data, size_t size) override
   {
     m_ofs.write(static_cast<char*>(data), size);
     return *this;

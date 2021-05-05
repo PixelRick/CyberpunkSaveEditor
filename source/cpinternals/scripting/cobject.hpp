@@ -17,6 +17,8 @@
 #include "iproperty.hpp"
 #include "cproperty_factory.hpp"
 
+// todo: move the ui part out of this lib
+#include "imgui/extras/ImGuizmo.h"
 
 // probably temporary until we can match CClass def
 
@@ -436,6 +438,9 @@ public:
 
   static inline bool show_field_types = false;
 
+  [[nodiscard]] bool imgui_widget_wpos(const char* label, bool editable);
+  [[nodiscard]] bool imgui_widget_quat(const char* label, bool editable);
+
   [[nodiscard]] bool imgui_widget(const char* label, bool editable)
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
@@ -443,6 +448,16 @@ public:
       return false;
 
     bool modified = false;
+
+    if (ctypename() == "WorldPosition"_gn)
+    {
+      return imgui_widget_wpos(label, editable);
+    }
+
+    if (ctypename() == "Quaternion"_gn)
+    {
+      return imgui_widget_quat(label, editable);
+    }
 
     static ImGuiTableFlags tbl_flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_RowBg
       | ImGuiTableFlags_Resizable;
@@ -454,7 +469,7 @@ public:
       ImGui::TableSetupScrollFreeze(0, 1);
       if (show_field_types)
         ImGui::TableSetupColumn("field type", ImGuiTableColumnFlags_WidthFixed, 100.f);
-      ImGui::TableSetupColumn("field name", ImGuiTableColumnFlags_WidthFixed, 100.f);
+      ImGui::TableSetupColumn("field gname", ImGuiTableColumnFlags_WidthFixed, 100.f);
       ImGui::TableSetupColumn("value", ImGuiTableColumnFlags_WidthStretch);
       ImGui::TableHeadersRow();
 
@@ -495,7 +510,10 @@ public:
         }
         else
         {
-          ImGui::PushItemWidth(-FLT_MIN);
+          if (prop->ctypename() != "WorldPosition"_gn && prop->ctypename() != "Quaternion"_gn)
+            ImGui::PushItemWidth(-FLT_MIN);
+          else
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth() - 50);
           modified |= field.prop->imgui_widget(field_name.c_str(), editable);
         }
 
@@ -509,6 +527,55 @@ public:
       //}
 
       ImGui::EndTable();
+    }
+
+    if (ctypename() == "Quaternion"_gn)
+    {
+      //const float siz = 100.f;
+      //
+      //ImGuiContext& g = *ImGui::GetCurrentContext();
+      //const ImGuiStyle& style = g.Style;
+      //
+      //const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(100.f, 100.f));
+      //
+      //ImGui::ItemSize(frame_bb, style.FramePadding.y);
+      //ImGui::ItemAdd(frame_bb, 0, &frame_bb);
+      //
+      //ImGui::RenderFrame(frame_bb.Min, frame_bb.Max, ImGui::GetColorU32(ImGuiCol_FrameBg), true, style.FrameRounding);
+      //
+      //ImGuizmo::SetOrthographic(true);
+      //ImGuizmo::SetDrawlist();
+      //ImGuizmo::SetRect(frame_bb.Min.x, frame_bb.Min.y, 100.f, 100.f);
+      //
+      //static float identityMatrix[16] = {
+      //  1.0f, 0.0f, 0.0f, 0.0f,
+      //  0.0f, 1.0f, 0.0f, 0.0f,
+      //  0.0f, 0.0f, 1.0f, 0.0f,
+      //  0.0f, 0.0f, 0.0f, 1.0f };
+      //
+      //const float vsf = 0.57735;
+      //
+      //static float cameraView[16] = {
+      //   vsf, -vsf, -vsf, 0.0f, // rht
+      //  -vsf, -vsf,  vsf, 0.0f, // up
+      //  -vsf, -vsf, -vsf, 0.0f, // fwd
+      //   vsf,  vsf,  vsf, 1.0f };
+      //
+      //static float cameraProjection[16] = {
+      //  0.5f, 0.0f, 0.0f, 0.0f,
+      //  0.0f, 0.5f, 0.0f, 0.0f,
+      //  0.0f, 0.0f, 0.5f, 0.0f,
+      //  0.0f, 0.0f, 0.5f, 1.0f };
+      //
+      //ImGui::InputScalarN("view", ImGuiDataType_Float, cameraView, 16);
+      //ImGui::InputScalarN("proj", ImGuiDataType_Float, cameraProjection, 16);
+      //
+      //ImGuizmo::DrawGrid(cameraView, cameraProjection, identityMatrix, 100.f);
+      //ImGuizmo::DrawCubes(cameraView, cameraProjection, identityMatrix, 1);
+      //ImGuizmo::Manipulate(cameraView, cameraProjection, mCurrentGizmoOperation, mCurrentGizmoMode, matrix, NULL, useSnap ? &snap[0] : NULL, boundSizing ? bounds : NULL, boundSizingSnap ? boundsSnap : NULL);
+      //
+      //ImGuizmo::ViewManipulate(cameraView, camDistance, ImVec2(viewManipulateRight - 128, viewManipulateTop), ImVec2(128, 128), 0x10101010);
+    
     }
 
     return modified;

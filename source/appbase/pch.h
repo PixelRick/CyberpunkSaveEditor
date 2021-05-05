@@ -5,10 +5,10 @@
 #pragma warning(disable:4324) // structure was padded due to __declspec(align())
 
 #ifndef WIN32_LEAN_AND_MEAN
-	#define WIN32_LEAN_AND_MEAN
+  #define WIN32_LEAN_AND_MEAN
 #endif
 #ifndef NOMINMAX
-	#define NOMINMAX
+  #define NOMINMAX
 #endif
 #include <windows.h>
 
@@ -36,7 +36,7 @@ using Microsoft::WRL::ComPtr;
 
 struct noncopyable
 {
-	noncopyable() = default;
-	noncopyable(const noncopyable&) = delete;
-	noncopyable& operator=(const noncopyable&) = delete;
+  noncopyable() = default;
+  noncopyable(const noncopyable&) = delete;
+  noncopyable& operator=(const noncopyable&) = delete;
 };

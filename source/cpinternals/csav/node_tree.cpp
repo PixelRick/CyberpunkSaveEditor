@@ -231,7 +231,7 @@ void node_tree::serialize_in(streambase& ar)
     size_t csize = cd.size-8;
     if (csize > tmp.size())
       tmp.resize(csize);
-    ar.serialize(tmp.data(), csize);
+    ar.serialize_bytes(tmp.data(), csize);
 
     int res = LZ4_decompress_safe(tmp.data(), nodedata.data() + cd.data_offset, (int)csize, cd.data_size);
     if (res != cd.data_size)
@@ -245,7 +245,7 @@ void node_tree::serialize_in(streambase& ar)
   {
     size_t offset = chunk_descs[0].offset;
     ar.seek(offset);
-    ar.serialize(nodedata.data() + offset, nodedata_size - offset);
+    ar.serialize_bytes(nodedata.data() + offset, nodedata_size - offset);
   }
 
   if (ar.has_error())
@@ -332,7 +332,7 @@ void node_tree::serialize_out(streambase& ar)
   tmp.resize(XLZ4_CHUNK_SIZE);
 
   // allocate tbl
-  ar.serialize(tmp.data(), std::max(chunktbl_maxsize, 0xC21 - (size_t)chunkdescs_start));
+  ar.serialize_bytes(tmp.data(), std::max(chunktbl_maxsize, 0xC21 - (size_t)chunkdescs_start));
   chunks_start = (uint32_t)ar.tell();
 
   // --------------------------------------------------------
@@ -342,7 +342,7 @@ void node_tree::serialize_out(streambase& ar)
   serial_tree stree;
   if (!stree.from_tree(root, chunks_start))
   {
-    ar.set_error("couldn't flatten node tree.");
+    ar.set_error("couldn't flatten node_t tree.");
     return;
   }
 
@@ -372,7 +372,7 @@ void node_tree::serialize_out(streambase& ar)
     {
       srcsize = std::min(srcsize, XLZ4_CHUNK_SIZE);
       // write decompressed chunk
-      ar.serialize(pcur, srcsize);
+      ar.serialize_bytes(pcur, srcsize);
       chunk_desc.size = srcsize;
     }
     else
@@ -391,7 +391,7 @@ void node_tree::serialize_out(streambase& ar)
       uint32_t data_size = 0;
       ar << srcsize;
       // write compressed chunk
-      ar.serialize(ptmp, csize);
+      ar.serialize_bytes(ptmp, csize);
 
       chunk_desc.size = csize+8;
     }

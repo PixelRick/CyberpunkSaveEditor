@@ -1,4 +1,4 @@
-#include "streambase.hpp"
+#include <cpinternals/common/streambase.hpp>
 
 #ifndef _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
 #define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
@@ -25,13 +25,13 @@ streambase& streambase::serialize_str_lpfxd(std::string& s)
     {
       const size_t len = static_cast<size_t>(-cnt);
       s.resize(len, '\0');
-      serialize(s.data(), len);
+      serialize_bytes(s.data(), len);
     }
     else
     {
       const size_t len = static_cast<size_t>(cnt);
       std::u16string str16(len, L'\0');
-      serialize(str16.data(), len * 2);
+      serialize_bytes(str16.data(), len * 2);
       std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
       s = convert.to_bytes(str16);
     }
@@ -42,7 +42,7 @@ streambase& streambase::serialize_str_lpfxd(std::string& s)
     const int64_t cnt = -static_cast<int64_t>(len);
     write_int_packed(cnt);
     if (len)
-      serialize(s.data(), len);
+      serialize_bytes(s.data(), len);
   }
 
   return *this;
@@ -51,24 +51,24 @@ streambase& streambase::serialize_str_lpfxd(std::string& s)
 int64_t streambase::read_int_packed()
 {
   uint8_t a = 0;
-  serialize(&a, 1);
+  serialize_byte(&a);
   int64_t value = a & 0x3F;
   const bool sign = !!(a & 0x80);
   if (a & 0x40)
   {
-    serialize(&a, 1);
+    serialize_byte(&a);
     value |= static_cast<uint64_t>(a & 0x7F) << 6;
     if (a < 0)
     {
-      serialize(&a, 1);
+      serialize_byte(&a);
       value |= static_cast<uint64_t>(a & 0x7F) << 13;
       if (a < 0)
       {
-        serialize(&a, 1);
+        serialize_byte(&a);
         value |= static_cast<uint64_t>(a & 0x7F) << 20;
         if (a < 0)
         {
-          serialize(&a, 1);
+          serialize_byte(&a);
           value |= static_cast<uint64_t>(a & 0xFF) << 27;
         }
       }
@@ -113,7 +113,7 @@ void streambase::write_int_packed(int64_t v)
       }
     }
   }
-  serialize((char*)packed.data(), cnt);
+  serialize_bytes((char*)packed.data(), cnt);
 }
 
 } // namespace cp

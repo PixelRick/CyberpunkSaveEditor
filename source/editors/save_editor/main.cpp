@@ -12,8 +12,9 @@
 
 #include "appbase/widgets/csav_widget.hpp"
 #include "appbase/widgets/node_editors/hexedit.hpp"
-#include "cpinternals/tmp/archive_test.hpp"
-#include "cpinternals/init.hpp"
+#include <cpinternals/tmp/archive_test.hpp>
+//#include <cpinternals/radr.hpp>
+#include <cpinternals/init.hpp>
 #include "appbase/app_version.h"
 
 using namespace std::chrono_literals;
@@ -268,6 +269,7 @@ protected:
     std::filesystem::path p(fpath);
     p = std::filesystem::canonical(p); // let's try to remove last null character.. todo: fix in IAppLib
     auto ext = p.extension().string();
+    
     if (ext.rfind(".bin", 0) == 0 or ext.rfind(".buffer", 0) == 0)
     {
       archtest.open(fpath);

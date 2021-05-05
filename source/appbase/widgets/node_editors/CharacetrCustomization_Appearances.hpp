@@ -89,7 +89,7 @@ struct cetr_uk_thing2_widget
 
     if (ImGui::TreeNode("Array #1##cetr2"))
     {
-      static auto name_fn = [](const cp::csav::cetr_uk_thing3& y) { return y.cn.name().string(); };
+      static auto name_fn = [](const cp::csav::cetr_uk_thing3& y) { return y.cn.gstr().string(); };
       modified |= imgui_list_tree_widget(x.vuk3, name_fn, &cetr_uk_thing3_widget::draw, 0, true, true);
       ImGui::TreePop();
     }

@@ -9,7 +9,7 @@
 #include "cpinternals/common.hpp"
 #include "cpinternals/ctypes.hpp"
 #include "cpinternals/scripting.hpp"
-#include "cpinternals/ioarchive/fstream.hpp"
+#include "cpinternals/stream/fstream.hpp"
 #include "value_pool.hpp"
 
 namespace cp::tdb {

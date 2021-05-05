@@ -9,7 +9,7 @@ namespace cp {
 // cp streams can't do both in and out
 template <typename StreamType>
 struct stdstream_wrapper
-  : streambase
+  : public streambase
 {
   using underlying_type = StreamType;
 
@@ -69,16 +69,15 @@ struct stdstream_wrapper
     return *this;
   }
 
-  streambase& serialize(void* data, size_t len) override
+  streambase& serialize_bytes(void* data, size_t len) override
   {
-    
     if constexpr (is_istream)
     {
-      m_ref.read(static_cast<char*>(data), len);
+      m_ref.read(reinterpret_cast<char*>(data), len);
     }
     else
     {
-      m_ref.write(static_cast<char*>(data), len);
+      m_ref.write(reinterpret_cast<char*>(data), len);
     }
     return *this;
   }
