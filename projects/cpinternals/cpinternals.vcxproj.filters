@@ -48,8 +48,17 @@
     <Filter Include="source\cpinternals\tmp">
       <UniqueIdentifier>{a0a9252c-0b0a-41c4-870d-2d766c2bdd0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\cpinternals\oodle">
+      <UniqueIdentifier>{f5ea1935-d081-4bfb-8f82-c8dfd690aa2b}</UniqueIdentifier>
+    </Filter>
     <Filter Include="source\cpinternals\stream">
       <UniqueIdentifier>{51bf6c62-d0bb-4ce0-8d80-69f380db5422}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\cpinternals\filesystem">
+      <UniqueIdentifier>{be7111d4-2f61-4bc4-935c-425b5eb0f329}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="assets\ardbs">
+      <UniqueIdentifier>{335ef4d0-c866-4427-b2c4-85fc8272cc4d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -95,8 +104,23 @@
     <ClCompile Include="..\..\source\cpinternals\common\utils.cpp">
       <Filter>source\cpinternals\common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\oodle\oodle.cpp">
+      <Filter>source\cpinternals\oodle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\filesystem\treefs.cpp">
+      <Filter>source\cpinternals\filesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\filesystem\archive.cpp">
+      <Filter>source\cpinternals\filesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\filesystem\radr.cpp">
+      <Filter>source\cpinternals\filesystem</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\source\cpinternals\common\windowz.cpp">
       <Filter>source\cpinternals\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\filesystem\win_file_reader.cpp">
+      <Filter>source\cpinternals\filesystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -283,6 +307,9 @@
     <ClInclude Include="..\..\source\cpinternals\stream\stdstream_wrapper.hpp">
       <Filter>source\cpinternals\stream</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\oodle\oodle.hpp">
+      <Filter>source\cpinternals\oodle</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\source\cpinternals\common\hashing_tables.hpp">
       <Filter>source\cpinternals\common</Filter>
     </ClInclude>
@@ -298,11 +325,29 @@
     <ClInclude Include="..\..\source\cpinternals\common\gstrid.hpp">
       <Filter>source\cpinternals\common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\filesystem\archive_file_stream.hpp">
+      <Filter>source\cpinternals\filesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\filesystem\treefs.hpp">
+      <Filter>source\cpinternals\filesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\filesystem\archive.hpp">
+      <Filter>source\cpinternals\filesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\filesystem\radr.hpp">
+      <Filter>source\cpinternals\filesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\filesystem\path.hpp">
+      <Filter>source\cpinternals\filesystem</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\source\cpinternals\common\windowz.hpp">
       <Filter>source\cpinternals\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cpinternals\common\platform.hpp">
       <Filter>source\cpinternals\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\filesystem\file_reader.hpp">
+      <Filter>source\cpinternals\filesystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -320,6 +365,102 @@
     </CopyFileToFolders>
     <CopyFileToFolders Include="..\..\assets\internal_names.txt">
       <Filter>assets</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\audio_1_general.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\audio_2_soundbanks.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\basegame_1_engine.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\basegame_2_mainmenu.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\basegame_3_nightcity.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\basegame_3_nightcity_gi.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\basegame_3_nightcity_terrain.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\basegame_4_animation.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\basegame_4_appearance.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\basegame_4_gamedata.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\basegame_5_video.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\basegame_Mod.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_ar_text.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_cs_text.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_de_text.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_en_text.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_en_voice.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_es-es_text.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_es-mx_text.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_fr_text.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_fr_voice.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_hu_text.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_it_text.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_ja_text.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_ko_text.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_pl_text.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_pt_text.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_ru_text.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_th_text.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_tr_text.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_zh-cn_text.ardb">
+      <Filter>assets\ardbs</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_zh-tw_text.ardb">
+      <Filter>assets\ardbs</Filter>
     </CopyFileToFolders>
   </ItemGroup>
 </Project>

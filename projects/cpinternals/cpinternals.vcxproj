@@ -62,7 +62,14 @@
     <ClInclude Include="..\..\source\cpinternals\ctypes\CFact.hpp" />
     <ClInclude Include="..\..\source\cpinternals\ctypes\CName.hpp" />
     <ClInclude Include="..\..\source\cpinternals\ctypes\TweakDBID.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\filesystem\archive.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\filesystem\archive_file_stream.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\filesystem\path.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\filesystem\radr.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\filesystem\treefs.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\filesystem\file_reader.hpp" />
     <ClInclude Include="..\..\source\cpinternals\init.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\oodle\oodle.hpp" />
     <ClInclude Include="..\..\source\cpinternals\radr.hpp" />
     <ClInclude Include="..\..\source\cpinternals\rtdt\dynamic.hpp" />
     <ClInclude Include="..\..\source\cpinternals\rtdt\rttr_helpers.hpp" />
@@ -99,7 +106,12 @@
     <ClCompile Include="..\..\source\cpinternals\ctypes\CEnum.cpp" />
     <ClCompile Include="..\..\source\cpinternals\ctypes\CFact.cpp" />
     <ClCompile Include="..\..\source\cpinternals\ctypes\TweakDBID.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\filesystem\archive.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\filesystem\radr.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\filesystem\treefs.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\filesystem\win_file_reader.cpp" />
     <ClCompile Include="..\..\source\cpinternals\init.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\oodle\oodle.cpp" />
     <ClCompile Include="..\..\source\cpinternals\rtdt\Source.cpp" />
     <ClCompile Include="..\..\source\cpinternals\scripting\cclass.cpp" />
     <ClCompile Include="..\..\source\cpinternals\scripting\cobject.cpp" />
@@ -123,6 +135,200 @@
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\..\assets\internal_names.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\..\assets\ardbs\audio_1_general.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\audio_2_soundbanks.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\basegame_1_engine.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\basegame_2_mainmenu.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\basegame_3_nightcity.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\basegame_3_nightcity_gi.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\basegame_3_nightcity_terrain.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\basegame_4_animation.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\basegame_4_appearance.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\basegame_4_gamedata.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\basegame_5_video.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\basegame_Mod.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_ar_text.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_cs_text.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_de_text.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_en_text.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_en_voice.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_es-es_text.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_es-mx_text.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_fr_text.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_fr_voice.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_hu_text.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_it_text.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_ja_text.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_ko_text.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_pl_text.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_pt_text.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_ru_text.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_th_text.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_tr_text.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_zh-cn_text.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\..\assets\ardbs\lang_zh-tw_text.ardb">
+      <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
+    </CopyFileToFolders>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
