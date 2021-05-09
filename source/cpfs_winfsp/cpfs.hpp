@@ -6,6 +6,7 @@
 #include <cpinternals/common.hpp>
 #include <cpinternals/filesystem/archive.hpp>
 #include <cpinternals/filesystem/treefs.hpp>
+#include <cpinternals/oodle/oodle.hpp>
 
 extern FSP_FILE_SYSTEM_INTERFACE s_cpfs_interface;
 
@@ -34,6 +35,9 @@ struct scope_timer
   std::string name;
 };
 
+// todo list:
+//  - named streams (:raw for raw access, otherwise try to uncook)
+
 struct cpfs
 {
   cpfs()
@@ -51,6 +55,8 @@ struct cpfs
     m_volume_params.CasePreservedNames = 1;
     m_volume_params.UnicodeOnDisk = 1;
     m_volume_params.PersistentAcls = 1;
+    m_volume_params.NamedStreams = 1;
+    m_volume_params.ReadOnlyVolume = 1;
     m_volume_params.PostCleanupWhenModifiedOnly = 1;
     m_volume_params.PassQueryDirectoryPattern = 1;
     m_volume_params.FlushAndPurgeOnCleanup = 1;
@@ -85,6 +91,38 @@ struct cpfs
       return false;
     }
 
+    auto game_bin_path_opt = cp::windowz::get_cp_executable_path();
+    if (!game_bin_path_opt.has_value())
+    {
+      MessageBoxA(0, "Game path could not be located", "error", 0);
+      return false;
+    }
+
+    auto game_bin_path = game_bin_path_opt.value();
+    auto game_path = game_bin_path.parent_path().parent_path().parent_path();
+
+    content_path = game_path / "archive/pc/content";
+    if (!std::filesystem::exists(content_path))
+    {
+      MessageBoxA(0, "Game content path could not be located", "error", 0);
+      return false;
+    }
+
+    if (!cp::oodle::is_available())
+    {
+      MessageBoxA(0, "oodle couldn't be loaded", "error", 0);
+      return false;
+    }
+
+    SPDLOG_INFO("loading fsp lib..");
+    if (!NT_SUCCESS(FspLoad(0)))
+    {
+      MessageBoxA(0, "WinFSP couldn't be loaded (install it first..)", "error", 0);
+      return false;
+    }
+
+    SPDLOG_INFO("game path: {}", game_path.string());
+
     NTSTATUS Status = STATUS_SUCCESS;
 
     Status = FspFileSystemCreate(
@@ -113,6 +151,31 @@ struct cpfs
     disk_letter = FspFileSystemMountPoint(m_fsp_fs);
 
     FspFileSystemSetDebugLog(m_fsp_fs, fsp_loglvl);
+
+    return true;
+  }
+
+  bool load_archives()
+  {
+    scope_timer st("load_archive loop");
+
+    for (const auto& dirent: std::filesystem::directory_iterator(content_path))
+    {
+      auto fname = dirent.path().filename();
+      auto sfname = fname.string();
+      if (fname.extension() == ".archive")
+      {
+        if (cp::starts_with(sfname, "lang_"))
+        {
+          if (!cp::starts_with(sfname, "lang_en"))
+          {
+            continue;
+          }
+        }
+    
+        tfs.load_archive(dirent.path().string());
+      }
+    }
 
     return true;
   }
@@ -159,7 +222,10 @@ struct cpfs
   std::filesystem::path diffdir_path;
   std::wstring disk_letter;
   std::wstring volume_label;
+
+  std::filesystem::path content_path;
   cp::filesystem::treefs tfs;
+  std::shared_mutex mtx;
 
 private:
 

@@ -27,7 +27,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\cpfs_winfsp\cpfs.hpp" />
+    <ClInclude Include="..\..\source\cpfs_winfsp\resource.h" />
     <ClInclude Include="..\..\source\cpfs_winfsp\winfsp.hpp" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\cpinternals\cpinternals.vcxproj">
@@ -36,6 +38,12 @@
     <ProjectReference Include="..\external\xlz4.vcxproj">
       <Project>{e368f9af-5f85-4ad4-8e6f-2056fc877d38}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\source\cpfs_winfsp\cpfs.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\source\cpfs_winfsp\cpfs_winfsp.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -107,17 +115,20 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>winfsp-x64.lib;dcomp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winfsp-x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);$(WinFSPLibrary_lib);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <DelayLoadDLLs>winfsp-x64.dll</DelayLoadDLLs>
     </Link>
     <CopyFileToFolders>
       <DestinationFolders>$(OutDir)/db</DestinationFolders>
     </CopyFileToFolders>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)\source;</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">
     <ClCompile>
@@ -136,16 +147,19 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>winfsp-x64.lib;dcomp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winfsp-x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);$(WinFSPLibrary_lib);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <DelayLoadDLLs>winfsp-x64.dll</DelayLoadDLLs>
     </Link>
     <CopyFileToFolders>
       <DestinationFolders>$(OutDir)/db</DestinationFolders>
     </CopyFileToFolders>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)\source;</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -163,13 +177,16 @@
       <AdditionalLibraryDirectories>$(OutDir);$(WinFSPLibrary_lib);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
-      <AdditionalDependencies>winfsp-x64.lib;dcomp.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>winfsp-x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
       <DelayLoadDLLs>winfsp-x64.dll</DelayLoadDLLs>
     </Link>
     <CopyFileToFolders>
       <DestinationFolders>$(OutDir)/db</DestinationFolders>
     </CopyFileToFolders>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)\source;</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

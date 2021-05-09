@@ -5,6 +5,9 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;hpp;h;cxx;asm</Extensions>
     </Filter>
+    <Filter Include="assets">
+      <UniqueIdentifier>{67feed13-7143-47c7-b49c-70c052d4035b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\cpfs_winfsp\main.cpp">
@@ -24,5 +27,21 @@
     <ClInclude Include="..\..\source\cpfs_winfsp\winfsp.hpp">
       <Filter>source</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpfs_winfsp\resource.h">
+      <Filter>assets</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\source\cpfs_winfsp\cpfs.ico">
+      <Filter>assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\source\cpfs_winfsp\cpfs_winfsp.rc">
+      <Filter>assets</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
