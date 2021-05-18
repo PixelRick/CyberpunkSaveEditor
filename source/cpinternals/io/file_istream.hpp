@@ -6,34 +6,34 @@
 namespace cp {
 
 // Input binary file stream
-struct ifstream
+struct file_istream
   : streambase
 {
-  ifstream() = default;
-  ~ifstream() override = default;
+  file_istream() = default;
+  ~file_istream() override = default;
 
-  ifstream(std::filesystem::path path)
+  file_istream(std::filesystem::path path)
     : m_ifs(path, std::ios_base::binary)
   {
   }
 
-  ifstream(const char* filename)
+  file_istream(const char* filename)
     : m_ifs(filename, std::ios_base::binary)
   {
   }
 
-  ifstream(ifstream&& other)
+  file_istream(file_istream&& other)
     : m_ifs(std::move(other.m_ifs))
   {
   }
 
-  ifstream& operator=(ifstream&& rhs)
+  file_istream& operator=(file_istream&& rhs)
   {
     m_ifs = std::move(rhs.m_ifs);
     return *this;
   }
 
-  void swap(ifstream& other)
+  void swap(file_istream& other)
   {
     if (this != &other)
     {

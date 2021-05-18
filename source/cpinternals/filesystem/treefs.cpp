@@ -1,4 +1,5 @@
 #include <cpinternals/filesystem/treefs.hpp>
+#include <cpinternals/io/file_stream.hpp>
 #include <filesystem>
 
 namespace cp::filesystem {
@@ -128,7 +129,7 @@ constexpr int32_t ardb_root_idx = -1;
 // array of (dirs/files fhash (optional), idx parent, idx fname) = one u64 per file/ folder = 5MB
 bool treefs::load_ardb(const std::filesystem::path& arpath)
 {
-  ifstream ifs;
+  cp::file_istream ifs;
   ifs.open(arpath);
 
   if (!ifs.is_open())
@@ -275,7 +276,10 @@ std::pair<int32_t, bool> treefs::insert_child_entry(int32_t parent_entry_idx, fs
     const auto& e = m_entries[entry_idx];
     if (e.name != name || e.parent_entry_idx != parent_entry_idx)
     {
-      SPDLOG_CRITICAL("collision detected, \"{}\" vs \"{}\"", get_path(e).string(), (get_path(parent_copy) / name).string());
+      SPDLOG_CRITICAL(
+        "path hash collision detected, \"{}\" vs \"{}\"",
+        get_path(e).string(),
+        (get_path(parent_copy).append(name_strv, path::already_normalized_tag())).string());
       return {-1, false};
     }
 

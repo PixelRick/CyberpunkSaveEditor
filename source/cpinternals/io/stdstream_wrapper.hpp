@@ -5,7 +5,6 @@
 
 namespace cp {
 
-
 // cp streams can't do both in and out
 template <typename StreamType>
 struct stdstream_wrapper

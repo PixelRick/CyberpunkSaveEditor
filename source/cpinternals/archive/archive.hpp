@@ -7,15 +7,12 @@
 #include <memory>
 
 #include <cpinternals/common.hpp>
-#include <cpinternals/stream/fstream.hpp>
-#include <cpinternals/stream/imemstream.hpp>
-#include <cpinternals/filesystem/path.hpp>
-#include <cpinternals/filesystem/radr.hpp>
-#include <cpinternals/filesystem/file_reader.hpp>
+#include <cpinternals/archive/radr.hpp>
+#include <cpinternals/os/file_reader.hpp>
 
 namespace cp {
 
-#define CACHE_FILE_SIZE
+//#define CACHE_FILE_SIZE
 
 // read-only, standard thread-safety
 struct archive
@@ -100,7 +97,7 @@ protected:
 
 public:
 
-  archive(const std::filesystem::path& p, radr::metadata&& md, file_reader&& freader, create_tag&&);
+  archive(const std::filesystem::path& p, radr::metadata&& md, os::file_reader&& freader, create_tag&&);
 
   ~archive() = default;
 
@@ -109,22 +106,22 @@ public:
 
   static std::shared_ptr<archive> load(const std::filesystem::path& path);
 
-  const std::filesystem::path& path() const
+  inline const std::filesystem::path& path() const
   {
     return m_path;
   }
 
-  const cp::radr::version& ver() const
+  inline const cp::radr::version& ver() const
   {
     return m_ver;
   }
 
-  size_t size() const
+  inline size_t size() const
   {
     return m_records.size();
   }
 
-  file_handle get_file_handle(uint32_t index) const
+  inline file_handle get_file_handle(uint32_t index) const
   {
     if (index >= m_records.size())
     {
@@ -135,36 +132,7 @@ public:
     return {shared_from_this(), index};
   }
 
-  file_info get_file_info(uint32_t index) const
-  {
-    file_info ret;
-
-    if (index >= m_records.size())
-    {
-      SPDLOG_CRITICAL("index out of range");
-      DEBUG_BREAK();
-    }
-
-    const file_record rec = m_records[index];
-    
-    ret.id = rec.fid;
-    ret.time = rec.ftime;
-    
-    auto segspan = rec.segs_irange.slice(m_segments);
-    auto segit = segspan.begin();
-    
-    ret.size = segit->size;
-    ret.disk_size = segit->disk_size;
-
-    while (++segit != segspan.end())
-    {
-      const size_t disk_size = segit->disk_size;
-      ret.size += disk_size;
-      ret.disk_size += disk_size;
-    }
-
-    return ret;
-  }
+  file_info get_file_info(uint32_t index) const;
 
   bool read_segment(const cp::radr::segment_descriptor& sd, const std::span<char>& dst, bool decompress) const;
 
@@ -207,7 +175,7 @@ private:
   std::vector<cp::radr::segment_descriptor> m_segments;
   std::vector<cp::radr::dependency>         m_dependencies;
 
-  mutable file_reader                       m_freader;
+  mutable os::file_reader                   m_freader;
   mutable std::mutex                        m_freader_mtx;
 };
 

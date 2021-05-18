@@ -6,11 +6,10 @@
 #include <numeric>
 
 #include <cpinternals/common.hpp>
-#include <cpinternals/filesystem/path.hpp>
 
 namespace cp::radr {
 
-using file_id = filesystem::path_id;
+using file_id = cp::path_id;
 
 struct file_record
 {

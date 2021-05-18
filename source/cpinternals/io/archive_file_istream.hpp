@@ -2,12 +2,12 @@
 #include <fstream>
 #include <filesystem>
 #include <cpinternals/common.hpp>
-#include <cpinternals/filesystem/archive.hpp>
+#include <cpinternals/archive/archive.hpp>
 
 namespace cp {
 
 // not thread safe
-struct archive_file_stream
+struct archive_file_istream
   : streambase
 {
   enum option : uint32_t
@@ -16,10 +16,10 @@ struct archive_file_stream
     //minimize_buffering = 1, // skips buffering for whole segment or file reads
   };
 
-  archive_file_stream() = default;
-  ~archive_file_stream() override = default;
+  archive_file_istream() = default;
+  ~archive_file_istream() override = default;
 
-  archive_file_stream(const archive::file_handle& handle, option options = option::none)
+  archive_file_istream(const archive::file_handle& handle, option options = option::none)
   {
     open(handle, options);
   }
@@ -385,7 +385,7 @@ protected:
 
   void reset()
   {
-    *this = archive_file_stream();
+    *this = archive_file_istream();
   }
 
 private:

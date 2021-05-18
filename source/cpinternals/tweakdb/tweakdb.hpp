@@ -9,12 +9,10 @@
 #include "cpinternals/common.hpp"
 #include "cpinternals/ctypes.hpp"
 #include "cpinternals/scripting.hpp"
-#include "cpinternals/stream/fstream.hpp"
+#include "cpinternals/io/file_stream.hpp"
 #include "value_pool.hpp"
 
 namespace cp::tdb {
-
-namespace detail {
 
 struct header_t
 {
@@ -27,8 +25,6 @@ struct header_t
   uint32_t inlgroups_offset     = 0;
   uint32_t packages_offset      = 0;
 };
-
-}
 
 struct QuatElem
 {
@@ -76,7 +72,7 @@ struct pool_desc_t
   {
     ar << armanip::cnamehash;
     ar << x.ctypename << x.len;
-    ar << armanip::cnamestr;
+    ar << armanip::cnamestr; // todo: save and restore
     return ar;
   }
 };
@@ -153,32 +149,32 @@ struct tweakdb
   {
     // Add some types to the CNames
     auto& resolver = CName_resolver::get();
-    resolver.register_name("String");
-    resolver.register_name("Quaternion");
-    resolver.register_name("array:Bool");
-    resolver.register_name("array:CName");
-    resolver.register_name("array:Int32");
-    resolver.register_name("array:raRef:CResource");
-    resolver.register_name("array:Vector2");
-    resolver.register_name("array:String");
-    resolver.register_name("array:Float");
-    resolver.register_name("array:Vector3");
-    resolver.register_name("array:TweakDBID");
-    resolver.register_name("Vector3");
-    resolver.register_name("EulerAngles");
-    resolver.register_name("Vector2");
-    resolver.register_name("TweakDBID");
-    resolver.register_name("CName");
-    resolver.register_name("raRef:CResource");
-    resolver.register_name("gamedataLocKeyWrapper");
-    resolver.register_name("Float");
-    resolver.register_name("Int32");
-    resolver.register_name("Bool");
+    resolver.register_str("String");
+    resolver.register_str("Quaternion");
+    resolver.register_str("array:Bool");
+    resolver.register_str("array:CName");
+    resolver.register_str("array:Int32");
+    resolver.register_str("array:raRef:CResource");
+    resolver.register_str("array:Vector2");
+    resolver.register_str("array:String");
+    resolver.register_str("array:Float");
+    resolver.register_str("array:Vector3");
+    resolver.register_str("array:TweakDBID");
+    resolver.register_str("Vector3");
+    resolver.register_str("EulerAngles");
+    resolver.register_str("Vector2");
+    resolver.register_str("TweakDBID");
+    resolver.register_str("CName");
+    resolver.register_str("raRef:CResource");
+    resolver.register_str("gamedataLocKeyWrapper");
+    resolver.register_str("Float");
+    resolver.register_str("Int32");
+    resolver.register_str("Bool");
   }
 
   bool open(std::filesystem::path path)
   {
-    ifstream ifa(path);
+    file_istream ifa(path);
 
     ifa.seek(0, std::ios_base::end);
     uint32_t blob_size = (uint32_t)ifa.tell();
@@ -257,7 +253,7 @@ public:
   //resolver.register_name("Bool");
 
 private:
-  detail::header_t m_header;
+  header_t m_header;
   std::vector<pool_desc_t> m_pools_descs;
 };
 

@@ -4,9 +4,9 @@
 
 #include <cpinternals/common.hpp>
 
-namespace cp::filesystem {
+namespace cp {
 
-// depot paths:
+// resource paths:
 // - are lower case ascii
 // - use the separator '\'
 // - have no prefix separator
@@ -21,52 +21,31 @@ struct path
   path(const path& p) = default;
   path(path&& p) noexcept = default;
 
-  path(std::string&& s) noexcept
-    : str(std::move(s))
+  template <class InputIt>
+  path(InputIt first, InputIt last, bool& success)
   {
-    normalize();
-  }
-
-  path(std::wstring_view wcs, bool& success)
-  {
-    assign(wcs, success);
+    normalize_append(first, last, success);
   }
 
   template <class Source>
-  path(const Source& s)
-    : str(s)
+  path(const Source& s, bool& success)
+    : path(std::begin(s), std::end(s), success) {}
+
+  path(std::string&& str, bool& success)
+    : str(std::move(str))
   {
-    normalize();
+    normalize_moved(success);
   }
 
-  template <class InputIt>
-  path(InputIt first, InputIt last)
-    : str(first, last)
-  {
-    normalize();
-  }
-
-  path(std::string_view strv, already_normalized_tag&&)
-    : str(strv) {}
+  template <class Source>
+  path(const Source& s, already_normalized_tag&&)
+    : str(s) {}
 
   path(std::string&& s, already_normalized_tag&&)
     : str(std::move(s)) {}
 
   path& operator=(const path& p) = default;
   path& operator=(path&& p) noexcept = default;
-  
-  path& operator=(std::string&& s)
-  {
-    str = std::move(s);
-    normalize();
-  }
-  
-  template <class Source>
-  path& operator=(const Source& s)
-  {
-    str = s;
-    normalize();
-  }
 
   friend inline bool operator==(const path& lhs, const path& rhs) noexcept
   {
@@ -105,63 +84,64 @@ struct path
     return ret;
   }
 
-  path& operator/=(const path& rhs)
+  inline path& operator/=(const path& rhs)
   {
-    append_unnormalized(rhs.str);
+    append_raw(rhs.str);
     return *this;
-  }
-
-  template <class Source>
-  path& operator/=(const Source& s)
-  {
-    const size_t start = append_unnormalized(s);
-    normalize(start);
-    return *this;
-  }
-
-  template <class Source>
-  path& assign(const Source& s) noexcept
-  {
-    str = s;
-    normalize();
-  }
-
-  path& assign(std::wstring_view wcs, bool& success) noexcept
-  {
-    str.resize(wcs.length(), 0);
-
-    auto wr_it = str.begin();
-    for (auto rd_it = wcs.begin(); rd_it != wcs.end(); ++rd_it, ++wr_it)
-    {
-      const wchar_t wc = *rd_it;
-
-      if (wc & 0xFF80)
-      {
-        success = false;
-        clear();
-        return *this;
-      }
-
-      *wr_it = static_cast<char>(wc);
-    }
-
-    success = true;
-    normalize();
-    return *this;
-  }
-
-  template <class Source>
-  path& append(const Source& s)
-  {
-    return operator/=(s);
   }
 
   template <class InputIt>
-  path& append(InputIt first, InputIt last)
+  inline path& assign(InputIt first, InputIt last, bool& success)
   {
-    const size_t start = append_unnormalized<InputIt>(first, last);
-    normalize(start);
+    str.clear();
+    append(first, last, success);
     return *this;
+  }
+
+  template <class Source>
+  inline path& assign(const Source& src, bool& success)
+  {
+    return assign(std::begin(src), std::end(src), success);
+  }
+
+  template <class InputIt>
+  inline path& assign(InputIt first, InputIt last, already_normalized_tag&&)
+  {
+    str.clear();
+    append(first, last, already_normalized_tag{});
+    return *this;
+  }
+
+  template <class Source>
+  inline path& assign(const Source& src, already_normalized_tag&&)
+  {
+    return assign(std::begin(src), std::end(src), already_normalized_tag{});
+  }
+
+  template <class InputIt>
+  inline path& append(InputIt first, InputIt last, bool& success)
+  {
+    normalize_append(first, last, success);
+    return *this;
+  }
+
+  template <class Source>
+  inline path& append(const Source& src, bool& success)
+  {
+    return append(std::begin(src), std::end(src), success);
+  }
+
+  template <class InputIt>
+  inline path& append(InputIt first, InputIt last, already_normalized_tag&&)
+  {
+    append_raw(first, last);
+    return *this;
+  }
+
+  template <class Source>
+  inline path& append(const Source& src, already_normalized_tag&&)
+  {
+    return append(std::begin(src), std::end(src), already_normalized_tag{});
   }
 
   void clear() noexcept
@@ -231,21 +211,17 @@ struct path
     return str.compare(p.str);
   }
 
-  // todo: normalize while comparing..
-
-  int compare(const std::string& str) const noexcept
+  template <class Source>
+  int compare(const Source& src) const noexcept
 	{
-    return str.compare(path(str));
-  }
-
-  int compare(std::string_view strv) const noexcept
-	{
-    return str.compare(path(strv));
+    bool normalized = {};
+    path p(src, normalized);
+    return normalized ? compare(p) : -1;
   }
 
   int compare(const char* s) const noexcept
 	{
-    return str.compare(path(s));
+    return compare(std::string_view(s));
   }
 
   path parent_path() const
@@ -335,8 +311,9 @@ protected:
     return pos;
   }
 
+  // returns previous size
   template <class InputIt>
-  size_t append_unnormalized(InputIt first, InputIt last)
+  size_t append_raw(InputIt first, InputIt last)
   {
     const size_t start = str.size();
 
@@ -358,25 +335,52 @@ protected:
   }
 
   template <class Source>
-  size_t append_unnormalized(const Source& s)
+  inline path& append_raw(const Source& src)
   {
-    return append_unnormalized(std::begin(s), std::end(s));
+    append_raw(std::begin(src), std::end(src));
+    return *this;
   }
 
-  // note: removes prefix separators even when start != 0
-  void normalize(size_t start = 0)
+  template <typename CharT>
+  static inline bool is_separator(CharT c)
   {
-    bool prev_was_sep = true; // skip prefix separator if any
-    auto write_it = str.begin() + start;
-    for (auto read_it = write_it; read_it != str.end(); ++read_it)
+    return c == static_cast<CharT>('/') || c == static_cast<CharT>('\\');
+  }
+
+  // returns appended count of characters
+  template <class InputIt, class OutIt>
+  static size_t normalize_copy_nosep(InputIt first, InputIt last, OutIt dest, bool& success)
+  {
+    using input_char_type = decltype(*InputIt());
+
+    success = true;
+
+    bool prev_is_sep = true;
+
+    auto write_it = dest;
+    auto read_it = first;
+    auto last_sep_it = dest;
+
+    while (read_it != last)
     {
-      const char c = *read_it;
+      const auto tc = *read_it++;
+
+      // check for forbidden characters
+      if (tc & 0xFF80)
+      {
+        success = false;
+        return 0;
+      }
+
+      const char c = static_cast<char>(tc);
+
       if (c == '/' || c == '\\')
       {
-        if (!prev_was_sep)
+        if (!prev_is_sep)
         {
+          prev_is_sep = true;
+          last_sep_it = write_it;
           *(write_it++) = '\\';
-          prev_was_sep = true;
         }
       }
       else if (c == ':')
@@ -385,18 +389,60 @@ protected:
       }
       else
       {
+        prev_is_sep = false;
         *(write_it++) = std::tolower(c);
-        prev_was_sep = false;
       }
     }
 
-    auto rit = std::reverse_iterator(write_it);
-    while (rit != str.rend() && *rit == '\\')
+    if (prev_is_sep)
     {
-      ++rit;
+      write_it = last_sep_it;
     }
 
-    str.resize(std::distance(str.begin(), rit.base()));
+    return std::distance(dest, write_it);
+  }
+
+  template <class InputIt>
+  void normalize_append(InputIt beg, InputIt end, bool& success)
+  {
+    success = true;
+
+    const size_t max_append = 1 + std::distance(beg, end);
+    const size_t prev_size = str.size();
+
+    str.resize(prev_size + max_append);
+
+    auto write_it = str.begin() + prev_size;
+
+    size_t appended_cnt = 0;
+
+    if (prev_size > 0)
+    {
+      *(write_it++) = '\\';
+      appended_cnt++;
+    }
+
+    const size_t copied_cnt = normalize_copy_nosep(beg, end, write_it, success);
+
+    if (!success || !copied_cnt)
+    {
+      str.resize(prev_size);
+    }
+    else
+    {
+      appended_cnt += copied_cnt;
+      str.resize(prev_size + appended_cnt);
+    }
+  }
+
+  void normalize_moved(bool& success)
+  {
+    size_t copied_cnt = normalize_copy_nosep(str.begin(), str.end(), str.begin(), success);
+    if (!success)
+    {
+      copied_cnt = 0;
+    }
+    str.resize(copied_cnt);
   }
 
 private:
@@ -441,7 +487,7 @@ struct path_id
 
   static constexpr path_id root()
   {
-    return path_id("");
+    return path_id(""_fnv1a64);
   }
 
   // in-place compute the path identifier of the concatenation of this's path and rhs with a directory separator.
@@ -483,14 +529,14 @@ struct path_id
   uint64_t hash = 0;
 };
 
-} // namespace cp::filesystem
+} // namespace cp
 
 namespace std {
 
 template <>
-struct hash<cp::filesystem::path_id>
+struct hash<cp::path_id>
 {
-  std::size_t operator()(const cp::filesystem::path_id& k) const noexcept
+  std::size_t operator()(const cp::path_id& k) const noexcept
   {
     return k.hash;
   }

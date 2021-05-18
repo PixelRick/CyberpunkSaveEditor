@@ -6,22 +6,22 @@
 namespace cp {
 
 // Output binary file stream
-struct ofstream
+struct file_ostream
   : streambase
 {
-  ofstream() = default;
+  file_ostream() = default;
 
-  ofstream(std::filesystem::path path)
+  file_ostream(std::filesystem::path path)
     : m_ofs(path, std::ios_base::binary)
   {
   }
 
-  ofstream(const char* filename)
+  file_ostream(const char* filename)
     : m_ofs(filename, std::ios_base::binary)
   {
   }
 
-  ~ofstream() override = default;
+  ~file_ostream() override = default;
 
   void open(std::filesystem::path path)
   {

@@ -6,15 +6,15 @@
 namespace cp {
 
 // Input memory stream
-struct imemstream
+struct memory_istream
   : streambase
 {
-  ~imemstream() override = default;
+  ~memory_istream() override = default;
 
-  imemstream(std::span<const char> span)
+  memory_istream(std::span<const char> span)
     : m_span(span), m_pos(0) {}
 
-  imemstream(const char* data, size_t size)
+  memory_istream(const char* data, size_t size)
     : m_span(data, size), m_pos(0) {}
 
   bool is_reader() const override

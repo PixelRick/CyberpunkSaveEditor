@@ -21,11 +21,14 @@
     <ProjectName>cpinternals</ProjectName>
   </PropertyGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\source\cpinternals\archive\archive.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\archive\radr.hpp" />
     <ClInclude Include="..\..\source\cpinternals\common.hpp" />
     <ClInclude Include="..\..\source\cpinternals\common\cname.hpp" />
     <ClInclude Include="..\..\source\cpinternals\common\gstrid.hpp" />
     <ClInclude Include="..\..\source\cpinternals\common\gname.hpp" />
     <ClInclude Include="..\..\source\cpinternals\common\gstring.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\common\path.hpp" />
     <ClInclude Include="..\..\source\cpinternals\common\platform.hpp" />
     <ClInclude Include="..\..\source\cpinternals\common\stringpoolsb.hpp" />
     <ClInclude Include="..\..\source\cpinternals\common\cnameset.hpp" />
@@ -36,7 +39,6 @@
     <ClInclude Include="..\..\source\cpinternals\common\stringpool.hpp" />
     <ClInclude Include="..\..\source\cpinternals\common\tstamp.hpp" />
     <ClInclude Include="..\..\source\cpinternals\common\utils.hpp" />
-    <ClInclude Include="..\..\source\cpinternals\common\windowz.hpp" />
     <ClInclude Include="..\..\source\cpinternals\csav.hpp" />
     <ClInclude Include="..\..\source\cpinternals\csav\node_tree.hpp" />
     <ClInclude Include="..\..\source\cpinternals\csav\nodes.hpp" />
@@ -62,14 +64,21 @@
     <ClInclude Include="..\..\source\cpinternals\ctypes\CFact.hpp" />
     <ClInclude Include="..\..\source\cpinternals\ctypes\CName.hpp" />
     <ClInclude Include="..\..\source\cpinternals\ctypes\TweakDBID.hpp" />
-    <ClInclude Include="..\..\source\cpinternals\filesystem\archive.hpp" />
-    <ClInclude Include="..\..\source\cpinternals\filesystem\archive_file_stream.hpp" />
-    <ClInclude Include="..\..\source\cpinternals\filesystem\path.hpp" />
-    <ClInclude Include="..\..\source\cpinternals\filesystem\radr.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\filesystem\depot.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\filesystem\depot_file_stream.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\filesystem\directory_entry.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\filesystem\directory_iterator.hpp" />
     <ClInclude Include="..\..\source\cpinternals\filesystem\treefs.hpp" />
-    <ClInclude Include="..\..\source\cpinternals\filesystem\file_reader.hpp" />
     <ClInclude Include="..\..\source\cpinternals\init.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\io\archive_file_istream.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\io\file_stream.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\io\file_istream.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\io\memory_istream.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\io\file_ostream.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\io\stdstream_wrapper.hpp" />
     <ClInclude Include="..\..\source\cpinternals\oodle\oodle.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\os\file_reader.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\os\platform_utils.hpp" />
     <ClInclude Include="..\..\source\cpinternals\radr.hpp" />
     <ClInclude Include="..\..\source\cpinternals\rtdt\dynamic.hpp" />
     <ClInclude Include="..\..\source\cpinternals\rtdt\rttr_helpers.hpp" />
@@ -86,11 +95,6 @@
     <ClInclude Include="..\..\source\cpinternals\scripting\csystem_serctx.hpp" />
     <ClInclude Include="..\..\source\cpinternals\scripting\fwd.hpp" />
     <ClInclude Include="..\..\source\cpinternals\scripting\iproperty.hpp" />
-    <ClInclude Include="..\..\source\cpinternals\stream\imemstream.hpp" />
-    <ClInclude Include="..\..\source\cpinternals\stream\fstream.hpp" />
-    <ClInclude Include="..\..\source\cpinternals\stream\ifstream.hpp" />
-    <ClInclude Include="..\..\source\cpinternals\stream\stdstream_wrapper.hpp" />
-    <ClInclude Include="..\..\source\cpinternals\stream\ofstream.hpp" />
     <ClInclude Include="..\..\source\cpinternals\tmp\archive_test.hpp" />
     <ClInclude Include="..\..\source\cpinternals\tweakdb\tweakdb.hpp" />
     <ClInclude Include="..\..\source\cpinternals\tweakdb\value_pool.hpp" />
@@ -98,20 +102,21 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\cpinternals\common\hashing_tables.hpp" />
+    <ClCompile Include="..\..\source\cpinternals\archive\archive.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\archive\radr.cpp" />
     <ClCompile Include="..\..\source\cpinternals\common\streambase.cpp" />
     <ClCompile Include="..\..\source\cpinternals\common\utils.cpp" />
-    <ClCompile Include="..\..\source\cpinternals\common\windowz.cpp" />
     <ClCompile Include="..\..\source\cpinternals\csav\node_tree.cpp" />
     <ClCompile Include="..\..\source\cpinternals\csav\misc\serializable_stringpool.cpp" />
     <ClCompile Include="..\..\source\cpinternals\ctypes\CEnum.cpp" />
     <ClCompile Include="..\..\source\cpinternals\ctypes\CFact.cpp" />
     <ClCompile Include="..\..\source\cpinternals\ctypes\TweakDBID.cpp" />
-    <ClCompile Include="..\..\source\cpinternals\filesystem\archive.cpp" />
-    <ClCompile Include="..\..\source\cpinternals\filesystem\radr.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\filesystem\directory_entry.cpp" />
     <ClCompile Include="..\..\source\cpinternals\filesystem\treefs.cpp" />
-    <ClCompile Include="..\..\source\cpinternals\filesystem\win_file_reader.cpp" />
     <ClCompile Include="..\..\source\cpinternals\init.cpp" />
     <ClCompile Include="..\..\source\cpinternals\oodle\oodle.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\os\win_utils.cpp" />
+    <ClCompile Include="..\..\source\cpinternals\os\win_file_reader.cpp" />
     <ClCompile Include="..\..\source\cpinternals\rtdt\Source.cpp" />
     <ClCompile Include="..\..\source\cpinternals\scripting\cclass.cpp" />
     <ClCompile Include="..\..\source\cpinternals\scripting\cobject.cpp" />

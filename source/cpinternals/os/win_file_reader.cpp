@@ -1,4 +1,5 @@
-#include <cpinternals/filesystem/file_reader.hpp>
+#include <cpinternals/os/file_reader.hpp>
+#include <cpinternals/os/platform_utils.hpp>
 
 #include <fileapi.h>
 
@@ -7,7 +8,7 @@
 
 #include <cpinternals/common.hpp>
 
-namespace cp {
+namespace cp::os {
 
 struct win_file_reader
   : file_reader_impl
@@ -49,7 +50,7 @@ struct win_file_reader
 
     if (!ok)
     {
-      SPDLOG_ERROR("SetFilePointerEx failed: {}", windowz::get_last_error());
+      SPDLOG_ERROR("SetFilePointerEx failed: {}", os::last_error_string());
     }
 
     return ok && (lioff.QuadPart == out_lioff.QuadPart);
@@ -77,11 +78,11 @@ struct win_file_reader
         DWORD dwErr = GetLastError();
         if (dwErr != ERROR_NOT_ENOUGH_MEMORY)
         {
-          SPDLOG_ERROR("ReadFile failed: {}", windowz::format_error(dwErr));
+          SPDLOG_ERROR("ReadFile failed: {}", os::format_error(dwErr));
           return false;
         }
 
-        SPDLOG_WARN("ReadFile failed with ERROR_NOT_ENOUGH_MEMORY, retrying..", windowz::format_error(dwErr));
+        SPDLOG_WARN("ReadFile failed with ERROR_NOT_ENOUGH_MEMORY, retrying..", os::format_error(dwErr));
       }
 
       if (!retries)
@@ -129,5 +130,5 @@ file_reader::~file_reader()
 {
 }
 
-} // namespace cp
+} // namespace cp::os
 

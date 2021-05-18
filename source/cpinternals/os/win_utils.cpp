@@ -5,13 +5,13 @@
 #include <optional>
 #include <filesystem>
 
-#include <cpinternals/common/windowz.hpp>
+#include <cpinternals/os/platform_utils.hpp>
 #include <spdlog/spdlog.h>
 
 #define MAX_KEY_LENGTH 255
 #define MAX_VALUE_NAME 16383
 
-namespace cp::windowz {
+namespace cp::os {
 
 std::optional<std::filesystem::path> find_exe_path(std::string_view exename)
 {
@@ -63,12 +63,12 @@ std::optional<std::filesystem::path> get_cp_executable_path()
   return s_path;
 }
 
-std::string get_last_error()
+std::string last_error_string()
 {
   return format_error(GetLastError());
 }
 
-std::string format_error(uint32_t id)
+std::string format_error(error_type id)
 {
   if (id != 0)
   {
@@ -87,7 +87,7 @@ std::string format_error(uint32_t id)
   return "";
 }
 
-} // namespace cp::windowz
+} // namespace cp::os
 
 
 

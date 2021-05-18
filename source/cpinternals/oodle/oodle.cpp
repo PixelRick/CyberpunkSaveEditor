@@ -1,5 +1,7 @@
 #include <cpinternals/oodle/oodle.hpp>
 
+// windows-only
+
 #ifndef WIN32_LEAN_AND_MEAN
   #define WIN32_LEAN_AND_MEAN
 #endif
@@ -8,7 +10,7 @@
 #endif
 #include <windows.h>
 
-#include <cpinternals/common/windowz.hpp>
+#include <cpinternals/os/platform_utils.hpp>
 
 #define LIBNAME "oo2ext_7_win64.dll"
 
@@ -40,7 +42,7 @@ library::library()
 
   if (!handle)
   {
-    auto game_path_opt = cp::windowz::get_cp_executable_path();
+    auto game_path_opt = cp::os::get_cp_executable_path();
     if (game_path_opt.has_value())
     {
       auto dll_path = game_path_opt.value().replace_filename(LIBNAME);
@@ -94,24 +96,54 @@ bool decompress(std::span<const char> src, std::span<char> dst, bool check_crc)
 
   if (!hdr.is_magic_ok())
   {
-    SPDLOG_ERROR("oodle::decompress: wrong magic");
+    SPDLOG_ERROR("wrong magic");
     return false;
   }
 
   if (hdr.size != dst.size())
   {
-    SPDLOG_ERROR("oodle::decompress: dst_size doesn't match uncompressed size");
+    SPDLOG_ERROR("dst_size doesn't match uncompressed size");
     return false;
   }
 
-  std::array<char, library::OODLELZ_BLOCK_LEN * 2> decoder_mem;
-  
+  const size_t decoder_mem_size = library::OODLELZ_BLOCK_LEN * 2;
+  char* decoder_mem = nullptr;
+  bool decoder_mem_is_on_stack = true;
+
+  __try
+  {
+    decoder_mem = reinterpret_cast<char*>(_malloca(decoder_mem_size));
+  }
+  __except(GetExceptionCode() == STATUS_STACK_OVERFLOW)
+  {
+    SPDLOG_WARN("_malloca failed, switching to malloc");
+    decoder_mem_is_on_stack = false;
+    decoder_mem = reinterpret_cast<char*>(malloc(decoder_mem_size));
+  };
+
+  //std::array<char, library::OODLELZ_BLOCK_LEN * 2> decoder_mem;
+
   size_t decompressed = lib.pfn_OodleLZ_Decompress(
     src.data() + hdr_size, src.size() - hdr_size, dst.data(), dst.size(),
     library::OodleLZ_FuzzSafe::Yes,
     check_crc, 0, 0, 0, 0, 0,
-    decoder_mem.data(), decoder_mem.size(),
+    decoder_mem, decoder_mem_size,
     library::OodleLZ_Decode_Thread::Current);
+
+  if (decoder_mem_is_on_stack)
+  {
+    _freea(decoder_mem);
+  }
+  else
+  {
+    free(decoder_mem);
+  }
+
+  if (hdr.size != decompressed)
+  {
+    SPDLOG_ERROR("decompressed size doesn't match header info");
+    return false;
+  }
 
   return true;
 }
@@ -120,7 +152,7 @@ size_t compress(std::span<const char> src, std::span<char> dst, compression_leve
 {
   auto& lib = library::get();
 
-  SPDLOG_ERROR("oodle::compress: not implemented yet");
+  SPDLOG_ERROR("not implemented yet");
 
   return false;
 }

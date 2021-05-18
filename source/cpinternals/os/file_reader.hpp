@@ -4,7 +4,7 @@
 
 #include <cpinternals/common.hpp>
 
-namespace cp {
+namespace cp::os {
 
 struct file_reader_impl
 {
@@ -54,5 +54,5 @@ private:
   std::unique_ptr<file_reader_impl> m_impl;
 };
 
-} // namespace cp
+} // namespace cp::os
 

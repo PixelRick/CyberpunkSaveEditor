@@ -1,9 +1,11 @@
-#include <cpinternals/filesystem/archive.hpp>
+#include <cpinternals/archive/archive.hpp>
 
 #include <fstream>
 #include <set>
 
-#include <cpinternals/stream/stdstream_wrapper.hpp>
+#include <cpinternals/os/file_reader.hpp>
+#include <cpinternals/io/stdstream_wrapper.hpp>
+#include <cpinternals/io/memory_istream.hpp>
 #include <cpinternals/oodle/oodle.hpp>
 //#include <cpinternals/radr/fdesc.hpp>
 
@@ -12,7 +14,7 @@ namespace cp {
 // check_for_corruption not implemented yet
 std::shared_ptr<archive> archive::load(const std::filesystem::path& path)
 {
-  file_reader freader;
+  os::file_reader freader;
 
   freader.open(path);
 
@@ -54,7 +56,7 @@ std::shared_ptr<archive> archive::load(const std::filesystem::path& path)
     return nullptr;
   }
 
-  imemstream stmeta(metadata_block_span);
+  memory_istream stmeta(metadata_block_span);
 
   cp::radr::metadata md;
   md.serialize(stmeta, true);
@@ -68,7 +70,7 @@ std::shared_ptr<archive> archive::load(const std::filesystem::path& path)
   return std::make_shared<archive>(path, std::move(md), std::move(freader), create_tag{});
 }
 
-archive::archive(const std::filesystem::path& p, radr::metadata&& md, file_reader&& freader, create_tag&&)
+archive::archive(const std::filesystem::path& p, radr::metadata&& md, os::file_reader&& freader, create_tag&&)
   : m_path(p)
   , m_freader(std::move(freader))
 {
@@ -121,6 +123,37 @@ bool archive::read_file(uint32_t idx, const std::span<char>& dst) const
   bool success = read_segments_raw(rec.segs_irange.subrange(1), dst.subspan(std0_size));
 
   return success;
+}
+
+archive::file_info archive::get_file_info(uint32_t index) const
+{
+  file_info ret;
+
+  if (index >= m_records.size())
+  {
+    SPDLOG_CRITICAL("index out of range");
+    DEBUG_BREAK();
+  }
+
+  const file_record rec = m_records[index];
+  
+  ret.id = rec.fid;
+  ret.time = rec.ftime;
+  
+  auto segspan = rec.segs_irange.slice(m_segments);
+  auto segit = segspan.begin();
+  
+  ret.size = segit->size;
+  ret.disk_size = segit->disk_size;
+
+  while (++segit != segspan.end())
+  {
+    const size_t disk_size = segit->disk_size;
+    ret.size += disk_size;
+    ret.disk_size += disk_size;
+  }
+
+  return ret;
 }
 
 // protected

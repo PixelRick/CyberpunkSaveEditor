@@ -13,6 +13,7 @@ struct gstrid;
 
 namespace detail {
 
+// threadsafe global pool
 template <uint32_t PoolTag>
 struct gstringpool
 {

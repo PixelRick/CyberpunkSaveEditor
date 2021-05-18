@@ -7,7 +7,7 @@
 #include <appbase/widgets/cpinternals.hpp>
 #include "cpinternals/scripting/csystem.hpp"
 #include <cpinternals/common.hpp>
-#include <cpinternals/stream/stdstream_wrapper.hpp>
+#include <cpinternals/io/stdstream_wrapper.hpp>
 
 class archive_test
 {

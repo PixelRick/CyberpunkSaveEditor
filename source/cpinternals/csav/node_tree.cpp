@@ -1,7 +1,7 @@
 #include "node_tree.hpp"
 
 #include <xlz4/lz4.h>
-#include <cpinternals/stream/fstream.hpp>
+#include <cpinternals/io/file_stream.hpp>
 #include <cpinternals/csav/serial_tree.hpp>
 
 #define XLZ4_CHUNK_SIZE 0x40000
@@ -23,7 +23,7 @@ struct compressed_chunk_desc
 
 op_status node_tree::load(std::filesystem::path path)
 {
-  ifstream ar(path);
+  file_istream ar(path);
   serialize_in(ar);
 
   return op_status(ar.error());
@@ -40,7 +40,7 @@ op_status node_tree::save(std::filesystem::path path)
       std::filesystem::copy(path, oldpath);
   }
 
-  ofstream ar(path);
+  file_ostream ar(path);
   serialize_out(ar);
 
   return op_status(ar.error());
