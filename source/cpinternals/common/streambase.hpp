@@ -268,6 +268,7 @@ struct streambase
   streambase& serialize_str_lpfxd(std::string& s);
 
 protected:
+
   int64_t read_int_packed();
   void write_int_packed(int64_t v);
 

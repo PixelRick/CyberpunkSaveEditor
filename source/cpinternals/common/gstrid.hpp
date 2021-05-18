@@ -113,7 +113,7 @@ struct gstrid
 
 protected:
 
-  static stringpool& nc_gpool()
+  static stringpool_mt& nc_gpool()
   {
     return gstring_type::nc_gpool();
   }

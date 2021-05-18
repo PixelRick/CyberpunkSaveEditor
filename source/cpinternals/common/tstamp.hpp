@@ -7,14 +7,14 @@ namespace cp {
 using clock = std::chrono::high_resolution_clock;
 using time_point = clock::time_point;
 
-using hectonanoseconds = std::chrono::duration<int64_t, std::ratio_multiply<std::hecto, std::nano>>;
-
 struct time_stamp
 {
+  using duration_type = std::chrono::duration<int64_t, std::milli>;
+
   time_stamp() = default;
 
   explicit time_stamp(time_point tp) noexcept
-    : ms_since_unix_epoch(std::chrono::duration_cast<std::chrono::milliseconds>(tp.time_since_epoch()).count()) {}
+    : ms_since_unix_epoch(std::chrono::duration_cast<duration_type>(tp.time_since_epoch())) {}
 
   explicit time_stamp(uint64_t ms_since_unix_epoch) noexcept
     : ms_since_unix_epoch(ms_since_unix_epoch) {}
@@ -25,9 +25,15 @@ struct time_stamp
      return *this;
   }
 
-  time_stamp& operator=(uint64_t ms_since_unix_epoch) noexcept
+  time_stamp& operator=(duration_type ms_since_unix_epoch) noexcept
   {
      this->ms_since_unix_epoch = ms_since_unix_epoch;
+     return *this;
+  }
+
+  time_stamp& operator=(uint64_t ms_since_unix_epoch) noexcept
+  {
+     this->ms_since_unix_epoch = duration_type(ms_since_unix_epoch);
      return *this;
   }
 
@@ -48,18 +54,23 @@ struct time_stamp
 
   inline operator time_point() const noexcept
   {
-    return time_point(std::chrono::milliseconds(ms_since_unix_epoch));
+    return time_point(ms_since_unix_epoch);
   }
 
-  uint64_t ms_since_unix_epoch = 0;
+  duration_type ms_since_unix_epoch = {};
 };
+
+static_assert(sizeof(time_stamp) == 8);
 
 struct file_time
 {
+  using duration_type = std::chrono::duration<int64_t, std::ratio_multiply<std::hecto, std::nano>>;
+  constexpr static duration_type win_epoch{116444736000000000};
+
   file_time() = default;
 
   explicit file_time(time_point tp) noexcept
-    : hns_since_win_epoch(std::chrono::duration_cast<hectonanoseconds>(tp.time_since_epoch()).count() + 116444736000000000) {}
+    : hns_since_win_epoch(std::chrono::duration_cast<duration_type>(tp.time_since_epoch()) + win_epoch) {}
 
   explicit file_time(uint64_t hns_since_win_epoch) noexcept
     : hns_since_win_epoch(hns_since_win_epoch) {}
@@ -70,9 +81,15 @@ struct file_time
      return *this;
   }
 
-  file_time& operator=(uint64_t hns_since_win_epoch) noexcept
+  file_time& operator=(duration_type hns_since_win_epoch) noexcept
   {
      this->hns_since_win_epoch = hns_since_win_epoch;
+     return *this;
+  }
+
+  file_time& operator=(uint64_t hns_since_win_epoch) noexcept
+  {
+     this->hns_since_win_epoch = duration_type(hns_since_win_epoch);
      return *this;
   }
 
@@ -93,11 +110,13 @@ struct file_time
 
   inline operator time_point() const noexcept
   {
-    return time_point(hectonanoseconds(hns_since_win_epoch - 116444736000000000));
+    return time_point(hns_since_win_epoch - win_epoch);
   }
 
-  uint64_t hns_since_win_epoch = 0;
+  duration_type hns_since_win_epoch = {};
 };
+
+static_assert(sizeof(file_time) == 8);
 
 } // namespace cp
 

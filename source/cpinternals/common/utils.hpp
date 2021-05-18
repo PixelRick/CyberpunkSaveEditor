@@ -16,6 +16,19 @@ namespace std { using tcb::span; }
 
 namespace cp {
 
+struct nop_mutex
+{
+  nop_mutex(const nop_mutex&) = delete;
+  nop_mutex& operator=(const nop_mutex&) = delete;
+
+  void lock() {}
+  void try_lock() {}
+  void unlock() {}
+  void lock_shared() {}
+  void try_lock_shared() {}
+  void unlock_shared() {}
+};
+
 inline bool starts_with(const std::string& str, const std::string& with)
 {
   return with.length() <= str.length()

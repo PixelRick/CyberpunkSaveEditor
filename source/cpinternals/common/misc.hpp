@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <algorithm>
+#include <optional>
 #include <spdlog/spdlog.h>
 
 namespace cp {

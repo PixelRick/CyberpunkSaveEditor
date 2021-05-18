@@ -2,6 +2,7 @@
 #include <inttypes.h>
 #include <array>
 #include <string>
+#include <string_view>
 #include <cpinternals/common/utils.hpp>
 #include <cpinternals/common/hashing_tables.hpp>
 
@@ -148,15 +149,21 @@ constexpr uint32_t crc32_combine_bigdata(uint32_t crc1, uint32_t crc2, size_t le
   {
       gf2_matrix_square<uint32_t>(even, odd);
       if (len2 & 1)
+      {
           crc1 = gf2_matrix_times<uint32_t>(even, crc1);
+      }
       len2 >>= 1;
 
       if (len2 == 0)
+      {
           break;
+      }
 
       gf2_matrix_square<uint32_t>(odd, even);
       if (len2 & 1)
+      {
           crc1 = gf2_matrix_times<uint32_t>(odd, crc1);
+      }
       len2 >>= 1;
 
   } while (len2 != 0);
@@ -587,7 +594,9 @@ struct sha1_builder
       memcpy(m_buf + m_len, data, n);
       m_len += n;
       if (m_len != 64)
+      {
         return;
+      }
 
       data += n;
       len -= n;

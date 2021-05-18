@@ -16,9 +16,9 @@ namespace detail {
 template <uint32_t PoolTag>
 struct gstringpool
 {
-  static stringpool& get()
+  static stringpool_mt& get()
   {
-    static stringpool instance;
+    static stringpool_mt instance;
     static bool once = [](){
 
       const uint32_t pooltag = PoolTag;
@@ -142,7 +142,7 @@ private:
   explicit gstring(uint32_t idx) noexcept
     : m_idx(idx) {}
 
-  static stringpool& nc_gpool()
+  static stringpool_mt& nc_gpool()
   {
     return detail::gstringpool<pool_tag>::get();
   }
