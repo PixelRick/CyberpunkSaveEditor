@@ -6,7 +6,7 @@
 
 #include <spdlog/spdlog.h>
 #include <cpinternals/common/hashing.hpp>
-#include <cpinternals/common/windowz.hpp>
+#include <cpinternals/common/platform.hpp>
 
 namespace fs = std::filesystem;
 
@@ -47,14 +47,14 @@ int wmain(int argc, wchar_t* argv[])
   HANDLE hToken = NULL;
   if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken))
   {
-    SPDLOG_ERROR("couldn't open current process with (TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY): {}", cp::windowz::get_last_error());
+    SPDLOG_ERROR("couldn't open current process with (TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY): {}", get_last_error());
     return -1;
   }
 
   LUID luidDebug;
   if (!LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &luidDebug))
   {
-    SPDLOG_ERROR("couldn't lookup the debugging privilege: {}", cp::windowz::get_last_error());
+    SPDLOG_ERROR("couldn't lookup the debugging privilege: {}", get_last_error());
     return -1;
   }
 
@@ -65,7 +65,7 @@ int wmain(int argc, wchar_t* argv[])
   if (!AdjustTokenPrivileges(hToken, FALSE, &tokenPriv, sizeof(tokenPriv), NULL, NULL))
   {
     CloseHandle(hToken);
-    SPDLOG_ERROR("couldn't adjust privilege: {}", cp::windowz::get_last_error());
+    SPDLOG_ERROR("couldn't adjust privilege: {}", get_last_error());
     return -1;
   }
 
@@ -74,7 +74,7 @@ int wmain(int argc, wchar_t* argv[])
   HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
   if (hSnapshot == INVALID_HANDLE_VALUE)
   {
-    SPDLOG_ERROR("couldn't create a processes snapshot: {}", cp::windowz::get_last_error());
+    SPDLOG_ERROR("couldn't create a processes snapshot: {}", get_last_error());
     return -1;
   }
 
@@ -112,7 +112,7 @@ int wmain(int argc, wchar_t* argv[])
   hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPID);
   if (hProcess == 0)
   {
-    SPDLOG_ERROR("couldn't open target process: {}", cp::windowz::get_last_error());
+    SPDLOG_ERROR("couldn't open target process: {}", get_last_error());
     return -2;
   }
 
@@ -127,14 +127,14 @@ int wmain(int argc, wchar_t* argv[])
   if (lpParam == nullptr)
   {
     
-    SPDLOG_ERROR("couldn't allocate memory in remote process: {}", cp::windowz::get_last_error());
+    SPDLOG_ERROR("couldn't allocate memory in remote process: {}", get_last_error());
     return -1;
   }
 
   SIZE_T nWritten = 0;
   if (!WriteProcessMemory(hProcess, lpParam, dll_wspath.data(), dll_wspath.size() * 2, &nWritten))
   {
-    SPDLOG_ERROR("couldn't write memory in remote process: {}", cp::windowz::get_last_error());
+    SPDLOG_ERROR("couldn't write memory in remote process: {}", get_last_error());
     VirtualFreeEx(hProcess, lpParam, 0, MEM_RELEASE);
     return -1;
   }
@@ -142,7 +142,7 @@ int wmain(int argc, wchar_t* argv[])
   HANDLE hThread = CreateRemoteThread(hProcess, nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(pLoadLibrary), lpParam, 0, nullptr);
   if (hThread == nullptr)
   {
-    SPDLOG_ERROR("couldn't create remote thread: {}", cp::windowz::get_last_error());
+    SPDLOG_ERROR("couldn't create remote thread: {}", get_last_error());
     VirtualFreeEx(hProcess, lpParam, 0, MEM_RELEASE);
     return -1;
   }

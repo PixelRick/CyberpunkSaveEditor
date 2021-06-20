@@ -159,18 +159,20 @@ struct EnumRecord
       [](auto& lhs, auto& rhs) { return lhs.value < rhs.value; }
     );
 
-    nlohmann::json jmbrs = nlohmann::json::object();
+    nlohmann::json jmbrs = nlohmann::json::array();
 
     for (auto& member : members)
     {
-      jmbrs[member.enumerator.ToString()] = member.value;
+      //jmbrs[member.enumerator.ToString()] = member.value;
+      jmbrs.push_back(member.enumerator.ToString());
     }
 
-    nlohmann::json jmbrs2 = nlohmann::json::object();
+    nlohmann::json jmbrs2 = nlohmann::json::array();
 
     for (auto& member : members2)
     {
-      jmbrs2[member.enumerator.ToString()] = member.value;
+      //jmbrs2[member.enumerator.ToString()] = member.value;
+      jmbrs2.push_back(member.enumerator.ToString());
     }
 
     auto sname = name.ToString();
@@ -333,12 +335,12 @@ void dump()
   }
 
   {
-    std::ofstream file(path / L"JClasses.json");
+    std::ofstream file(path / L"JClasses_1.23.json");
     file << jclasses.dump(2);
   }
 
   {
-    std::ofstream file(path / L"JEnums.json");
+    std::ofstream file(path / L"JEnums_1.23.json");
     file << jenums.dump(2);
   }
 

@@ -151,9 +151,6 @@
   ],
   "AISquadType": [
     "Community",
-    "Global",
-    "Security",
-    "Attitude",
     "Combat",
     "Follower",
     "Unknown"
@@ -352,13 +349,13 @@
     "complete"
   ],
   "CodexCategoryType": [
+    "Invalid",
     "All",
     "Database",
     "Characters",
     "Locations",
     "Tutorials",
-    "Count",
-    "Invalid"
+    "Count"
   ],
   "CodexDataSource": [
     "Undefined",
@@ -440,9 +437,9 @@
     "Inventory"
   ],
   "DamageEffectDisplayType": [
+    "Invalid",
     "Flat",
-    "TargetHealth",
-    "Invalid"
+    "TargetHealth"
   ],
   "DerivedFilterResult": [
     "False",
@@ -542,13 +539,13 @@
     "FrontLeft"
   ],
   "EAIDismembermentBodyPart": [
+    "NONE",
     "LEFT_ARM",
     "RIGHT_ARM",
     "LEFT_LEG",
     "RIGHT_LEG",
     "HEAD",
-    "BODY",
-    "NONE"
+    "BODY"
   ],
   "EAIGateEventFlags": [
     "AIGEF_Undefined",
@@ -565,42 +562,41 @@
     "AIGSF_AcceptsAdditives"
   ],
   "EAIHitBodyPart": [
-    "<no_zero_name>",
+    "None",
     "Head",
     "LeftTorso",
     "RightTorso",
     "Belly",
     "LeftLeg",
-    "RightLeg",
-    "None"
+    "RightLeg"
   ],
   "EAIHitDirection": [
+    "None",
     "Left",
     "Back",
     "Right",
-    "Front",
-    "None"
+    "Front"
   ],
   "EAIHitIntensity": [
+    "None",
     "Light",
     "Medium",
     "Heavy",
-    "Explosion",
-    "None"
+    "Explosion"
   ],
   "EAIHitSource": [
+    "None",
     "Ranged",
     "MeleeSharp",
     "MeleeBlunt",
-    "QuickMelee",
-    "None"
+    "QuickMelee"
   ],
   "EAILastHitReactionPlayed": [
+    "None",
     "Twitch",
     "Impact",
     "Stagger",
-    "Knockdown",
-    "None"
+    "Knockdown"
   ],
   "EAIPlayerSquadOrder": [
     "Takedown",
@@ -714,11 +710,11 @@
     "OrderRevoked"
   ],
   "EActionContext": [
+    "None",
     "Direct",
     "QHack",
     "Master",
-    "Spiderbot",
-    "None"
+    "Spiderbot"
   ],
   "EActionInactivityReson": [
     "Ready",
@@ -1006,7 +1002,6 @@
     "ECCTV_OnlyOnscreen"
   ],
   "ECustomMaterialParam": [
-    "<no_zero_name>",
     "ECMP_CustomParam0",
     "ECMP_CustomParam1",
     "ECMP_CustomParam2",
@@ -1049,7 +1044,6 @@
     "DRM_AllDynamic"
   ],
   "EDepthCollisionEffect": [
-    "<no_zero_name>",
     "DCE_Bounce",
     "DCE_Glide",
     "DCE_Kill"
@@ -1080,11 +1074,11 @@
     "DESTRUCTIBLE"
   ],
   "EDeviceStatus": [
+    "DISABLED",
+    "UNPOWERED",
     "OFF",
     "ON",
-    "INVALID",
-    "DISABLED",
-    "UNPOWERED"
+    "INVALID"
   ],
   "EDocumentType": [
     "FILE",
@@ -1102,7 +1096,9 @@
     "SLIDING_HORIZONTALLY",
     "SLIDING_VERTICALLY",
     "HINGED",
-    "GATE"
+    "GATE",
+    "HINGED_SIDE_ONE",
+    "HINGED_SIDE_TWO"
   ],
   "EDoorSkillcheckSide": [
     "BOTH",
@@ -1110,10 +1106,10 @@
     "TWO"
   ],
   "EDoorStatus": [
-    "CLOSED",
-    "OPENED",
     "SEALED",
-    "LOCKED"
+    "LOCKED",
+    "CLOSED",
+    "OPENED"
   ],
   "EDoorTriggerSide": [
     "OUTSIDE",
@@ -1287,6 +1283,10 @@
     "none",
     "EMP"
   ],
+  "EFastTravelDeviceType": [
+    "DataTerm",
+    "SubwayGate"
+  ],
   "EFastTravelSystemInstruction": [
     "Forward",
     "Previous"
@@ -1370,7 +1370,6 @@
     "ArrowsDown"
   ],
   "EFreeVectorAxes": [
-    "<no_zero_name>",
     "FVA_One",
     "FVA_Two",
     "FVA_Three",
@@ -1480,11 +1479,11 @@
     "Special"
   ],
   "EHitShapeType": [
+    "None",
     "Flesh",
     "Metal",
     "Cyberware",
-    "Armor",
-    "None"
+    "Armor"
   ],
   "EHotkeyRequestType": [
     "Assign",
@@ -1545,7 +1544,6 @@
     "IACT_Axis"
   ],
   "EInputCustomKey": [
-    "<no_zero_name>",
     "ICK_Pad_DigitLeftRight",
     "ICK_Pad_DigitUpDown",
     "ICK_Count"
@@ -1813,6 +1811,8 @@
     "IK_Pad_Fake_LeftAxis",
     "IK_Pad_Fake_RightAxis",
     "IK_Pad_Fake_RelativeLeftAxis",
+    "IK_Pad_Fake_DigitLeftRight",
+    "IK_Pad_Fake_DigitUpDown",
     "IK_Last",
     "IK_Count"
   ],
@@ -1833,12 +1833,12 @@
     "REMOVE"
   ],
   "EItemSlotCheckType": [
+    "NONE",
     "TAG",
     "TYPE",
     "CATEGORY",
     "EVOLUTION",
-    "FULLY_MODDED",
-    "NONE"
+    "FULLY_MODDED"
   ],
   "EJuryrigTrapState": [
     "UNARMED",
@@ -1984,7 +1984,6 @@
     "MSH_MAX"
   ],
   "EMaterialVertexFactory": [
-    "<no_zero_name>",
     "MVF_Terrain",
     "MVF_MeshStatic",
     "MVF_MeshSkinned",
@@ -2104,14 +2103,13 @@
     "MPOM_NoRotation"
   ],
   "EMeshShadowImportanceBias": [
+    "MSIB_EvenLessImportant",
+    "MSIB_LessImportant",
     "MSIB_Default",
     "MSIB_MoreImportant",
-    "MSIB_EvenMoreImportant",
-    "MSIB_EvenLessImportant",
-    "MSIB_LessImportant"
+    "MSIB_EvenMoreImportant"
   ],
   "EMeshStreamType": [
-    "<no_zero_name>",
     "MST_Position_3F",
     "MST_SkinningIndices_4U8",
     "MST_SkinningWeights_4F",
@@ -2273,18 +2271,17 @@
     "TECHIE"
   ],
   "EPlaystyleType": [
+    "NONE",
     "TECHIE",
     "NETRUNNER",
-    "TECHIE_AND_NETRUNNER",
-    "NONE"
+    "TECHIE_AND_NETRUNNER"
   ],
   "EPowerDifferential": [
-    "<no_zero_name>",
+    "IMPOSSIBLE",
+    "HARD",
     "NORMAL",
     "EASY",
-    "TRASH",
-    "IMPOSSIBLE",
-    "HARD"
+    "TRASH"
   ],
   "EPreventionDebugProcessReason": [
     "Redirected_IsPsycho",
@@ -2379,7 +2376,6 @@
     "RMT_Foliage"
   ],
   "ERenderMeshStreams": [
-    "<no_zero_name>",
     "RMS_PositionSkinning",
     "RMS_TexCoords",
     "RMS_TangentFrame",
@@ -2454,7 +2450,6 @@
     "SSAOQUALITY_VeryHigh"
   ],
   "ESaveFormat": [
-    "<no_zero_name>",
     "SF_PNG",
     "SF_EXR",
     "SF_PNG_AND_EXR"
@@ -2504,6 +2499,8 @@
     "THREAT_DETECTED"
   ],
   "ESecurityNotificationType": [
+    "REPRIMAND_SUCCESSFUL",
+    "DEESCALATE",
     "DEFAULT",
     "ILLEGAL_ACTION",
     "REPRIMAND_ESCALATE",
@@ -2511,9 +2508,7 @@
     "ALARM",
     "SECURITY_GATE",
     "COMBAT",
-    "QUEST",
-    "REPRIMAND_SUCCESSFUL",
-    "DEESCALATE"
+    "QUEST"
   ],
   "ESecuritySystemState": [
     "UNINITIALIZED",
@@ -2522,11 +2517,11 @@
     "COMBAT"
   ],
   "ESecurityTurretStatus": [
+    "THREAT",
     "SHOOTING",
     "WORKING",
     "SCANING",
-    "DAMAGED",
-    "THREAT"
+    "DAMAGED"
   ],
   "ESecurityTurretType": [
     "SIMPLE"
@@ -2542,10 +2537,10 @@
     "JAMMER"
   ],
   "ESensorDeviceWakeState": [
+    "NONE",
     "CLOSED",
     "WAKEN",
-    "OPEN",
-    "NONE"
+    "OPEN"
   ],
   "EShouldChangeAttitude": [
     "PERSISTENTLY",
@@ -2608,9 +2603,9 @@
     "Active"
   ],
   "ESurveillanceCameraStatus": [
+    "THREAT",
     "STREAMING",
-    "WORKING",
-    "THREAT"
+    "WORKING"
   ],
   "ESwitchAction": [
     "ToggleOn",
@@ -2734,20 +2729,22 @@
     "TCM_RGBE",
     "TCM_Normalmap",
     "TCM_Normals_DEPRECATED",
-    "TCM_Normals",
     "TCM_NormalsHigh_DEPRECATED",
-    "TCM_NormalsHigh",
     "TCM_NormalsGloss_DEPRECATED",
-    "TCM_NormalsGloss",
     "TCM_TileMap",
     "TCM_DXTAlphaLinear",
     "TCM_QualityR",
     "TCM_QualityRG",
     "TCM_QualityColor",
     "TCM_HalfHDR_Unsigned",
-    "TCM_HalfHDR",
     "TCM_HalfHDR_Signed",
     "TCM_Max"
+  ],
+  "ETextureCompression_TEST": [
+    "TCM_Normals",
+    "TCM_NormalsHigh",
+    "TCM_NormalsGloss",
+    "TCM_HalfHDR"
   ],
   "ETextureFilteringMag": [
     "TFMag_Point",
@@ -3147,12 +3144,13 @@
     "MAX"
   ],
   "GpuWrapApiVertexPackingEStreamType": [
+    "ST_Invalid",
     "ST_PerVertex",
     "ST_PerInstance",
-    "ST_Max",
-    "ST_Invalid"
+    "ST_Max"
   ],
   "GpuWrapApiVertexPackingePackingType": [
+    "PT_Invalid",
     "PT_Float1",
     "PT_Float2",
     "PT_Float3",
@@ -3184,10 +3182,10 @@
     "PT_Dec4",
     "PT_Index16",
     "PT_Index32",
-    "PT_Max",
-    "PT_Invalid"
+    "PT_Max"
   ],
   "GpuWrapApiVertexPackingePackingUsage": [
+    "PS_Invalid",
     "PS_SysPosition",
     "PS_Position",
     "PS_Normal",
@@ -3212,8 +3210,7 @@
     "PS_BoneIndex",
     "PS_Padding",
     "PS_PatchOffset",
-    "PS_Max",
-    "PS_Invalid"
+    "PS_Max"
   ],
   "GpuWrapApieBufferChunkCategory": [
     "BCC_Staging",
@@ -3239,47 +3236,28 @@
   ],
   "GpuWrapApieTextureFormat": [
     "TEXFMT_A8_Unorm",
-    "TEXFMT_A8",
     "TEXFMT_R8_Unorm",
-    "TEXFMT_R8",
     "TEXFMT_L8_Unorm",
-    "TEXFMT_L8",
     "TEXFMT_R8G8_Unorm",
-    "TEXFMT_R8G8",
     "TEXFMT_R8G8B8X8_Unorm",
-    "TEXFMT_R8G8B8X8",
     "TEXFMT_R8G8B8A8_Unorm",
-    "TEXFMT_R8G8B8A8",
     "TEXFMT_R8G8B8A8_Snorm",
-    "TEXFMT_Uint_16_norm",
     "TEXFMT_R16_Unorm",
     "TEXFMT_R16_Uint",
-    "TEXFMT_Uint_16",
     "TEXFMT_R32_Uint",
-    "TEXFMT_Uint_32",
     "TEXFMT_R32G32B32A32_Uint",
-    "TEXFMT_Uint_R32G32B32A32",
     "TEXFMT_R32G32_Uint",
     "TEXFMT_R16G16B16A16_Unorm",
     "TEXFMT_R16G16B16A16_Uint",
-    "TEXFMT_Uint_R32G32B32A32",
     "TEXFMT_R16G16_Uint",
-    "TEXFMT_R10G10B10A2",
     "TEXFMT_R10G10B10A2_Unorm",
     "TEXFMT_R16G16B16A16_Float",
-    "TEXFMT_Float_R16G16B16A16",
     "TEXFMT_R11G11B10_Float",
-    "TEXFMT_Float_R11G11B10",
     "TEXFMT_R16G16_Float",
-    "TEXFMT_Float_R16G16",
     "TEXFMT_R32G32_Float",
-    "TEXFMT_Float_R32G32",
     "TEXFMT_R32G32B32A32_Float",
-    "TEXFMT_Float_R32G32B32A32",
     "TEXFMT_R32_Float",
-    "TEXFMT_Float_R32",
     "TEXFMT_R16_Float",
-    "TEXFMT_Float_R16",
     "TEXFMT_D24S8",
     "TEXFMT_D32FS8",
     "TEXFMT_D32F",
@@ -3289,13 +3267,11 @@
     "TEXFMT_BC3",
     "TEXFMT_BC4",
     "TEXFMT_BC5",
-    "TEXFMT_BC6H",
     "TEXFMT_BC6H_UNSIGNED",
     "TEXFMT_BC6H_SIGNED",
     "TEXFMT_BC7",
     "TEXFMT_BC7_SRGB",
     "TEXFMT_R8_Uint",
-    "TEXFMT_R8G8B8A8",
     "TEXFMT_R8G8B8A8_Unorm_SRGB",
     "TEXFMT_BC1_SRGB",
     "TEXFMT_BC2_SRGB",
@@ -3305,8 +3281,30 @@
     "TEXFMT_R16G16_Snorm",
     "TEXFMT_B5G6R5_Unorm"
   ],
+  "GpuWrapApieTextureFormat_TEST": [
+    "TEXFMT_A8",
+    "TEXFMT_R8",
+    "TEXFMT_L8",
+    "TEXFMT_R8G8",
+    "TEXFMT_R8G8B8X8",
+    "TEXFMT_R8G8B8A8",
+    "TEXFMT_Uint_16_norm",
+    "TEXFMT_Uint_16",
+    "TEXFMT_Uint_32",
+    "TEXFMT_Uint_R32G32B32A32",
+    "TEXFMT_Uint_R32G32B32A32",
+    "TEXFMT_R10G10B10A2",
+    "TEXFMT_Float_R16G16B16A16",
+    "TEXFMT_Float_R11G11B10",
+    "TEXFMT_Float_R16G16",
+    "TEXFMT_Float_R32G32",
+    "TEXFMT_Float_R32G32B32A32",
+    "TEXFMT_Float_R32",
+    "TEXFMT_Float_R16",
+    "TEXFMT_BC6H",
+    "TEXFMT_R8G8B8A8"
+  ],
   "GpuWrapApieTextureGroup": [
-    "<no_zero_name>",
     "TEXG_Generic_Color",
     "TEXG_Generic_Grayscale",
     "TEXG_Generic_Normal",
@@ -3394,6 +3392,7 @@
     "Backpack"
   ],
   "HubMenuItems": [
+    "None",
     "Crafting",
     "Character",
     "Inventory",
@@ -3409,8 +3408,7 @@
     "Tarot",
     "Gear",
     "Cyberware",
-    "Count",
-    "None"
+    "Count"
   ],
   "HubVendorMenuItems": [
     "Trade",
@@ -3438,23 +3436,26 @@
     "PT_MAX"
   ],
   "InGameConfigChangeReason": [
+    "Invalid",
     "Accepted",
     "Rejected",
     "NeedsConfirmation",
-    "NeedsRestart",
-    "Invalid"
+    "NeedsRestart"
   ],
   "InGameConfigNotificationType": [
     "RestartRequiredConfirmed",
+    "RestartRequiredRejected",
     "ChangesApplied",
     "ChangesRejected",
     "ChangesLoadLastCheckpointApplied",
+    "ChangesLoadLastCheckpointRejected",
     "Saved",
     "ErrorSaving",
-    "RequiresRestart",
     "Loaded",
     "LoadCanceled",
-    "Refresh"
+    "LoadInternalError",
+    "Refresh",
+    "LanguagePackInstalled"
   ],
   "InGameConfigUserSettingsLoadStatus": [
     "NotLoaded",
@@ -3535,6 +3536,7 @@
     "Weapon"
   ],
   "ItemFilterCategory": [
+    "Invalid",
     "RangedWeapons",
     "MeleeWeapons",
     "Clothes",
@@ -3549,8 +3551,7 @@
     "Quest",
     "Buyback",
     "AllItems",
-    "AllCount",
-    "Invalid"
+    "AllCount"
   ],
   "ItemFilterType": [
     "All",
@@ -3831,7 +3832,8 @@
     "TransferToStorage",
     "TransferToPlayer",
     "Drop",
-    "Disassembly"
+    "Disassembly",
+    "Craft"
   ],
   "QuickSlotActionType": [
     "Undefined",
@@ -3872,7 +3874,6 @@
     "LegRight"
   ],
   "Ref_1_3_3_BigEnum": [
-    "<no_zero_name>",
     "BigValue"
   ],
   "Ref_1_3_3_Colors": [
@@ -3881,9 +3882,9 @@
     "Blue"
   ],
   "Ref_1_3_3_CustomSize_1": [
+    "Test1",
     "Test",
-    "Test2",
-    "Test1"
+    "Test2"
   ],
   "Ref_1_3_3_CustomSize_2": [
     "Test",
@@ -3894,7 +3895,6 @@
     "Value"
   ],
   "Ref_2_3_3_Enum64Bit": [
-    "<no_zero_name>",
     "BigValue"
   ],
   "RenderDecalNormalsBlendingMode": [
@@ -3980,19 +3980,18 @@
     "Sample_Enum_Option_4_4_2"
   ],
   "Sample_Enum_4_5": [
-    "<no_zero_name>",
     "Sample_Enum_Option_4_5_0",
     "Sample_Enum_Option_4_5_1",
     "Sample_Enum_Option_4_5_2"
   ],
   "Sample_Enum_4_6": [
     "Sample_Enum_Option_4_6_0",
-    "Sample_Enum_Option_4_6_1_with_a_new_name",
+    "Sample_Enum_Option_4_6_1_with_a_new_name"
+  ],
+  "Sample_Enum_4_6_TEST": [
     "Sample_Enum_Option_4_6_1"
   ],
-  "Sample_Enum_6_8": [
-    "<no_zero_name>"
-  ],
+  "Sample_Enum_6_8": [],
   "Sample_Namespace_4_2Sample_Enum_4_2": [
     "Sample_Enum_Option_4_2_0",
     "Sample_Enum_Option_4_2_1",
@@ -4142,7 +4141,8 @@
     "CantSaveQuestRestriction",
     "CantSaveDeathRestriction",
     "NotEnoughSlotsSaveResctriction",
-    "NotEnoughSpaceSaveResctriction"
+    "NotEnoughSpaceSaveResctriction",
+    "PhotoModeDisabledRestriction"
   ],
   "UIMenuNotificationType": [
     "VendorNotEnoughMoney",
@@ -4156,7 +4156,8 @@
     "PerksLocked",
     "MaxLevelPerks",
     "NoAttributePoints",
-    "InCombat"
+    "InCombat",
+    "CraftingQuickhack"
   ],
   "UIObjectiveEntryType": [
     "Invalid",
@@ -4172,7 +4173,9 @@
   "VendorConfirmationPopupType": [
     "Default",
     "ExpensiveItem",
-    "EquippedItem"
+    "EquippedItem",
+    "BuyCyberware",
+    "DisassembeIconic"
   ],
   "VisualState": [
     "OFF",
@@ -4304,7 +4307,6 @@
     "HighRight"
   ],
   "animCoverState": [
-    "<no_zero_name>",
     "LowCover",
     "HighCover"
   ],
@@ -4406,7 +4408,6 @@
     "World"
   ],
   "animETransformAxis": [
-    "<no_zero_name>",
     "X_Axis",
     "Y_Axis",
     "Z_Axis"
@@ -4621,7 +4622,6 @@
     "ENUM_SIZE"
   ],
   "animLookAtStatus": [
-    "<no_zero_name>",
     "Active",
     "LimitReached",
     "TransitionInProgress"
@@ -5089,6 +5089,7 @@
     "CanInterrupt"
   ],
   "audioVoGruntType": [
+    "None",
     "PainLong",
     "AgroShort",
     "AgroLong",
@@ -5113,8 +5114,7 @@
     "BraindanceNeutral",
     "BraindanceSexual",
     "PainShort",
-    "Effort",
-    "None"
+    "Effort"
   ],
   "audioWeaponBulletType": [
     "standard",
@@ -5180,7 +5180,6 @@
     "HoldingBreath"
   ],
   "audiottsvoicesFemale": [
-    "<no_zero_name>",
     "Olivia",
     "Emily",
     "Jessica",
@@ -5199,12 +5198,10 @@
     "Thomas"
   ],
   "audiottsvoicesPolishFemale": [
-    "<no_zero_name>",
     "Iwona",
     "Paulina"
   ],
   "audiottsvoicesPolishMale": [
-    "<no_zero_name>",
     "Mateusz",
     "Pawel"
   ],
@@ -5267,7 +5264,6 @@
     "ESLT_SmoothSymmetric"
   ],
   "damageSystemLogFlags": [
-    "<no_zero_name>",
     "GENERAL",
     "ASSERT",
     "WEAKSPOTS"
@@ -5349,7 +5345,6 @@
     "RotationQuatW"
   ],
   "entVisibilityParamSource": [
-    "<no_zero_name>",
     "PhantomEntitySystem"
   ],
   "entVisualControllerComponentForcedLodDistance": [
@@ -5512,12 +5507,11 @@
     "INVALID"
   ],
   "gameDebugViewETextAlignment": [
+    "Left",
     "Center",
-    "Right",
-    "Left"
+    "Right"
   ],
   "gameDelayContext": [
-    "<no_zero_name>",
     "Standard_TD",
     "Standard_ND",
     "Quest_TD",
@@ -5530,7 +5524,6 @@
     "Story"
   ],
   "gameDismBodyPart": [
-    "<no_zero_name>",
     "HEAD",
     "LEFT_ARM",
     "RIGHT_ARM",
@@ -5539,7 +5532,6 @@
     "BODY"
   ],
   "gameDismWoundType": [
-    "<no_zero_name>",
     "CLEAN",
     "COARSE",
     "HOLE"
@@ -5583,18 +5575,16 @@
     "Stop"
   ],
   "gameEEquipmentManagerState": [
-    "<no_zero_name>",
     "InfiniteAmmo"
   ],
   "gameEHotkey": [
+    "INVALID",
     "DPAD_UP",
     "DPAD_DOWN",
     "DPAD_RIGHT",
-    "RB",
-    "INVALID"
+    "RB"
   ],
   "gameEInventoryFlags": [
-    "<no_zero_name>",
     "MustSave"
   ],
   "gameELootGenerationType": [
@@ -5630,7 +5620,6 @@
     "Available"
   ],
   "gameEStatFlags": [
-    "<no_zero_name>",
     "Bool",
     "EquipOnPlayer",
     "EquipOnNPC",
@@ -5691,7 +5680,6 @@
     "SceneActorContextName"
   ],
   "gameEntitySpawnerEventType": [
-    "<no_zero_name>",
     "Spawn",
     "Despawn",
     "Death"
@@ -5743,12 +5731,16 @@
     "CP77_PatchDay0_Hotfix4_Internal",
     "CP77_Patch_1_Internal",
     "CP77_Patch_1_1",
-    "Current",
+    "CP77_Patch_1_1_Hotfix1",
+    "CP77_Patch_1_1_Hotfix2",
     "CP77_Patch_1_2",
+    "CP77_Patch_1_2_Hotfix1",
+    "CP77_Patch_1_2_Hotfix2",
+    "CP77_Patch_1_2_Hotfix3",
+    "Current",
     "CP77_Patch_1_3"
   ],
   "gameGameplayEventFlag": [
-    "<no_zero_name>",
     "Ai",
     "Trigger",
     "Component",
@@ -5801,7 +5793,8 @@
     "Backpack",
     "DPAD_RADIAL",
     "Attachment",
-    "Ripperdoc"
+    "Ripperdoc",
+    "Crafting"
   ],
   "gameItemEquipContexts": [
     "LastWeaponEquipped",
@@ -5906,21 +5899,21 @@
     "MovingPlatform"
   ],
   "gameMountingObjectType": [
+    "Invalid",
     "Object",
     "Vehicle",
     "Puppet",
-    "Platform",
-    "Invalid"
+    "Platform"
   ],
   "gameMountingRelationshipType": [
+    "Invalid",
     "Parent",
-    "Child",
-    "Invalid"
+    "Child"
   ],
   "gameMountingSlotRole": [
+    "Invalid",
     "Driver",
-    "Passenger",
-    "Invalid"
+    "Passenger"
   ],
   "gameMovingPlatformLoopType": [
     "NoLooping",
@@ -5955,12 +5948,12 @@
     "GravityOnly"
   ],
   "gamePSMBodyCarrying": [
+    "Any",
     "Default",
     "PickUp",
     "Carry",
     "Dispose",
-    "Drop",
-    "Any"
+    "Drop"
   ],
   "gamePSMBodyCarryingLocomotion": [
     "Default",
@@ -5978,11 +5971,11 @@
     "Strong"
   ],
   "gamePSMCombat": [
+    "Any",
     "Default",
     "InCombat",
     "OutOfCombat",
-    "Stealth",
-    "Any"
+    "Stealth"
   ],
   "gamePSMCombatGadget": [
     "Default",
@@ -5994,12 +5987,12 @@
     "QuickThrow"
   ],
   "gamePSMCover": [
+    "Any",
     "Default",
     "InCover",
     "Peek",
     "Lean",
-    "OutOfCover",
-    "Any"
+    "OutOfCover"
   ],
   "gamePSMCrosshairStates": [
     "Default",
@@ -6060,13 +6053,14 @@
     "DeathFall"
   ],
   "gamePSMHighLevel": [
+    "Any",
     "Default",
     "SceneTier1",
     "SceneTier2",
     "SceneTier3",
     "SceneTier4",
     "SceneTier5",
-    "Any"
+    "Swimming"
   ],
   "gamePSMLandingState": [
     "Default",
@@ -6093,18 +6087,18 @@
     "Unequip"
   ],
   "gamePSMLocomotionStates": [
+    "Any",
     "Default",
     "Crouch",
     "Sprint",
     "Kereznikov",
-    "Jump",
-    "Any"
+    "Jump"
   ],
   "gamePSMMelee": [
+    "Any",
     "Default",
     "Attack",
-    "Block",
-    "Any"
+    "Block"
   ],
   "gamePSMMeleeWeapon": [
     "NotReady",
@@ -6155,37 +6149,38 @@
     "Exhausted"
   ],
   "gamePSMSwimming": [
+    "Any",
     "Default",
     "Surface",
-    "Diving",
-    "Any"
+    "Diving"
   ],
   "gamePSMTakedown": [
+    "Any",
     "Default",
     "EnteringGrapple",
     "Grapple",
     "Leap",
-    "Takedown",
-    "Any"
+    "Takedown"
   ],
   "gamePSMTimeDilation": [
+    "Any",
     "Default",
-    "Sandevistan",
-    "Any"
+    "Sandevistan"
   ],
   "gamePSMUIState": [
     "None",
     "WeaponSelect"
   ],
   "gamePSMUpperBodyStates": [
+    "Any",
     "Default",
     "SwitchItems",
     "SwitchCyberware",
     "Reload",
-    "Aim",
-    "Any"
+    "Aim"
   ],
   "gamePSMVehicle": [
+    "Any",
     "Default",
     "Driving",
     "Combat",
@@ -6193,13 +6188,12 @@
     "Transition",
     "Turret",
     "DriverCombat",
-    "Scene",
-    "Any"
+    "Scene"
   ],
   "gamePSMVision": [
+    "Any",
     "Default",
-    "Focus",
-    "Any"
+    "Focus"
   ],
   "gamePSMVisionDebug": [
     "Default",
@@ -6211,11 +6205,11 @@
     "Resurrecting"
   ],
   "gamePSMWeaponStates": [
+    "Any",
     "Default",
     "NoAmmo",
     "Ready",
-    "Safe",
-    "Any"
+    "Safe"
   ],
   "gamePSMWhip": [
     "Default",
@@ -6227,12 +6221,12 @@
     "Workspot"
   ],
   "gamePSMZones": [
+    "Any",
     "Default",
     "Public",
     "Safe",
     "Restricted",
-    "Dangerous",
-    "Any"
+    "Dangerous"
   ],
   "gamePlatformMovementState": [
     "Stopped",
@@ -6241,10 +6235,10 @@
     "MovingDown"
   ],
   "gamePlayerCoverDirection": [
+    "None",
     "Up",
     "Left",
-    "Right",
-    "None"
+    "Right"
   ],
   "gamePlayerCoverMode": [
     "None",
@@ -6551,7 +6545,6 @@
     "WallRight"
   ],
   "gamecheatsystemFlag": [
-    "<no_zero_name>",
     "God_Immortal",
     "God_Invulnerable",
     "Resurrect",
@@ -6730,6 +6723,22 @@
     "Count",
     "Invalid"
   ],
+  "gamedataAIThreatPersistenceSource": [
+    "AddThreat",
+    "CatchUp",
+    "CommandAimWithWeapon",
+    "CommandForceShoot",
+    "CommandInjectCombatTarget",
+    "CommandInjectThreat",
+    "CommandMeleeAttack",
+    "CommandShoot",
+    "CommandThrowGrenade",
+    "Default",
+    "SetNewCombatTarget",
+    "TrackedBySecuritySystemAgent",
+    "Count",
+    "Invalid"
+  ],
   "gamedataAITicketType": [
     "BackUp",
     "BattleCry",
@@ -6841,6 +6850,7 @@
     "Civilian",
     "KangTao",
     "Maelstrom",
+    "MaelstromAndroid",
     "Militech",
     "NCPD",
     "NetWatch",
@@ -6848,7 +6858,9 @@
     "RecordingAgency",
     "SSI",
     "Scavengers",
+    "ScavengersAndroid",
     "SixthStreet",
+    "SixthStreetAndroid",
     "SouthCalifornia",
     "TheMox",
     "TraumaTeam",
@@ -6859,6 +6871,7 @@
     "Valentinos",
     "VoodooBoys",
     "Wraiths",
+    "WraithsAndroid",
     "Count",
     "Invalid"
   ],
@@ -7114,6 +7127,7 @@
     "Badlands_JacksonPlains",
     "Badlands_LagunaBend",
     "Badlands_LasPalapas",
+    "Badlands_NorthSunriseOilField",
     "Badlands_RattlesnakeCreek",
     "Badlands_RedPeaks",
     "Badlands_RockyRidge",
@@ -7590,6 +7604,8 @@
     "UseVariant",
     "VehicleVariant",
     "WanderingMerchantVariant",
+    "Zzz01_CarForPurchaseVariant",
+    "Zzz02_MotorcycleForPurchaseVariant",
     "CPO_PingDoorVariant",
     "CPO_PingGoHereVariant",
     "CPO_PingLootVariant",
@@ -9185,6 +9201,7 @@
     "SwayStartBlendTime",
     "SwayStartDelay",
     "SwayTraversalTime",
+    "SystemCollapseImmunity",
     "TBHsBaseCoefficient",
     "TBHsBaseSourceMultiplierCoefficient",
     "TBHsCoverTraceLoSIncreaseSpeed",
@@ -9222,6 +9239,7 @@
     "TimeDilationWhenEnteringCombatCooldownDuration",
     "TimeDilationWhenEnteringCombatDuration",
     "TimeDilationWhenEnteringCombatTimeScale",
+    "TranquilizerImmunity",
     "TriggerDismembermentChance",
     "TriggerWoundedChance",
     "TurretFriendlyExtension",
@@ -9661,6 +9679,7 @@
     "Quest",
     "ServicePoint",
     "Story",
+    "VehiclesForPurchaseFilter",
     "Count",
     "Invalid"
   ],
@@ -9736,7 +9755,6 @@
     "Orb"
   ],
   "gameinteractionsChoiceType": [
-    "<no_zero_name>",
     "QuestImportant",
     "AlreadyRead",
     "Inactive",
@@ -9777,7 +9795,6 @@
     "Invisible"
   ],
   "gameinteractionsELootVisualiserControlOperation": [
-    "<no_zero_name>",
     "Locked"
   ],
   "gameinteractionsEPredicateType": [
@@ -9786,11 +9803,13 @@
     "EPredicateFunction_containedInShapes",
     "EPredicateFunction_onScreenTest",
     "EPredicateFunction_visibleTarget",
-    "EPredicateFunction_lineOfSight",
     "EPredicateFunction_lookAt",
     "EPredicateFunction_lookAtComponent",
     "EPredicateFunction_logicalLookAt",
     "EPredicateFunction_obstructedLookAt"
+  ],
+  "gameinteractionsEPredicateType_TEST": [
+    "EPredicateFunction_lineOfSight"
   ],
   "gameinteractionsEUnaryOperator": [
     "EUnaryOperator_empty",
@@ -9877,7 +9896,6 @@
     "Continue"
   ],
   "gametargetingSystemScriptFilter": [
-    "<no_zero_name>",
     "Melee",
     "Shooting",
     "Scanning",
@@ -9888,7 +9906,6 @@
     "MechanicalTarget"
   ],
   "gametargetingSystemSearchFilterMaskValue": [
-    "<no_zero_name>",
     "Obj_Player",
     "Obj_Puppet",
     "Obj_Sensor",
@@ -10628,8 +10645,10 @@
   ],
   "physicsFilterDataSource": [
     "Parent",
+    "Collider"
+  ],
+  "physicsFilterDataSource_TEST": [
     "Component",
-    "Collider",
     "Body"
   ],
   "physicsMaterialFriction": [
@@ -10651,12 +10670,18 @@
   ],
   "physicsMaterialTagType": [
     "AIVisibility",
+    "PlayerVisibility",
     "ProjectilePenetration",
     "VehicleTraction"
   ],
   "physicsMaterialTagVehicleTraction": [
     "Default",
     "Gravel"
+  ],
+  "physicsMaterialTagVisibility": [
+    "None",
+    "SemiTransparent",
+    "Transparent"
   ],
   "physicsPhysicalSystemOwner": [
     "Unknown",
@@ -10770,7 +10795,6 @@
     "Invalid"
   ],
   "physicsStateValue": [
-    "<no_zero_name>",
     "Position",
     "Rotation",
     "Transform",
@@ -10792,12 +10816,14 @@
   "populationSpawnerObjectCtrlAction": [
     "Undefined",
     "Activate",
-    "Spawn",
     "Deactivate",
-    "Despawn",
     "Reactivate",
-    "Respawn",
     "ResetKillCount"
+  ],
+  "populationSpawnerObjectCtrlAction_TEST": [
+    "Spawn",
+    "Despawn",
+    "Respawn"
   ],
   "questAttachmentOffsetMode": [
     "UseRealOffset",
@@ -11185,9 +11211,11 @@
   "questVehicleCameraType": [
     "Undefined",
     "PuppetFPP",
-    "FPP",
     "TPP",
     "DriverFPP"
+  ],
+  "questVehicleCameraType_TEST": [
+    "FPP"
   ],
   "questVehicleCommandType": [
     "Move On Spline",
@@ -11266,7 +11294,6 @@
     "Complete"
   ],
   "rendResolutionMultiplier": [
-    "<no_zero_name>",
     "X1",
     "X2",
     "X4"
@@ -11365,12 +11392,10 @@
     "Cyberware"
   ],
   "scnAudioFastForwardSupport": [
-    "<no_zero_name>",
     "MuteDuringFastForward",
     "DontMuteDuringFastForward"
   ],
   "scnAudioPlaybackDirectionSupportFlag": [
-    "<no_zero_name>",
     "Forward",
     "Backward"
   ],
@@ -11391,7 +11416,6 @@
     "VeryFast"
   ],
   "scnChoiceNodeNsChoiceNodeFlags": [
-    "<no_zero_name>",
     "IsFocusClue",
     "IsValidInteractionFailsafeDisabled"
   ],
@@ -11487,7 +11511,6 @@
     "NonTerminating"
   ],
   "scnEntityAcquisitionPlan": [
-    "<no_zero_name>",
     "findInContext",
     "findInWorld",
     "spawnDespawn",
@@ -11498,9 +11521,7 @@
     "findInNode",
     "findNetworkPlayer"
   ],
-  "scnEventType": [
-    "<no_zero_name>"
-  ],
+  "scnEventType": [],
   "scnFastForwardMode": [
     "Default",
     "GameplayReview"
@@ -11661,11 +11682,11 @@
     "Chest"
   ],
   "senseEShapeType": [
+    "INVALID",
     "BOX",
     "SPHERE",
     "CONE",
-    "ANGLE_RANGE",
-    "INVALID"
+    "ANGLE_RANGE"
   ],
   "senseTracingFreq": [
     "Never",
@@ -11782,7 +11803,6 @@
     "HighBeams"
   ],
   "vehicleELightType": [
-    "<no_zero_name>",
     "Head",
     "Brake",
     "LeftBlinker",
@@ -11819,7 +11839,6 @@
     "CloseAll"
   ],
   "vehicleEState": [
-    "<no_zero_name>",
     "Default",
     "On",
     "Disabled",
@@ -11857,12 +11876,12 @@
     "Open"
   ],
   "vehicleExitDirection": [
+    "NoDirection",
     "Left",
     "Right",
     "Front",
     "Back",
-    "Top",
-    "NoDirection"
+    "Top"
   ],
   "vehicleFormationType": [
     "FORMATION_TRIANGLE",
@@ -11995,7 +12014,6 @@
     "TwoHandedClub"
   ],
   "workWorkspotDebugMode": [
-    "<no_zero_name>",
     "VisualLogToogle",
     "VisualLogOn",
     "VisualLogOff",
@@ -12050,7 +12068,6 @@
     "Disabled"
   ],
   "worldObjectTag": [
-    "<no_zero_name>",
     "WallExterior",
     "WallInterior",
     "Discard",
@@ -12062,7 +12079,6 @@
     "Stairs"
   ],
   "worldObjectTagExt": [
-    "<no_zero_name>",
     "Default",
     "NonClimbable",
     "None"
@@ -12246,7 +12262,6 @@
     "EBPS_Frame"
   ],
   "worldgeometryDescriptionQueryFlags": [
-    "<no_zero_name>",
     "DistanceVector",
     "CollisionNormal",
     "ObstacleDepth",
