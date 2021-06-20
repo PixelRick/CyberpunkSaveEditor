@@ -97,10 +97,20 @@ struct op_status
   op_status() noexcept = default;
 
   op_status(const std::string_view& err)
-    : m_err(err) {}
+  {
+    if (err != "")
+    {
+      m_err = err;
+    }
+  }
 
   op_status(std::string err)
-    : m_err(err) {}
+  {
+    if (err != "")
+    {
+      m_err = err;
+    }
+  }
 
   op_status(bool ok)
   {
