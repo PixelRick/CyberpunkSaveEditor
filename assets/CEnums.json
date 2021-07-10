@@ -2740,12 +2740,6 @@
     "TCM_HalfHDR_Signed",
     "TCM_Max"
   ],
-  "ETextureCompression_TEST": [
-    "TCM_Normals",
-    "TCM_NormalsHigh",
-    "TCM_NormalsGloss",
-    "TCM_HalfHDR"
-  ],
   "ETextureFilteringMag": [
     "TFMag_Point",
     "TFMag_Linear"
@@ -3280,29 +3274,6 @@
     "TEXFMT_R16G16_Sint",
     "TEXFMT_R16G16_Snorm",
     "TEXFMT_B5G6R5_Unorm"
-  ],
-  "GpuWrapApieTextureFormat_TEST": [
-    "TEXFMT_A8",
-    "TEXFMT_R8",
-    "TEXFMT_L8",
-    "TEXFMT_R8G8",
-    "TEXFMT_R8G8B8X8",
-    "TEXFMT_R8G8B8A8",
-    "TEXFMT_Uint_16_norm",
-    "TEXFMT_Uint_16",
-    "TEXFMT_Uint_32",
-    "TEXFMT_Uint_R32G32B32A32",
-    "TEXFMT_Uint_R32G32B32A32",
-    "TEXFMT_R10G10B10A2",
-    "TEXFMT_Float_R16G16B16A16",
-    "TEXFMT_Float_R11G11B10",
-    "TEXFMT_Float_R16G16",
-    "TEXFMT_Float_R32G32",
-    "TEXFMT_Float_R32G32B32A32",
-    "TEXFMT_Float_R32",
-    "TEXFMT_Float_R16",
-    "TEXFMT_BC6H",
-    "TEXFMT_R8G8B8A8"
   ],
   "GpuWrapApieTextureGroup": [
     "TEXG_Generic_Color",
@@ -3987,9 +3958,6 @@
   "Sample_Enum_4_6": [
     "Sample_Enum_Option_4_6_0",
     "Sample_Enum_Option_4_6_1_with_a_new_name"
-  ],
-  "Sample_Enum_4_6_TEST": [
-    "Sample_Enum_Option_4_6_1"
   ],
   "Sample_Enum_6_8": [],
   "Sample_Namespace_4_2Sample_Enum_4_2": [
@@ -9808,9 +9776,6 @@
     "EPredicateFunction_logicalLookAt",
     "EPredicateFunction_obstructedLookAt"
   ],
-  "gameinteractionsEPredicateType_TEST": [
-    "EPredicateFunction_lineOfSight"
-  ],
   "gameinteractionsEUnaryOperator": [
     "EUnaryOperator_empty",
     "EUnaryOperator_not"
@@ -10647,10 +10612,6 @@
     "Parent",
     "Collider"
   ],
-  "physicsFilterDataSource_TEST": [
-    "Component",
-    "Body"
-  ],
   "physicsMaterialFriction": [
     "Enabled",
     "DisabledStrong",
@@ -10819,11 +10780,6 @@
     "Deactivate",
     "Reactivate",
     "ResetKillCount"
-  ],
-  "populationSpawnerObjectCtrlAction_TEST": [
-    "Spawn",
-    "Despawn",
-    "Respawn"
   ],
   "questAttachmentOffsetMode": [
     "UseRealOffset",
@@ -11213,9 +11169,6 @@
     "PuppetFPP",
     "TPP",
     "DriverFPP"
-  ],
-  "questVehicleCameraType_TEST": [
-    "FPP"
   ],
   "questVehicleCommandType": [
     "Move On Spline",
