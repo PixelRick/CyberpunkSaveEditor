@@ -45,6 +45,7 @@ bool WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
       }
       catch (std::exception& e)
       {
+        std::ignore = e;
         SPDLOG_DEBUG("dump() threw an exception: {}", e.what());
       }
 

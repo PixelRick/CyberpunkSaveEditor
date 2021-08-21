@@ -335,12 +335,12 @@ void dump()
   }
 
   {
-    std::ofstream file(path / L"JClasses_1.23.json");
+    std::ofstream file(path / L"JClasses_1.3.json");
     file << jclasses.dump(2);
   }
 
   {
-    std::ofstream file(path / L"JEnums_1.23.json");
+    std::ofstream file(path / L"JEnums_1.3.json");
     file << jenums.dump(2);
   }
 

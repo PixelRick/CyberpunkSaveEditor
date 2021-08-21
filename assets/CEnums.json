@@ -276,6 +276,10 @@
     "Lean",
     "Move"
   ],
+  "ATUIComputerTestStepMode": [
+    "SINGLE_ACTION",
+    "ROLLING"
+  ],
   "ActiveMode": [
     "UNINITIALIZED",
     "CLEAR",
@@ -386,6 +390,10 @@
     "SafeMode",
     "Auto"
   ],
+  "ConfigMeshQualityLevel": [
+    "Default",
+    "Console"
+  ],
   "ConfigTextureQualityLevel": [
     "Console",
     "ConsoleSafe",
@@ -406,10 +414,6 @@
     "DisassemblingFinished",
     "UpgradingFinished",
     "Failed"
-  ],
-  "CraftingInfoType": [
-    "QuickHack",
-    "Item"
   ],
   "CraftingMode": [
     "craft",
@@ -2403,6 +2407,25 @@
     "ROT_Particle",
     "ROT_Enemy"
   ],
+  "ERenderProxyType": [
+    "RPT_None",
+    "RPT_Mesh",
+    "RPT_PointLight",
+    "RPT_SpotLight",
+    "RPT_AreaLight",
+    "RPT_Particles",
+    "RPT_Foliage",
+    "RPT_SSDecal",
+    "RPT_VectorField",
+    "RPT_FogVolume",
+    "RPT_GI",
+    "RPT_ReflectionProbe",
+    "RPT_MorphTargetMesh",
+    "RPT_LightVolume",
+    "RPT_DynamicDecalSpawner",
+    "RPT_AutoSpawner",
+    "RPT_LightBlocker"
+  ],
   "ERenderingMode": [
     "RM_Shaded",
     "RM_Shaded_NoAmbient",
@@ -2739,6 +2762,12 @@
     "TCM_HalfHDR_Unsigned",
     "TCM_HalfHDR_Signed",
     "TCM_Max"
+  ],
+  "ETextureCompression_TEST": [
+    "TCM_Normals",
+    "TCM_NormalsHigh",
+    "TCM_NormalsGloss",
+    "TCM_HalfHDR"
   ],
   "ETextureFilteringMag": [
     "TFMag_Point",
@@ -3275,6 +3304,29 @@
     "TEXFMT_R16G16_Snorm",
     "TEXFMT_B5G6R5_Unorm"
   ],
+  "GpuWrapApieTextureFormat_TEST": [
+    "TEXFMT_A8",
+    "TEXFMT_R8",
+    "TEXFMT_L8",
+    "TEXFMT_R8G8",
+    "TEXFMT_R8G8B8X8",
+    "TEXFMT_R8G8B8A8",
+    "TEXFMT_Uint_16_norm",
+    "TEXFMT_Uint_16",
+    "TEXFMT_Uint_32",
+    "TEXFMT_Uint_R32G32B32A32",
+    "TEXFMT_Uint_R32G32B32A32",
+    "TEXFMT_R10G10B10A2",
+    "TEXFMT_Float_R16G16B16A16",
+    "TEXFMT_Float_R11G11B10",
+    "TEXFMT_Float_R16G16",
+    "TEXFMT_Float_R32G32",
+    "TEXFMT_Float_R32G32B32A32",
+    "TEXFMT_Float_R32",
+    "TEXFMT_Float_R16",
+    "TEXFMT_BC6H",
+    "TEXFMT_R8G8B8A8"
+  ],
   "GpuWrapApieTextureGroup": [
     "TEXG_Generic_Color",
     "TEXG_Generic_Grayscale",
@@ -3383,7 +3435,6 @@
   ],
   "HubVendorMenuItems": [
     "Trade",
-    "Crafting",
     "Cyberware"
   ],
   "IMaterialDataProviderDescEParameterType": [
@@ -3495,7 +3546,8 @@
     "Attachment",
     "Crafting",
     "Upgrading",
-    "HUD"
+    "HUD",
+    "Vendor"
   ],
   "ItemAdditionalInfoType": [
     "NONE",
@@ -3781,6 +3833,16 @@
     "CommandInjectThreat",
     "TrackedBySecuritySystemAgent"
   ],
+  "PlayerCombatControllerRefreshPolicyEnum": [
+    "Persistent",
+    "Eventful"
+  ],
+  "PlayerCombatState": [
+    "Invalid",
+    "InCombat",
+    "OutOfCombat",
+    "Stealth"
+  ],
   "PlayerVisionModeControllerRefreshPolicyEnum": [
     "Persistent",
     "Eventful"
@@ -3843,30 +3905,6 @@
     "Abdomen",
     "LegLeft",
     "LegRight"
-  ],
-  "Ref_1_3_3_BigEnum": [
-    "BigValue"
-  ],
-  "Ref_1_3_3_Colors": [
-    "Red",
-    "Green",
-    "Blue"
-  ],
-  "Ref_1_3_3_CustomSize_1": [
-    "Test1",
-    "Test",
-    "Test2"
-  ],
-  "Ref_1_3_3_CustomSize_2": [
-    "Test",
-    "Test1",
-    "Test2"
-  ],
-  "Ref_2_3_3_Enum32Bit": [
-    "Value"
-  ],
-  "Ref_2_3_3_Enum64Bit": [
-    "BigValue"
   ],
   "RenderDecalNormalsBlendingMode": [
     "AlphaBlending",
@@ -3938,39 +3976,6 @@
     "ABSO_NonStreamable",
     "ABSO_PartiallyStreamable",
     "ABSO_FullyStreamable"
-  ],
-  "Sample_Enum_4_1": [
-    "Sample_Enum_Option_4_1_0",
-    "Sample_Enum_Option_4_1_1",
-    "Sample_Enum_Option_4_1_2",
-    "MyCustomEnumOptionName413"
-  ],
-  "Sample_Enum_4_4": [
-    "Sample_Enum_Option_4_4_0",
-    "Sample_Enum_Option_4_4_1",
-    "Sample_Enum_Option_4_4_2"
-  ],
-  "Sample_Enum_4_5": [
-    "Sample_Enum_Option_4_5_0",
-    "Sample_Enum_Option_4_5_1",
-    "Sample_Enum_Option_4_5_2"
-  ],
-  "Sample_Enum_4_6": [
-    "Sample_Enum_Option_4_6_0",
-    "Sample_Enum_Option_4_6_1_with_a_new_name"
-  ],
-  "Sample_Enum_6_8": [],
-  "Sample_Namespace_4_2Sample_Enum_4_2": [
-    "Sample_Enum_Option_4_2_0",
-    "Sample_Enum_Option_4_2_1",
-    "Sample_Enum_Option_4_2_2",
-    "MyCustomEnumOptionName423"
-  ],
-  "Sample_Namespace_4_3_0Sample_Namespace_4_3_1Sample_Enum_4_3": [
-    "Sample_Enum_Option_4_3_0",
-    "Sample_Enum_Option_4_3_1",
-    "Sample_Enum_Option_4_3_2",
-    "MyCustomEnumOptionName433"
   ],
   "Sample_Replicated_Enum": [
     "One",
@@ -4142,7 +4147,8 @@
     "Default",
     "ExpensiveItem",
     "EquippedItem",
-    "BuyCyberware",
+    "BuyAndEquipCyberware",
+    "BuyNotEquipableCyberware",
     "DisassembeIconic"
   ],
   "VisualState": [
@@ -4913,48 +4919,64 @@
     "Light_Solid",
     "Light_Flesh",
     "Light_Robot",
+    "Light_Android",
+    "Light_Mech",
     "Normal",
     "Normal_Hard",
     "Normal_Soft",
     "Normal_Solid",
     "Normal_Flesh",
     "Normal_Robot",
+    "Normal_Android",
+    "Normal_Mech",
     "Heavy",
     "Heavy_Hard",
     "Heavy_Soft",
     "Heavy_Solid",
     "Heavy_Flesh",
     "Heavy_Robot",
+    "Heavy_Android",
+    "Heavy_Mech",
     "Slash",
     "Slash_Hard",
     "Slash_Soft",
     "Slash_Solid",
     "Slash_Flesh",
     "Slash_Robot",
+    "Slash_Android",
+    "Slash_Mech",
     "Cut",
     "Cut_Hard",
     "Cut_Soft",
     "Cut_Solid",
     "Cut_Flesh",
     "Cut_Robot",
+    "Cut_Android",
+    "Cut_Mech",
     "Stab",
     "Stab_Hard",
     "Stab_Soft",
     "Stab_Solid",
     "Stab_Flesh",
     "Stab_Robot",
+    "Stab_Android",
+    "Stab_Mech",
     "Finisher",
     "Finisher_Hard",
     "Finisher_Soft",
     "Finisher_Solid",
     "Finisher_Flesh",
     "Finisher_Robot",
+    "Finisher_Android",
+    "Finisher_Mech",
     "Weak",
     "Weak_Hard",
     "Weak_Soft",
     "Weak_Solid",
     "Weak_Flesh",
-    "Weak_Robot"
+    "Weak_Robot",
+    "Weak_Android",
+    "Weak_Mech"
   ],
   "audioMeleeHitType": [
     "Light",
@@ -5279,6 +5301,17 @@
     "Select",
     "Suppress"
   ],
+  "entForcedLodDistance": [
+    "Default",
+    "Background",
+    "Regular",
+    "Cinematic",
+    "Vehicle",
+    "CinematicVehicle",
+    "VehicleInterior",
+    "LargeVehicleInterior",
+    "ConsoleLOD"
+  ],
   "entMeshComponentLODMode": [
     "AlwaysVisible",
     "Appearance",
@@ -5314,14 +5347,6 @@
   ],
   "entVisibilityParamSource": [
     "PhantomEntitySystem"
-  ],
-  "entVisualControllerComponentForcedLodDistance": [
-    "Default",
-    "Background",
-    "Regular",
-    "Cinematic",
-    "Vehicle",
-    "CinematicVehicle"
   ],
   "entdismembermentResourceSetE": [
     "BARE",
@@ -5705,8 +5730,9 @@
     "CP77_Patch_1_2_Hotfix1",
     "CP77_Patch_1_2_Hotfix2",
     "CP77_Patch_1_2_Hotfix3",
-    "Current",
-    "CP77_Patch_1_3"
+    "CP77_Patch_1_2_Hotfix4_dlc1",
+    "CP77_Patch_1_3",
+    "Current"
   ],
   "gameGameplayEventFlag": [
     "Ai",
@@ -5732,6 +5758,7 @@
   ],
   "gameInitalChoiceStage": [
     "None",
+    "Difficulty",
     "LifePath",
     "Gender",
     "Customizations",
@@ -6060,7 +6087,13 @@
     "Crouch",
     "Sprint",
     "Kereznikov",
-    "Jump"
+    "Jump",
+    "Vault",
+    "Dodge",
+    "DodgeAir",
+    "Workspot",
+    "Slide",
+    "SlideFall"
   ],
   "gamePSMMelee": [
     "Any",
@@ -6145,6 +6178,8 @@
     "SwitchItems",
     "SwitchCyberware",
     "Reload",
+    "TemporaryUnequip",
+    "ForceEmptyHands",
     "Aim"
   ],
   "gamePSMVehicle": [
@@ -6296,10 +6331,6 @@
     "ShallowComplete",
     "Reset"
   ],
-  "gameSceneAnimationMotionActionParamsActionPlayDirection": [
-    "Forward",
-    "Backward"
-  ],
   "gameSceneAnimationMotionActionParamsEasingType": [
     "Linear",
     "SinusoidalEaseInOut",
@@ -6317,6 +6348,10 @@
     "Blend",
     "TeleportToStart",
     "PlayAtActorPosition"
+  ],
+  "gameScriptTaskExecutionStage": [
+    "Any",
+    "PostPhysics"
   ],
   "gameScriptedBlackboardStorage": [
     "Default"
@@ -7574,6 +7609,7 @@
     "WanderingMerchantVariant",
     "Zzz01_CarForPurchaseVariant",
     "Zzz02_MotorcycleForPurchaseVariant",
+    "Zzz03_MotorcycleVariant",
     "CPO_PingDoorVariant",
     "CPO_PingGoHereVariant",
     "CPO_PingLootVariant",
@@ -8321,6 +8357,8 @@
     "BufferSize",
     "BulletMagnetismDefaultAngle",
     "BulletMagnetismHighVelocityAngle",
+    "BulletPseudoPierceHitVFxChance",
+    "BulletSurroundingHitVFxChance",
     "BurningApplicationRate",
     "BurningImmunity",
     "BurningRegenStamina",
@@ -8838,6 +8876,7 @@
     "MaxStacks",
     "MaxStacksBonusBleeding",
     "MaxStacksBonusBurning",
+    "MaximumRange",
     "MechanicalsBuffDPSBonus",
     "MeleeAttackDuration",
     "Memory",
@@ -8862,6 +8901,7 @@
     "MemoryOutOfCombatRegenStartThreshold",
     "MemoryOutOfCombatStartDelay",
     "MemoryTrackerCooldownDuration",
+    "MemoryWipeImmunity",
     "MinSpeed",
     "MinigameBufferExtension",
     "MinigameMaterialsEarned",
@@ -9776,6 +9816,9 @@
     "EPredicateFunction_logicalLookAt",
     "EPredicateFunction_obstructedLookAt"
   ],
+  "gameinteractionsEPredicateType_TEST": [
+    "EPredicateFunction_lineOfSight"
+  ],
   "gameinteractionsEUnaryOperator": [
     "EUnaryOperator_empty",
     "EUnaryOperator_not"
@@ -10161,6 +10204,7 @@
   "inkDisplayMode": [
     "Invalid",
     "Basic",
+    "BasicTranslatable",
     "Bold",
     "Header",
     "Single"
@@ -10216,6 +10260,7 @@
   ],
   "inkELayerType": [
     "Watermarks",
+    "WaitingSign",
     "SystemNotifications",
     "Loading",
     "GameNotifications",
@@ -10495,6 +10540,17 @@
     "Action",
     "RPG"
   ],
+  "inputEInputDevice": [
+    "INVALID",
+    "KBD_MOUSE",
+    "ORBIS",
+    "DURANGO",
+    "STEAM",
+    "XINPUT_PAD",
+    "STADIA",
+    "NINTENDO_SWITCH",
+    "EID_COUNT"
+  ],
   "locHolocallActorMode": [
     "Default",
     "ActorUsesHolocall",
@@ -10612,6 +10668,10 @@
     "Parent",
     "Collider"
   ],
+  "physicsFilterDataSource_TEST": [
+    "Component",
+    "Body"
+  ],
   "physicsMaterialFriction": [
     "Enabled",
     "DisabledStrong",
@@ -10674,7 +10734,8 @@
     "InstancedDestructibleNode",
     "PhotoModeSystem",
     "VehicleChassisComponent",
-    "FoliageDestruction"
+    "FoliageDestruction",
+    "EntityProxy"
   ],
   "physicsPhysicsJointAxis": [
     "AxisX",
@@ -10734,7 +10795,9 @@
     "VehicleWheel",
     "VehicleStreamingHack",
     "VehicleWater",
-    "WorldUI"
+    "WorldUI",
+    "GameEffects",
+    "GameProjectiles"
   ],
   "physicsRagdollShapeType": [
     "CAPSULE",
@@ -10780,6 +10843,11 @@
     "Deactivate",
     "Reactivate",
     "ResetKillCount"
+  ],
+  "populationSpawnerObjectCtrlAction_TEST": [
+    "Spawn",
+    "Despawn",
+    "Respawn"
   ],
   "questAttachmentOffsetMode": [
     "UseRealOffset",
@@ -11127,6 +11195,10 @@
     "AnyMotorcycle",
     "SpecificVehicle"
   ],
+  "questStorage": [
+    "Slow",
+    "Fast"
+  ],
   "questSwitchWeaponModes": [
     "PrimaryWeapon",
     "SecondaryWeapon"
@@ -11169,6 +11241,9 @@
     "PuppetFPP",
     "TPP",
     "DriverFPP"
+  ],
+  "questVehicleCameraType_TEST": [
+    "FPP"
   ],
   "questVehicleCommandType": [
     "Move On Spline",
@@ -11571,6 +11646,10 @@
     "otherOpenWorld",
     "other"
   ],
+  "scnSceneVersionCheck": [
+    "OlderOrEqual",
+    "Equal"
+  ],
   "scnSectionInternalsActorBehaviorMode": [
     "OnlyIfAlive",
     "EvenIfDead"
@@ -11728,6 +11807,10 @@
     "Text",
     "Location",
     "Tag"
+  ],
+  "toolsMessageVerbosity": [
+    "Normal",
+    "Verbose"
   ],
   "vehicleAudioEventAction": [
     "OnPlayerDriving",
