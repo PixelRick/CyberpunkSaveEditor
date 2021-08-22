@@ -191,7 +191,7 @@ struct CItemData_widget
             for (auto& o : *modifiers)
             {
               auto stat = dynamic_cast<CHandleProperty*>(o.get())->obj();
-              if (stat->ctypename() != gname("gameConstantStatModifierData"))
+              if (stat->ctypename() != gname("gameConstantStatModifierData_Deprecated"))
                 continue;
               if (stat->get_prop_cast<CEnumProperty>("statType"_gn)->value_name() == "Quality"_gn)
               {

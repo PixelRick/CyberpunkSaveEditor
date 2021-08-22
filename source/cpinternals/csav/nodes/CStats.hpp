@@ -111,17 +111,17 @@ protected:
 public:
   CObjectSPtr add_combined_stats(CProperty* modifiers)
   {
-    return add_new_modifier(modifiers, "gameCombinedStatModifierData"_gn);
+    return add_new_modifier(modifiers, "gameCombinedStatModifierData_Deprecated"_gn);
   }
 
   CObjectSPtr add_curve_stats(CProperty* modifiers)
   {
-    return add_new_modifier(modifiers, "gameCurveStatModifierData"_gn);
+    return add_new_modifier(modifiers, "gameCurveStatModifierData_Deprecated"_gn);
   }
 
   CObjectSPtr add_constant_stats(CProperty* modifiers)
   {
-    auto a = add_new_modifier(modifiers, "gameConstantStatModifierData"_gn);
+    auto a = add_new_modifier(modifiers, "gameConstantStatModifierData_Deprecated"_gn);
     a->get_prop_cast<CEnumProperty>("modifierType"_gn)->set_value_by_idx(0);
     a->get_prop_cast<CEnumProperty>("statType"_gn)->set_value_by_idx(0);
     a->get_prop_cast<CFloatProperty>("value"_gn)->set_value(1.0f);
