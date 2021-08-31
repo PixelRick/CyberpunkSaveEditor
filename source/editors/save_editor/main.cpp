@@ -180,7 +180,7 @@ protected:
     static bool imgui_style_editor = false;
 
 
-    static bool cploaded = redx::init_redx();
+    static bool cploaded = !!redx::init_redx();
 
     if (font != nullptr)
     {

@@ -157,7 +157,7 @@ protected:
     std::weak_ptr<redx::savegame> weak_csav = m_csav;
     save_job.start([weak_csav](progress_t& progress) -> bool {
       auto csav = weak_csav.lock();
-      return csav->save_with_progress(csav->filepath, progress, s_dump_decompressed_data, s_use_ps4_weird_format);
+      return !!csav->save_with_progress(csav->filepath, progress, s_dump_decompressed_data, s_use_ps4_weird_format);
     });
     ImGui::OpenPopup("Saving..##SAVE"); // should be in parent class
   }
@@ -192,7 +192,7 @@ public:
     ImVec2 center(ImGui::GetIO().DisplaySize.x * 0.5f, ImGui::GetIO().DisplaySize.y * 0.5f);
 
     std::string label = fmt::format("{} (csav {})",
-      m_csav->filepath.u8string(), m_csav->tree.ver().string());
+      m_csav->filepath.string(), m_csav->tree.ver().string());
 
     ImGuiStyle& style = ImGui::GetStyle();
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, style.ItemSpacing.y));

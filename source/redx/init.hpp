@@ -3,7 +3,7 @@
 
 namespace redx {
 
-op_status init_redx(bool with_archive_names = true);
+bool init_redx(bool with_archive_names = true);
 
 }
 

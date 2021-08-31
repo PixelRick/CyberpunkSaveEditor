@@ -3,6 +3,7 @@
 #include <array>
 #include <string>
 #include <string_view>
+
 #include <redx/core/utils.hpp>
 #include <redx/core/hashing_tables.hpp>
 

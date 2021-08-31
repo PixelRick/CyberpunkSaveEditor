@@ -1,4 +1,5 @@
 #include <redx/core/utils.hpp>
+
 #include <intrin.h>
 #include <cassert>
 

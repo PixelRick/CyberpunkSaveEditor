@@ -1,5 +1,4 @@
 #include "init.hpp"
-#include <Windows.h>
 #include <filesystem>
 #include <fstream>
 #include <vector>
@@ -74,7 +73,7 @@ bool load_names_from_txt(std::filesystem::path path, std::vector<gname>& out, bo
 }
 
 // TODO: rename this an add progress param
-op_status init_redx(bool with_archive_names)
+bool init_redx(bool with_archive_names)
 {
   {
     std::vector<gname> names;
