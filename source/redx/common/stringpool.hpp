@@ -6,19 +6,19 @@
 #include <unordered_map>
 #include <shared_mutex>
 
-#include <cpinternals/common/hashing.hpp>
-#include <cpinternals/common/utils.hpp>
+#include <redx/common/hashing.hpp>
+#include <redx/common/utils.hpp>
 
 // todo: add collision detection
 
-namespace cp {
+namespace redx {
 
 // this pool never reallocates thus string_views are valid until destruction of the pool.
 // it behaves as a set (no duplicates) and is not clearable.
 template <bool ThreadSafe>
 struct stringpool
 {
-  using mutex_type = std::conditional_t<ThreadSafe, std::shared_mutex, cp::nop_mutex>;
+  using mutex_type = std::conditional_t<ThreadSafe, std::shared_mutex, redx::nop_mutex>;
 
   constexpr static size_t block_size = 0x40000;
   using block_type = std::array<char, block_size>;
@@ -222,5 +222,5 @@ private:
 using stringpool_st = stringpool<false>;
 using stringpool_mt = stringpool<true>;
 
-} // namespace cp
+} // namespace redx
 

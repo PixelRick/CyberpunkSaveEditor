@@ -5,9 +5,9 @@
 #include <unordered_map>
 #include <algorithm>
 #include <spdlog/spdlog.h>
-#include "cpinternals/common.hpp"
+#include "redx/common.hpp"
 
-namespace cp {
+namespace redx {
 
 /////////////////////////////////////////
 // CFact
@@ -154,5 +154,5 @@ inline gname CFact::name() const
   return resolver.resolve(*this);
 }
 
-} // namespace cp
+} // namespace redx
 

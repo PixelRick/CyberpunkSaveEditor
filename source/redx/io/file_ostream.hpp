@@ -1,9 +1,9 @@
 #pragma once
 #include <fstream>
 #include <filesystem>
-#include <cpinternals/common.hpp>
+#include <redx/common.hpp>
 
-namespace cp {
+namespace redx {
 
 // Output binary file stream
 struct file_ostream
@@ -71,5 +71,5 @@ protected:
   mutable std::ofstream m_ofs;
 };
 
-} // namespace cp
+} // namespace redx
 

@@ -1,11 +1,11 @@
 #pragma once
-#include <cpinternals/csav/node.hpp>
-#include <cpinternals/csav/node_tree.hpp>
-#include <cpinternals/csav/savegame.hpp>
+#include <redx/csav/node.hpp>
+#include <redx/csav/node_tree.hpp>
+#include <redx/csav/savegame.hpp>
 
-namespace cp {
+namespace redx {
 
 using savegame = csav::savegame;
 
-} // namespace cp
+} // namespace redx
 

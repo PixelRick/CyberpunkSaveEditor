@@ -1,10 +1,10 @@
 #pragma once
 #include <fstream>
 #include <filesystem>
-#include <cpinternals/common.hpp>
-#include <cpinternals/archive/archive.hpp>
+#include <redx/common.hpp>
+#include <redx/archive/archive.hpp>
 
-namespace cp {
+namespace redx {
 
 // not thread safe
 struct archive_file_istream
@@ -403,5 +403,5 @@ private:
   pos_type m_pos = 0;
 };
 
-} // namespace cp
+} // namespace redx
 

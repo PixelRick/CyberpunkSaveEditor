@@ -6,9 +6,9 @@
 #include <algorithm>
 #include <spdlog/spdlog.h>
 #include <nlohmann/json.hpp>
-#include "cpinternals/common.hpp"
+#include "redx/common.hpp"
 
-namespace cp {
+namespace redx {
 
 struct CEnum_member
 {
@@ -95,5 +95,5 @@ protected:
   std::unordered_map<gname, enum_desc_sptr> m_enums_map;
 };
 
-} // namespace cp
+} // namespace redx
 

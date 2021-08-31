@@ -1,9 +1,9 @@
 #pragma once
 #include <fstream>
 #include <filesystem>
-#include <cpinternals/common.hpp>
+#include <redx/common.hpp>
 
-namespace cp {
+namespace redx {
 
 // Input binary file stream
 struct file_istream
@@ -99,5 +99,5 @@ protected:
   mutable std::ifstream m_ifs;
 };
 
-} // namespace cp
+} // namespace redx
 

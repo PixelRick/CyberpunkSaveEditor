@@ -6,12 +6,12 @@
 
 #include <appbase/extras/cpp_imgui.hpp>
 #include <appbase/extras/imgui_stdlib.h>
-#include <cpinternals/utils.hpp>
-#include <cpinternals/ctypes.hpp>
+#include <redx/utils.hpp>
+#include <redx/ctypes.hpp>
 #include "node_editor.hpp"
 #include "hexedit.hpp"
 
-#include "cpinternals/csav/nodes.hpp"
+#include "redx/csav/nodes.hpp"
 
 // to be used with CScriptObjProperty struct
 struct CProperty_widget
@@ -132,7 +132,7 @@ struct CPSData_widget
   }
 
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(cp::csav::CPSData& psdata, int* selected_object)
+  [[nodiscard]] static inline bool draw(redx::csav::CPSData& psdata, int* selected_object)
   {
     bool modified = false;
 
@@ -157,10 +157,10 @@ struct CPSData_widget
 class System_editor
   : public node_editor_widget
 {
-  cp::csav::CGenericSystem m_data;
+  redx::csav::CGenericSystem m_data;
 
 public:
-  System_editor(const std::shared_ptr<const cp::csav::node_t>& node, const cp::csav::version& version)
+  System_editor(const std::shared_ptr<const redx::csav::node_t>& node, const redx::csav::version& version)
     : node_editor_widget(node, version)
   {
     reload();
@@ -171,7 +171,7 @@ public:
 public:
   bool commit_impl() override
   {
-    std::shared_ptr<const cp::csav::node_t> rebuilt;
+    std::shared_ptr<const redx::csav::node_t> rebuilt;
     try
     {
       rebuilt = m_data.to_node(version());
@@ -222,10 +222,10 @@ protected:
 class PSData_editor
   : public node_editor_widget
 {
-  cp::csav::CPSData m_data;
+  redx::csav::CPSData m_data;
 
 public:
-  PSData_editor(const std::shared_ptr<const cp::csav::node_t>& node, const cp::csav::version& version)
+  PSData_editor(const std::shared_ptr<const redx::csav::node_t>& node, const redx::csav::version& version)
     : node_editor_widget(node, version)
   {
     reload();
@@ -236,7 +236,7 @@ public:
 public:
   bool commit_impl() override
   {
-    std::shared_ptr<const cp::csav::node_t> rebuilt;
+    std::shared_ptr<const redx::csav::node_t> rebuilt;
     try
     {
       rebuilt = m_data.to_node(version());

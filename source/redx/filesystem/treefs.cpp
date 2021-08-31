@@ -1,8 +1,8 @@
-#include <cpinternals/filesystem/treefs.hpp>
-#include <cpinternals/io/file_stream.hpp>
+#include <redx/filesystem/treefs.hpp>
+#include <redx/io/file_stream.hpp>
 #include <filesystem>
 
-namespace cp::filesystem {
+namespace redx::filesystem {
 
 bool treefs::load_archive(const std::filesystem::path& path)
 {
@@ -27,7 +27,7 @@ bool treefs::load_archive(const std::filesystem::path& path)
     }
   }
 
-  auto ar = cp::archive::load(path);
+  auto ar = redx::archive::load(path);
   if (!ar)
   {
     SPDLOG_ERROR("couldn't load archive");
@@ -129,7 +129,7 @@ constexpr int32_t ardb_root_idx = -1;
 // array of (dirs/files fhash (optional), idx parent, idx fname) = one u64 per file/ folder = 5MB
 bool treefs::load_ardb(const std::filesystem::path& arpath)
 {
-  cp::file_istream ifs;
+  redx::file_istream ifs;
   ifs.open(arpath);
 
   if (!ifs.is_open())
@@ -325,5 +325,5 @@ std::pair<int32_t, bool> treefs::insert_child_entry(int32_t parent_entry_idx, fs
   return {entry_idx, true};
 }
 
-} // namespace cp::filesystem
+} // namespace redx::filesystem
 

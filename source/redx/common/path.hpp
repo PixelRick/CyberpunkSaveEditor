@@ -2,9 +2,9 @@
 #include <filesystem>
 #include <string>
 
-#include <cpinternals/common.hpp>
+#include <redx/common.hpp>
 
-namespace cp {
+namespace redx {
 
 // resource paths:
 // - are lower case ascii
@@ -529,14 +529,14 @@ struct path_id
   uint64_t hash = 0;
 };
 
-} // namespace cp
+} // namespace redx
 
 namespace std {
 
 template <>
-struct hash<cp::path_id>
+struct hash<redx::path_id>
 {
-  std::size_t operator()(const cp::path_id& k) const noexcept
+  std::size_t operator()(const redx::path_id& k) const noexcept
   {
     return k.hash;
   }

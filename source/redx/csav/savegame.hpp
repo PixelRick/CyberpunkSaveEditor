@@ -10,7 +10,7 @@
 #include "node.hpp"
 #include "nodes.hpp"
 
-namespace cp::csav {
+namespace redx::csav {
 
 struct savegame
 {
@@ -112,7 +112,7 @@ public:
   }
 
 protected:
-  bool try_load_node_data_struct(cp::csav::node_serializable& var, std::string_view nodename, progress_t& progress, float end_progress, bool test=false)
+  bool try_load_node_data_struct(redx::csav::node_serializable& var, std::string_view nodename, progress_t& progress, float end_progress, bool test=false)
   {
     auto node = search_node(nodename);
     if (!node)
@@ -140,7 +140,7 @@ protected:
     return ok;
   }
 
-  bool test_reserialize(const shared_node_type& node, cp::csav::node_serializable& var)
+  bool test_reserialize(const shared_node_type& node, redx::csav::node_serializable& var)
   {
     auto new_node = var.to_node(tree.ver());
     if (!new_node)
@@ -248,5 +248,5 @@ public:
   }
 };
 
-} // namespace cp::csav
+} // namespace redx::csav
 

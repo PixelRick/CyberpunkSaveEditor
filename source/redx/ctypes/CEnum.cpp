@@ -6,7 +6,7 @@
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 
-namespace cp {
+namespace redx {
 
 void to_json(nlohmann::json& j, const CEnum_member& x)
 {
@@ -51,5 +51,5 @@ void from_json(const nlohmann::json& j, CEnum_resolver& x)
   }
 }
 
-} // namespace cp
+} // namespace redx
 

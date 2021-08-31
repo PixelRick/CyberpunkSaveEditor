@@ -6,7 +6,7 @@
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 
-namespace cp {
+namespace redx {
 
 CFact::CFact(std::string_view name, uint32_t value, bool add_to_resolver)
   : m_value(value)
@@ -35,5 +35,5 @@ void CFact_resolver::feed(const std::vector<gname>& names)
   }
 }
 
-} // namespace cp
+} // namespace redx
 

@@ -7,11 +7,11 @@
 #include <iostream>
 #include <algorithm>
 
-//#pragma message ("deprecated header utils.hpp, include cpinternals/common.hpp instead")
+//#pragma message ("deprecated header utils.hpp, include redx/common.hpp instead")
 
-#include "cpinternals/common.hpp"
+#include "redx/common.hpp"
 
-using namespace cp;
+using namespace redx;
 
 class span_istreambuf
 	: public std::streambuf

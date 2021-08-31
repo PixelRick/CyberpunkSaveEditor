@@ -4,11 +4,11 @@
 #include <vector>
 #include <unordered_map>
 #include <spdlog/spdlog.h>
-#include <cpinternals/common/streambase.hpp>
-#include <cpinternals/common/gstrid.hpp>
-#include <cpinternals/common/gname.hpp>
+#include <redx/common/streambase.hpp>
+#include <redx/common/gstrid.hpp>
+#include <redx/common/gname.hpp>
 
-namespace cp {
+namespace redx {
 
 //--------------------------------------------------------
 //  cname
@@ -154,13 +154,13 @@ protected:
   //std::unordered_map<uint32_t, gname, identity_op_32> m_invmap_32;
 };
 
-} // namespace cp
+} // namespace redx
 
 namespace std {
 
-template<> struct hash<cp::cname>
+template<> struct hash<redx::cname>
 {
-    std::size_t operator()(const cp::cname& x) const noexcept
+    std::size_t operator()(const redx::cname& x) const noexcept
     {
         return x.hash;
     }

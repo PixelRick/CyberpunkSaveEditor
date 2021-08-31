@@ -1,7 +1,7 @@
 #pragma once
 
 #include "node_editor.hpp"
-#include "cpinternals/utils.hpp"
+#include "redx/utils.hpp"
 #include "appbase/extras/imgui_memory_editor.hpp"
 
 class node_hexeditor
@@ -13,8 +13,8 @@ class node_hexeditor
   bool m_write_event = false;
 
 public:
-  node_hexeditor(const std::shared_ptr<const cp::csav::node_t>& node)
-    : node_editor_widget(node, cp::csav::version{})
+  node_hexeditor(const std::shared_ptr<const redx::csav::node_t>& node)
+    : node_editor_widget(node, redx::csav::version{})
   {
     me.ReadFn = read_fn;
     me.WriteFn = write_fn;

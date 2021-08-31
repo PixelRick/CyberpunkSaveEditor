@@ -4,13 +4,13 @@
 #include <array>
 #include <exception>
 
-#include "cpinternals/common.hpp"
-#include "cpinternals/ctypes.hpp"
-#include "cpinternals/csav/node.hpp"
-#include "cpinternals/csav/serializers.hpp"
+#include "redx/common.hpp"
+#include "redx/ctypes.hpp"
+#include "redx/csav/node.hpp"
+#include "redx/csav/serializers.hpp"
 #include "CStringPool.hpp"
 #include "cobject.hpp"
-#include "cpinternals/io/stdstream_wrapper.hpp"
+#include "redx/io/stdstream_wrapper.hpp"
 
 enum class ESystemKind : uint8_t
 {
@@ -143,7 +143,7 @@ public:
     //reader.seekg((size_t)blob_spos + base_offset);
 
     //CStringPool strpool;
-    cp::cnameset& strpool = m_serctx.strpool;
+    redx::cnameset& strpool = m_serctx.strpool;
     if (!strpool.read_in(blob.get(), 0, strpool_descs_size, strpool_data_size))
       return false;
 

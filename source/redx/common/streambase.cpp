@@ -1,11 +1,11 @@
-#include <cpinternals/common/streambase.hpp>
+#include <redx/common/streambase.hpp>
 
 #ifndef _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
 #define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
 #endif
 #include <codecvt>
 
-namespace cp {
+namespace redx {
 
 streambase& streambase::serialize_str_lpfxd(std::string& s)
 {
@@ -116,5 +116,5 @@ void streambase::write_int_packed(int64_t v)
   serialize_bytes((char*)packed.data(), cnt);
 }
 
-} // namespace cp
+} // namespace redx
 

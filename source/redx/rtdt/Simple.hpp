@@ -2,7 +2,7 @@
 #include "itype.hpp"
 #include "idynamic.hpp"
 
-namespace cp::rtdt {
+namespace redx::rtdt {
 
 struct Simple_type
   : idynamic_type
@@ -50,5 +50,5 @@ protected:
   size_t m_alignment;
 };
 
-} // namespace cp::rtdt
+} // namespace redx::rtdt
 

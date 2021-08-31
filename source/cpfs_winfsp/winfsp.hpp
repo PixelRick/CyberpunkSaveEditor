@@ -4,8 +4,8 @@
 #include <winfsp/winfsp.h>
 #include <sddl.h>
 
-#include <cpinternals/common.hpp>
-#include <cpinternals/common/windowz.hpp>
+#include <redx/common.hpp>
+#include <redx/common/windowz.hpp>
 
 struct security_desc
 {
@@ -38,7 +38,7 @@ struct security_desc
 
     if (!ConvertStringSecurityDescriptorToSecurityDescriptorA(sddl.c_str(), SDDL_REVISION_1, &m_psecdesc, &m_secdesc_size))
     {
-      SPDLOG_ERROR("security_desc::set_sddl: ", cp::windowz::get_last_error());
+      SPDLOG_ERROR("security_desc::set_sddl: ", redx::windowz::get_last_error());
       return false;
     }
 
@@ -73,5 +73,5 @@ inline constexpr LARGE_INTEGER fsp_time_to_largeinteger(uint64_t fspt)
   return tmp;
 }
 
-bool set_file_times(HANDLE file_handle, cp::file_time creation, cp::file_time last_access, cp::file_time last_write, cp::file_time change);
+bool set_file_times(HANDLE file_handle, redx::file_time creation, redx::file_time last_access, redx::file_time last_write, redx::file_time change);
 

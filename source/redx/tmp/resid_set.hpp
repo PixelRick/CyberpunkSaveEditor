@@ -6,13 +6,13 @@
 #include <array>
 #include <unordered_map>
 
-#include <cpinternals/common/cname.hpp>
-#include <cpinternals/common/streambase.hpp>
-#include <cpinternals/common/hashing.hpp>
-#include <cpinternals/common/utils.hpp>
+#include <redx/common/cname.hpp>
+#include <redx/common/streambase.hpp>
+#include <redx/common/hashing.hpp>
+#include <redx/common/utils.hpp>
 #include <redx/containers/bitfield.hpp>
 
-namespace cp {
+namespace redx {
 
 // temp
 struct resource_id
@@ -255,5 +255,5 @@ protected:
   std::unordered_map<cname, uint32_t, identity_op> m_idxmap;
 };
 
-} // namespace cp
+} // namespace redx
 

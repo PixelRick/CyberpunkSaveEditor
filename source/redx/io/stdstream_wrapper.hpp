@@ -1,9 +1,9 @@
 #pragma once
 #include <iostream>
 #include <type_traits>
-#include <cpinternals/common.hpp>
+#include <redx/common.hpp>
 
-namespace cp {
+namespace redx {
 
 // cp streams can't do both in and out
 template <typename StreamType>
@@ -86,5 +86,5 @@ protected:
   underlying_type& m_ref;
 };
 
-} // namespace cp
+} // namespace redx
 

@@ -3,7 +3,7 @@
 #include <string>
 #include <spdlog/spdlog.h>
 
-namespace cp::csav {
+namespace redx::csav {
 
 struct version
 {
@@ -31,5 +31,5 @@ inline bool operator!=(const version& a, const version& b)
   return !(a == b);
 }
 
-} // namespace cp::csav
+} // namespace redx::csav
 

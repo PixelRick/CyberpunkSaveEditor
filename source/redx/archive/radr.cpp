@@ -1,8 +1,8 @@
-#include <cpinternals/archive/radr.hpp>
+#include <redx/archive/radr.hpp>
 
-#include <cpinternals/common.hpp>
+#include <redx/common.hpp>
 
-namespace cp::radr {
+namespace redx::radr {
 
 void metadata::serialize(streambase& st, bool check_crc)
 {
@@ -117,5 +117,5 @@ uint64_t metadata::compute_tbls_crc64()
   return b.finalize();
 }
 
-} // namespace cp::radr
+} // namespace redx::radr
 

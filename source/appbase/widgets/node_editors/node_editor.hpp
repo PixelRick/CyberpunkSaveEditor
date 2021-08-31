@@ -8,8 +8,8 @@
 #include <iostream>
 
 #include "appbase/IApp.hpp"
-#include "cpinternals/csav/node.hpp"
-#include "cpinternals/csav/version.hpp"
+#include "redx/csav/node.hpp"
+#include "redx/csav/version.hpp"
 #include "spdlog/spdlog.h"
 
 #define NODE_EDITOR__DEFAULT_LEAF_EDITOR_NAME "<default_editor>"
@@ -20,16 +20,16 @@
 
 
 class node_editor_widget
-  : public cp::csav::node_listener_t
+  : public redx::csav::node_listener_t
 {
   friend class node_editor_window;
 
 private:
-  std::weak_ptr<const cp::csav::node_t> m_weaknode;
-  cp::csav::version m_version;
+  std::weak_ptr<const redx::csav::node_t> m_weaknode;
+  redx::csav::version m_version;
 
 public:
-  node_editor_widget(const std::shared_ptr<const cp::csav::node_t>& node, const cp::csav::version& version)
+  node_editor_widget(const std::shared_ptr<const redx::csav::node_t>& node, const redx::csav::version& version)
     : m_weaknode(node), m_version(version)
   {
     node->add_listener(this);
@@ -42,7 +42,7 @@ public:
       node->remove_listener(this);
   };
 
-  const cp::csav::version& version() const { return m_version; }
+  const redx::csav::version& version() const { return m_version; }
 
 private:
   bool m_is_drawing = false; // to filter events
@@ -50,7 +50,7 @@ private:
   bool m_has_unsaved_changes = false;
 
 protected:
-  void on_node_event(const std::shared_ptr<const cp::csav::node_t>& node, cp::csav::node_event_e evt) override
+  void on_node_event(const std::shared_ptr<const redx::csav::node_t>& node, redx::csav::node_event_e evt) override
   {
     if (m_is_drawing)
       m_has_unsaved_changes = true;
@@ -71,8 +71,8 @@ public:
     return "dead_node";
   }
 
-  std::shared_ptr<const cp::csav::node_t> node() const { return m_weaknode.lock(); }
-  std::shared_ptr<cp::csav::node_t> ncnode() { return std::const_pointer_cast<cp::csav::node_t>(m_weaknode.lock()); }
+  std::shared_ptr<const redx::csav::node_t> node() const { return m_weaknode.lock(); }
+  std::shared_ptr<redx::csav::node_t> ncnode() { return std::const_pointer_cast<redx::csav::node_t>(m_weaknode.lock()); }
 
   void draw_widget(const ImVec2& size = ImVec2(0, 0), bool with_save_buttons=true)
   {

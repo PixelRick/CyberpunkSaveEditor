@@ -1,9 +1,9 @@
 #pragma once
 #include "stringpool.hpp"
 #include <nlohmann/json.hpp>
-#include <cpinternals/common/gstring.hpp>
+#include <redx/common/gstring.hpp>
 
-namespace cp {
+namespace redx {
 
 inline constexpr uint32_t gstring_name_category_tag = 'GNAM';
 
@@ -16,5 +16,5 @@ constexpr literal_gname operator""_gn(const char* str, std::size_t len)
   return literal_gname{str};
 }
 
-} // namespace cp
+} // namespace redx
 

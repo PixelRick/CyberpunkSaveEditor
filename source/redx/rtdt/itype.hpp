@@ -1,10 +1,10 @@
 #pragma once
-#include "cpinternals/common.hpp"
+#include "redx/common.hpp"
 
 // We don't need to exactly match the game rtti system since we only work on serialized data
 // and do not execute scripts.
 
-namespace cp::rtdt {
+namespace redx::rtdt {
 
 enum typekind
 {
@@ -81,5 +81,5 @@ private:
 };
 
 
-} // namespace cp::rtdt
+} // namespace redx::rtdt
 

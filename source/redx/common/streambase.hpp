@@ -5,10 +5,10 @@
 #include <array>
 #include <cmath>
 
-#include <cpinternals/common/iserializable.hpp>
-#include <cpinternals/common/utils.hpp>
+#include <redx/common/iserializable.hpp>
+#include <redx/common/utils.hpp>
 
-namespace cp {
+namespace redx {
 
 namespace armanip {
 
@@ -277,5 +277,5 @@ protected:
 };
 
 
-} // namespace cp
+} // namespace redx
 

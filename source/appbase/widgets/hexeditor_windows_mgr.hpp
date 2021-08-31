@@ -3,7 +3,7 @@
 
 class hexeditor_windows_mgr
 {
-  using node_type = cp::csav::node_t;
+  using node_type = redx::csav::node_t;
 
 public:
   static hexeditor_windows_mgr& get()

@@ -12,9 +12,9 @@
 
 #include "appbase/widgets/csav_widget.hpp"
 #include "appbase/widgets/node_editors/hexedit.hpp"
-#include <cpinternals/tmp/archive_test.hpp>
-//#include <cpinternals/radr.hpp>
-#include <cpinternals/init.hpp>
+#include <redx/tmp/archive_test.hpp>
+//#include <redx/radr.hpp>
+#include <redx/init.hpp>
 #include "appbase/app_version.h"
 
 using namespace std::chrono_literals;
@@ -180,7 +180,7 @@ protected:
     static bool imgui_style_editor = false;
 
 
-    static bool cploaded = cp::init_cpinternals();
+    static bool cploaded = redx::init_redx();
 
     if (font != nullptr)
     {
@@ -245,7 +245,7 @@ protected:
     auto& emgr = hexeditor_windows_mgr::get();
     emgr.draw_windows();
 
-    static auto testnode = cp::csav::node_t::create_shared(123, "testnode");
+    static auto testnode = redx::csav::node_t::create_shared(123, "testnode");
     if (test_hexeditor)
       emgr.open_window(testnode);
 

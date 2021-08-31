@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
-  <Type Name="cp::gstring&lt;*&gt;">
-    <DisplayString>{::cp::detail::gstringpool&lt;$T1&gt;::s_ppool->m_views[m_idx],s}</DisplayString>
+  <Type Name="redx::gstring&lt;*&gt;">
+    <DisplayString>{::redx::detail::gstringpool&lt;$T1&gt;::s_ppool->m_views[m_idx],s}</DisplayString>
     <Expand>
       <Item Name="Index">m_idx,8X</Item>
     </Expand>
   </Type>
-  <Type Name="cp::gstrid&lt;*&gt;">
+  <Type Name="redx::gstrid&lt;*&gt;">
     <DisplayString>{hash,16X}</DisplayString>
   </Type>
 </AutoVisualizer>

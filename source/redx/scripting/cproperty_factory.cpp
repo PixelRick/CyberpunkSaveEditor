@@ -3,7 +3,7 @@
 #include <string>
 #include <functional>
 
-#include "cpinternals/ctypes.hpp"
+#include "redx/ctypes.hpp"
 #include "cproperty.hpp"
 
 

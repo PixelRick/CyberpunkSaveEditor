@@ -2,15 +2,15 @@
 #include <inttypes.h>
 #include <appbase/IApp.hpp>
 #include <appbase/extras/imgui_better_combo.hpp>
-#include "cpinternals/csav/nodes/questSystem/FactsDB.hpp"
-#include <appbase/widgets/cpinternals.hpp>
+#include "redx/csav/nodes/questSystem/FactsDB.hpp"
+#include <appbase/widgets/redx.hpp>
 
 namespace UI {
 
 struct WidFactsTable
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(cp::csav::FactsTable& x, const char* label)
+  [[nodiscard]] static inline bool draw(redx::csav::FactsTable& x, const char* label)
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
@@ -37,7 +37,7 @@ struct WidFactsTable
     ImGui::SameLine();
     if (ImGui::Button("Sort facts lexicographically ascending"))
     {
-      std::sort(facts.begin(), facts.end(), [](const cp::CFact& a, const cp::CFact& b) -> bool {
+      std::sort(facts.begin(), facts.end(), [](const redx::CFact& a, const redx::CFact& b) -> bool {
         return a.name().strv() < b.name().strv();
       });
     }
@@ -90,7 +90,7 @@ struct WidFactsTable
 struct WidFactsDB
 {
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(cp::csav::FactsDB& x, const char* label)
+  [[nodiscard]] static inline bool draw(redx::csav::FactsDB& x, const char* label)
   {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)

@@ -10,10 +10,10 @@
 #include <cwchar>
 #include <algorithm>
 
-#include <cpinternals/common.hpp>
+#include <redx/common.hpp>
 
 #include <cpfs_winfsp/winfsp.hpp>
-#include <cpinternals/common/windowz.hpp>
+#include <redx/common/windowz.hpp>
 
 //#define PRINT_CALL_ARGS
 
@@ -85,7 +85,7 @@ inline cpfs* fs_from_ffs(FSP_FILE_SYSTEM* FileSystem)
 }
 
 
-void fill_fsp_info(FSP_FSCTL_FILE_INFO& fsp_finfo, const cp::filesystem::directory_entry& de)
+void fill_fsp_info(FSP_FSCTL_FILE_INFO& fsp_finfo, const redx::filesystem::directory_entry& de)
 {
   fsp_finfo.FileAttributes  = de.is_file() ? FILE_ATTRIBUTE_ARCHIVE : FILE_ATTRIBUTE_DIRECTORY;
 
@@ -166,7 +166,7 @@ struct file_context
       if (!GetFileInformationByHandle(handle.get(), &finfo))
       {
         DWORD dwErr = GetLastError();
-        SPDLOG_ERROR("GetFileInformationByHandle: {}", cp::windowz::format_error(dwErr));
+        SPDLOG_ERROR("GetFileInformationByHandle: {}", redx::windowz::format_error(dwErr));
         return FspNtStatusFromWin32(dwErr);
       }
 
@@ -174,7 +174,7 @@ struct file_context
       if (!GetFileInformationByHandleEx(handle.get(), FileStandardInfo, &fstdinfo, sizeof(fstdinfo)))
       {
         DWORD dwErr = GetLastError();
-        SPDLOG_ERROR("GetFileInformationByHandleEx: {}", cp::windowz::format_error(dwErr));
+        SPDLOG_ERROR("GetFileInformationByHandleEx: {}", redx::windowz::format_error(dwErr));
         return FspNtStatusFromWin32(dwErr);
       }
 
@@ -209,8 +209,8 @@ struct file_context
   std::wstring wrel_path;
 
   bool is_tfs_file = false;
-  cp::filesystem::directory_entry dirent;
-  cp::archive_file_stream afs;
+  redx::filesystem::directory_entry dirent;
+  redx::archive_file_stream afs;
   mutable std::mutex m_afs_mtx;
   bool m_symlink = false;
 
@@ -218,7 +218,7 @@ struct file_context
   win_handle handle;
   
   PVOID dir_buffer = nullptr;
-  std::unordered_set<cp::filesystem::path_id> overridden_pids;
+  std::unordered_set<redx::filesystem::path_id> overridden_pids;
 };
 
 
@@ -260,7 +260,7 @@ NTSTATUS GetSecurityByName(
   std::wstring_view wfilepath = FileName;
 
   bool tfs_compatible{};
-  cp::filesystem::path tfs_path(wfilepath, tfs_compatible);
+  redx::filesystem::path tfs_path(wfilepath, tfs_compatible);
 
   win_handle fh;
 
@@ -286,7 +286,7 @@ NTSTATUS GetSecurityByName(
         if (!GetFileInformationByHandleEx(fh.get(), FileAttributeTagInfo, &atinfo, sizeof(atinfo)))
         {
           dwErr = GetLastError();
-          SPDLOG_ERROR("couldn't get file info; {}", cp::windowz::format_error(dwErr));
+          SPDLOG_ERROR("couldn't get file info; {}", redx::windowz::format_error(dwErr));
           return FspNtStatusFromWin32(dwErr);
         }
         *PFileAttributes = atinfo.FileAttributes;
@@ -303,7 +303,7 @@ NTSTATUS GetSecurityByName(
         {
           *PSecurityDescriptorSize = security_desc_size;
           dwErr = GetLastError();
-          SPDLOG_ERROR("couldn't get file security; {}", cp::windowz::format_error(dwErr));
+          SPDLOG_ERROR("couldn't get file security; {}", redx::windowz::format_error(dwErr));
           return FspNtStatusFromWin32(dwErr);
         }
         *PSecurityDescriptorSize = security_desc_size;
@@ -315,7 +315,7 @@ NTSTATUS GetSecurityByName(
     {
       SPDLOG_ERROR(
         "couldn't open diff file {}; reason: ({}){}",
-        diff_path.string(), dwErr, cp::windowz::format_error(dwErr)
+        diff_path.string(), dwErr, redx::windowz::format_error(dwErr)
       );
       return FspNtStatusFromWin32(dwErr);;
     }
@@ -326,7 +326,7 @@ NTSTATUS GetSecurityByName(
 
   if (tfs_compatible)
   {
-    cp::filesystem::directory_entry entry(fs->tfs, tfs_path);
+    redx::filesystem::directory_entry entry(fs->tfs, tfs_path);
     if (!entry.exists() || !(entry.is_file() || entry.is_directory()))
     {
       // TODO: if not found, check for parent directory
@@ -442,7 +442,7 @@ NTSTATUS Create(
     delete fctx;
     fctx = nullptr;
     DWORD dwErr = GetLastError();
-    SPDLOG_ERROR("CreateFileW: {}", cp::windowz::format_error(dwErr));
+    SPDLOG_ERROR("CreateFileW: {}", redx::windowz::format_error(dwErr));
     return FspNtStatusFromWin32(dwErr);
   }
 
@@ -474,7 +474,7 @@ NTSTATUS Open(
   std::wstring_view wfilepath = FileName;
 
   bool tfs_compatible{};
-  cp::filesystem::path tfs_path(wfilepath, tfs_compatible);
+  redx::filesystem::path tfs_path(wfilepath, tfs_compatible);
 
   //SPDLOG_DEBUG("Open(.., \"{}\", ..)", tfs_path.strv());
 
@@ -722,7 +722,7 @@ static NTSTATUS Read(
     if (!ReadFile(fctx->handle.get(), Buffer, Length, PBytesTransferred, &Overlapped))
     {
       DWORD dwErr = GetLastError();
-      SPDLOG_ERROR("ReadFile: {}", cp::windowz::format_error(dwErr));
+      SPDLOG_ERROR("ReadFile: {}", redx::windowz::format_error(dwErr));
       return FspNtStatusFromWin32(dwErr);
     }
   }
@@ -756,7 +756,7 @@ static NTSTATUS Write(
       if (!GetFileSizeEx(Handle, &FileSize))
       {
         DWORD dwErr = GetLastError();
-        SPDLOG_ERROR("GetFileSizeEx: {}", cp::windowz::format_error(dwErr));
+        SPDLOG_ERROR("GetFileSizeEx: {}", redx::windowz::format_error(dwErr));
         return FspNtStatusFromWin32(dwErr);
       }
 
@@ -772,7 +772,7 @@ static NTSTATUS Write(
     if (!WriteFile(Handle, Buffer, Length, PBytesTransferred, &Overlapped))
     {
       DWORD dwErr = GetLastError();
-      SPDLOG_ERROR("WriteFile: {}", cp::windowz::format_error(dwErr));
+      SPDLOG_ERROR("WriteFile: {}", redx::windowz::format_error(dwErr));
       return FspNtStatusFromWin32(dwErr);
     }
 
@@ -807,7 +807,7 @@ NTSTATUS Flush(
     if (!FlushFileBuffers(Handle))
     {
       DWORD dwErr = GetLastError();
-      SPDLOG_ERROR("FlushFileBuffers: {}", cp::windowz::format_error(dwErr));
+      SPDLOG_ERROR("FlushFileBuffers: {}", redx::windowz::format_error(dwErr));
       return FspNtStatusFromWin32(dwErr);
     }
 
@@ -879,7 +879,7 @@ NTSTATUS SetBasicInfo(
     if (!SetFileInformationByHandle(Handle, FileBasicInfo, &BasicInfo, sizeof BasicInfo))
     {
       DWORD dwErr = GetLastError();
-      SPDLOG_ERROR("SetFileInformationByHandle: {}", cp::windowz::format_error(dwErr));
+      SPDLOG_ERROR("SetFileInformationByHandle: {}", redx::windowz::format_error(dwErr));
       return FspNtStatusFromWin32(dwErr);
     }
 
@@ -917,7 +917,7 @@ NTSTATUS SetFileSize(
         FileAllocationInfo, &AllocationInfo, sizeof AllocationInfo))
       {
         DWORD dwErr = GetLastError();
-        SPDLOG_ERROR("SetFileInformationByHandle: {}", cp::windowz::format_error(dwErr));
+        SPDLOG_ERROR("SetFileInformationByHandle: {}", redx::windowz::format_error(dwErr));
         return FspNtStatusFromWin32(dwErr);
       }
     }
@@ -931,7 +931,7 @@ NTSTATUS SetFileSize(
         FileEndOfFileInfo, &EndOfFileInfo, sizeof EndOfFileInfo))
       {
         DWORD dwErr = GetLastError();
-        SPDLOG_ERROR("SetFileInformationByHandle: {}", cp::windowz::format_error(dwErr));
+        SPDLOG_ERROR("SetFileInformationByHandle: {}", redx::windowz::format_error(dwErr));
         return FspNtStatusFromWin32(dwErr);
       }
     }
@@ -971,7 +971,7 @@ NTSTATUS SetFileSize(
 //  if (!MoveFileExW(FullPath, NewFullPath, ReplaceIfExists ? MOVEFILE_REPLACE_EXISTING : 0))
 //  {
 //    DWORD dwErr = GetLastError();
-//    SPDLOG_ERROR("MoveFileExW: {}", cp::windowz::format_error(dwErr));
+//    SPDLOG_ERROR("MoveFileExW: {}", redx::windowz::format_error(dwErr));
 //    return FspNtStatusFromWin32(dwErr);
 //  }
 //
@@ -1018,7 +1018,7 @@ NTSTATUS GetSecurity(
     {
       *PSecurityDescriptorSize = SecurityDescriptorSizeNeeded;
       DWORD dwErr = GetLastError();
-      SPDLOG_ERROR("GetKernelObjectSecurity: {}", cp::windowz::format_error(dwErr));
+      SPDLOG_ERROR("GetKernelObjectSecurity: {}", redx::windowz::format_error(dwErr));
       return FspNtStatusFromWin32(dwErr);
     }
     *PSecurityDescriptorSize = SecurityDescriptorSizeNeeded;
@@ -1048,7 +1048,7 @@ NTSTATUS SetSecurity(
     if (!SetKernelObjectSecurity(fctx->handle.get(), SecurityInformation, ModificationDescriptor))
     {
       DWORD dwErr = GetLastError();
-      SPDLOG_ERROR("SetKernelObjectSecurity: {}", cp::windowz::format_error(dwErr));
+      SPDLOG_ERROR("SetKernelObjectSecurity: {}", redx::windowz::format_error(dwErr));
       return FspNtStatusFromWin32(dwErr);
     }
   }
@@ -1081,7 +1081,7 @@ NTSTATUS ReadDirectory(
 
   const bool has_diffdir = fs->has_diffdir;
 
-  const cp::filesystem::directory_entry& dirent = fctx->dirent;
+  const redx::filesystem::directory_entry& dirent = fctx->dirent;
 
   bool read_tfs = dirent.is_directory();
 
@@ -1318,7 +1318,7 @@ NTSTATUS ReadDirectory(
 
   if (read_tfs)
   {
-    const cp::filesystem::directory_entry& dirent = fctx->dirent;
+    const redx::filesystem::directory_entry& dirent = fctx->dirent;
 
     if (dirent.has_parent())
     {
@@ -1333,11 +1333,11 @@ NTSTATUS ReadDirectory(
       }
     }
 
-    cp::filesystem::directory_entry iter_dirent;
+    redx::filesystem::directory_entry iter_dirent;
 
     if (use_marker_for_tfs)
     {
-      cp::filesystem::path marker_path = dirent.tfs_path() / tfs_marker;
+      redx::filesystem::path marker_path = dirent.tfs_path() / tfs_marker;
 
       SPDLOG_DEBUG("dir:{} marker_path:{}", fctx->dirent.tfs_path().strv(), marker_path.strv());
 
@@ -1380,7 +1380,7 @@ NTSTATUS ReadDirectory(
         ++added_cnt;
         single_entry = true;
       
-        iter_dirent = cp::filesystem::directory_entry();
+        iter_dirent = redx::filesystem::directory_entry();
       }
       else if (!iter_dirent.exists())
       {
@@ -1457,7 +1457,7 @@ NTSTATUS ReadDirectory(
   //
   //if (path.has_parent_path())
   //{
-  //  cp::filesystem::directory_entry parent_dirent(fs->tfs, path.parent_path().string());
+  //  redx::filesystem::directory_entry parent_dirent(fs->tfs, path.parent_path().string());
   //  if (parent_dirent.is_directory())
   //  {
   //    memset(dir_info, 0, sizeof(FSP_FSCTL_DIR_INFO));
@@ -1472,7 +1472,7 @@ NTSTATUS ReadDirectory(
   //  }
   //}
 
-  //cp::filesystem::directory_iterator dirit(fs->tfs, fctx->rel_path);
+  //redx::filesystem::directory_iterator dirit(fs->tfs, fctx->rel_path);
   //for (const auto& it : dirit)
   //{
   //  if (it.is_file() || it.is_directory())
@@ -1511,7 +1511,7 @@ NTSTATUS ReadDirectory(
   
 }
 
-bool try_fill_symlink_reparse_data(const cp::filesystem::directory_entry& dirent, void* buffer, size_t* inout_size)
+bool try_fill_symlink_reparse_data(const redx::filesystem::directory_entry& dirent, void* buffer, size_t* inout_size)
 {
   assert(dirent.path().strv().size() == 16);
 
@@ -1572,11 +1572,11 @@ NTSTATUS ResolveReparsePoints(
   std::wstring_view wfilepath = FileName;
 
   bool tfs_compatible{};
-  cp::filesystem::path tfs_path(wfilepath, tfs_compatible);
+  redx::filesystem::path tfs_path(wfilepath, tfs_compatible);
 
   if (tfs_compatible)
   {
-    cp::filesystem::directory_entry dirent(fs->tfs, tfs_path);
+    redx::filesystem::directory_entry dirent(fs->tfs, tfs_path);
     if (dirent.is_pidlink())
     {
       if (!ResolveLastPathComponent)

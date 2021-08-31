@@ -1,15 +1,15 @@
-#include <cpinternals/archive/archive.hpp>
+#include <redx/archive/archive.hpp>
 
 #include <fstream>
 #include <set>
 
-#include <cpinternals/os/file_reader.hpp>
-#include <cpinternals/io/stdstream_wrapper.hpp>
-#include <cpinternals/io/memory_istream.hpp>
-#include <cpinternals/oodle/oodle.hpp>
-//#include <cpinternals/radr/fdesc.hpp>
+#include <redx/os/file_reader.hpp>
+#include <redx/io/stdstream_wrapper.hpp>
+#include <redx/io/memory_istream.hpp>
+#include <redx/oodle/oodle.hpp>
+//#include <redx/radr/fdesc.hpp>
 
-namespace cp {
+namespace redx {
 
 // check_for_corruption not implemented yet
 std::shared_ptr<archive> archive::load(const std::filesystem::path& path)
@@ -26,7 +26,7 @@ std::shared_ptr<archive> archive::load(const std::filesystem::path& path)
 
   bool ok{};
 
-  cp::radr::header hdr;
+  redx::radr::header hdr;
   ok = freader.read(std::span<char>((char*)&hdr, sizeof(hdr))); // todo: reader stream wrapper
   if (!ok)
   {
@@ -58,7 +58,7 @@ std::shared_ptr<archive> archive::load(const std::filesystem::path& path)
 
   memory_istream stmeta(metadata_block_span);
 
-  cp::radr::metadata md;
+  redx::radr::metadata md;
   md.serialize(stmeta, true);
 
   if (stmeta.has_error())
@@ -102,7 +102,7 @@ bool archive::read_file(uint32_t idx, const std::span<char>& dst) const
 
   // read and decompress first chunks
 
-  cp::radr::segment_descriptor sd0 = m_segments[rec.segs_irange.beg()];
+  redx::radr::segment_descriptor sd0 = m_segments[rec.segs_irange.beg()];
 
   const size_t std0_size = sd0.size;
 
@@ -172,12 +172,12 @@ bool archive::read_segments_raw(u32range segs_irange, const std::span<char>& dst
 
   for (auto seg_it = segspan.begin(); seg_it != segspan.end(); /**/)
   {
-    cp::radr::segment_descriptor bulk_sd = *seg_it++;
+    redx::radr::segment_descriptor bulk_sd = *seg_it++;
     bulk_sd.size = 0; // unused
 
     while (seg_it != segspan.end())
     {
-      cp::radr::segment_descriptor seg = *seg_it++;
+      redx::radr::segment_descriptor seg = *seg_it++;
       if (seg.offset_in_archive == bulk_sd.end_offset_in_archive())
       {
         bulk_sd.disk_size += seg.disk_size;
@@ -212,7 +212,7 @@ bool archive::read_segments_raw(u32range segs_irange, const std::span<char>& dst
   return true;
 }
 
-bool archive::read_segment(const cp::radr::segment_descriptor& sd, const std::span<char>& dst, bool decompress) const
+bool archive::read_segment(const redx::radr::segment_descriptor& sd, const std::span<char>& dst, bool decompress) const
 {
   decompress = decompress && sd.is_segment_compressed();
 
@@ -281,5 +281,5 @@ bool archive::read(size_t offset, const std::span<char>& dst) const
   return ok;
 }
 
-} // namespace cp
+} // namespace redx
 

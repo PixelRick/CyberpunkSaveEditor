@@ -1,7 +1,7 @@
 #pragma once
 #include "itype.hpp"
 
-namespace cp::rtdt {
+namespace redx::rtdt {
 
 // todo later if necessary: make it inative_type and specialize by kind to not have to store m_kind..
 
@@ -56,5 +56,5 @@ protected:
   typekind m_kind;
 };
 
-} // namespace cp::rtdt
+} // namespace redx::rtdt
 

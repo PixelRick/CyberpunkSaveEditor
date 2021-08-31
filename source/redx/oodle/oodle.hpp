@@ -1,8 +1,8 @@
 #pragma once
-#include <cpinternals/common.hpp>
+#include <redx/common.hpp>
 #include <filesystem>
 
-namespace cp::oodle {
+namespace redx::oodle {
 
 enum class compression_level : uint64_t
 {
@@ -124,5 +124,5 @@ inline bool is_available()
 bool decompress(std::span<const char> src, std::span<char> dst, bool check_crc);
 size_t compress(std::span<const char> src, std::span<char> dst, compression_level level = compression_level::normal);
 
-} // namespace cp::oodle
+} // namespace redx::oodle
 

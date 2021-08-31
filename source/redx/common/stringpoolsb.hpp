@@ -7,14 +7,14 @@
 #include <stdexcept>
 #include <iterator>
 
-#include <cpinternals/common/hashing.hpp>
-#include <cpinternals/common/utils.hpp>
-#include <cpinternals/common/streambase.hpp>
+#include <redx/common/hashing.hpp>
+#include <redx/common/utils.hpp>
+#include <redx/common/streambase.hpp>
 #include <redx/containers/bitfield.hpp>
 
 // todo: add collision detection
 
-namespace cp {
+namespace redx {
 
 // this is the single block variant of stringpool, it is designed for serialization.
 // this pool does reallocate thus string_views can be invalidated on insert.
@@ -280,5 +280,5 @@ protected:
   std::unordered_map<uint64_t, uint32_t, identity_op> m_idxmap;
 };
 
-} // namespace cp
+} // namespace redx
 

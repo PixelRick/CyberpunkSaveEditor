@@ -1,7 +1,7 @@
 #pragma once
-#include "cpinternals/common.hpp"
+#include "redx/common.hpp"
 
-namespace cp::tdb {
+namespace redx::tdb {
 
 template <typename T, int ReserveCnt = 0x100>
 struct value_pool
@@ -111,4 +111,4 @@ protected:
   }
 };
 
-} // namespace cp::tdb
+} // namespace redx::tdb

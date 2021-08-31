@@ -3,10 +3,10 @@
 #include <array>
 #include <string>
 #include <string_view>
-#include <cpinternals/common/utils.hpp>
-#include <cpinternals/common/hashing_tables.hpp>
+#include <redx/common/utils.hpp>
+#include <redx/common/hashing_tables.hpp>
 
-namespace cp {
+namespace redx {
 
 //--------------------------------------------------------
 //  CRC32 (poly:0x04C11DB7, reflected:0xEDB88320)
@@ -785,5 +785,5 @@ static_assert(0xEB5F499B == "testing"_fnv1a32, "constexpr fnv1a32 failed");
 static_assert(0xC2FE2FB77AE839BB == "testing"_fnv1a64, "constexpr fnv1a64 failed");
 static_assert(0xC5FC3C78 == "testing"_murmur3_32, "constexpr murmur3_32 failed");
 
-} // namespace cp
+} // namespace redx
 

@@ -5,13 +5,13 @@
 #include <optional>
 #include <filesystem>
 
-#include <cpinternals/os/platform_utils.hpp>
+#include <redx/os/platform_utils.hpp>
 #include <spdlog/spdlog.h>
 
 #define MAX_KEY_LENGTH 255
 #define MAX_VALUE_NAME 16383
 
-namespace cp::os {
+namespace redx::os {
 
 std::optional<std::filesystem::path> find_exe_path(std::string_view exename)
 {
@@ -87,7 +87,7 @@ std::string format_error(error_type id)
   return "";
 }
 
-} // namespace cp::os
+} // namespace redx::os
 
 
 

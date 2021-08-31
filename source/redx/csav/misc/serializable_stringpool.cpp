@@ -1,7 +1,7 @@
 //#include "stringpool.hpp"
 //#include "iarchive.hpp"
 //
-//namespace cp {
+//namespace redx {
 //
 //bool stringpool::serialize_in(iarchive& reader, uint32_t descs_size, uint32_t pool_size, uint32_t descs_offset = 0)
 //{
@@ -59,5 +59,5 @@
 //  return true;
 //}
 //
-//} // namespace cp
+//} // namespace redx
 //

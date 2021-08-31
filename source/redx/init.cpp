@@ -8,7 +8,7 @@
 #include "common.hpp"
 #include "ctypes.hpp"
 
-namespace cp {
+namespace redx {
 
 template <typename T>
 bool load_from_json(std::filesystem::path path, T& out)
@@ -74,7 +74,7 @@ bool load_names_from_txt(std::filesystem::path path, std::vector<gname>& out, bo
 }
 
 // TODO: rename this an add progress param
-op_status init_cpinternals(bool with_archive_names)
+op_status init_redx(bool with_archive_names)
 {
   {
     std::vector<gname> names;
@@ -112,5 +112,5 @@ op_status init_cpinternals(bool with_archive_names)
   return true;
 }
 
-} // namespace cp
+} // namespace redx
 

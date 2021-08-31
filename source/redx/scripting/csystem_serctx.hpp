@@ -5,8 +5,8 @@
 #include <spdlog/spdlog.h>
 
 #include "fwd.hpp"
-#include <cpinternals/common/cnameset.hpp>
-#include <cpinternals/tmp/resid_set.hpp>
+#include <redx/common/cnameset.hpp>
+#include <redx/tmp/resid_set.hpp>
 
 class CSystemSerCtx
 {
@@ -23,8 +23,8 @@ protected:
 
 public:
 
-  cp::cnameset strpool;
-  cp::resid_set respool;
+  redx::cnameset strpool;
+  redx::resid_set respool;
 
   CSystemSerCtx()
   {

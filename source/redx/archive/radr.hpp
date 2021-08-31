@@ -5,11 +5,11 @@
 #include <shared_mutex>
 #include <numeric>
 
-#include <cpinternals/common.hpp>
+#include <redx/common.hpp>
 
-namespace cp::radr {
+namespace redx::radr {
 
-using file_id = cp::path_id;
+using file_id = redx::path_id;
 
 struct file_record
 {
@@ -119,15 +119,15 @@ struct metadata
   std::vector<dependency>         dependencies;
 };
 
-} // namespace cp::radr
+} // namespace redx::radr
 
 
 namespace std {
 
 template <>
-struct hash<cp::radr::dependency>
+struct hash<redx::radr::dependency>
 {
-  std::size_t operator()(const cp::radr::dependency& k) const noexcept
+  std::size_t operator()(const redx::radr::dependency& k) const noexcept
   {
     return k.hpath;
   }

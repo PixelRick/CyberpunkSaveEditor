@@ -1,9 +1,9 @@
 #pragma once
 #include "common.hpp"
 
-namespace cp {
+namespace redx {
 
-op_status init_cpinternals(bool with_archive_names = true);
+op_status init_redx(bool with_archive_names = true);
 
 }
 

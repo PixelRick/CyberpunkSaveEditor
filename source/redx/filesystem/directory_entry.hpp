@@ -1,14 +1,14 @@
 #pragma once
-#include <cpinternals/common/path.hpp>
-#include <cpinternals/filesystem/treefs.hpp>
+#include <redx/common/path.hpp>
+#include <redx/filesystem/treefs.hpp>
 
-namespace cp::filesystem {
+namespace redx::filesystem {
 
 // this is a sensible struct
 // needs as much optimization as it can
 struct directory_entry
 {
-  using path_type = cp::path;
+  using path_type = redx::path;
 
   directory_entry() = default;
 
@@ -130,7 +130,7 @@ struct directory_entry
   }
 
   // return value is undefined if this is not a file entry
-  inline cp::archive::file_id archive_file_id() const
+  inline redx::archive::file_id archive_file_id() const
   {
     return m_info.id;
   }
@@ -163,7 +163,7 @@ struct directory_entry
   }
 
   // return value is undefined if this is not a file entry
-  inline const cp::archive::file_info& get_file_info() const
+  inline const redx::archive::file_info& get_file_info() const
   {
     return m_info;
   }
@@ -253,5 +253,5 @@ private:
   const archive* m_ar;
 };
 
-} // cp::filesystem
+} // redx::filesystem
 

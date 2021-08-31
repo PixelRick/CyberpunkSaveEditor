@@ -1,8 +1,8 @@
 #include "TweakDBID.hpp"
 
-#include "cpinternals/common.hpp"
+#include "redx/common.hpp"
 
-namespace cp {
+namespace redx {
 
 TweakDBID::TweakDBID(std::string_view name, bool add_to_resolver)
   : as_u64(0)
@@ -74,5 +74,5 @@ void TweakDBID_resolver::feed(const std::vector<gname>& names)
   }
 }
 
-} // namespace cp
+} // namespace redx
 

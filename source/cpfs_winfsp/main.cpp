@@ -174,7 +174,7 @@ int wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int n
 
   //if (0)
   //{
-  //  cp::filesystem::recursive_directory_iterator it(cpfs.tfs, "base\\worlds\\03_night_city\\sectors\\_generated\\global_illumination");
+  //  redx::filesystem::recursive_directory_iterator it(cpfs.tfs, "base\\worlds\\03_night_city\\sectors\\_generated\\global_illumination");
   //  SPDLOG_INFO("start");
   //  size_t i = 0;
   //  for (const auto& dirent: it)
@@ -186,7 +186,7 @@ int wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int n
   //    if (dirent.is_reserved_for_file())
   //    {
   //      SPDLOG_INFO("IS_RESERVED_FOR_FILE");
-  //      cp::filesystem::directory_entry d(cpfs.tfs, dirent.tfs_path());
+  //      redx::filesystem::directory_entry d(cpfs.tfs, dirent.tfs_path());
   //      SPDLOG_INFO("resolved: {}", d.tfs_path().strv());
   //    }
   //
@@ -225,7 +225,7 @@ BOOL AddNotificationIcon(HWND hWnd)
 
   if (!Shell_NotifyIconW(NIM_ADD, &nid))
   {
-    SPDLOG_CRITICAL("couldn't add notify icon, {}", cp::windowz::get_last_error());
+    SPDLOG_CRITICAL("couldn't add notify icon, {}", redx::windowz::get_last_error());
     return false;
   }
 
@@ -407,7 +407,7 @@ void debug_symlink(const std::filesystem::path& p)
     }
     else
     {
-      SPDLOG_INFO("GetFileInformationByHandleEx failed:{}", cp::windowz::get_last_error());
+      SPDLOG_INFO("GetFileInformationByHandleEx failed:{}", redx::windowz::get_last_error());
     }
 
     BY_HANDLE_FILE_INFORMATION ByHandleInfo;
@@ -418,7 +418,7 @@ void debug_symlink(const std::filesystem::path& p)
     }
     else
     {
-      SPDLOG_INFO("GetFileInformationByHandle failed:{}", cp::windowz::get_last_error());
+      SPDLOG_INFO("GetFileInformationByHandle failed:{}", redx::windowz::get_last_error());
     }
 
     WCHAR wbuf[1000]{};
@@ -428,7 +428,7 @@ void debug_symlink(const std::filesystem::path& p)
     }
     else
     {
-      SPDLOG_INFO("GetFinalPathNameByHandleW failed:{}", cp::windowz::get_last_error());
+      SPDLOG_INFO("GetFinalPathNameByHandleW failed:{}", redx::windowz::get_last_error());
     }
 
     CloseHandle(Handle);
@@ -449,7 +449,7 @@ void debug_symlink(const std::filesystem::path& p)
     }
     else
     {
-      SPDLOG_INFO("GetFileInformationByHandleEx failed:{}", cp::windowz::get_last_error());
+      SPDLOG_INFO("GetFileInformationByHandleEx failed:{}", redx::windowz::get_last_error());
     }
 
     char buf[2000];
@@ -476,7 +476,7 @@ void debug_symlink(const std::filesystem::path& p)
     }
     else
     {
-      SPDLOG_INFO("DeviceIoControl failed:{}", cp::windowz::get_last_error());
+      SPDLOG_INFO("DeviceIoControl failed:{}", redx::windowz::get_last_error());
     }
 
     WCHAR wbuf[1000]{};
@@ -486,7 +486,7 @@ void debug_symlink(const std::filesystem::path& p)
     }
     else
     {
-      SPDLOG_INFO("GetFinalPathNameByHandleW failed:{}", cp::windowz::get_last_error());
+      SPDLOG_INFO("GetFinalPathNameByHandleW failed:{}", redx::windowz::get_last_error());
     }
 
     CloseHandle(Handle);

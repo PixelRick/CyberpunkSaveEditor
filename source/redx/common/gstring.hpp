@@ -3,7 +3,7 @@
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 
-namespace cp {
+namespace redx {
 
 template <uint32_t PoolTag>
 struct literal_gstring;
@@ -195,14 +195,14 @@ protected:
   gstring_type gs;
 };
 
-} // namespace cp
+} // namespace redx
 
 namespace std {
 
 template <uint32_t PoolTag>
-struct hash<cp::gstring<PoolTag>>
+struct hash<redx::gstring<PoolTag>>
 {
-  std::size_t operator()(const cp::gstring<PoolTag>& k) const noexcept
+  std::size_t operator()(const redx::gstring<PoolTag>& k) const noexcept
   {
     return hash<uint32_t>()(k.idx());
   }

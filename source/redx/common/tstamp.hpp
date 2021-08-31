@@ -2,7 +2,7 @@
 #include <inttypes.h>
 #include <chrono>
 
-namespace cp {
+namespace redx {
 
 using clock = std::chrono::high_resolution_clock;
 using time_point = clock::time_point;
@@ -118,5 +118,5 @@ struct file_time
 
 static_assert(sizeof(file_time) == 8);
 
-} // namespace cp
+} // namespace redx
 

@@ -1,6 +1,6 @@
-#include <cpinternals/filesystem/directory_entry.hpp>
+#include <redx/filesystem/directory_entry.hpp>
 
-namespace cp::filesystem {
+namespace redx::filesystem {
 
 void directory_entry::assign_entry(int32_t entry_idx, bool refresh_tfs_path)
 {
@@ -42,5 +42,5 @@ void directory_entry::assign_entry(int32_t entry_idx, bool refresh_tfs_path)
   }
 }
 
-} // cp::filesystem
+} // redx::filesystem
 

@@ -6,13 +6,13 @@
 #include <fstream>
 #include <vector>
 #include <numeric>
-#include "cpinternals/common.hpp"
-#include "cpinternals/ctypes.hpp"
-#include "cpinternals/scripting.hpp"
-#include "cpinternals/io/file_stream.hpp"
+#include "redx/common.hpp"
+#include "redx/ctypes.hpp"
+#include "redx/scripting.hpp"
+#include "redx/io/file_stream.hpp"
 #include "value_pool.hpp"
 
-namespace cp::tdb {
+namespace redx::tdb {
 
 struct header_t
 {
@@ -257,5 +257,5 @@ private:
   std::vector<pool_desc_t> m_pools_descs;
 };
 
-} // namespace cp::tdb
+} // namespace redx::tdb
 

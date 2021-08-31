@@ -6,10 +6,10 @@
 #include <unordered_map>
 #include <stdexcept>
 #include <spdlog/spdlog.h>
-#include <cpinternals/common/gstring.hpp>
-#include <cpinternals/common/streambase.hpp>
+#include <redx/common/gstring.hpp>
+#include <redx/common/streambase.hpp>
 
-namespace cp {
+namespace redx {
 
 template <uint32_t PoolTag>
 struct gstrid_db;
@@ -121,14 +121,14 @@ protected:
 
 static_assert(sizeof(gstrid<0>) == 8);
 
-} // namespace cp
+} // namespace redx
 
 namespace std {
 
 template <uint32_t PoolTag>
-struct hash<cp::gstrid<PoolTag>>
+struct hash<redx::gstrid<PoolTag>>
 {
-  std::size_t operator()(const cp::gstrid<PoolTag>& k) const noexcept
+  std::size_t operator()(const redx::gstrid<PoolTag>& k) const noexcept
   {
     return k.hash;
   }

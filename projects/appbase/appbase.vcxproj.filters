@@ -28,7 +28,7 @@
     <ClInclude Include="..\..\source\appbase\ps_json_storage.hpp">
       <Filter>source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\appbase\widgets\cpinternals.hpp">
+    <ClInclude Include="..\..\source\appbase\widgets\redx.hpp">
       <Filter>source\widgets</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\appbase\widgets\csav_experimental.hpp">

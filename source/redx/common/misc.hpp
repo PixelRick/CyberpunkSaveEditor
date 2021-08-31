@@ -6,7 +6,7 @@
 #include <optional>
 #include <spdlog/spdlog.h>
 
-namespace cp {
+namespace redx {
 
 struct task_progress
 {
@@ -137,5 +137,5 @@ protected:
   std::optional<std::string> m_err;
 };
 
-} // namespace cp
+} // namespace redx
 

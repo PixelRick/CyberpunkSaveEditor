@@ -1,9 +1,9 @@
 #pragma once
 #include <fstream>
 #include <filesystem>
-#include <cpinternals/common.hpp>
+#include <redx/common.hpp>
 
-namespace cp {
+namespace redx {
 
 // Input memory stream
 struct memory_istream
@@ -119,5 +119,5 @@ protected:
   pos_type m_pos = 0;
 };
 
-} // namespace cp
+} // namespace redx
 

@@ -2,13 +2,13 @@
 #include <iostream>
 #include <memory>
 
-#include "cpinternals/common.hpp"
-#include "cpinternals/ctypes.hpp"
-#include "cpinternals/csav/node.hpp"
+#include "redx/common.hpp"
+#include "redx/ctypes.hpp"
+#include "redx/csav/node.hpp"
 
-#include "cpinternals/csav/serializers.hpp"
+#include "redx/csav/serializers.hpp"
 
-namespace cp::csav {
+namespace redx::csav {
 
 struct serial_node_desc
 {
@@ -180,5 +180,5 @@ protected:
   }
 };
 
-} // namespace cp::csav
+} // namespace redx::csav
 

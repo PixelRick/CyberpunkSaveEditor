@@ -3,10 +3,10 @@
 
 #include <filesystem>
 
-#include <cpinternals/common.hpp>
-#include <cpinternals/filesystem/archive.hpp>
-#include <cpinternals/filesystem/treefs.hpp>
-#include <cpinternals/oodle/oodle.hpp>
+#include <redx/common.hpp>
+#include <redx/filesystem/archive.hpp>
+#include <redx/filesystem/treefs.hpp>
+#include <redx/oodle/oodle.hpp>
 
 extern FSP_FILE_SYSTEM_INTERFACE s_cpfs_interface;
 
@@ -45,7 +45,7 @@ struct cpfs
     m_volume_params = {};
     m_volume_params.SectorSize = 1;
     m_volume_params.SectorsPerAllocationUnit = 1;
-    m_volume_params.VolumeCreationTime = cp::file_time(cp::clock::now()).hns_since_win_epoch;
+    m_volume_params.VolumeCreationTime = redx::file_time(redx::clock::now()).hns_since_win_epoch;
     m_volume_params.VolumeSerialNumber = 0;
     m_volume_params.FileInfoTimeout = 1000;
     m_volume_params.ReparsePointsAccessCheck = 1;
@@ -91,7 +91,7 @@ struct cpfs
       return false;
     }
 
-    auto game_bin_path_opt = cp::windowz::get_cp_executable_path();
+    auto game_bin_path_opt = redx::windowz::get_cp_executable_path();
     if (!game_bin_path_opt.has_value())
     {
       MessageBoxA(0, "Game path could not be located", "error", 0);
@@ -108,7 +108,7 @@ struct cpfs
       return false;
     }
 
-    if (!cp::oodle::is_available())
+    if (!redx::oodle::is_available())
     {
       MessageBoxA(0, "oodle couldn't be loaded", "error", 0);
       return false;
@@ -165,9 +165,9 @@ struct cpfs
       auto sfname = fname.string();
       if (fname.extension() == ".archive")
       {
-        if (cp::starts_with(sfname, "lang_"))
+        if (redx::starts_with(sfname, "lang_"))
         {
-          if (!cp::starts_with(sfname, "lang_en"))
+          if (!redx::starts_with(sfname, "lang_en"))
           {
             continue;
           }
@@ -224,7 +224,7 @@ struct cpfs
   std::wstring volume_label;
 
   std::filesystem::path content_path;
-  cp::filesystem::treefs tfs;
+  redx::filesystem::treefs tfs;
   std::shared_mutex mtx;
 
 private:

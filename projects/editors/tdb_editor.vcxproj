@@ -24,9 +24,6 @@
     <ProjectReference Include="..\appbase\appbase.vcxproj">
       <Project>{459c8251-cf21-4e43-9304-421d6a0764b3}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\cpinternals\cpinternals.vcxproj">
-      <Project>{bb6106aa-32c4-4f09-b978-27c527f0b3b7}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\external\imgui.vcxproj">
       <Project>{b0e4d3c6-c1ba-4488-9619-a55ae7b9a8d5}</Project>
     </ProjectReference>
@@ -35,6 +32,9 @@
     </ProjectReference>
     <ProjectReference Include="..\external\xlz4.vcxproj">
       <Project>{e368f9af-5f85-4ad4-8e6f-2056fc877d38}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\redx\redx.vcxproj">
+      <Project>{bb6106aa-32c4-4f09-b978-27c527f0b3b7}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

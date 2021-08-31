@@ -7,11 +7,11 @@
 #include <array>
 #include <exception>
 
-#include "cpinternals/csav/serializers.hpp"
-#include "cpinternals/common.hpp"
-#include "cpinternals/ctypes.hpp"
+#include "redx/csav/serializers.hpp"
+#include "redx/common.hpp"
+#include "redx/ctypes.hpp"
 
-#include <cpinternals/tmp/resid_set.hpp>
+#include <redx/tmp/resid_set.hpp>
 
 #include "fwd.hpp"
 #include "CStringPool.hpp"
@@ -20,7 +20,7 @@
 #include "cobject.hpp"
 
 // todo: move the ui part out of this lib
-#include "appbase/widgets/cpinternals.hpp"
+#include "appbase/widgets/redx.hpp"
 #include "imgui/extras/ImGuizmo.h"
 
 //------------------------------------------------------------------------------

@@ -5,9 +5,9 @@
 #include <unordered_set>
 #include <stack>
 
-#include <cpinternals/common.hpp>
-#include <cpinternals/archive/archive.hpp>
-#include <cpinternals/io/archive_file_istream.hpp>
+#include <redx/common.hpp>
+#include <redx/archive/archive.hpp>
+#include <redx/io/archive_file_istream.hpp>
 
 // to diff depots, the file system must be instantiatable
 // goals:
@@ -16,7 +16,7 @@
 //  
 //
 
-namespace cp::filesystem {
+namespace redx::filesystem {
 
 constexpr auto unidentified_files_directory_name = "unidentified_files";
 
@@ -28,12 +28,12 @@ struct recursive_directory_iterator;
 // fse: file system entry
 
 using fs_gname = gstring<'RADR'>;
-using file_info = cp::archive::file_info;
-using file_handle = cp::archive::file_handle;
+using file_info = redx::archive::file_info;
+using file_handle = redx::archive::file_handle;
 
-// it is different from cp::file_istream since the source isn't the same !
+// it is different from redx::file_istream since the source isn't the same !
 // (could probably get another name..)
-using file_istream = cp::archive_file_istream;
+using file_istream = redx::archive_file_istream;
 
 namespace detail::treefs {
 
@@ -325,5 +325,5 @@ private:
   mutable bool m_cached_info_dirty = true;
 };
 
-} // namespace cp::filesystem
+} // namespace redx::filesystem
 

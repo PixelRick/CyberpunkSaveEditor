@@ -7,10 +7,10 @@
 #include <numeric>
 #include <sstream>
 #include <set>
-#include "cpinternals/utils.hpp"
+#include "redx/utils.hpp"
 #include "version.hpp"
 
-namespace cp::csav {
+namespace redx::csav {
 
 class node_t;
 
@@ -405,5 +405,5 @@ private:
   virtual std::shared_ptr<const node_t> to_node_impl(const version& version) const = 0;
 };
 
-} // namespace cp::csav
+} // namespace redx::csav
 

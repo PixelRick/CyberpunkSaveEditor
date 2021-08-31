@@ -4,9 +4,9 @@
 #include <vector>
 #include <unordered_map>
 #include <spdlog/spdlog.h>
-#include "cpinternals/common.hpp"
+#include "redx/common.hpp"
 
-namespace cp {
+namespace redx {
 
 /////////////////////////////////////////
 // TweakDBID
@@ -192,5 +192,5 @@ inline gname TweakDBID::name() const
   return resolver.resolve(*this);
 }
 
-} // namespace cp
+} // namespace redx
 

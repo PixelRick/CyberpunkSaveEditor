@@ -1,4 +1,4 @@
-#include <cpinternals/oodle/oodle.hpp>
+#include <redx/oodle/oodle.hpp>
 
 // windows-only
 
@@ -10,11 +10,11 @@
 #endif
 #include <windows.h>
 
-#include <cpinternals/os/platform_utils.hpp>
+#include <redx/os/platform_utils.hpp>
 
 #define LIBNAME "oo2ext_7_win64.dll"
 
-namespace cp::oodle {
+namespace redx::oodle {
 
 struct proc_pointer
 {
@@ -42,7 +42,7 @@ library::library()
 
   if (!handle)
   {
-    auto game_path_opt = cp::os::get_cp_executable_path();
+    auto game_path_opt = redx::os::get_cp_executable_path();
     if (game_path_opt.has_value())
     {
       auto dll_path = game_path_opt.value().replace_filename(LIBNAME);
@@ -157,5 +157,5 @@ size_t compress(std::span<const char> src, std::span<char> dst, compression_leve
   return false;
 }
 
-} // namespace cp::oodle
+} // namespace redx::oodle
 

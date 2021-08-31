@@ -6,9 +6,9 @@
 #include <exception>
 #include <stdexcept>
 
-#include "cpinternals/csav/serializers.hpp"
-#include "cpinternals/common.hpp"
-#include "cpinternals/ctypes.hpp"
+#include "redx/csav/serializers.hpp"
+#include "redx/common.hpp"
+#include "redx/ctypes.hpp"
 
 #include "fwd.hpp"
 #include "CStringPool.hpp"

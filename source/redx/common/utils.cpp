@@ -1,8 +1,8 @@
-#include <cpinternals/common/utils.hpp>
+#include <redx/common/utils.hpp>
 #include <intrin.h>
 #include <cassert>
 
-namespace cp {
+namespace redx {
 
 inline uint16_t candidates_lookup(__m128i headblk, __m128i tailblk, const uint8_t* headseq, const uint8_t* tailseq)
 {
@@ -143,5 +143,5 @@ std::vector<uintptr_t> sse2_strstr(uintptr_t hs, size_t m, const uint8_t* needle
   return ret;
 }
 
-} // namespace cp
+} // namespace redx
 

@@ -2,7 +2,7 @@
 #include <inttypes.h>
 #include "misc.hpp"
 
-namespace cp {
+namespace redx {
 
 struct streambase;
 
@@ -13,5 +13,5 @@ struct iserializable
   virtual bool serialize(streambase& ar) = 0;
 };
 
-} // namespace cp
+} // namespace redx
 

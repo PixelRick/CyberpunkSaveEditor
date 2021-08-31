@@ -4,13 +4,13 @@
 #include <fstream>
 #include <numeric>
 #include <list>
-#include <appbase/widgets/cpinternals.hpp>
-#include "cpinternals/scripting/csystem.hpp"
-#include <cpinternals/common.hpp>
+#include <appbase/widgets/redx.hpp>
+#include "redx/scripting/csystem.hpp"
+#include <redx/common.hpp>
 
 #include <redx/containers/bitfield.hpp>
-#include <cpinternals/tmp/resid_set.hpp>
-#include <cpinternals/io/memory_istream.hpp>
+#include <redx/tmp/resid_set.hpp>
+#include <redx/io/memory_istream.hpp>
 
 
 class archive_test
@@ -134,7 +134,7 @@ public:
         //{
         //  //ImGui::BeginChild("current editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
 
-        //  static auto name_fn = [](const cp::cname& y) { return y.string(); };
+        //  static auto name_fn = [](const redx::cname& y) { return y.string(); };
         //  imgui_list_tree_widget(m_resids, name_fn, &CName_widget::draw_, 0, true, true);
 
         //  //ImGui::EndChild();
@@ -270,7 +270,7 @@ public:
     reader.seekg(0);
     reader.read(buffer.get(), buf_size);
 
-    cp::memory_istream ar(buffer.get(), buf_size);
+    redx::memory_istream ar(buffer.get(), buf_size);
 
     m_ids.clear();
     m_objects.clear();

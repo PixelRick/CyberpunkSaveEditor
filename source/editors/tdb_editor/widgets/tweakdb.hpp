@@ -1,9 +1,9 @@
 #pragma once
-#include <cpinternals/tweakdb/tweakdb.hpp>
+#include <redx/tweakdb/tweakdb.hpp>
 
 namespace ui {
 
-using namespace cp::tdb;
+using namespace redx::tdb;
 
 bool im_tweakdb(tweakdb& tdb, int* selected);
 

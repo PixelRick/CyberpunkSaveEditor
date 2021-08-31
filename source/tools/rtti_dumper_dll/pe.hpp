@@ -68,7 +68,7 @@ inline std::vector<uintptr_t> find_pattern_in_game_text(std::string pattern, std
   }
 
   const uint8_t* needle = reinterpret_cast<uint8_t*>(pattern.data());
-  std::vector<uintptr_t> ret = cp::sse2_strstr_masked(range.start, range.size(), needle, pattern.size(), mask.c_str());
+  std::vector<uintptr_t> ret = redx::sse2_strstr_masked(range.start, range.size(), needle, pattern.size(), mask.c_str());
   std::transform(std::begin(ret), std::end(ret), std::begin(ret), [](uintptr_t x) { return range.start + x; });
   return ret;
 }

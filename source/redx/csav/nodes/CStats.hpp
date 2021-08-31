@@ -1,14 +1,14 @@
 #pragma once
 #include <inttypes.h>
 
-#include "cpinternals/common.hpp"
-#include "cpinternals/ctypes.hpp"
-#include "cpinternals/csav/node.hpp"
-#include "cpinternals/csav/serializers.hpp"
-#include "cpinternals/scripting/csystem.hpp"
-#include "cpinternals/scripting/cproperty.hpp"
+#include "redx/common.hpp"
+#include "redx/ctypes.hpp"
+#include "redx/csav/node.hpp"
+#include "redx/csav/serializers.hpp"
+#include "redx/scripting/csystem.hpp"
+#include "redx/scripting/cproperty.hpp"
 
-namespace cp::csav {
+namespace redx::csav {
 
 struct CStats
   : public node_serializable
@@ -170,5 +170,5 @@ public:
   }
 };
 
-} // namespace cp::csav
+} // namespace redx::csav
 

@@ -14,7 +14,7 @@ namespace std { using tcb::span; }
 
 #include <spdlog/spdlog.h>
 
-namespace cp {
+namespace redx {
 
 struct nop_mutex
 {
@@ -249,5 +249,5 @@ inline std::vector<uintptr_t> sse2_strstr(const void* hs, size_t m, const uint8_
   return sse2_strstr((uintptr_t)hs, m, needle, n, maxcnt);
 }
 
-} // namespace cp
+} // namespace redx
 

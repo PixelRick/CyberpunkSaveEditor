@@ -1,12 +1,12 @@
 #pragma once
 #include <inttypes.h>
 
-#include "cpinternals/common.hpp"
-#include "cpinternals/ctypes.hpp"
-#include "cpinternals/csav/node.hpp"
-#include "cpinternals/csav/serializers.hpp"
+#include "redx/common.hpp"
+#include "redx/ctypes.hpp"
+#include "redx/csav/node.hpp"
+#include "redx/csav/serializers.hpp"
 
-namespace cp::csav {
+namespace redx::csav {
 
 struct FactsTable
   : public node_serializable
@@ -87,5 +87,5 @@ protected:
   std::shared_ptr<const node_t> m_raw;
 };
 
-} // namespace cp::csav
+} // namespace redx::csav
 

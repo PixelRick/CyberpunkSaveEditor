@@ -35,7 +35,7 @@ SOFTWARE.
 #include <string>
 #include <vector>
 
-#include <cpinternals/utils.hpp>
+#include <redx/utils.hpp>
 
 
 #ifndef IMGUI_VERSION

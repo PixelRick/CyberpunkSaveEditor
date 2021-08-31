@@ -6,11 +6,11 @@
 #include <numeric>
 #include <memory>
 
-#include <cpinternals/common.hpp>
-#include <cpinternals/archive/radr.hpp>
-#include <cpinternals/os/file_reader.hpp>
+#include <redx/common.hpp>
+#include <redx/archive/radr.hpp>
+#include <redx/os/file_reader.hpp>
 
-namespace cp {
+namespace redx {
 
 //#define CACHE_FILE_SIZE
 
@@ -33,7 +33,7 @@ struct archive
   {
     file_record() = default;
   
-    file_record(const cp::radr::file_record& record)
+    file_record(const redx::radr::file_record& record)
       : fid(record.fid)
       , ftime(record.ftime)
       , segs_irange(record.segs_irange)
@@ -111,7 +111,7 @@ public:
     return m_path;
   }
 
-  inline const cp::radr::version& ver() const
+  inline const redx::radr::version& ver() const
   {
     return m_ver;
   }
@@ -134,7 +134,7 @@ public:
 
   file_info get_file_info(uint32_t index) const;
 
-  bool read_segment(const cp::radr::segment_descriptor& sd, const std::span<char>& dst, bool decompress) const;
+  bool read_segment(const redx::radr::segment_descriptor& sd, const std::span<char>& dst, bool decompress) const;
 
   inline bool is_valid_segments_irange(const u32range& segs_irange) const
   {
@@ -150,12 +150,12 @@ public:
     return m_records;
   }
 
-  const std::vector<cp::radr::segment_descriptor>& segments() const
+  const std::vector<redx::radr::segment_descriptor>& segments() const
   {
     return m_segments;
   }
 
-  const std::vector<cp::radr::dependency>& dependencies() const
+  const std::vector<redx::radr::dependency>& dependencies() const
   {
     return m_dependencies;
   }
@@ -169,15 +169,15 @@ protected:
 private:
 
   std::filesystem::path                     m_path;
-  cp::radr::version                         m_ver;
+  redx::radr::version                         m_ver;
 
   std::vector<file_record>                  m_records;
-  std::vector<cp::radr::segment_descriptor> m_segments;
-  std::vector<cp::radr::dependency>         m_dependencies;
+  std::vector<redx::radr::segment_descriptor> m_segments;
+  std::vector<redx::radr::dependency>         m_dependencies;
 
   mutable os::file_reader                   m_freader;
   mutable std::mutex                        m_freader_mtx;
 };
 
-} // namespace cp
+} // namespace redx
 

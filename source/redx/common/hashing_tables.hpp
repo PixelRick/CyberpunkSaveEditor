@@ -1,7 +1,7 @@
 #include <inttypes.h>
 #include <array>
 
-namespace cp::detail::crc32 {
+namespace redx::detail::crc32 {
 
 // poly:0x04C11DB7, reflected:0xEDB88320
 alignas(0x1000) inline constexpr std::array<std::array<uint32_t, 256>, 8> s8lut = {
@@ -151,9 +151,9 @@ alignas(0x1000) inline constexpr std::array<std::array<uint32_t, 256>, 8> s8lut 
   }
 };
 
-} // namespace cp::detail::crc32
+} // namespace redx::detail::crc32
 
-namespace cp::detail::crc64 {
+namespace redx::detail::crc64 {
 
 // poly:0x42F0E1EBA9EA3693, reflected:0xC96C5795D7870F42
 alignas(0x1000) inline constexpr std::array<std::array<uint64_t, 256>, 8> s8lut = {
@@ -431,5 +431,5 @@ alignas(0x1000) inline constexpr std::array<std::array<uint64_t, 256>, 8> s8lut 
   }
 };
 
-} // namespace cp::detail::crc64
+} // namespace redx::detail::crc64
 

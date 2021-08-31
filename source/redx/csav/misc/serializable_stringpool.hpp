@@ -6,7 +6,7 @@
 //#include <unordered_map>
 //#include "iarchive.hpp"
 //
-//namespace cp {
+//namespace redx {
 //
 //namespace detail {
 //
@@ -125,5 +125,5 @@
 //
 //
 //
-//} // namespace cp
+//} // namespace redx
 //

@@ -17,7 +17,7 @@ struct WidCFact
   static inline bool ItemGetter(void* data, int n, const char** out_str)
   { 
     static std::string tmp;
-    auto& namelist = cp::CFact_resolver::get().sorted_names();
+    auto& namelist = redx::CFact_resolver::get().sorted_names();
     if (n == 0)
       *out_str = (const char*)data;
     else
@@ -28,12 +28,12 @@ struct WidCFact
   }
 
   // returns true if content has been edited
-  [[nodiscard]] static inline bool draw(cp::CFact& x)
+  [[nodiscard]] static inline bool draw(redx::CFact& x)
   {
     scoped_imgui_id _sii(&x);
     bool modified = false;
 
-    auto& namelist = cp::CFact_resolver::get().sorted_names();
+    auto& namelist = redx::CFact_resolver::get().sorted_names();
 
     // tricky ;)
     int current_item_idx = 0;

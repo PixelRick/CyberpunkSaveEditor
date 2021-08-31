@@ -10,8 +10,8 @@
 #include <spdlog/spdlog.h>
 #include <appbase/extras/imgui_filebrowser.hpp>
 
-#include "cpinternals/tweakdb/tweakdb.hpp"
-#include "cpinternals/init.hpp"
+#include "redx/tweakdb/tweakdb.hpp"
+#include "redx/init.hpp"
 #include "appbase/app_version.h"
 #include "widgets/tweakdb.hpp"
 
@@ -42,7 +42,7 @@ protected:
   ImVec4 bg_color = ImVec4(0.1f, 0.1f, 0.1f, 1.f);
   ImVec4 addr_color = ImVec4(0.f, 0.6f, 0.8f, 1.f);
 
-  cp::tdb::tweakdb tdb;
+  redx::tdb::tweakdb tdb;
 
 public:
   CPTEApp()
@@ -141,7 +141,7 @@ protected:
     static bool imgui_demo = false;
     static bool imgui_style_editor = false;
 
-    static bool cploaded = cp::init_cpinternals();
+    static bool cploaded = redx::init_redx();
 
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::SetNextWindowSize(ImVec2((float)m_display_width, (float)m_display_height));

@@ -4,21 +4,21 @@
 #include <vector>
 #include <unordered_map>
 
-#include <cpinternals/common/platform.hpp>
-#include <cpinternals/common/utils.hpp>
-#include <cpinternals/common/hashing.hpp>
-#include <cpinternals/common/streambase.hpp>
-#include <cpinternals/common/iserializable.hpp>
-#include <cpinternals/common/stringpool.hpp>
-#include <cpinternals/common/stringpoolsb.hpp>
-#include <cpinternals/common/gstring.hpp>
-#include <cpinternals/common/gstrid.hpp>
-#include <cpinternals/common/gname.hpp>
-#include <cpinternals/common/cname.hpp>
-#include <cpinternals/common/cnameset.hpp>
-#include <cpinternals/common/tstamp.hpp>
-#include <cpinternals/common/path.hpp>
-#include <cpinternals/common/misc.hpp>
+#include <redx/common/platform.hpp>
+#include <redx/common/utils.hpp>
+#include <redx/common/hashing.hpp>
+#include <redx/common/streambase.hpp>
+#include <redx/common/iserializable.hpp>
+#include <redx/common/stringpool.hpp>
+#include <redx/common/stringpoolsb.hpp>
+#include <redx/common/gstring.hpp>
+#include <redx/common/gstrid.hpp>
+#include <redx/common/gname.hpp>
+#include <redx/common/cname.hpp>
+#include <redx/common/cnameset.hpp>
+#include <redx/common/tstamp.hpp>
+#include <redx/common/path.hpp>
+#include <redx/common/misc.hpp>
 
 #include "ctypes.hpp"
 

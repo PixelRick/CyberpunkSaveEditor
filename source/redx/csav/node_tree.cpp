@@ -1,12 +1,12 @@
 #include "node_tree.hpp"
 
 #include <xlz4/lz4.h>
-#include <cpinternals/io/file_stream.hpp>
-#include <cpinternals/csav/serial_tree.hpp>
+#include <redx/io/file_stream.hpp>
+#include <redx/csav/serial_tree.hpp>
 
 #define XLZ4_CHUNK_SIZE 0x40000
 
-namespace cp::csav {
+namespace redx::csav {
 
 struct compressed_chunk_desc
 {
@@ -454,5 +454,5 @@ void node_tree::serialize_out(streambase& ar)
   ar << magic;
 }
 
-} // namespace cp::csav
+} // namespace redx::csav
 

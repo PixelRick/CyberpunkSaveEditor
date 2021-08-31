@@ -2,9 +2,9 @@
 #include <filesystem>
 #include <memory>
 
-#include <cpinternals/common.hpp>
+#include <redx/common.hpp>
 
-namespace cp::os {
+namespace redx::os {
 
 struct file_reader_impl
 {
@@ -54,5 +54,5 @@ private:
   std::unique_ptr<file_reader_impl> m_impl;
 };
 
-} // namespace cp::os
+} // namespace redx::os
 

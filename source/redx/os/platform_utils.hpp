@@ -4,7 +4,7 @@
 #include <optional>
 #include <filesystem>
 
-namespace cp::os {
+namespace redx::os {
 
 // windows only atm
 using error_type = uint32_t;
@@ -15,5 +15,5 @@ std::string last_error_string();
 
 std::string format_error(error_type id);
 
-} // namespace cp::os
+} // namespace redx::os
 

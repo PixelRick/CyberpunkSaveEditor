@@ -2,11 +2,11 @@
 #include <filesystem>
 #include <vector>
 
-#include <cpinternals/csav/node.hpp>
-#include <cpinternals/csav/version.hpp>
-#include <cpinternals/csav/serial_tree.hpp>
+#include <redx/csav/node.hpp>
+#include <redx/csav/version.hpp>
+#include <redx/csav/serial_tree.hpp>
 
-namespace cp::csav {
+namespace redx::csav {
 
 struct node_tree
 {
@@ -53,12 +53,12 @@ protected:
   version m_ver;
 };
 
-} // namespace cp::csav
+} // namespace redx::csav
 
 
-namespace cp {
+namespace redx {
 
 using csav_tree = csav::node_tree;
 
-} // namespace cp
+} // namespace redx
 

@@ -1,14 +1,14 @@
-#include <cpinternals/os/file_reader.hpp>
-#include <cpinternals/os/platform_utils.hpp>
+#include <redx/os/file_reader.hpp>
+#include <redx/os/platform_utils.hpp>
 
 #include <fileapi.h>
 
 #include <filesystem>
 #include <memory>
 
-#include <cpinternals/common.hpp>
+#include <redx/common.hpp>
 
-namespace cp::os {
+namespace redx::os {
 
 struct win_file_reader
   : file_reader_impl
@@ -130,5 +130,5 @@ file_reader::~file_reader()
 {
 }
 
-} // namespace cp::os
+} // namespace redx::os
 

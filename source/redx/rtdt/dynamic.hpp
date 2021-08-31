@@ -4,7 +4,7 @@
 #include <vector>
 #include <rttr/type>
 
-namespace cp::rtdt {
+namespace redx::rtdt {
 
 struct iscriptable
   : iserializable
@@ -23,5 +23,5 @@ protected:
 
 };
 
-} // namespace cp::rtdt
+} // namespace redx::rtdt
 
