@@ -1,7 +1,4 @@
-#include <redx/oodle/oodle.hpp>
-
 // windows-only
-
 #ifndef WIN32_LEAN_AND_MEAN
   #define WIN32_LEAN_AND_MEAN
 #endif
@@ -10,6 +7,7 @@
 #endif
 #include <windows.h>
 
+#include <redx/oodle/oodle.hpp>
 #include <redx/os/platform_utils.hpp>
 
 #define LIBNAME "oo2ext_7_win64.dll"
@@ -83,16 +81,7 @@ struct header
 
 bool decompress(std::span<const char> src, std::span<char> dst, bool check_crc)
 {
-  auto& lib = library::get();
-
-  if (lib.pfn_OodleLZ_Decompress == nullptr)
-  {
-    SPDLOG_ERROR("OodleLZ_Decompress isn't available; either the oodle library is not present or versions mistmatch.");
-    return false;
-  }
-
   const header& hdr = *reinterpret_cast<const header*>(src.data());
-  const size_t hdr_size = sizeof(header);
 
   if (!hdr.is_magic_ok())
   {
@@ -103,6 +92,19 @@ bool decompress(std::span<const char> src, std::span<char> dst, bool check_crc)
   if (hdr.size != dst.size())
   {
     SPDLOG_ERROR("dst_size doesn't match uncompressed size");
+    return false;
+  }
+
+  return decompress_noheader(src.subspan(sizeof(header)), dst, check_crc);
+}
+
+bool decompress_noheader(std::span<const char> src, std::span<char> dst, bool check_crc)
+{
+  auto& lib = library::get();
+
+  if (lib.pfn_OodleLZ_Decompress == nullptr)
+  {
+    SPDLOG_ERROR("OodleLZ_Decompress isn't available; either the oodle library is not present or versions mistmatch.");
     return false;
   }
 
@@ -124,7 +126,7 @@ bool decompress(std::span<const char> src, std::span<char> dst, bool check_crc)
   //std::array<char, library::OODLELZ_BLOCK_LEN * 2> decoder_mem;
 
   size_t decompressed = lib.pfn_OodleLZ_Decompress(
-    src.data() + hdr_size, src.size() - hdr_size, dst.data(), dst.size(),
+    src.data(), src.size(), dst.data(), dst.size(),
     library::OodleLZ_FuzzSafe::Yes,
     check_crc, 0, 0, 0, 0, 0,
     decoder_mem, decoder_mem_size,
@@ -139,7 +141,7 @@ bool decompress(std::span<const char> src, std::span<char> dst, bool check_crc)
     free(decoder_mem);
   }
 
-  if (hdr.size != decompressed)
+  if (dst.size() != decompressed)
   {
     SPDLOG_ERROR("decompressed size doesn't match header info");
     return false;
@@ -148,14 +150,82 @@ bool decompress(std::span<const char> src, std::span<char> dst, bool check_crc)
   return true;
 }
 
-size_t compress(std::span<const char> src, std::span<char> dst, compression_level level)
+bool check_lib_is_ready_to_compress(library& lib)
+{
+  if (lib.pfn_OodleLZ_Compress == nullptr)
+  {
+    SPDLOG_ERROR("OodleLZ_Compress isn't available; either the oodle library is not present or versions mistmatch.");
+    return false;
+  }
+
+  if (lib.pfn_OodleLZ_GetCompressedBufferSizeNeeded == nullptr)
+  {
+    SPDLOG_ERROR("OodleLZ_GetCompressedBufferSizeNeeded isn't available; either the oodle library is not present or versions mistmatch.");
+    return false;
+  }
+
+  return true;
+}
+
+// returns compressed size
+inline size_t compress_to(library& lib, std::span<const char> src, std::span<char> dst, compression_level level)
+{
+  return lib.pfn_OodleLZ_Compress(
+    library::OodleLZ_Compressor::Kraken,
+    src.data(), src.size(), dst.data(),
+    level, 0, 0, 0,
+    nullptr, 0);
+}
+
+// returns an empty buffer on error or worthless compression
+std::vector<char> compress_with_blank_header(std::span<const char> src, size_t header_size, compression_level level)
 {
   auto& lib = library::get();
 
-  SPDLOG_ERROR("not implemented yet");
+  if (!check_lib_is_ready_to_compress(lib))
+  {
+    return {};
+  }
 
-  return false;
+  if (src.size() < 0x100)
+  {
+    return {};
+  }
+
+  const size_t needed_size = lib.pfn_OodleLZ_GetCompressedBufferSizeNeeded(src.size());
+  std::vector<char> buf(header_size + needed_size);
+
+  const size_t compressed = compress_to(
+    lib, src, std::span<char>(buf.data() + header_size, buf.size() - header_size), level);
+
+  if (compressed == 0 || compressed + header_size >= src.size())
+  {
+    return {};
+  }
+
+  return buf;
 }
+
+std::vector<char> compress(std::span<const char> src, compression_level level)
+{
+  std::vector<char> buf = compress_with_blank_header(src, sizeof(header), level);
+
+  if (!buf.empty())
+  {
+    header& hdr = *reinterpret_cast<header*>(buf.data());
+    hdr = header(); // sets magic
+    hdr.size = numeric_cast<uint32_t>(src.size());
+  }
+
+  return buf;
+}
+
+std::vector<char> compress_noheader(std::span<const char> src, compression_level level)
+{
+  return compress_with_blank_header(src, 0, level);;
+}
+
+
 
 } // namespace redx::oodle
 

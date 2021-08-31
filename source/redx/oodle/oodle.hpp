@@ -122,7 +122,14 @@ inline bool is_available()
 }
 
 bool decompress(std::span<const char> src, std::span<char> dst, bool check_crc);
-size_t compress(std::span<const char> src, std::span<char> dst, compression_level level = compression_level::normal);
+
+bool decompress_noheader(std::span<const char> src, std::span<char> dst, bool check_crc);
+
+// returns an empty buffer on error or worthless compression
+std::vector<char> compress(std::span<const char> src, compression_level level = compression_level::normal);
+
+// returns an empty buffer on error or worthless compression
+std::vector<char> compress_noheader(std::span<const char> src, compression_level level = compression_level::normal);
 
 } // namespace redx::oodle
 
