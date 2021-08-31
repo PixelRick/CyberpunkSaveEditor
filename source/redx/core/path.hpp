@@ -2,7 +2,7 @@
 #include <filesystem>
 #include <string>
 
-#include <redx/common.hpp>
+#include <redx/core.hpp>
 
 namespace redx {
 

@@ -7,9 +7,9 @@
 #include <iostream>
 #include <algorithm>
 
-//#pragma message ("deprecated header utils.hpp, include redx/common.hpp instead")
+//#pragma message ("deprecated header utils.hpp, include redx/core.hpp instead")
 
-#include "redx/common.hpp"
+#include "redx/core.hpp"
 
 using namespace redx;
 

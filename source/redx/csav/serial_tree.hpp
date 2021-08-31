@@ -2,7 +2,7 @@
 #include <iostream>
 #include <memory>
 
-#include "redx/common.hpp"
+#include "redx/core.hpp"
 #include "redx/ctypes.hpp"
 #include "redx/csav/node.hpp"
 

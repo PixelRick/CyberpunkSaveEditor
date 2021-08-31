@@ -1,5 +1,5 @@
 #pragma once
-#include <redx/common/path.hpp>
+#include <redx/core/path.hpp>
 #include <redx/filesystem/treefs.hpp>
 
 namespace redx::filesystem {

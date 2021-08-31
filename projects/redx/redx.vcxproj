@@ -23,22 +23,23 @@
   <ItemGroup>
     <ClInclude Include="..\..\source\redx\archive\archive.hpp" />
     <ClInclude Include="..\..\source\redx\archive\radr.hpp" />
-    <ClInclude Include="..\..\source\redx\common.hpp" />
-    <ClInclude Include="..\..\source\redx\common\cname.hpp" />
-    <ClInclude Include="..\..\source\redx\common\gstrid.hpp" />
-    <ClInclude Include="..\..\source\redx\common\gname.hpp" />
-    <ClInclude Include="..\..\source\redx\common\gstring.hpp" />
-    <ClInclude Include="..\..\source\redx\common\path.hpp" />
-    <ClInclude Include="..\..\source\redx\common\platform.hpp" />
-    <ClInclude Include="..\..\source\redx\common\stringpoolsb.hpp" />
-    <ClInclude Include="..\..\source\redx\common\cnameset.hpp" />
-    <ClInclude Include="..\..\source\redx\common\streambase.hpp" />
-    <ClInclude Include="..\..\source\redx\common\hashing.hpp" />
-    <ClInclude Include="..\..\source\redx\common\iserializable.hpp" />
-    <ClInclude Include="..\..\source\redx\common\misc.hpp" />
-    <ClInclude Include="..\..\source\redx\common\stringpool.hpp" />
-    <ClInclude Include="..\..\source\redx\common\tstamp.hpp" />
-    <ClInclude Include="..\..\source\redx\common\utils.hpp" />
+    <ClInclude Include="..\..\source\redx\core.hpp" />
+    <ClInclude Include="..\..\source\redx\core\cname.hpp" />
+    <ClInclude Include="..\..\source\redx\core\cnameset.hpp" />
+    <ClInclude Include="..\..\source\redx\core\gname.hpp" />
+    <ClInclude Include="..\..\source\redx\core\gstrid.hpp" />
+    <ClInclude Include="..\..\source\redx\core\gstring.hpp" />
+    <ClInclude Include="..\..\source\redx\core\hashing.hpp" />
+    <ClInclude Include="..\..\source\redx\core\hashing_tables.hpp" />
+    <ClInclude Include="..\..\source\redx\core\iserializable.hpp" />
+    <ClInclude Include="..\..\source\redx\core\misc.hpp" />
+    <ClInclude Include="..\..\source\redx\core\path.hpp" />
+    <ClInclude Include="..\..\source\redx\core\platform.hpp" />
+    <ClInclude Include="..\..\source\redx\core\streambase.hpp" />
+    <ClInclude Include="..\..\source\redx\core\stringpool.hpp" />
+    <ClInclude Include="..\..\source\redx\core\stringpoolsb.hpp" />
+    <ClInclude Include="..\..\source\redx\core\tstamp.hpp" />
+    <ClInclude Include="..\..\source\redx\core\utils.hpp" />
     <ClInclude Include="..\..\source\redx\csav.hpp" />
     <ClInclude Include="..\..\source\redx\csav\node_tree.hpp" />
     <ClInclude Include="..\..\source\redx\csav\nodes.hpp" />
@@ -103,11 +104,10 @@
     <ClInclude Include="..\..\source\redx\containers\bitfield.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\source\redx\common\hashing_tables.hpp" />
     <ClCompile Include="..\..\source\redx\archive\archive.cpp" />
     <ClCompile Include="..\..\source\redx\archive\radr.cpp" />
-    <ClCompile Include="..\..\source\redx\common\streambase.cpp" />
-    <ClCompile Include="..\..\source\redx\common\utils.cpp" />
+    <ClCompile Include="..\..\source\redx\core\streambase.cpp" />
+    <ClCompile Include="..\..\source\redx\core\utils.cpp" />
     <ClCompile Include="..\..\source\redx\csav\node_tree.cpp" />
     <ClCompile Include="..\..\source\redx\csav\misc\serializable_stringpool.cpp" />
     <ClCompile Include="..\..\source\redx\ctypes\CEnum.cpp" />

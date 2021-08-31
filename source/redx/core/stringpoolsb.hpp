@@ -7,9 +7,9 @@
 #include <stdexcept>
 #include <iterator>
 
-#include <redx/common/hashing.hpp>
-#include <redx/common/utils.hpp>
-#include <redx/common/streambase.hpp>
+#include <redx/core/hashing.hpp>
+#include <redx/core/utils.hpp>
+#include <redx/core/streambase.hpp>
 #include <redx/containers/bitfield.hpp>
 
 // todo: add collision detection

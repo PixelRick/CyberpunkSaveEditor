@@ -6,7 +6,7 @@
 #include <fstream>
 #include <vector>
 #include <numeric>
-#include "redx/common.hpp"
+#include "redx/core.hpp"
 #include "redx/ctypes.hpp"
 #include "redx/scripting.hpp"
 #include "redx/io/file_stream.hpp"

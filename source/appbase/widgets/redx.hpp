@@ -3,7 +3,7 @@
 #include <appbase/IApp.hpp>
 #include <appbase/extras/imgui_better_combo.hpp>
 
-#include "redx/common.hpp"
+#include "redx/core.hpp"
 #include "redx/ctypes.hpp"
 #include "redx/csav/node.hpp"
 #include "redx/csav/serializers.hpp"

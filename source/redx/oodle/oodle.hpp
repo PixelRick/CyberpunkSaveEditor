@@ -1,5 +1,5 @@
 #pragma once
-#include <redx/common.hpp>
+#include <redx/core.hpp>
 #include <filesystem>
 
 namespace redx::oodle {

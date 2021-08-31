@@ -1,7 +1,7 @@
 #pragma once
 #include <fstream>
 #include <filesystem>
-#include <redx/common.hpp>
+#include <redx/core.hpp>
 #include <redx/archive/archive.hpp>
 
 namespace redx {

@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <spdlog/spdlog.h>
 #include <nlohmann/json.hpp>
-#include "redx/common.hpp"
+#include "redx/core.hpp"
 
 namespace redx {
 

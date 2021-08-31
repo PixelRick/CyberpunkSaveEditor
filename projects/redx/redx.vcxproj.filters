@@ -12,9 +12,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>json</Extensions>
     </Filter>
-    <Filter Include="source\redx\common">
-      <UniqueIdentifier>{3698b2d9-8fe3-4762-8434-2edc483d0481}</UniqueIdentifier>
-    </Filter>
     <Filter Include="source\redx\tweakdb">
       <UniqueIdentifier>{22691e45-30ed-4c2e-b9b2-b2ae3e4eeb34}</UniqueIdentifier>
     </Filter>
@@ -72,11 +69,11 @@
     <Filter Include="source\redx\os">
       <UniqueIdentifier>{fd80afad-0208-4fb4-a1aa-47d8f3d73774}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\redx\core">
+      <UniqueIdentifier>{cb09fa96-fdc6-442f-b175-0a00e3713f05}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\source\redx\common\streambase.cpp">
-      <Filter>source\redx\common</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\redx\csav\misc\serializable_stringpool.cpp">
       <Filter>source\redx\csav\misc</Filter>
     </ClCompile>
@@ -113,9 +110,6 @@
     <ClCompile Include="..\..\source\redx\rtdt\Source.cpp">
       <Filter>source\redx\rtdt</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\redx\common\utils.cpp">
-      <Filter>source\redx\common</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\redx\oodle\oodle.cpp">
       <Filter>source\redx\oodle</Filter>
     </ClCompile>
@@ -137,43 +131,28 @@
     <ClCompile Include="..\..\source\redx\os\win_file_reader.cpp">
       <Filter>source\redx\os</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\redx\core\streambase.cpp">
+      <Filter>source\redx\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\redx\core\utils.cpp">
+      <Filter>source\redx\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\redx\tweakdb\tweakdb.hpp">
       <Filter>source\redx\tweakdb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\common\hashing.hpp">
-      <Filter>source\redx\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\common\iserializable.hpp">
-      <Filter>source\redx\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\common.hpp">
+    <ClInclude Include="..\..\source\redx\core.hpp">
       <Filter>source\redx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\common\stringpool.hpp">
-      <Filter>source\redx\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\common\streambase.hpp">
-      <Filter>source\redx\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\misc\serializable_stringpool.hpp">
       <Filter>source\redx\csav\misc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\common\gname.hpp">
-      <Filter>source\redx\common</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\misc\system_serializer.hpp">
       <Filter>source\redx\csav\misc</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\common\utils.hpp">
-      <Filter>source\redx\common</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\redx\init.hpp">
       <Filter>source\redx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\common\misc.hpp">
-      <Filter>source\redx\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\version.hpp">
       <Filter>source\redx\csav</Filter>
@@ -298,38 +277,14 @@
     <ClInclude Include="..\..\source\redx\rtdt\rttr_helpers.hpp">
       <Filter>source\redx\rtdt</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\common\tstamp.hpp">
-      <Filter>source\redx\common</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\redx\radr.hpp">
       <Filter>source\redx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\common\cname.hpp">
-      <Filter>source\redx\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\common\cnameset.hpp">
-      <Filter>source\redx\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\oodle\oodle.hpp">
       <Filter>source\redx\oodle</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\common\hashing_tables.hpp">
-      <Filter>source\redx\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\common\gstring.hpp">
-      <Filter>source\redx\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\common\stringpoolsb.hpp">
-      <Filter>source\redx\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\common\gstrid.hpp">
-      <Filter>source\redx\common</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\redx\filesystem\treefs.hpp">
       <Filter>source\redx\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\common\platform.hpp">
-      <Filter>source\redx\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\containers\bitfield.hpp">
       <Filter>source\redx\containers</Filter>
@@ -379,8 +334,53 @@
     <ClInclude Include="..\..\source\redx\os\file_reader.hpp">
       <Filter>source\redx\os</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\common\path.hpp">
-      <Filter>source\redx\common</Filter>
+    <ClInclude Include="..\..\source\redx\core\cname.hpp">
+      <Filter>source\redx\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\core\cnameset.hpp">
+      <Filter>source\redx\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\core\gname.hpp">
+      <Filter>source\redx\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\core\gstrid.hpp">
+      <Filter>source\redx\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\core\gstring.hpp">
+      <Filter>source\redx\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\core\hashing.hpp">
+      <Filter>source\redx\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\core\hashing_tables.hpp">
+      <Filter>source\redx\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\core\iserializable.hpp">
+      <Filter>source\redx\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\core\misc.hpp">
+      <Filter>source\redx\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\core\path.hpp">
+      <Filter>source\redx\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\core\platform.hpp">
+      <Filter>source\redx\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\core\streambase.hpp">
+      <Filter>source\redx\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\core\stringpool.hpp">
+      <Filter>source\redx\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\core\stringpoolsb.hpp">
+      <Filter>source\redx\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\core\tstamp.hpp">
+      <Filter>source\redx\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\core\utils.hpp">
+      <Filter>source\redx\core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -498,7 +498,7 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="gstring.natvis">
-      <Filter>source\redx\common</Filter>
+      <Filter>source\redx\core</Filter>
     </Natvis>
   </ItemGroup>
 </Project>

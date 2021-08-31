@@ -3,7 +3,7 @@
 
 #include <filesystem>
 
-#include <redx/common.hpp>
+#include <redx/core.hpp>
 #include <redx/filesystem/archive.hpp>
 #include <redx/filesystem/treefs.hpp>
 #include <redx/oodle/oodle.hpp>

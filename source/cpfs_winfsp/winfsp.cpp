@@ -1,5 +1,5 @@
 #include <cpfs_winfsp/winfsp.hpp>
-#include <redx/common.hpp>
+#include <redx/core.hpp>
 
 // Microsoft said:
 // Do not cast a pointer to a FILETIME structure to either a ULARGE_INTEGER* or __int64* value because it can cause alignment faults on 64-bit Windows.

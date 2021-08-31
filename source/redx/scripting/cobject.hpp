@@ -7,7 +7,7 @@
 #include <stdexcept>
 
 #include "redx/csav/serializers.hpp"
-#include "redx/common.hpp"
+#include "redx/core.hpp"
 #include "redx/ctypes.hpp"
 
 #include "fwd.hpp"

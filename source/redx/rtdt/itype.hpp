@@ -1,5 +1,5 @@
 #pragma once
-#include "redx/common.hpp"
+#include "redx/core.hpp"
 
 // We don't need to exactly match the game rtti system since we only work on serialized data
 // and do not execute scripts.

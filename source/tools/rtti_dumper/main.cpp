@@ -5,8 +5,8 @@
 #include <filesystem>
 
 #include <spdlog/spdlog.h>
-#include <redx/common/hashing.hpp>
-#include <redx/common/platform.hpp>
+#include <redx/core/hashing.hpp>
+#include <redx/core/platform.hpp>
 
 namespace fs = std::filesystem;
 

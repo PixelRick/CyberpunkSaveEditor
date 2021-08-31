@@ -1,7 +1,7 @@
 #pragma once
 #include "node_editor.hpp"
 
-#include "redx/common.hpp"
+#include "redx/core.hpp"
 #include "redx/ctypes.hpp"
 #include "redx/csav/nodes/CInventory.hpp"
 #include "itemData.hpp"

@@ -5,7 +5,7 @@
 #include <shared_mutex>
 #include <numeric>
 
-#include <redx/common.hpp>
+#include <redx/core.hpp>
 
 namespace redx::radr {
 

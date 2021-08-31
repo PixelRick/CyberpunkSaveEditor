@@ -6,7 +6,7 @@
 #include <filesystem>
 #include <memory>
 
-#include <redx/common.hpp>
+#include <redx/core.hpp>
 
 namespace redx::os {
 

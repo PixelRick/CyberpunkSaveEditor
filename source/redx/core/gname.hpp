@@ -1,7 +1,7 @@
 #pragma once
 #include "stringpool.hpp"
 #include <nlohmann/json.hpp>
-#include <redx/common/gstring.hpp>
+#include <redx/core/gstring.hpp>
 
 namespace redx {
 

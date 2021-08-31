@@ -6,7 +6,7 @@
 #include <list>
 #include <appbase/widgets/redx.hpp>
 #include "redx/scripting/csystem.hpp"
-#include <redx/common.hpp>
+#include <redx/core.hpp>
 
 #include <redx/containers/bitfield.hpp>
 #include <redx/tmp/resid_set.hpp>

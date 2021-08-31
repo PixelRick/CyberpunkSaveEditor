@@ -3,8 +3,8 @@
 #include <array>
 #include <string>
 #include <string_view>
-#include <redx/common/utils.hpp>
-#include <redx/common/hashing_tables.hpp>
+#include <redx/core/utils.hpp>
+#include <redx/core/hashing_tables.hpp>
 
 namespace redx {
 

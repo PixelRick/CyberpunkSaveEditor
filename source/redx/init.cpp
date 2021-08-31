@@ -5,7 +5,7 @@
 #include <vector>
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
-#include "common.hpp"
+#include "core.hpp"
 #include "ctypes.hpp"
 
 namespace redx {

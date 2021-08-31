@@ -3,7 +3,7 @@
 #include <vector>
 #include <algorithm>
 
-#include <redx/common/utils.hpp> // maybe these utils could go in a mini lib..
+#include <redx/core/utils.hpp> // maybe these utils could go in a mini lib..
 
 namespace dumper {
 

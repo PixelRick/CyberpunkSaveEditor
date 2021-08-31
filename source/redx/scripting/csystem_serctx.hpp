@@ -5,7 +5,7 @@
 #include <spdlog/spdlog.h>
 
 #include "fwd.hpp"
-#include <redx/common/cnameset.hpp>
+#include <redx/core/cnameset.hpp>
 #include <redx/tmp/resid_set.hpp>
 
 class CSystemSerCtx

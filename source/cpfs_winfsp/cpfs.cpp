@@ -10,10 +10,10 @@
 #include <cwchar>
 #include <algorithm>
 
-#include <redx/common.hpp>
+#include <redx/core.hpp>
 
 #include <cpfs_winfsp/winfsp.hpp>
-#include <redx/common/windowz.hpp>
+#include <redx/core/windowz.hpp>
 
 //#define PRINT_CALL_ARGS
 

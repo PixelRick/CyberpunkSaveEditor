@@ -6,8 +6,8 @@
 #include <unordered_map>
 #include <shared_mutex>
 
-#include <redx/common/hashing.hpp>
-#include <redx/common/utils.hpp>
+#include <redx/core/hashing.hpp>
+#include <redx/core/utils.hpp>
 
 // todo: add collision detection
 

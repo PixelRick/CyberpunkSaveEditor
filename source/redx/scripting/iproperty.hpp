@@ -8,7 +8,7 @@
 #include <array>
 #include <exception>
 
-#include "redx/common.hpp"
+#include "redx/core.hpp"
 #include "redx/ctypes.hpp"
 #include "redx/csav/node.hpp"
 #include "redx/csav/serializers.hpp"

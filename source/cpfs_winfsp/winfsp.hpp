@@ -4,8 +4,8 @@
 #include <winfsp/winfsp.h>
 #include <sddl.h>
 
-#include <redx/common.hpp>
-#include <redx/common/windowz.hpp>
+#include <redx/core.hpp>
+#include <redx/core/windowz.hpp>
 
 struct security_desc
 {

@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include <type_traits>
-#include <redx/common.hpp>
+#include <redx/core.hpp>
 
 namespace redx {
 

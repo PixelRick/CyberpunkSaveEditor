@@ -4,9 +4,9 @@
 #include <vector>
 #include <unordered_map>
 #include <spdlog/spdlog.h>
-#include <redx/common/streambase.hpp>
-#include <redx/common/gstrid.hpp>
-#include <redx/common/gname.hpp>
+#include <redx/core/streambase.hpp>
+#include <redx/core/gstrid.hpp>
+#include <redx/core/gname.hpp>
 
 namespace redx {
 

@@ -6,8 +6,8 @@
 #include <unordered_map>
 #include <stdexcept>
 #include <spdlog/spdlog.h>
-#include <redx/common/gstring.hpp>
-#include <redx/common/streambase.hpp>
+#include <redx/core/gstring.hpp>
+#include <redx/core/streambase.hpp>
 
 namespace redx {
 

@@ -6,10 +6,10 @@
 #include <array>
 #include <unordered_map>
 
-#include <redx/common/cname.hpp>
-#include <redx/common/streambase.hpp>
-#include <redx/common/hashing.hpp>
-#include <redx/common/utils.hpp>
+#include <redx/core/cname.hpp>
+#include <redx/core/streambase.hpp>
+#include <redx/core/hashing.hpp>
+#include <redx/core/utils.hpp>
 #include <redx/containers/bitfield.hpp>
 
 namespace redx {

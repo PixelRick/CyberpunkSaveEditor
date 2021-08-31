@@ -6,7 +6,7 @@
 #include <numeric>
 #include <memory>
 
-#include <redx/common.hpp>
+#include <redx/core.hpp>
 #include <redx/archive/radr.hpp>
 #include <redx/os/file_reader.hpp>
 

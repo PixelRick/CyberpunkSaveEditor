@@ -5,7 +5,7 @@
 #include <unordered_set>
 #include <stack>
 
-#include <redx/common.hpp>
+#include <redx/core.hpp>
 #include <redx/archive/archive.hpp>
 #include <redx/io/archive_file_istream.hpp>
 

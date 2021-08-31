@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include <spdlog/spdlog.h>
-#include "redx/common.hpp"
+#include "redx/core.hpp"
 
 namespace redx {
 
