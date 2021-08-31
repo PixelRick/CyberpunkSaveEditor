@@ -86,7 +86,7 @@ op_status init_cpinternals(bool with_archive_names)
     std::vector<gname> names;
     load_names_from_txt("./db/internal_names.txt", names);
 
-    if (0 && with_archive_names)
+    if (1 || with_archive_names)
     {
       load_names_from_txt("./db/archive_names.txt", names);
 
