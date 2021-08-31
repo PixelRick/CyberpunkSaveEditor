@@ -308,11 +308,11 @@ private:
   };
 
   struct pidlink_hash {
-    size_t operator()(const pidlink& x) const { return x.pid.hash; }
+    size_t operator()(const pidlink& x) const { return x.pid.hash(); }
   };
 
   struct pidlink_eq {
-    size_t operator()(const pidlink& a, const pidlink& b) const { return a.pid.hash == b.pid.hash; }
+    size_t operator()(const pidlink& a, const pidlink& b) const { return a.pid.hash() == b.pid.hash(); }
   };
 
   std::unordered_set<pidlink, pidlink_hash, pidlink_eq> m_pidlinks;

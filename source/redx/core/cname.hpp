@@ -1,71 +1,127 @@
 #pragma once
-#include <inttypes.h>
+#include <redx/core/platform.hpp>
+
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include <spdlog/spdlog.h>
-#include <redx/core/streambase.hpp>
+
 #include <redx/core/gstrid.hpp>
 #include <redx/core/gname.hpp>
+//#include <redx/serialization/serializer.hpp>
 
 namespace redx {
 
 //--------------------------------------------------------
 //  cname
-// 
+//
 // name with average constant access to value (lookup).
 struct cname
   : public gstrid<gname::pool_tag>
 {
-  using base_type = gstrid<gname::pool_tag>;
+  static constexpr bool is_trivially_serializable = false; // cname are cp types
 
-  using base_type::base_type;
-  using base_type::operator=;
+  using base = gstrid<gname::pool_tag>;
 
-  friend streambase& operator<<(streambase& ar, cname& cn)
+  using base::base;
+  using base::operator=;
+
+  cname(const gstrid<gname::pool_tag>& other)
+    : gstrid<gname::pool_tag>(other) {}
+
+  static cname register_with_hash(std::string_view strv, fnv1a64_t hash)
   {
-    if (ar.flags() & armanip::cnamehash)
-    {
-      return ar << cn.hash;
-    }
-  
-    if (ar.is_reader())
-    {
-      std::string s;
-      ar << s;
-      cn = cname(s);
-    }
-    else
-    {
-      auto gs = cn.gstr();
-      if (!gs)
-      {
-        // todo:
-        // debug break instead ?
-        // just set error ?
-        throw std::runtime_error(fmt::format("trying to serialize <cname:{:016X}> as string but the string is unknown", cn.hash));
-      }
-      std::string s = gs.string();
-      ar << s;
-    }
-  
-    return ar;
+    return cname(nc_gpool().register_string(strv, hash).first);
   }
+
+  // TODO: move that to serializer.. serialization strategy is there not here
+  //friend serializer& operator<<(serializer& ser, cname& cn)
+  //{
+  //  if (ser.flags() & sermanip::cnamehash)
+  //  {
+  //    return ser << cn.hash;
+  //  }
+  //
+  //  if (ser.is_reader())
+  //  {
+  //    std::string s;
+  //    ser << s;
+  //    cn = cname(s);
+  //  }
+  //  else
+  //  {
+  //    auto gs = cn.gstr();
+  //    if (!gs)
+  //    {
+  //      // todo:
+  //      // debug break instead ?
+  //      // just set error ?
+  //      throw std::runtime_error(fmt::format("trying to serialize <cname:{:016X}> as string but the string is unknown", cn.hash));
+  //    }
+  //    std::string s = gs.string();
+  //    ser << s;
+  //  }
+  //
+  //  return ser;
+  //}
 
   std::string string() const
   {
-    auto gn = gstr();
-
-    if (!gn)
+    auto gs = gstr();
+    if (!gs)
     {
       return fmt::format("<cname:{:016X}>", hash);
     }
-
-    return gn.string();
+    return gs.string();
   }
 };
 
 static_assert(sizeof(cname) == 8);
+
+inline std::ostream& operator<<(std::ostream& os, const cname& x)
+{ 
+  return os << x.string(); 
+}
+
+namespace literals {
+
+using literal_cname_helper = literal_gstring_helper<cname::pool_tag>;
+
+struct cname_builder
+  : protected literal_cname_helper::gstrid_builder
+{
+  using gstrid_type = literal_cname_helper::gstrid_type;
+
+  using literal_cname_helper::gstrid_builder::gstrid_builder;
+
+  inline operator cname() const
+  {
+    static_assert(std::is_same_v<cname::base, gstrid_type>);
+    return cname(this->operator gstrid_type());
+  }
+};
+
+// does register the name
+constexpr cname_builder operator""_cndef(const char* s, std::size_t)
+{
+  // todo: c++20, use the singleton version of the builder
+  return cname_builder(s);
+}
+
+// does not register the name
+constexpr cname operator""_cn(const char* s, std::size_t n)
+{
+  // todo: c++20, use the singleton version of the builder
+  return cname(fnv1a64(s));
+}
+
+inline constexpr auto cn_test1 = literal_cname_helper::builder("test1");
+inline constexpr auto cn_test2 = "test2"_cndef;
+inline constexpr auto cn_test3 = "test2"_cn;
+
+} // namespace literals
+
+using literals::operator""_cndef;
+using literals::operator""_cn;
 
 //--------------------------------------------------------
 //  database: sorted names
@@ -83,17 +139,17 @@ struct cname_db
     return s;
   }
 
-  bool is_registered(std::string_view name) const
+  FORCE_INLINE bool is_registered(std::string_view name) const
   {
     return is_registered(cname(name));
   }
 
-  bool is_registered(const cname& cid) const
+  FORCE_INLINE bool is_registered(const cname& cid) const
   {
     return is_registered(cid.hash);
   }
 
-  bool is_registered(uint64_t hash) const
+  FORCE_INLINE bool is_registered(uint64_t hash) const
   {
     return gname::find(hash).has_value();
   }
@@ -123,7 +179,7 @@ struct cname_db
   //  return gname();
   //}
 
-  const std::vector<gname>& sorted_names() const
+  FORCE_INLINE const std::vector<gname>& sorted_names() const noexcept
   {
     return m_full_list;
   }
@@ -141,7 +197,7 @@ struct cname_db
 
 protected:
 
-  cname_db() = default;
+  cname_db() noexcept = default;
   ~cname_db() = default;
 
 protected:
@@ -155,6 +211,17 @@ protected:
 };
 
 } // namespace redx
+
+template <>
+struct fmt::formatter<redx::cname>
+  : fmt::formatter<string_view>
+{
+  template <typename FormatContext>
+  auto format(const redx::cname& x, FormatContext& ctx)
+  {
+    return formatter<string_view>::format(x.string(), ctx);
+  }
+};
 
 namespace std {
 

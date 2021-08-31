@@ -453,12 +453,12 @@ public:
 
     bool modified = false;
 
-    if (ctypename() == "WorldPosition"_gn)
+    if (ctypename() == "WorldPosition"_gndef)
     {
       return imgui_widget_wpos(label, editable);
     }
 
-    if (ctypename() == "Quaternion"_gn)
+    if (ctypename() == "Quaternion"_gndef)
     {
       return imgui_widget_quat(label, editable);
     }
@@ -514,7 +514,7 @@ public:
         }
         else
         {
-          if (prop->ctypename() != "WorldPosition"_gn && prop->ctypename() != "Quaternion"_gn)
+          if (prop->ctypename() != "WorldPosition"_gndef && prop->ctypename() != "Quaternion"_gndef)
             ImGui::PushItemWidth(-FLT_MIN);
           else
             ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth() - 50);
@@ -533,7 +533,7 @@ public:
       ImGui::EndTable();
     }
 
-    if (ctypename() == "Quaternion"_gn)
+    if (ctypename() == "Quaternion"_gndef)
     {
       //const float siz = 100.f;
       //

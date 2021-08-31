@@ -1,5 +1,6 @@
 #pragma once
-#include <inttypes.h>
+#include <redx/core/platform.hpp>
+
 #include <array>
 #include <string>
 #include <string_view>
@@ -385,32 +386,33 @@ constexpr uint32_t operator""_fnv1a32(const char* const str, std::size_t len)
 //--------------------------------------------------------
 //  FNV1A64
 
-constexpr uint64_t fnv1a64_continue(uint64_t hash, std::string_view str)
+using fnv1a64_t = uint64_t;
+
+constexpr fnv1a64_t fnv1a64_continue(fnv1a64_t hash, std::string_view str)
 {
   constexpr uint64_t prime = 0x00000100000001B3;
 
+  uint64_t x = uint64_t(hash);
   for (auto c : str)
   {
-    hash ^= c;
-    hash *= prime;
+    x ^= c;
+    x *= prime;
   }
 
-  return hash;
+  return {x};
 }
 
-constexpr uint64_t fnv1a64(std::string_view str)
+constexpr fnv1a64_t fnv1a64(std::string_view str)
 {
   constexpr uint64_t basis = 0xCBF29CE484222325;
 
   return fnv1a64_continue(basis, str);
 }
 
-constexpr uint64_t operator""_fnv1a64(const char* const str, std::size_t len)
+constexpr fnv1a64_t operator""_fnv1a64(const char* const str, std::size_t len)
 {
   return fnv1a64(std::string_view(str, len));
 }
-
-
 
 //--------------------------------------------------------
 //  MURMUR3_32
@@ -760,7 +762,7 @@ inline sha1_digest sha1(const char* const data, size_t len)
   return b.finalize();
 }
 
-inline sha1_digest sha1(std::string_view s)
+FORCE_INLINE sha1_digest sha1(std::string_view s)
 {
   return sha1(s.data(), s.size());
 }

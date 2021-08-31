@@ -1,5 +1,6 @@
 #pragma once
-#include <inttypes.h>
+#include <redx/core/platform.hpp>
+
 #include <chrono>
 
 namespace redx {
@@ -19,40 +20,40 @@ struct time_stamp
   explicit time_stamp(uint64_t ms_since_unix_epoch) noexcept
     : ms_since_unix_epoch(ms_since_unix_epoch) {}
 
-  time_stamp& operator=(time_point tp) noexcept
+  FORCE_INLINE time_stamp& operator=(time_point tp) noexcept
   {
      *this = time_stamp(tp);
      return *this;
   }
 
-  time_stamp& operator=(duration_type ms_since_unix_epoch) noexcept
+  FORCE_INLINE time_stamp& operator=(duration_type ms_since_unix_epoch) noexcept
   {
      this->ms_since_unix_epoch = ms_since_unix_epoch;
      return *this;
   }
 
-  time_stamp& operator=(uint64_t ms_since_unix_epoch) noexcept
+  FORCE_INLINE time_stamp& operator=(uint64_t ms_since_unix_epoch) noexcept
   {
      this->ms_since_unix_epoch = duration_type(ms_since_unix_epoch);
      return *this;
   }
 
-  bool operator<(const time_stamp& rhs) const
+  FORCE_INLINE bool operator<(const time_stamp& rhs) const noexcept
   {
     return ms_since_unix_epoch < rhs.ms_since_unix_epoch;
   }
 
-  bool operator==(const time_stamp& rhs) const
+  FORCE_INLINE bool operator==(const time_stamp& rhs) const noexcept
   {
     return ms_since_unix_epoch == rhs.ms_since_unix_epoch;
   }
 
-  bool operator!=(const time_stamp& rhs) const
+  FORCE_INLINE bool operator!=(const time_stamp& rhs) const noexcept
   {
     return ms_since_unix_epoch != rhs.ms_since_unix_epoch;
   }
 
-  inline operator time_point() const noexcept
+  FORCE_INLINE operator time_point() const noexcept
   {
     return time_point(ms_since_unix_epoch);
   }
@@ -65,7 +66,7 @@ static_assert(sizeof(time_stamp) == 8);
 struct file_time
 {
   using duration_type = std::chrono::duration<int64_t, std::ratio_multiply<std::hecto, std::nano>>;
-  constexpr static duration_type win_epoch{116444736000000000};
+  static constexpr duration_type win_epoch{116444736000000000};
 
   file_time() = default;
 
@@ -75,40 +76,40 @@ struct file_time
   explicit file_time(uint64_t hns_since_win_epoch) noexcept
     : hns_since_win_epoch(hns_since_win_epoch) {}
 
-  file_time& operator=(time_point tp) noexcept
+  FORCE_INLINE file_time& operator=(time_point tp) noexcept
   {
      *this = file_time(tp);
      return *this;
   }
 
-  file_time& operator=(duration_type hns_since_win_epoch) noexcept
+  FORCE_INLINE file_time& operator=(duration_type hns_since_win_epoch) noexcept
   {
      this->hns_since_win_epoch = hns_since_win_epoch;
      return *this;
   }
 
-  file_time& operator=(uint64_t hns_since_win_epoch) noexcept
+  FORCE_INLINE file_time& operator=(uint64_t hns_since_win_epoch) noexcept
   {
      this->hns_since_win_epoch = duration_type(hns_since_win_epoch);
      return *this;
   }
 
-  bool operator<(const file_time& rhs) const
+  FORCE_INLINE bool operator<(const file_time& rhs) const noexcept
   {
     return hns_since_win_epoch < rhs.hns_since_win_epoch;
   }
 
-  bool operator==(const file_time& rhs) const
+  FORCE_INLINE bool operator==(const file_time& rhs) const noexcept
   {
     return hns_since_win_epoch == rhs.hns_since_win_epoch;
   }
 
-  bool operator!=(const file_time& rhs) const
+  FORCE_INLINE bool operator!=(const file_time& rhs) const noexcept
   {
     return hns_since_win_epoch != rhs.hns_since_win_epoch;
   }
 
-  inline operator time_point() const noexcept
+  FORCE_INLINE operator time_point() const noexcept
   {
     return time_point(hns_since_win_epoch - win_epoch);
   }

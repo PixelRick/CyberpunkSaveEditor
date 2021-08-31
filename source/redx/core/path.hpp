@@ -1,10 +1,15 @@
 #pragma once
-#include <filesystem>
+#include <redx/core/platform.hpp>
+
 #include <string>
+#include <string_view>
+#include <type_traits>
 
 #include <redx/core.hpp>
 
 namespace redx {
+
+// CRITICAL: this must remain AFAP!
 
 // resource paths:
 // - are lower case ascii
@@ -47,51 +52,51 @@ struct path
   path& operator=(const path& p) = default;
   path& operator=(path&& p) noexcept = default;
 
-  friend inline bool operator==(const path& lhs, const path& rhs) noexcept
+  friend FORCE_INLINE bool operator==(const path& lhs, const path& rhs) noexcept
   {
     return lhs.str == rhs.str;
   }
 
-  friend inline bool operator!=(const path& lhs, const path& rhs) noexcept
+  friend FORCE_INLINE bool operator!=(const path& lhs, const path& rhs) noexcept
   {
     return !(lhs == rhs);
   }
 
-  friend inline bool operator<(const path& lhs, const path& rhs) noexcept
+  friend FORCE_INLINE bool operator<(const path& lhs, const path& rhs) noexcept
   {
     return lhs.str < rhs.str;
   }
 
-  friend inline bool operator>(const path& lhs, const path& rhs) noexcept
+  friend FORCE_INLINE bool operator>(const path& lhs, const path& rhs) noexcept
   {
     return rhs.str < lhs.str;
   }
 
-  friend inline bool operator<=(const path& lhs, const path& rhs) noexcept
+  friend FORCE_INLINE bool operator<=(const path& lhs, const path& rhs) noexcept
   {
     return !(rhs.str < lhs.str);
   }
 
-  friend inline bool operator>=(const path& lhs, const path& rhs) noexcept
+  friend FORCE_INLINE bool operator>=(const path& lhs, const path& rhs) noexcept
   {
     return !(lhs.str < rhs.str);
   }
 
-  friend inline path operator/(const path& lhs, const path& rhs)
+  friend FORCE_INLINE path operator/(const path& lhs, const path& rhs)
   {
     path ret = lhs;
     ret /= rhs;
     return ret;
   }
 
-  inline path& operator/=(const path& rhs)
+  FORCE_INLINE path& operator/=(const path& rhs)
   {
-    append_raw(rhs.str);
+    append_checked(rhs.str);
     return *this;
   }
 
   template <class InputIt>
-  inline path& assign(InputIt first, InputIt last, bool& success)
+  FORCE_INLINE path& assign(InputIt first, InputIt last, bool& success)
   {
     str.clear();
     append(first, last, success);
@@ -99,13 +104,13 @@ struct path
   }
 
   template <class Source>
-  inline path& assign(const Source& src, bool& success)
+  FORCE_INLINE path& assign(const Source& src, bool& success)
   {
     return assign(std::begin(src), std::end(src), success);
   }
 
   template <class InputIt>
-  inline path& assign(InputIt first, InputIt last, already_normalized_tag&&)
+  FORCE_INLINE path& assign(InputIt first, InputIt last, already_normalized_tag&&)
   {
     str.clear();
     append(first, last, already_normalized_tag{});
@@ -113,38 +118,38 @@ struct path
   }
 
   template <class Source>
-  inline path& assign(const Source& src, already_normalized_tag&&)
+  FORCE_INLINE path& assign(const Source& src, already_normalized_tag&&)
   {
     return assign(std::begin(src), std::end(src), already_normalized_tag{});
   }
 
   template <class InputIt>
-  inline path& append(InputIt first, InputIt last, bool& success)
+  FORCE_INLINE path& append(InputIt first, InputIt last, bool& success)
   {
     normalize_append(first, last, success);
     return *this;
   }
 
   template <class Source>
-  inline path& append(const Source& src, bool& success)
+  FORCE_INLINE path& append(const Source& src, bool& success)
   {
     return append(std::begin(src), std::end(src), success);
   }
 
   template <class InputIt>
-  inline path& append(InputIt first, InputIt last, already_normalized_tag&&)
+  FORCE_INLINE path& append(InputIt first, InputIt last, already_normalized_tag&&)
   {
-    append_raw(first, last);
+    append_checked(first, last);
     return *this;
   }
 
   template <class Source>
-  inline path& append(const Source& src, already_normalized_tag&&)
+  FORCE_INLINE path& append(const Source& src, already_normalized_tag&&)
   {
     return append(std::begin(src), std::end(src), already_normalized_tag{});
   }
 
-  void clear() noexcept
+  FORCE_INLINE void clear() noexcept
   {
     str.clear();
   }
@@ -180,33 +185,33 @@ struct path
     return *this;
   }
 
-  void swap(path& other) noexcept
+  FORCE_INLINE void swap(path& other) noexcept
   {
     str.swap(other.str);
   }
 
-  const char* c_str() const noexcept
+  FORCE_INLINE const char* c_str() const noexcept
   {
     return str.c_str();
   }
 
-  operator std::string() const
+  FORCE_INLINE operator std::string() const noexcept
   {
     return str;
   }
 
-  const std::string& string() const
+  FORCE_INLINE std::string string() const noexcept
   {
     return str;
   }
 
   // name explicitly saying there is no copy
-  const std::string& strv() const
+  FORCE_INLINE std::string_view strv() const& noexcept
   {
     return str;
   }
 
-  int compare(const path& p) const noexcept
+  FORCE_INLINE int compare(const path& p) const noexcept
 	{
     return str.compare(p.str);
   }
@@ -219,7 +224,7 @@ struct path
     return normalized ? compare(p) : -1;
   }
 
-  int compare(const char* s) const noexcept
+  FORCE_INLINE int compare(const char* s) const noexcept
 	{
     return compare(std::string_view(s));
   }
@@ -258,7 +263,7 @@ struct path
     return path(std::string_view(str).substr(filename_pos), already_normalized_tag{});
   }
 
-  bool empty() const noexcept
+  FORCE_INLINE bool empty() const noexcept
   {
     return str.empty();
   }
@@ -313,7 +318,7 @@ protected:
 
   // returns previous size
   template <class InputIt>
-  size_t append_raw(InputIt first, InputIt last)
+  size_t append_checked(InputIt first, InputIt last)
   {
     const size_t start = str.size();
 
@@ -335,14 +340,14 @@ protected:
   }
 
   template <class Source>
-  inline path& append_raw(const Source& src)
+  FORCE_INLINE path& append_checked(const Source& src)
   {
-    append_raw(std::begin(src), std::end(src));
+    append_checked(std::begin(src), std::end(src));
     return *this;
   }
 
   template <typename CharT>
-  static inline bool is_separator(CharT c)
+  static FORCE_INLINE bool is_separator(CharT c)
   {
     return c == static_cast<CharT>('/') || c == static_cast<CharT>('\\');
   }
@@ -385,7 +390,9 @@ protected:
       }
       else if (c == ':')
       {
-        DEBUG_BREAK();
+        //DEBUG_BREAK();
+        success = false;
+        return 0;
       }
       else
       {
@@ -459,10 +466,13 @@ inline void swap(path& lhs, path& rhs) noexcept
 // path_id (fnv1a64 hash of depot-relative path)
 struct path_id
 {
-  path_id() = default;
+  path_id() noexcept = default;
 
-  constexpr explicit path_id(uint64_t hash) noexcept
-    : hash(hash)
+  path_id(const path_id& other) noexcept = default;
+  path_id& operator=(const path_id& other) noexcept = default;
+
+  constexpr explicit path_id(fnv1a64_t hash) noexcept
+    : m_hash(hash)
   {
     if (hash < 0x1000)
     {
@@ -472,22 +482,7 @@ struct path_id
 
   constexpr explicit path_id(const path& p) noexcept
   {
-    hash = fnv1a64(p.strv());
-  }
-
-  friend streambase& operator<<(streambase& st, path_id& x)
-  {
-    return st << x.hash;
-  }
-
-  inline bool is_null() const noexcept
-  {
-    return hash == 0;
-  }
-
-  static constexpr path_id root()
-  {
-    return path_id(""_fnv1a64);
+    m_hash = fnv1a64(p.strv());
   }
 
   // in-place compute the path identifier of the concatenation of this's path and rhs with a directory separator.
@@ -495,13 +490,13 @@ struct path_id
   // if this path_id identifies the root path, this is equivalent to *this = path_id(rhs).
   path_id& operator/=(const path& p)
   {
-    if (hash != 0)
+    if (m_hash != 0)
     {
-      if (hash != root().hash)
+      if (m_hash != root().hash())
       {
-        hash = fnv1a64_continue(hash, "\\");
+        m_hash = fnv1a64_continue(m_hash, "\\");
       }
-      hash = fnv1a64_continue(hash, p.strv());
+      m_hash = fnv1a64_continue(m_hash, p.strv());
     }
     return *this;
   }
@@ -516,31 +511,54 @@ struct path_id
     return ret;
   }
 
-  inline constexpr bool operator==(const path_id& rhs) const
+  FORCE_INLINE bool operator==(const path_id& rhs) const
   {
-    return hash == rhs.hash;
+    return m_hash == rhs.m_hash;
   }
 
-  inline constexpr bool operator!=(const path_id& rhs) const
+  FORCE_INLINE bool operator!=(const path_id& rhs) const
   {
     return !operator==(rhs);
   }
 
-  uint64_t hash = 0;
+  FORCE_INLINE fnv1a64_t hash() const
+  {
+    return m_hash;
+  }
+
+  FORCE_INLINE bool is_null() const noexcept
+  {
+    return m_hash == 0;
+  }
+
+  static constexpr path_id root()
+  {
+    return path_id(""_fnv1a64);
+  }
+
+  /*path_id combine(const path_id& rhs)
+  {
+  }*/
+
+  using path_already_normalized_tag = path::already_normalized_tag;
+
+private:
+
+  fnv1a64_t m_hash = 0;
 };
+
+// check serialization reqs
+static_assert(std::is_trivially_assignable_v<path_id&, const path_id&>);
+static_assert(sizeof(path_id) == 8);
 
 } // namespace redx
 
-namespace std {
-
 template <>
-struct hash<redx::path_id>
+struct std::hash<redx::path_id>
 {
-  std::size_t operator()(const redx::path_id& k) const noexcept
+  std::size_t operator()(const redx::path_id& x) const noexcept
   {
-    return k.hash;
+    return x.hash();
   }
 };
-
-} // namespace std
 

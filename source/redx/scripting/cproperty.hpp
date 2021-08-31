@@ -746,7 +746,7 @@ public:
 
   bool imgui_is_one_liner() override
   {
-    return m_obj_ctypename == "WorldPosition"_gn || m_obj_ctypename == "Quaternion"_gn;
+    return m_obj_ctypename == "WorldPosition"_gndef || m_obj_ctypename == "Quaternion"_gndef;
   }
 
 #endif
@@ -867,7 +867,7 @@ public:
 
   virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
-    if (m_val_name == "<no_zero_name>"_gn)
+    if (m_val_name == "<no_zero_name>"_gndef)
       throw std::logic_error("enum value must be skipped, 0 has no gname");
 
     uint16_t strpool_idx = serctx.strpool.insert(m_val_name);

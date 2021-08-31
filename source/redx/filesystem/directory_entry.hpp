@@ -66,7 +66,7 @@ struct directory_entry
   {
     m_by_pid = true;
     m_pid = pid;
-    m_path.assign(fmt::format("{:016x}", pid.hash), path::already_normalized_tag());
+    m_path.assign(fmt::format("{:016x}", pid.hash()), path::already_normalized_tag());
 
     refresh();
   }

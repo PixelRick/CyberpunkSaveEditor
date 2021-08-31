@@ -1,60 +1,74 @@
 #pragma once
-#include <inttypes.h>
+#include <redx/core/platform.hpp>
+
 #include <string>
 #include <string_view>
 #include <vector>
 #include <unordered_map>
 #include <stdexcept>
-#include <spdlog/spdlog.h>
+
 #include <redx/core/gstring.hpp>
-#include <redx/core/streambase.hpp>
 
 namespace redx {
 
 template <uint32_t PoolTag>
 struct gstrid_db;
 
-//--------------------------------------------------------f
+//--------------------------------------------------------
 //  gstrid
 // 
 // identifier with average constant access to string (lookup).
 template <uint32_t PoolTag>
 struct gstrid
 {
-  constexpr static uint32_t pool_tag = PoolTag;
-  using gstring_type = typename gstring<pool_tag>;
-  using db_type = typename gstrid_db<pool_tag>;
+  static constexpr uint32_t pool_tag = PoolTag;
+  using gstring_type = gstring<pool_tag>;
+  using db_type = gstrid_db<pool_tag>;
 
-  gstrid() = default;
-  gstrid(const gstrid&) = default;
+  constexpr gstrid() noexcept = default;
+  constexpr gstrid(const gstrid&) noexcept = default;
+  constexpr gstrid(gstrid&&) noexcept = default;
 
-  constexpr explicit gstrid(uint64_t hash)
+  constexpr explicit gstrid(fnv1a64_t hash)
     : hash(hash)
   {
   }
 
-  explicit gstrid(const char* sz)
-    : gstrid(std::string_view(sz))
+  explicit gstrid(const char* sz, bool register_in_db = false)
+    : gstrid(std::string_view(sz), register_in_db)
   {
   }
 
-  explicit gstrid(std::string_view strv)
+  explicit gstrid(std::string_view strv, bool register_in_db = false)
   {
-    hash = nc_gpool().register_string(strv).first;
+    if (register_in_db)
+    {
+      hash = nc_gpool().register_string(strv).first;
+    }
+    else
+    {
+      hash = fnv1a64(strv);
+    }
   }
 
-  explicit gstrid(gstring_type gs)
+  explicit gstrid(const gstring_type& gs)
   {
     std::string_view strv = gs.strv();
     hash = fnv1a64(strv);
   }
 
-  operator bool() const
+  explicit FORCE_INLINE operator bool() const noexcept
   {
     return !!hash;
   }
 
-  gstrid& operator=(const gstrid&) = default;
+  FORCE_INLINE bool operator!() const noexcept
+  {
+    return !hash;
+  }
+
+  constexpr gstrid& operator=(const gstrid&) noexcept = default;
+  constexpr gstrid& operator=(gstrid&&) noexcept = default;
 
   gstrid& operator=(std::string_view name)
   {
@@ -68,25 +82,30 @@ struct gstrid
     return *this;
   }
 
-  gstrid& operator=(gstring_type name)
+  gstrid& operator=(const gstring_type& name)
   {
     operator=(gstrid(name));
     return *this;
   }
 
-  friend bool operator==(const gstrid& a, const gstrid& b)
+  friend FORCE_INLINE bool operator==(const gstrid& a, const gstrid& b) noexcept
   {
     return a.hash == b.hash;
   }
 
-  friend bool operator!=(const gstrid& a, const gstrid& b)
+  friend FORCE_INLINE bool operator!=(const gstrid& a, const gstrid& b) noexcept
   {
     return !(a == b);
   }
 
-  friend bool operator<(const gstrid& a, const gstrid& b)
+  friend FORCE_INLINE bool operator<(const gstrid& a, const gstrid& b) noexcept
   {
     return a.hash < b.hash;
+  }
+
+  static gstrid register_with_hash(std::string_view strv, fnv1a64_t hash)
+  {
+    return gstrid(nc_gpool().register_string(strv, hash).first);
   }
 
   std::string string() const
@@ -109,11 +128,11 @@ struct gstrid
     return gstring_type::find(hash);
   }
 
-  uint64_t hash = 0;
+  fnv1a64_t hash = 0;
 
 protected:
 
-  static stringpool_mt& nc_gpool()
+  static typename gstring_type::stringpool_type& nc_gpool()
   {
     return gstring_type::nc_gpool();
   }
@@ -121,12 +140,16 @@ protected:
 
 static_assert(sizeof(gstrid<0>) == 8);
 
+template <uint32_t PoolTag>
+inline std::ostream& operator<<(std::ostream& os, const gstrid<PoolTag>& x)
+{ 
+  return os << x.string(); 
+}
+
 } // namespace redx
 
-namespace std {
-
 template <uint32_t PoolTag>
-struct hash<redx::gstrid<PoolTag>>
+struct std::hash<redx::gstrid<PoolTag>>
 {
   std::size_t operator()(const redx::gstrid<PoolTag>& k) const noexcept
   {
@@ -134,5 +157,14 @@ struct hash<redx::gstrid<PoolTag>>
   }
 };
 
-} // namespace std
+template <uint32_t PoolTag>
+struct fmt::formatter<redx::gstrid<PoolTag>>
+  : fmt::formatter<string_view>
+{
+  template <typename FormatContext>
+  auto format(const redx::gstrid<PoolTag>& x, FormatContext& ctx)
+  {
+    return formatter<string_view>::format(x.string(), ctx);
+  }
+};
 

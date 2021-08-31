@@ -1,10 +1,10 @@
 #pragma once
-#include <inttypes.h>
+#include <redx/core/platform.hpp>
+
 #include <string>
 #include <memory>
 #include <algorithm>
 #include <optional>
-#include <spdlog/spdlog.h>
 
 namespace redx {
 
@@ -98,7 +98,7 @@ struct op_status
 
   op_status(const std::string_view& err)
   {
-    if (err != "")
+    if (!err.empty())
     {
       m_err = err;
     }
@@ -106,7 +106,7 @@ struct op_status
 
   op_status(std::string err)
   {
-    if (err != "")
+    if (!err.empty())
     {
       m_err = err;
     }
@@ -123,7 +123,7 @@ struct op_status
   op_status& operator=(const op_status& other) = default;
 
   // returns true when status is "ok"
-  operator bool() const
+  explicit operator bool() const
   {
     return !m_err.has_value();
   }

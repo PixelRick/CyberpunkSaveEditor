@@ -193,10 +193,10 @@ struct CItemData_widget
               auto stat = dynamic_cast<CHandleProperty*>(o.get())->obj();
               if (stat->ctypename() != gname("gameConstantStatModifierData_Deprecated"))
                 continue;
-              if (stat->get_prop_cast<CEnumProperty>("statType"_gn)->value_name() == "Quality"_gn)
+              if (stat->get_prop_cast<CEnumProperty>("statType"_gndef)->value_name() == "Quality"_gndef)
               {
-                stat->get_prop_cast<CFloatProperty>("value"_gn)->set_value(4.0f);
-                stat->get_prop_cast<CEnumProperty>("modifierType"_gn)->set_value_by_name("Additive"_gn);
+                stat->get_prop_cast<CFloatProperty>("value"_gndef)->set_value(4.0f);
+                stat->get_prop_cast<CEnumProperty>("modifierType"_gndef)->set_value_by_name("Additive"_gndef);
                 found_qstat = true;
                 break;
               }
@@ -206,9 +206,9 @@ struct CItemData_widget
               auto stat = stats->add_constant_stats(modifiers);
               if (stat)
               {
-                stat->get_prop_cast<CFloatProperty>("value"_gn)->set_value(4.0f);
-                stat->get_prop_cast<CEnumProperty>("modifierType"_gn)->set_value_by_name("Additive"_gn);
-                stat->get_prop_cast<CEnumProperty>("statType"_gn)->set_value_by_name("Quality"_gn);
+                stat->get_prop_cast<CFloatProperty>("value"_gndef)->set_value(4.0f);
+                stat->get_prop_cast<CEnumProperty>("modifierType"_gndef)->set_value_by_name("Additive"_gndef);
+                stat->get_prop_cast<CEnumProperty>("statType"_gndef)->set_value_by_name("Quality"_gndef);
               }
             }
           }

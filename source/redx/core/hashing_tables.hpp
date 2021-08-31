@@ -1,4 +1,6 @@
-#include <inttypes.h>
+#pragma once
+#include <redx/core/platform.hpp>
+
 #include <array>
 
 namespace redx::detail::crc32 {

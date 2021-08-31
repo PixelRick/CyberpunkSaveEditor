@@ -64,7 +64,7 @@ bool treefs::load_archive(const std::filesystem::path& path)
 
     if (entry_idx < 0)
     {
-      entry_idx = insert_child_entry(unids_idx, fs_gname(fmt::format("{:016x}.bin", pid.hash)), entry_kind::file, false).first;
+      entry_idx = insert_child_entry(unids_idx, fs_gname(fmt::format("{:016x}.bin", pid.hash())), entry_kind::file, false).first;
       if (entry_idx < 0)
       {
         // collision, already logged by insert
