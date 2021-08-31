@@ -246,8 +246,8 @@ public:
       prev_offset = sdesc.data_offset;
 
       fdesc = {
-        gname(strpool.from_idx(sdesc.name_idx)),
-        gname(strpool.from_idx(sdesc.ctypename_idx))
+        strpool.at(sdesc.name_idx).gstr(),
+        strpool.at(sdesc.ctypename_idx).gstr()
       };
       ddesc.data_offset = sdesc.data_offset;
 
@@ -395,9 +395,13 @@ public:
       size_t prop_start_pos = (size_t)os.tellp();
 
       const uint32_t data_offset = (uint32_t)(prop_start_pos - start_pos);
+
+      const uint32_t name_idx = strpool.insert(field.name);
+      const uint32_t ctypename_idx = strpool.insert(field.prop->ctypename());
+
       descs.emplace_back(
-        strpool.to_idx(field.name.c_str()),
-        strpool.to_idx(field.prop->ctypename().c_str()),
+        name_idx,
+        ctypename_idx,
         data_offset
       );
 

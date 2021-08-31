@@ -39,7 +39,7 @@ bool load_from_json(std::filesystem::path path, T& out)
   return true;
 }
 
-bool load_names_from_txt(std::filesystem::path path, std::vector<gname>& out)
+bool load_names_from_txt(std::filesystem::path path, std::vector<gname>& out, bool optional = false)
 {
   auto relpath = std::filesystem::relative(path);
 
@@ -65,7 +65,8 @@ bool load_names_from_txt(std::filesystem::path path, std::vector<gname>& out)
   }
   else
   {
-    MessageBox(0, fmt::format(L"{} is missing", relpath.wstring()).c_str(), L"missing resource file", 0);
+    if (!optional)
+      MessageBox(0, fmt::format(L"{} is missing", relpath.wstring()).c_str(), L"missing resource file", 0);
     return false;
   }
 

@@ -54,7 +54,7 @@ struct cname
 
   std::string string() const
   {
-    auto gn = gname();
+    auto gn = gstr();
 
     if (!gn)
     {
@@ -155,4 +155,16 @@ protected:
 };
 
 } // namespace cp
+
+namespace std {
+
+template<> struct hash<cp::cname>
+{
+    std::size_t operator()(const cp::cname& x) const noexcept
+    {
+        return x.hash;
+    }
+};
+
+} // namespace std
 

@@ -159,6 +159,7 @@ protected:
   }
 
 public:
+
   bool serialize_in(std::istream& reader, uint32_t descs_size, uint32_t data_size, uint32_t descs_offset = 0)
   {
     if (descs_size % sizeof(CRangeDesc) != 0)

@@ -1,5 +1,6 @@
 #pragma once
 #include <inttypes.h>
+#include <stdlib.h>
 #include <optional>
 #include <vector>
 #include <array>
@@ -9,7 +10,6 @@
 #include <cpinternals/common/streambase.hpp>
 #include <cpinternals/common/hashing.hpp>
 #include <cpinternals/common/utils.hpp>
-#include <cpinternals/common/stringpoolsb.hpp>
 
 namespace cp {
 
@@ -17,6 +17,19 @@ namespace cp {
 
 struct cnameset
 {
+protected:
+
+  struct ser_desc
+  {
+    union
+    {
+      redx::bfm32<uint32_t, 0, 24> offset;
+      redx::bfm32<uint8_t, 24, 8> size;
+    };
+  };
+
+public:
+
   using container_type = std::vector<cname>;
 
   cnameset() {}
@@ -124,65 +137,63 @@ struct cnameset
     return m_ids[idx];
   }
 
-  template <size_t StringSizeBits>
-  void serialize(streambase& sb, uint32_t base_offset, uint32_t& inout_descs_size, uint32_t& inout_data_size)
-  {
-    if (sb.is_reader())
-    {
-      serialize_in<StringSizeBits>(sb, base_offset, inout_descs_size, inout_data_size);
-    }
-    else
-    {
-      serialize_out<StringSizeBits>(sb, base_offset, inout_descs_size, inout_data_size);
-    }
-  }
-
-  template <size_t StringSizeBits>
-  void serialize_in(streambase& sb, uint32_t base_offset, uint32_t descs_size, uint32_t data_size)
+  template <bool WithNullTerminators = true>
+  bool read_in(const char* buffer, uint32_t descs_offset, uint32_t descs_size, uint32_t data_size)
   {
     clear();
 
-    if (!sb.is_reader())
+    const size_t descs_cnt = descs_size / sizeof(ser_desc);
+    if (descs_size % sizeof(ser_desc))
     {
-      sb.set_error("cnameset::serialize_in: cannot be used with output stream");
-      return;
+      SPDLOG_ERROR("cnameset::read_in: invalid given descs_size");
+      return false;
     }
 
-    stringpoolsb<StringSizeBits> sp;
-    sp.serialize_in(sb, base_offset, descs_size, data_size);
-
-    if (sb.has_error())
+    const char* pdescs = buffer + descs_offset;
+    const char* data = pdescs + descs_size;
+    const char* data_end = data + data_size;
+    std::span<const ser_desc> descs(reinterpret_cast<const ser_desc*>(pdescs), descs_cnt);
+    
+    for (uint32_t i = 0; i < descs.size(); ++i)
     {
-      return;
-    }
+      const auto& desc = descs[i];
 
-    uint32_t idx = 0;
-    for (uint32_t i = 0; i < sp.size(); ++i)
-    {
-      cname cn(sp.at(i));
+      const uint32_t str_size = WithNullTerminators ? desc.size() - 1 : desc.size();
+      std::string_view str(buffer + desc.offset(), str_size);
+
+      if (&*str.end() > data_end)
+      {
+        SPDLOG_ERROR("cnameset::read_in: string out of bounds");
+        return false;
+      }
+
+      cname cn(str);
       m_ids.emplace_back(cn);
-      m_idxmap.emplace(cn, idx++);
+      m_idxmap.emplace(cn, i);
     }
-  }
 
-  template <size_t StringSizeBits>
-  void serialize_out(streambase& sb, uint32_t base_offset, uint32_t& out_descs_size, uint32_t& out_data_size)
+    return true;
+  }
+  
+  // todo: remove descs_pos arg (use tell)
+
+  template <bool WithNullTerminators = true>
+  void serialize_out(streambase& sb, uint32_t base_spos, uint32_t& out_descs_size, uint32_t& out_data_size)
   {
     out_descs_size = 0;
     out_data_size = 0;
 
-    if (sb.is_reader())
+    std::vector<ser_desc> descs(size());
+
+    const uint32_t descs_spos = (uint32_t)sb.tell();
+    sb.serialize_pods_array_raw(descs.data(), descs.size()); // dummy
+
+    const uint32_t data_spos = (uint32_t)sb.tell();
+    uint32_t offset = (uint32_t)data_spos - base_spos;
+
+    for (uint32_t i = 0; i < descs.size(); ++i)
     {
-      sb.set_error("cnameset::serialize_out: cannot be used with input stream");
-      return;
-    }
-
-    stringpoolsb<StringSizeBits> sp;
-
-    for (auto& cn : m_ids)
-    {
-      gname gn = cn.gstr();
-
+      gname gn = m_ids[i].gstr();
       if (!gn)
       {
         sb.set_error("cnameset::serialize_out: a cname couldn't be resolved to string");
@@ -190,10 +201,35 @@ struct cnameset
       }
 
       const std::string_view strv = gn.strv();
-      sp.register_string(strv);
+      const uint32_t str_size = (uint32_t)strv.size();
+
+      auto& desc = descs[i];
+      desc.offset = offset;
+
+      sb.serialize_bytes((char*)strv.data(), strv.size());
+      offset += str_size;
+
+      if constexpr (WithNullTerminators)
+      {
+        sb.serialize_byte("\0");
+        desc.size = str_size + 1;
+        offset++;
+      }
+      else
+      {
+        desc.size = str_size;
+      }
     }
 
-    sp.serialize_out(sb, base_offset, out_descs_size, out_data_size);
+    const uint32_t end_spos = (uint32_t)sb.tell();
+
+    sb.seek(descs_spos);
+    sb.serialize_pods_array_raw(descs.data(), descs.size());
+
+    sb.seek(end_spos);
+
+    out_descs_size = data_spos - descs_spos;
+    out_data_size = end_spos - data_spos;
   }
 
 protected:

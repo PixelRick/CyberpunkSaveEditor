@@ -10,6 +10,7 @@
 #include "cpinternals/csav/serializers.hpp"
 #include "CStringPool.hpp"
 #include "cobject.hpp"
+#include "cpinternals/io/stdstream_wrapper.hpp"
 
 enum class ESystemKind : uint8_t
 {
@@ -41,7 +42,7 @@ private:
     uint16_t uk1                  = 0;
     uint16_t uk2                  = 0;
     uint32_t cnames_cnt           = 0;
-    uint32_t uk3                  = 0;
+    uint32_t strpool_descs_offset                  = 0;
     uint32_t strpool_data_offset  = 0;
     uint32_t obj_descs_offset     = 0;
     // tricky: obj offsets are relative to the strpool base
@@ -136,12 +137,19 @@ public:
     const uint32_t strpool_descs_size = m_header.strpool_data_offset;
     const uint32_t strpool_data_size = m_header.obj_descs_offset - strpool_descs_size;
 
+
+    auto blob = std::make_unique<char[]>(blob_size - base_offset);
+    reader.read(blob.get(), blob_size - base_offset);
+    //reader.seekg((size_t)blob_spos + base_offset);
+
     //CStringPool strpool;
-    CStringPool& strpool = m_serctx.strpool;
-    if (!strpool.serialize_in(reader, strpool_descs_size, strpool_data_size))
+    cp::cnameset& strpool = m_serctx.strpool;
+    if (!strpool.read_in(blob.get(), 0, strpool_descs_size, strpool_data_size))
       return false;
 
     // now let's read objects
+
+    reader.seekg((size_t)blob_spos + base_offset + m_header.obj_descs_offset);
 
     // we don't have the impl for all props
     // so we'll use the assumption that everything is serialized in
@@ -182,7 +190,7 @@ public:
       if (desc.data_offset < m_header.objdata_offset)
         return false;
 
-      auto obj_ctypename = gname(strpool.from_idx(desc.name_idx));
+      auto obj_ctypename = strpool.at(desc.name_idx).gstr();
       auto new_obj = std::make_shared<CObject>(obj_ctypename, true); // todo: static create method
       m_serctx.m_objects.push_back(new_obj);
     }
@@ -236,7 +244,8 @@ public:
       writer.write((char*)m_subsys_names.data(), cnames_cnt * sizeof(CName));
     }
 
-    auto base_spos = writer.tellp();
+    stdstream_wrapper stw(writer);
+    uint32_t base_spos = (uint32_t)stw.tell();
 
     // i see no choice but to build objects first to populate the pool
     // the game probably actually uses this pool so they don't have
@@ -258,15 +267,19 @@ public:
     {
       auto& obj = serctx.m_objects[i];
       const uint32_t tmp_offset = (uint32_t)ss.tellp();
-      const uint16_t name_idx = serctx.strpool.to_idx(obj->ctypename().c_str());
+      const uint16_t name_idx = serctx.strpool.insert(obj->ctypename());
       obj_descs.emplace_back(name_idx, tmp_offset);
       if (!obj->serialize_out(ss, serctx))
         return false;
     }
 
+
     // time to write strpool
     uint32_t strpool_data_size = 0;
-    if (!serctx.strpool.serialize_out(writer, new_header.strpool_data_offset, strpool_data_size))
+    new_header.strpool_descs_offset = 0;
+    serctx.strpool.serialize_out(stw, base_spos, new_header.strpool_data_offset, strpool_data_size);
+    
+    if (stw.has_error())
       return false;
 
     new_header.obj_descs_offset = new_header.strpool_data_offset + strpool_data_size;

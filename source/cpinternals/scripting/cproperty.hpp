@@ -11,7 +11,7 @@
 #include "cpinternals/common.hpp"
 #include "cpinternals/ctypes.hpp"
 
-#include "cpinternals/ctypes.hpp"
+#include <cpinternals/tmp/resid_set.hpp>
 
 #include "fwd.hpp"
 #include "CStringPool.hpp"
@@ -845,7 +845,7 @@ public:
     is >> cbytes_ref(strpool_idx);
     if (strpool_idx >= serctx.strpool.size())
       return false;
-    m_val_name = gname(serctx.strpool.from_idx(strpool_idx));
+    m_val_name = serctx.strpool.at(strpool_idx).gstr();
     auto& enum_members = m_enum_desc->members();
     m_bp_index = (uint32_t)enum_members.size();
     for (size_t i = 0; i < enum_members.size(); ++i)
@@ -870,7 +870,7 @@ public:
     if (m_val_name == "<no_zero_name>"_gn)
       throw std::logic_error("enum value must be skipped, 0 has no gname");
 
-    uint16_t strpool_idx = serctx.strpool.to_idx(m_val_name.strv());
+    uint16_t strpool_idx = serctx.strpool.insert(m_val_name);
     os << cbytes_ref(strpool_idx);
     return true;
   }
@@ -996,13 +996,13 @@ public:
     if (!is.good() || strpool_idx >= serctx.strpool.size())
       return false;
 
-    m_id = CName(serctx.strpool.from_idx(strpool_idx));
+    m_id = serctx.strpool.at(strpool_idx);
     return true;
   }
 
   virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
-    uint16_t strpool_idx = serctx.strpool.to_idx(m_id.gstr().strv());
+    uint16_t strpool_idx = serctx.strpool.insert(m_id);
     os << cbytes_ref(strpool_idx);
     return true;
   }
@@ -1018,6 +1018,59 @@ public:
 };
 
 //------------------------------------------------------------------------------
+// rRef
+//------------------------------------------------------------------------------
+
+class CRRefProperty
+  : public CProperty
+{
+protected:
+  gname m_base_ctypename;
+  gname m_ctypename;
+  cname m_path;
+
+public:
+  CRRefProperty(CPropertyOwner* owner, gname sub_ctypename)
+    : CProperty(owner, EPropertyKind::RaRef)
+    , m_base_ctypename(sub_ctypename)
+    , m_ctypename(std::string("rRef:") + m_base_ctypename.c_str())
+  {
+  }
+
+  ~CRRefProperty() override = default;
+
+public:
+  // overrides
+
+  gname ctypename() const override { return m_ctypename; }
+
+  bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
+  {
+    uint16_t idx;
+    is >> cbytes_ref(idx);
+    auto rid = serctx.respool.at(idx);
+    m_path = rid.path;
+    return true;
+  }
+
+  virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
+  {
+    uint16_t idx = serctx.respool.insert(m_path, true);
+    os << cbytes_ref(idx);
+    return true;
+  }
+
+#ifndef DISABLE_CP_IMGUI_WIDGETS
+
+  [[nodiscard]] bool imgui_widget_impl(const char* label, bool editable) override
+  {
+    return CName_widget::draw(m_path, label);
+  }
+
+#endif
+};
+
+//------------------------------------------------------------------------------
 // raRef
 //------------------------------------------------------------------------------
 
@@ -1027,7 +1080,7 @@ class CRaRefProperty
 protected:
   gname m_base_ctypename;
   gname m_ctypename;
-  uint16_t m_ref;
+  cname m_path;
 
 public:
   CRaRefProperty(CPropertyOwner* owner, gname sub_ctypename)
@@ -1046,13 +1099,17 @@ public:
 
   bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override
   {
-    is >> cbytes_ref(m_ref);
+    uint16_t idx;
+    is >> cbytes_ref(idx);
+    auto rid = serctx.respool.at(idx);
+    m_path = rid.path;
     return true;
   }
 
   virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
-    os << cbytes_ref(m_ref);
+    uint16_t idx = serctx.respool.insert(m_path, false);
+    os << cbytes_ref(idx);
     return true;
   }
 
@@ -1060,8 +1117,7 @@ public:
 
   [[nodiscard]] bool imgui_widget_impl(const char* label, bool editable) override
   {
-    return ImGui::InputScalar(label, ImGuiDataType_U16, &m_ref, 0, 0, "%04X",
-      ImGuiInputTextFlags_CharsHexadecimal | (editable ? 0 : ImGuiInputTextFlags_ReadOnly));
+    return CName_widget::draw(m_path, label);
   }
 
 #endif

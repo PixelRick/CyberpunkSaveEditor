@@ -26,11 +26,16 @@ struct gstringpool
       auto invalid = fmt::format("<gstring:{}:invalid>", std::string_view((char*)&pooltag, 4));
       instance.register_string(invalid);
       assert(instance.at(0) == invalid);
+      s_ppool = &instance;
       return true;
 
     }();
-    return instance;
+    return *s_ppool;
   }
+
+private:
+
+  static inline stringpool_mt* s_ppool = nullptr;
 };
 
 } // namespace detail

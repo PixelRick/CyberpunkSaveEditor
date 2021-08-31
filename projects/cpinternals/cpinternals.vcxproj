@@ -96,9 +96,11 @@
     <ClInclude Include="..\..\source\cpinternals\scripting\fwd.hpp" />
     <ClInclude Include="..\..\source\cpinternals\scripting\iproperty.hpp" />
     <ClInclude Include="..\..\source\cpinternals\tmp\archive_test.hpp" />
+    <ClInclude Include="..\..\source\cpinternals\tmp\resid_set.hpp" />
     <ClInclude Include="..\..\source\cpinternals\tweakdb\tweakdb.hpp" />
     <ClInclude Include="..\..\source\cpinternals\tweakdb\value_pool.hpp" />
     <ClInclude Include="..\..\source\cpinternals\utils.hpp" />
+    <ClInclude Include="..\..\source\redx\containers\bitfield.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\cpinternals\common\hashing_tables.hpp" />
@@ -334,6 +336,9 @@
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)/ardbs</DestinationFolders>
       <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)/ardbs</DestinationFolders>
     </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="gstring.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

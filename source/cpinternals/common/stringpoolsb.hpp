@@ -10,90 +10,29 @@
 #include <cpinternals/common/hashing.hpp>
 #include <cpinternals/common/utils.hpp>
 #include <cpinternals/common/streambase.hpp>
+#include <redx/containers/bitfield.hpp>
 
 // todo: add collision detection
 
 namespace cp {
 
-namespace detail {
-
-template <size_t StringSizeBits>
-struct stringpoolsb_str_desc
-{
-protected:
-
-  constexpr static uint32_t offset_mask = (1 << (32 - StringSizeBits)) - 1;
-  constexpr static uint32_t size_shift  = 32 - StringSizeBits;
-
-public:
-
-  constexpr static size_t serial_size   = sizeof(uint32_t);
-  constexpr static size_t max_offset    = offset_mask;
-  constexpr static size_t max_size      = (1 << size_shift) - 1;
-
-  stringpoolsb_str_desc() = default;
-
-  stringpoolsb_str_desc(size_t offset, size_t len)
-  {
-    assert(offset < std::numeric_limits<uint32_t>::max());
-    assert(len < std::numeric_limits<uint32_t>::max());
-    this->set_offset(static_cast<uint32_t>(offset));
-    this->set_size(static_cast<uint32_t>(len));
-  }
-
-  uint32_t offset() const
-  {
-    return m_bitfld & offset_mask;
-  }
-
-  uint32_t size() const
-  {
-    return m_bitfld >> size_shift;
-  }
-
-  uint32_t end_offset() const
-  {
-    return offset() + size();
-  }
-
-  void set_offset(uint32_t value)
-  {
-    if (value > max_offset)
-    {
-      throw std::range_error("stringpoolsb::str_desc: offset is too big");
-    }
-
-    m_bitfld = value | (m_bitfld & ~offset_mask);
-  }
-
-  void set_size(uint32_t value)
-  {
-    if (value > max_size)
-    {
-      throw std::range_error("stringpoolsb::str_desc: size is too big");
-    }
-
-    m_bitfld = (value << size_shift) | (m_bitfld & offset_mask);
-  }
-
-protected:
-
-  uint32_t m_bitfld = 0;
-};
-
-} // namespace detail
-
 // this is the single block variant of stringpool, it is designed for serialization.
 // this pool does reallocate thus string_views can be invalidated on insert.
-// descriptors (offset, size) are encoded in 4 bytes:
-//  - the template argument StringSizeBits let's you define the count of bits used to store the string length and thus define the maximum length for strings.
-//  - the remaining bits are used to define the offset and it constrains the maximum size of the pool.
+// descriptors (offset, size) are encoded in 4 bytes
 
-template <size_t StringSizeBits = 8 /* default max string length is 255 */, bool AddNullTerminators = false>
+template <bool AddNullTerminators = false>
 struct stringpoolsb
 {
   using block_type = std::vector<char>;
-  using str_desc = detail::stringpoolsb_str_desc<StringSizeBits>;
+
+  struct str_desc
+  {
+    union
+    {
+      redx::bfm32<uint32_t, 0, 24> offset;
+      redx::bfm32<uint8_t, 24, 8> size;
+    };
+  };
 
   stringpoolsb() = default;
 

@@ -7,7 +7,11 @@
 #include <appbase/widgets/cpinternals.hpp>
 #include "cpinternals/scripting/csystem.hpp"
 #include <cpinternals/common.hpp>
-#include <cpinternals/io/stdstream_wrapper.hpp>
+
+#include <redx/containers/bitfield.hpp>
+#include <cpinternals/tmp/resid_set.hpp>
+#include <cpinternals/io/memory_istream.hpp>
+
 
 class archive_test
 {
@@ -49,6 +53,12 @@ public:
     saved = true;
     if (!opened)
       return false;
+
+    // create back-up copy
+    std::filesystem::path oldpath = m_path;
+    oldpath.replace_extension(L".old");
+    if (!std::filesystem::exists(oldpath)) 
+    std::filesystem::copy(m_path, oldpath);
 
     std::ofstream ofs;
     ofs.open(m_path, ofs.out | ofs.binary);
@@ -120,16 +130,16 @@ public:
       if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags))
       {
         
-        if (ImGui::BeginTabItem("rarefs", 0, ImGuiTabItemFlags_None))
-        {
-          //ImGui::BeginChild("current editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
+        //if (ImGui::BeginTabItem("rarefs", 0, ImGuiTabItemFlags_None))
+        //{
+        //  //ImGui::BeginChild("current editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
 
-          static auto name_fn = [](const cp::cname& y) { return y.string(); };
-          imgui_list_tree_widget(m_rarefs, name_fn, &CName_widget::draw_, 0, true, true);
+        //  static auto name_fn = [](const cp::cname& y) { return y.string(); };
+        //  imgui_list_tree_widget(m_resids, name_fn, &CName_widget::draw_, 0, true, true);
 
-          //ImGui::EndChild();
-          ImGui::EndTabItem();
-        }
+        //  //ImGui::EndChild();
+        //  ImGui::EndTabItem();
+        //}
 
         if (ImGui::BeginTabItem("objects", 0, ImGuiTabItemFlags_None))
         {
@@ -189,19 +199,32 @@ public:
     return modified;
   }
 
+  struct vlotbl_desc
+  {
+    uint32_t descs_offset = 0;
+    uint32_t data_offset = 0;
+  };
+
+  enum pool_flag
+  {
+    vlotbl_resids   = 1, // present when 7, not when 6
+		vlotbl_strings  = 2, // according to in-blob order
+		vlotbl_objects  = 4, // according to in-blob order
+  };
+
   struct header_t
   {
-    uint16_t uk1                    = 0;
-    uint16_t uk2                    = 0; // sections count apparently
+    uint16_t uk1                    = 0; // probably version
+    uint16_t vlotbl_flags           = 0;
     uint32_t ids_cnt                = 0;
-    // test file has 7 sections
-    uint32_t rarefpool_descs_offset = 0;
-    uint32_t rarefpool_data_offset  = 0;
-    uint32_t strpool_descs_offset   = 0;
-    uint32_t strpool_data_offset    = 0;
-    uint32_t obj_descs_offset       = 0;
+    
+    //uint32_t rarefpool_descs_offset = 0;
+    //uint32_t rarefpool_data_offset  = 0;
+    //uint32_t strpool_descs_offset   = 0;
+    //uint32_t strpool_data_offset    = 0;
+    //uint32_t objpool_descs_offset       = 0;
     // tricky: obj offsets are relative to the strpool base
-    uint32_t objdata_offset         = 0; 
+    //uint32_t objpool_data_offset         = 0; 
   };
 
   struct obj_desc_t
@@ -221,9 +244,7 @@ private:
 
   std::vector<uint64_t> m_ids;
 
-  std::list<cname> m_rarefs;
-
-  CSystemSerCtx m_serctx; // strpool + handles
+  CSystemSerCtx m_serctx; // strpool + respool + handles
 
   std::vector<CObjectSPtr> m_objects;
   std::vector<CObjectSPtr> m_handle_objects;
@@ -234,135 +255,95 @@ public:
 
 public:
 
-  // this is redundant, should make stringpool serializable with template descriptor..
-  class path_desc
-  {
-    uint32_t m_meta = 0;
-  
-  public:
-    constexpr static size_t serial_size = sizeof(uint32_t);
-  
-    path_desc() = default;
-  
-    path_desc(uint32_t offset, uint32_t len)
-    {
-      this->offset(offset);
-      this->len(len);
-    }
-  
-    uint32_t offset() const { return m_meta & 0xFFFF; }
-    uint32_t len() const { return (m_meta >> 23) & 0x1FF; }
-  
-    uint32_t end_offset() const { return offset() + len(); }
-  
-    void offset(uint32_t value)
-    {
-      if (value > 0xFFFF)
-        throw std::range_error("path_desc: offset is too big");
-      m_meta = value | (m_meta & 0xFFFF0000);
-    }
-  
-    void len(uint32_t value)
-    {
-      if (value > 0x1FF)
-        throw std::range_error("path_desc: len is too big");
-      m_meta = (value << 23) | (m_meta & 0x007FFFFF);
-    }
-  
-    uint32_t as_u32() const { return m_meta; }
-  };
-
   bool serialize_in(std::istream& reader, size_t blob_size)
   {
-    size_t start_pos = (size_t)reader.tellg();
+    const uint32_t start_pos = (uint32_t)reader.tellg();
+    if (start_pos != 0)
+      throw std::exception("start_pos != 0..");
+
+    // get full blob
+    reader.seekg(0, std::ios::end);
+    const uint32_t end_pos = (uint32_t)reader.tellg();
+    const uint32_t buf_size = end_pos;
+
+    auto buffer = std::make_unique<char[]>(buf_size);
+    reader.seekg(0);
+    reader.read(buffer.get(), buf_size);
+
+    cp::memory_istream ar(buffer.get(), buf_size);
 
     m_ids.clear();
-    m_rarefs.clear();
     m_objects.clear();
     m_handle_objects.clear();
 
-    // let's get our header start position
-    auto blob_spos = reader.tellg();
+    ar.serialize_pod_raw(m_header);
 
-    reader >> cbytes_ref(m_header);
+    vlotbl_desc resids_tbl_desc {};
+    vlotbl_desc strings_tbl_desc {};
+    vlotbl_desc objects_tbl_desc {};
 
-    // check header
-    if (m_header.rarefpool_descs_offset > m_header.rarefpool_data_offset)
-      return false;
-    if (m_header.rarefpool_data_offset > m_header.strpool_descs_offset)
-      return false;
-    if (m_header.strpool_descs_offset > m_header.strpool_data_offset)
-      return false;
-    if (m_header.strpool_data_offset > m_header.obj_descs_offset)
-      return false;
-    if (m_header.obj_descs_offset > m_header.objdata_offset)
-      return false;
+    if (m_header.vlotbl_flags & vlotbl_resids)
+      ar.serialize_pod_raw(resids_tbl_desc);
 
-    if (m_header.rarefpool_descs_offset != 0)
-      throw std::exception("m_header.u32arr_offset != 0, not cool :(");
+    if (m_header.vlotbl_flags & vlotbl_strings)
+      ar.serialize_pod_raw(strings_tbl_desc);
 
+    if (m_header.vlotbl_flags & vlotbl_objects)
+      ar.serialize_pod_raw(objects_tbl_desc);
 
-    reader >> cbytes_ref(m_uk1);
+    ar.serialize_pod_raw(m_uk1);
+
     //if (uk1 != 0)
     //  throw std::exception("uk1 != 0, cool :)");
 
     uint16_t ids_cnt = 0;
-    reader >> cbytes_ref(ids_cnt);
+    ar.serialize_pod_raw(ids_cnt);
 
     if (ids_cnt != m_header.ids_cnt)
       throw std::exception("ids_cnt != m_header.ids_cnt, not cool :(");
 
     m_ids.resize(ids_cnt);
-    reader.read((char*)m_ids.data(), m_header.ids_cnt * 8);
+    ar.serialize_pods_array_raw(m_ids.data(), m_header.ids_cnt);
 
     // end of header
-    const size_t base_offset = (size_t)reader.tellg() - start_pos;
 
-    // rarefs
+    const uint32_t data_offset = (uint32_t)ar.tell();
+    const uint32_t data_size = buf_size - data_offset;
+
+    // res refs
     
-    const uint32_t rarefpool_descs_size = m_header.rarefpool_data_offset - m_header.rarefpool_descs_offset;
-    const uint32_t rarefpool_data_size = m_header.strpool_descs_offset - m_header.rarefpool_data_offset;
-
-    cp::stdstream_wrapper<std::istream> ar(reader);
-
-    // std::vector<std::string> m_rarefs_strs;
-    // std::vector<CName> m_rarefs_hashes;
-
-    if (m_uk1 == 0) // cname as strings
+    if (resids_tbl_desc.data_offset)
     {
-      cnameset np;
-      np.serialize_in<9>(ar, m_header.rarefpool_descs_offset, rarefpool_descs_size, rarefpool_data_size);
-
-      //m_rarefs.reserve(np.size());
-      for (auto& cn : np)
+      if (!m_serctx.respool.read_in(
+        buffer.get() + data_offset,
+        resids_tbl_desc.descs_offset,
+        resids_tbl_desc.data_offset - resids_tbl_desc.descs_offset,
+        data_size - resids_tbl_desc.data_offset, // larger than truth
+        m_uk1 != 0))
       {
-        m_rarefs.emplace_back(cn);
+        return false;
       }
     }
-    else // cname as hashes (but pooled.. lol)
+    else
     {
-      const size_t descs_cnt = rarefpool_descs_size / 4;
-      std::vector<uint32_t> descs(descs_cnt);
-      ar.serialize_pods_array_raw(descs.data(), descs_cnt);
-
-      std::vector<uint64_t> hashes(descs_cnt);
-      ar.serialize_pods_array_raw(hashes.data(), descs_cnt);
-
-      for (auto& hash : hashes)
-      {
-        cname cn(hash);
-        m_rarefs.emplace_back(hash);
-      }
+      m_serctx.respool.clear();
     }
 
-    // section 3+4: string pool
-    const uint32_t strpool_descs_size = m_header.strpool_data_offset - m_header.strpool_descs_offset;
-    const uint32_t strpool_data_size = m_header.obj_descs_offset - m_header.strpool_data_offset;
-
-    //CStringPool strpool;
-    CStringPool& strpool = m_serctx.strpool;
-    if (!strpool.serialize_in(reader, strpool_descs_size, strpool_data_size, m_header.strpool_descs_offset))
-      return false;
+    if (strings_tbl_desc.data_offset)
+    {
+      if (!m_serctx.strpool.read_in(
+        buffer.get() + data_offset,
+        strings_tbl_desc.descs_offset,
+        strings_tbl_desc.data_offset - strings_tbl_desc.descs_offset,
+        data_size - strings_tbl_desc.data_offset)) // larger than truth
+      {
+        return false;
+      }
+    }
+    else
+    {
+      m_serctx.respool.clear();
+    }
 
     // now let's read objects
 
@@ -370,31 +351,16 @@ public:
     // so we'll use the assumption that everything is serialized in
     // order and use the offset of next item as end of blob
 
-    const size_t obj_descs_offset = m_header.obj_descs_offset;
-    const size_t obj_descs_size = m_header.objdata_offset - obj_descs_offset;
+    const uint32_t obj_descs_size = objects_tbl_desc.data_offset - objects_tbl_desc.descs_offset;
     if (obj_descs_size % sizeof(obj_desc_t) != 0)
       return false;
 
     const size_t obj_descs_cnt = obj_descs_size / sizeof(obj_desc_t);
     if (obj_descs_cnt == 0)
-      return m_header.objdata_offset + base_offset == blob_size; // could be empty
+      return objects_tbl_desc.data_offset + data_offset == blob_size; // could be empty
 
     //std::vector<obj_desc_t> obj_descs(obj_descs_cnt);
-    std::vector<obj_desc_t> obj_descs(obj_descs_cnt);
-
-    reader.read((char*)obj_descs.data(), obj_descs_size);
-
-    // read objdata
-    const size_t objdata_size = blob_size - (base_offset + m_header.objdata_offset); 
-
-    if (base_offset + m_header.objdata_offset != (reader.tellg() - blob_spos))
-      return false;
-
-    std::vector<char> objdata(objdata_size);
-    reader.read((char*)objdata.data(), objdata_size);
-
-    if (blob_size != (reader.tellg() - blob_spos))
-      return false;
+    std::span<obj_desc_t> obj_descs((obj_desc_t*)(buffer.get() + data_offset + objects_tbl_desc.descs_offset), obj_descs_cnt);
 
     // prepare default initialized objects
     m_serctx.m_objects.clear();
@@ -404,26 +370,25 @@ public:
       const auto& desc = *it;
 
       // check desc is valid
-      if (desc.data_offset < m_header.objdata_offset)
+      if (desc.data_offset < objects_tbl_desc.data_offset)
         return false;
 
-      auto obj_ctypename = gname(strpool.from_idx(desc.name_idx));
+      auto obj_ctypename = m_serctx.strpool.at(desc.name_idx).gstr();
       auto new_obj = std::make_shared<CObject>(obj_ctypename, true); // todo: static create method
       m_serctx.m_objects.push_back(new_obj);
     }
 
-    // here the offsets relative to base_offset are converted to offsets relative to objdata
-    size_t next_obj_offset = objdata_size;
+    uint32_t next_obj_offset = data_size;
     auto obj_it = m_serctx.m_objects.rbegin();
     for (auto it = obj_descs.rbegin(); it != obj_descs.rend(); ++it, ++obj_it)
     {
       const auto& desc = *it;
 
-      const size_t offset = desc.data_offset - m_header.objdata_offset;
+      const uint32_t offset = desc.data_offset;
       if (offset > next_obj_offset)
         throw std::logic_error("CSystem: false assumption #2. please open an issue.");
 
-      std::span<char> objblob((char*)objdata.data() + offset, next_obj_offset - offset);
+      std::span<char> objblob(buffer.get() + data_offset + offset, next_obj_offset - offset);
       if (!(*obj_it)->serialize_in(objblob, m_serctx))
         return false;
 
@@ -438,89 +403,20 @@ public:
 
   bool serialize_out(std::ostream& writer) const
   {
-    // let's not do too many copies
-
-    auto start_spos = writer.tellp();
-    uint32_t blob_size = 0; // we don't know it yet
-    
-    writer << cbytes_ref(m_header); 
-
-    header_t new_header = m_header;
-
-    // ----------------------------------------------
-
-    writer << cbytes_ref(m_uk1);
-
-    uint16_t ids_cnt = (uint16_t)m_ids.size();
-    writer << cbytes_ref(ids_cnt);
-    writer.write((char*)m_ids.data(), ids_cnt * 8);
-
-    new_header.ids_cnt = ids_cnt;
-
-    // end of header
-
-    const size_t base_spos = (size_t)writer.tellp();
-    const size_t base_offset = (size_t)writer.tellp() - start_spos;
-
-    // rarefs
-
-    new_header.rarefpool_descs_offset = 0;
-
-    cp::stdstream_wrapper<std::ostream> ar(writer);
-
-    uint32_t rarefpool_descs_size = 0;
-    uint32_t rarefpool_data_size = 0;
-
-    cnameset np;
-
-    for (auto& cn : m_rarefs)
-    {
-      np.insert(cn);
-    }
-
-    if (m_uk1 == 0)
-    {
-      np.serialize_out<9>(ar, new_header.rarefpool_descs_offset, rarefpool_descs_size, rarefpool_data_size);
-    }
-    else // cname as hashes (but pooled.. lol)
-    {
-      const uint32_t descs_cnt = static_cast<uint32_t>(m_rarefs.size());
-      rarefpool_descs_size = descs_cnt * 4;
-      rarefpool_data_size = descs_cnt * 8;
-
-      std::vector<uint32_t> descs; descs.reserve(descs_cnt);
-      std::vector<uint64_t> hashes; hashes.reserve(descs_cnt);
-
-      uint32_t off = new_header.rarefpool_descs_offset + rarefpool_descs_size;
-
-      for (auto& cn : m_rarefs)
-      {
-        constexpr uint32_t desc_size_component = (8 << (32 - 9));
-        descs.emplace_back(desc_size_component | off);
-        off += 8;
-        hashes.emplace_back(cn.hash);
-      }
-
-      ar.serialize_pods_array_raw(descs.data(), descs_cnt);
-      ar.serialize_pods_array_raw(hashes.data(), descs_cnt);
-    }
-
-    new_header.rarefpool_data_offset = new_header.rarefpool_descs_offset + rarefpool_descs_size;
-
-    // section 3+4: string pool
-    const uint32_t strpool_descs_offset = (uint32_t)((size_t)writer.tellp() - base_spos);
-    new_header.strpool_descs_offset = (uint32_t)strpool_descs_offset;
-
     // ----------------------------------------------
 
     //CStringPool strpool;
     CSystemSerCtx& serctx = const_cast<CSystemSerCtx&>(m_serctx);
+
+    serctx.strpool.clear();
+    serctx.respool.clear();
+
     // here we can't really remove handle-objects because there might be hidden handles in unsupported types
     serctx.m_objects.assign(m_objects.begin(), m_objects.end());
     serctx.m_objects.insert(serctx.m_objects.end(), m_handle_objects.begin(), m_handle_objects.end());
     serctx.rebuild_handlemap();
 
-    std::ostringstream ss;
+    std::ostringstream objects_ss;
     std::vector<obj_desc_t> obj_descs;
     obj_descs.reserve(serctx.m_objects.size()); // ends up higher in the presence of handles
 
@@ -528,47 +424,119 @@ public:
     for (size_t i = 0; i < serctx.m_objects.size(); ++i)
     {
       auto& obj = serctx.m_objects[i];
-      const uint32_t tmp_offset = (uint32_t)ss.tellp();
-      const uint16_t name_idx = serctx.strpool.to_idx(obj->ctypename().c_str());
+      const uint32_t tmp_offset = (uint32_t)objects_ss.tellp();
+      const uint16_t name_idx = serctx.strpool.insert(obj->ctypename());
       obj_descs.emplace_back(name_idx, tmp_offset);
-      if (!obj->serialize_out(ss, serctx))
+      if (!obj->serialize_out(objects_ss, serctx))
         return false;
     }
 
-    // time to write strpool
-    uint32_t strpool_data_size = 0;
-    uint32_t strpool_descs_size = 0;
-    if (!serctx.strpool.serialize_out(writer, strpool_descs_size, strpool_data_size, strpool_descs_offset))
-      return false;
+    // ----------------------------------------------
 
-    new_header.strpool_data_offset = strpool_descs_offset + strpool_descs_size;
+    stdstream_wrapper stw(writer);
+    uint32_t start_spos = (uint32_t)stw.tell();
+    uint32_t blob_size = 0; // we don't know it yet
 
-    new_header.obj_descs_offset = new_header.strpool_data_offset + strpool_data_size;
+    header_t new_header = m_header;
+    stw.serialize_pod_raw(new_header); 
 
-    // reoffset offsets
-    const uint32_t obj_descs_size = (uint32_t)(obj_descs.size() * sizeof(obj_desc_t));
-    const uint32_t objdata_offset = new_header.obj_descs_offset + obj_descs_size;
+    vlotbl_desc resids_tbl_desc {};
+    vlotbl_desc strings_tbl_desc {};
+    vlotbl_desc objects_tbl_desc {};
 
-    new_header.objdata_offset = objdata_offset;
+    if (serctx.respool.size() != 0)
+    {
+      new_header.vlotbl_flags |= vlotbl_resids;
+      stw.serialize_pod_raw(resids_tbl_desc);
+    }
+    
+    if (serctx.strpool.size() != 0)
+    {
+      new_header.vlotbl_flags |= vlotbl_strings;
+      stw.serialize_pod_raw(strings_tbl_desc);
+    }
+
+    if (serctx.m_objects.size() != 0)
+    {
+      new_header.vlotbl_flags |= vlotbl_objects;
+      stw.serialize_pod_raw(objects_tbl_desc);
+    }
+
+    stw.serialize_pod_raw(m_uk1);
+
+    uint16_t ids_cnt = (uint16_t)m_ids.size();
+    stw.serialize_pod_raw(ids_cnt);
+    stw.serialize_pods_array_raw(m_ids.data(), ids_cnt);
+    new_header.ids_cnt = ids_cnt;
+
+    // end of header
+
+    const uint32_t data_spos = (uint32_t)stw.tell();
+    const uint32_t data_offset = data_spos - start_spos;
+
+    // rarefs
+
+    if (serctx.respool.size() != 0)
+    {
+      const uint32_t descs_offset = (uint32_t)stw.tell() - data_spos;
+      uint32_t descs_size = 0;
+      uint32_t data_size = 0;
+      serctx.respool.serialize_out(stw, data_spos, descs_size, data_size, m_uk1 != 0);
+      resids_tbl_desc.descs_offset = descs_offset;
+      resids_tbl_desc.data_offset = descs_offset + descs_size;
+    }
+
+    // strpool
+
+    if (serctx.strpool.size() != 0)
+    {
+      const uint32_t descs_offset = (uint32_t)stw.tell() - data_spos;
+      uint32_t descs_size = 0;
+      uint32_t data_size = 0;
+      serctx.strpool.serialize_out(stw, data_spos, descs_size, data_size);
+      strings_tbl_desc.descs_offset = descs_offset;
+      strings_tbl_desc.data_offset = descs_offset + descs_size;
+    }
+
+    // objects
+
+    objects_tbl_desc.descs_offset = (uint32_t)stw.tell() - data_spos;
+    const size_t obj_descs_size = obj_descs.size() * sizeof(obj_descs[0]);
+    objects_tbl_desc.data_offset = (uint32_t)(objects_tbl_desc.descs_offset + obj_descs_size);
 
     // reoffset offsets
     for (auto& desc : obj_descs)
-      desc.data_offset += objdata_offset;
+      desc.data_offset += objects_tbl_desc.data_offset;
 
-    // write obj descs + data
-    writer.write((char*)obj_descs.data(), obj_descs_size);
-    auto objdata = ss.str(); // not optimal but didn't want to depend on boost and no time to dev a mem stream for now
-    writer.write(objdata.data(), objdata.size());
-    auto end_spos = writer.tellp();
+    stw.serialize_pods_array_raw(obj_descs.data(), obj_descs.size());
 
-    // at this point data should be correct except blob_size and header
-    // so let's rewrite them
+    auto objdata = objects_ss.str(); // todo: fix
+    stw.serialize_bytes(objdata.data(), objdata.size());
+    uint32_t end_spos = (uint32_t)stw.tell();
 
-    writer.seekp(start_spos);
-    writer << cbytes_ref(new_header); 
+    // at this point let's overwrite the header
+
+    stw.seek(start_spos);
+    
+    stw.serialize_pod_raw(new_header); 
+
+    if (new_header.vlotbl_flags & vlotbl_resids)
+    {
+      stw.serialize_pod_raw(resids_tbl_desc);
+    }
+    
+    if (new_header.vlotbl_flags & vlotbl_strings)
+    {
+      stw.serialize_pod_raw(strings_tbl_desc);
+    }
+
+    if (new_header.vlotbl_flags & vlotbl_objects)
+    {
+      stw.serialize_pod_raw(objects_tbl_desc);
+    }
 
     // return to end of data
-    writer.seekp(end_spos);
+    stw.seek(end_spos);
 
     return true;
   }

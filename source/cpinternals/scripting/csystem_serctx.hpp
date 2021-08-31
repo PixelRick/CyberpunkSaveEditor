@@ -5,7 +5,8 @@
 #include <spdlog/spdlog.h>
 
 #include "fwd.hpp"
-#include "CStringPool.hpp"
+#include <cpinternals/common/cnameset.hpp>
+#include <cpinternals/tmp/resid_set.hpp>
 
 class CSystemSerCtx
 {
@@ -13,13 +14,17 @@ class CSystemSerCtx
   friend class archive_test;
 
 protected:
+
   std::vector<CObjectSPtr> m_objects;
+
   std::unordered_map<uintptr_t, uint32_t> m_ptrmap;
 
   std::ofstream m_logfile;
 
 public:
-  // TODO: include a logging lib!!
+
+  cp::cnameset strpool;
+  cp::resid_set respool;
 
   CSystemSerCtx()
   {
@@ -35,8 +40,6 @@ public:
   {
     //m_logfile << s << std::endl;
   }
-
-  CStringPool strpool;
 
 public:
   void rebuild_handlemap()

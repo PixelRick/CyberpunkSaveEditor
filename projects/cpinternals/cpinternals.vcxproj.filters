@@ -60,6 +60,9 @@
     <Filter Include="assets\ardbs">
       <UniqueIdentifier>{335ef4d0-c866-4427-b2c4-85fc8272cc4d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\cpinternals\containers">
+      <UniqueIdentifier>{fd69be9e-c7a2-49a7-9604-b7f61ccd5f92}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\cpinternals\common\streambase.cpp">
@@ -110,17 +113,20 @@
     <ClCompile Include="..\..\source\cpinternals\filesystem\treefs.cpp">
       <Filter>source\cpinternals\filesystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\cpinternals\filesystem\archive.cpp">
-      <Filter>source\cpinternals\filesystem</Filter>
+    <ClCompile Include="..\..\source\cpinternals\archive\archive.cpp">
+      <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\cpinternals\filesystem\radr.cpp">
-      <Filter>source\cpinternals\filesystem</Filter>
+    <ClCompile Include="..\..\source\cpinternals\archive\radr.cpp">
+      <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\cpinternals\common\windowz.cpp">
-      <Filter>source\cpinternals\common</Filter>
+    <ClCompile Include="..\..\source\cpinternals\filesystem\directory_entry.cpp">
+      <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\cpinternals\filesystem\win_file_reader.cpp">
-      <Filter>source\cpinternals\filesystem</Filter>
+    <ClCompile Include="..\..\source\cpinternals\os\win_utils.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cpinternals\os\win_file_reader.cpp">
+      <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -283,15 +289,6 @@
     <ClInclude Include="..\..\source\cpinternals\rtdt\rttr_helpers.hpp">
       <Filter>source\cpinternals\rtdt</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\cpinternals\stream\fstream.hpp">
-      <Filter>source\cpinternals\stream</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\cpinternals\stream\ifstream.hpp">
-      <Filter>source\cpinternals\stream</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\cpinternals\stream\ofstream.hpp">
-      <Filter>source\cpinternals\stream</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\cpinternals\common\tstamp.hpp">
       <Filter>source\cpinternals\common</Filter>
     </ClInclude>
@@ -304,17 +301,11 @@
     <ClInclude Include="..\..\source\cpinternals\common\cnameset.hpp">
       <Filter>source\cpinternals\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\cpinternals\stream\stdstream_wrapper.hpp">
-      <Filter>source\cpinternals\stream</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\cpinternals\oodle\oodle.hpp">
       <Filter>source\cpinternals\oodle</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cpinternals\common\hashing_tables.hpp">
       <Filter>source\cpinternals\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\cpinternals\stream\imemstream.hpp">
-      <Filter>source\cpinternals\stream</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cpinternals\common\gstring.hpp">
       <Filter>source\cpinternals\common</Filter>
@@ -325,29 +316,62 @@
     <ClInclude Include="..\..\source\cpinternals\common\gstrid.hpp">
       <Filter>source\cpinternals\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\cpinternals\filesystem\archive_file_stream.hpp">
-      <Filter>source\cpinternals\filesystem</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\cpinternals\filesystem\treefs.hpp">
       <Filter>source\cpinternals\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\cpinternals\filesystem\archive.hpp">
-      <Filter>source\cpinternals\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\cpinternals\filesystem\radr.hpp">
-      <Filter>source\cpinternals\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\cpinternals\filesystem\path.hpp">
-      <Filter>source\cpinternals\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\cpinternals\common\windowz.hpp">
-      <Filter>source\cpinternals\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cpinternals\common\platform.hpp">
       <Filter>source\cpinternals\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\cpinternals\filesystem\file_reader.hpp">
-      <Filter>source\cpinternals\filesystem</Filter>
+    <ClInclude Include="..\..\source\cpinternals\archive\archive.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\archive\radr.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\common\path.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\filesystem\depot.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\filesystem\depot_file_stream.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\filesystem\directory_entry.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\filesystem\directory_iterator.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\io\archive_file_istream.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\io\file_stream.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\io\file_istream.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\io\memory_istream.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\io\file_ostream.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\io\stdstream_wrapper.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\os\file_reader.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\os\platform_utils.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\containers\bitfield.hpp">
+      <Filter>source\cpinternals\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpinternals\tmp\resid_set.hpp">
+      <Filter>source\cpinternals\tmp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -462,5 +486,10 @@
     <CopyFileToFolders Include="..\..\assets\ardbs\lang_zh-tw_text.ardb">
       <Filter>assets\ardbs</Filter>
     </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="gstring.natvis">
+      <Filter>source\cpinternals\common</Filter>
+    </Natvis>
   </ItemGroup>
 </Project>

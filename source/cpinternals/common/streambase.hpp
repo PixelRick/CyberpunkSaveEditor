@@ -52,7 +52,7 @@ struct streambase
   template <typename T, typename = std::enable_if_t<sizeof(T) == 1>>
   streambase& serialize_byte(T* pb)
   {
-    return serialize_bytes(pb, 1);
+    return serialize_bytes((void*)pb, 1);
   }
 
   // Allows for overrides (csav serialization != others)
@@ -229,7 +229,7 @@ struct streambase
       return *this;
     }
 
-    serialize_bytes(&value, sizeof(T));
+    serialize_bytes((void*)&value, sizeof(T));
     return *this;
   }
 
@@ -241,7 +241,7 @@ struct streambase
       return *this;
     }
 
-    serialize_bytes(data, cnt * sizeof(T));
+    serialize_bytes((void*)data, cnt * sizeof(T));
     return *this;
   }
 
