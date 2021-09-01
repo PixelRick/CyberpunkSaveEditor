@@ -402,7 +402,7 @@ public:
     }
 
     size_t end_pos = is.tellg();
-    serctx.log(fmt::format("serialized_in {} in {} bytes", this->ctypename().strv(), (size_t)(end_pos - start_pos)));
+    serctx.log(fmt::format("serialized_in {} in {} bytes", this->ctypename(), (size_t)(end_pos - start_pos)));
 
     return is.good();
   }
@@ -746,7 +746,10 @@ public:
 
   bool imgui_is_one_liner() override
   {
-    return m_obj_ctypename == "WorldPosition"_gndef || m_obj_ctypename == "Quaternion"_gndef;
+    static gname gn_WorldPosition = "WorldPosition"_gndef;
+    static gname gn_Quaternion = "Quaternion"_gndef;
+
+    return m_obj_ctypename == gn_WorldPosition || m_obj_ctypename == gn_Quaternion;
   }
 
 #endif
@@ -867,7 +870,9 @@ public:
 
   virtual bool serialize_out(std::ostream& os, CSystemSerCtx& serctx) const
   {
-    if (m_val_name == "<no_zero_name>"_gndef)
+    static gname gn_no_zero_name = "<no_zero_name>"_gndef;
+
+    if (m_val_name == gn_no_zero_name)
       throw std::logic_error("enum value must be skipped, 0 has no gname");
 
     uint16_t strpool_idx = serctx.strpool.insert(m_val_name);

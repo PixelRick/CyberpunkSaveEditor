@@ -5,9 +5,11 @@ bool CObject::imgui_widget_wpos(const char* label, bool editable)
 {
   bool modified = false;
 
-  auto fxx = (CIntProperty*)((CObjectProperty*)m_fields[0].prop.get())->obj()->get_prop("Bits"_gndef);
-  auto fxy = (CIntProperty*)((CObjectProperty*)m_fields[1].prop.get())->obj()->get_prop("Bits"_gndef);
-  auto fxz = (CIntProperty*)((CObjectProperty*)m_fields[2].prop.get())->obj()->get_prop("Bits"_gndef);
+  static gname gn_Bits = "Bits"_gndef;
+
+  auto fxx = (CIntProperty*)((CObjectProperty*)m_fields[0].prop.get())->obj()->get_prop(gn_Bits);
+  auto fxy = (CIntProperty*)((CObjectProperty*)m_fields[1].prop.get())->obj()->get_prop(gn_Bits);
+  auto fxz = (CIntProperty*)((CObjectProperty*)m_fields[2].prop.get())->obj()->get_prop(gn_Bits);
 
   constexpr float exponent = 1.f / (2 << 16);
 

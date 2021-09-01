@@ -58,7 +58,10 @@ public:
 
     // update seed->stats map
 
-    auto mapvalues = m_mapstruct->get_prop("values"_gndef);
+    static gname gn_values = "values"_gndef;
+    static gname gn_seed = "seed"_gndef;
+
+    auto mapvalues = m_mapstruct->get_prop(gn_values);
     auto m_stats_values_prop = dynamic_cast<CDynArrayProperty*>(mapvalues);
     if (!m_stats_values_prop)
       return true;
@@ -71,7 +74,7 @@ public:
         continue;
       auto obj = objprop->obj();
 
-      auto seedprop = dynamic_cast<CIntProperty*>(obj->get_prop("seed"_gndef));
+      auto seedprop = dynamic_cast<CIntProperty*>(obj->get_prop(gn_seed));
       if (!seedprop)
         continue;
       uint32_t seed = seedprop->u32();
@@ -87,7 +90,8 @@ public:
     if (stats == m_seed_to_stats_obj_map.end())
       return nullptr;
 
-    auto modsarray = dynamic_cast<CDynArrayProperty*>(stats->second->get_prop("statModifiers"_gndef));
+    static gname gn_statModifiers = "statModifiers"_gndef;
+    auto modsarray = dynamic_cast<CDynArrayProperty*>(stats->second->get_prop(gn_statModifiers));
     if (!modsarray)
       return nullptr;
 
@@ -111,20 +115,27 @@ protected:
 public:
   CObjectSPtr add_combined_stats(CProperty* modifiers)
   {
-    return add_new_modifier(modifiers, "gameCombinedStatModifierData_Deprecated"_gndef);
+    static gname gn_gameCombinedStatModifierData = "gameCombinedStatModifierData_Deprecated"_gndef;
+    return add_new_modifier(modifiers, gn_gameCombinedStatModifierData);
   }
 
   CObjectSPtr add_curve_stats(CProperty* modifiers)
   {
-    return add_new_modifier(modifiers, "gameCurveStatModifierData_Deprecated"_gndef);
+    static gname gn_gameCurveStatModifierData = "gameCurveStatModifierData_Deprecated"_gndef;
+    return add_new_modifier(modifiers, gn_gameCurveStatModifierData);
   }
 
   CObjectSPtr add_constant_stats(CProperty* modifiers)
   {
-    auto a = add_new_modifier(modifiers, "gameConstantStatModifierData_Deprecated"_gndef);
-    a->get_prop_cast<CEnumProperty>("modifierType"_gndef)->set_value_by_idx(0);
-    a->get_prop_cast<CEnumProperty>("statType"_gndef)->set_value_by_idx(0);
-    a->get_prop_cast<CFloatProperty>("value"_gndef)->set_value(1.0f);
+    static gname gn_gameConstantStatModifierData = "gameConstantStatModifierData_Deprecated"_gndef;
+    static gname gn_modifierType = "modifierType"_gndef;
+    static gname gn_statType = "statType"_gndef;
+    static gname gn_value = "value"_gndef;
+
+    auto a = add_new_modifier(modifiers, gn_gameConstantStatModifierData);
+    a->get_prop_cast<CEnumProperty>(gn_modifierType)->set_value_by_idx(0);
+    a->get_prop_cast<CEnumProperty>(gn_statType)->set_value_by_idx(0);
+    a->get_prop_cast<CFloatProperty>(gn_value)->set_value(1.0f);
     return a;
   }
 
