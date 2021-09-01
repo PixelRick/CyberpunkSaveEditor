@@ -1,14 +1,42 @@
+
 #include <Windows.h>
 #include <stdio.h>
 
+#include <mutex>
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 
 #include <tools/rtti_dumper_dll/rtti.hpp>
+#include <tools/rtti_dumper_dll/pe.hpp>
 
 static HWND g_hWnd = NULL;
 static int g_stdout_fd = -1;
 static fpos_t g_stdout_pos;
+
+uintptr_t hook_addr = 0;
+char saved_bytes[20];
+std::mutex abool;
+
+void do_dump()
+{
+  if (!abool.try_lock())
+  {
+    abool.lock();
+    abool.unlock();
+    return;
+  }
+  memcpy((void*)hook_addr, saved_bytes, 20);
+  try
+  {
+    dumper::dump();
+  }
+  catch (std::exception& e)
+  {
+    std::ignore = e;
+    SPDLOG_DEBUG("dump() threw an exception: {}", e.what());
+  }
+  abool.unlock();
+}
 
 bool WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
 {
@@ -41,12 +69,34 @@ bool WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
 
       try
       {
-        dumper::dump();
+        auto matches = dumper::find_pattern_in_game_text("\x40\x56\x48\x83\xEC\x30\x48\x8B\x81\xE0\x00\x00\x00\x48\x8B\xF1", "xxxxxxxxxxxxxxxx");
+        if (matches.size() != 1)
+        {
+          SPDLOG_CRITICAL("couldn't find CClass::GetDefaultInstance pattern");
+        }
+        else
+        {
+          hook_addr = matches[0];
+          DWORD old;
+          if (!VirtualProtect((void*)hook_addr, 0x100, PAGE_EXECUTE_READWRITE, &old))
+          {
+            SPDLOG_CRITICAL("couldn't reprot for hook");
+          }
+          else
+          {
+            memcpy(saved_bytes, (void*)hook_addr, 20);
+
+            uintptr_t op = 0x25FF;
+            uintptr_t target = (uintptr_t)&do_dump;
+
+            *(uintptr_t*)hook_addr = op;
+            *(uintptr_t*)((char*)hook_addr + 6) = target;
+          }
+        }
       }
       catch (std::exception& e)
       {
-        std::ignore = e;
-        SPDLOG_DEBUG("dump() threw an exception: {}", e.what());
+        SPDLOG_DEBUG("hook failed", e.what());
       }
 
       //return FreeLibrary(hinstDLL); can work with an external C3

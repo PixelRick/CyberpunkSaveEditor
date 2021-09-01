@@ -15,6 +15,12 @@ void dump();
 struct IRTTIType;
 struct CClass;
 
+struct IScriptable
+{
+  uint64_t pad[6];
+  uint64_t scriptDataHolder;
+};
+
 struct CName
 {
   constexpr CName(uint64_t aHash = 0) noexcept
@@ -44,13 +50,23 @@ struct CName
 #pragma pack(push, 4)
 struct CString
 {
-private:
+  char* c_str()
+  {
+    if (length >= 0x40000000u)
+    {
+        return text.ptr;
+    }
+
+    return text.str;
+  }
 
   CString() = default;
 
+private:
+
   union
   {
-    char* ptr;
+    char* ptr = nullptr;
     char str[0x14];
 
   } text = {};            // 00
@@ -186,8 +202,8 @@ struct CProperty
     uint64_t b0 : 1;           // 00
     uint64_t b1 : 1;           // 01
     uint64_t b2 : 1;           // 02
-    uint64_t b3 : 1;           // 03
-    uint64_t b4 : 1;           // 04
+    uint64_t isNotSerialized : 1; // 03
+    uint64_t isNotSerializedIfUnknownCond : 1; // 04
     uint64_t b5 : 1;           // 05
     uint64_t b6 : 1;           // 06 - Is true when it is a return property, might be "isReturn".
     uint64_t b7 : 1;           // 07
@@ -199,7 +215,7 @@ struct CProperty
     uint64_t isProtected : 1;  // 11
     uint64_t isPublic : 1;     // 12
     uint64_t b19 : 2;          // 13
-    uint64_t b21 : 1;          // 15 - When true, acquire value from holder (isScripted?)
+    uint64_t isScripted : 1;          // 15 - When true, acquire value from holder (isScripted?)
     uint64_t b22 : 5;          // 16
     uint64_t isHandle : 1;     // 1B
     uint64_t isPersistent : 1; // 1C
@@ -212,6 +228,8 @@ struct CProperty
   CClass* parent;       // 18
   uint32_t valueOffset; // 20
   Flags flags;          // 28
+
+  uintptr_t get_final_address(void* parent_instance);
 
 private:
 
@@ -252,7 +270,7 @@ struct IRTTIType
   virtual void GetName2(CName& aOut) const = 0;                 // 30
   virtual void Init(void* aMemory) const = 0;                   // 38
   virtual void Destroy(void* aMemory) const = 0;                // 40
-  virtual bool IsEqual(const void* aLhs, const void* aRhs) = 0; // 48
+  virtual bool IsEqual(const void* aLhs, const void* aRhs, uint64_t h = 0) = 0; // 48
   virtual void Assign(void* aLhs, const void* aRhs) = 0;        // 50
   virtual void Move(void* aLhs, const void* aRhs) = 0;          // 58
   virtual void sub_60() = 0;                                    // 60
@@ -269,10 +287,84 @@ struct IRTTIType
   virtual void* GetAllocator() const = 0;                       // B8
 };
 
+struct ISerializable
+{
+    virtual IRTTIType* GetNativeType() = 0;       // 00
+    virtual IRTTIType* GetParentType() = 0;       // 08
+    virtual uint64_t GetAllocator() = 0; // 10
+    virtual ~ISerializable() = 0;                 // 18
+    virtual void sub_20() = 0;                    // 20
+    virtual void sub_28() = 0;                    // 28
+    virtual void sub_30() = 0;                    // 30
+    virtual void sub_38() = 0;                    // 38
+    virtual void sub_40() = 0;                    // 40
+    virtual void sub_48() = 0;                    // 48
+    virtual void sub_50() = 0;                    // 50
+    virtual void sub_58() = 0;                    // 58
+    virtual void sub_60() = 0;                    // 60
+    virtual void sub_68() = 0;                    // 68
+    virtual void sub_70() = 0;                    // 70
+    virtual void sub_78() = 0;                    // 78
+    virtual void sub_80() = 0;                    // 80
+    virtual void sub_88() = 0;                    // 88
+    virtual void sub_90() = 0;                    // 90
+    virtual void sub_98() = 0;                    // 98
+    virtual void sub_A0() = 0;                    // A0
+    virtual void sub_A8() = 0;                    // A8
+    virtual void sub_B0() = 0;                    // B0
+    virtual void sub_B8() = 0;                    // B8
+    virtual void sub_C0() = 0;                    // C0
+    virtual void sub_C8() = 0;                    // C8
+    virtual bool sub_D0() = 0;                    // D0
+};
+
 struct CRTTIType
   : IRTTIType
 {
   int64_t unk8;
+};
+
+struct CArrayBase : CRTTIType
+{
+    virtual CRTTIType* GetInnerType() const = 0;                                                    // C0
+    virtual bool sub_C8() = 0;                                                                      // C8 ret 1
+    virtual uint32_t GetLength(void* aInstance) const = 0;                                 // D0
+    virtual int32_t GetMaxLength() const = 0;                                                       // D8 ret -1
+    virtual void* GetElement(void* aInstance, uint32_t aIndex) const = 0;         // E0
+    virtual void* GetValuePointer(void* aInstance,
+                                           uint32_t aIndex) const = 0;                              // E8 Same func at 0xE0 ?
+    virtual int32_t sub_F0(void* aInstance, int32_t aIndex, void* aElement) = 0;  // F0
+    virtual bool RemoveAt(void* aInstance, int32_t aIndex) = 0;                            // F8
+    virtual bool InsertAt(void* aInstance, int32_t aIndex) = 0;                            // 100
+    virtual bool Resize(void* aInstance, uint32_t aSize) = 0;                              // 108
+};
+
+struct CArray : CArrayBase
+{
+    CRTTIType* innerType; // 10
+    CName name;           // 18
+    CRTTIType* parent;    // 20
+    uintptr_t unk28;      // 28
+    uintptr_t unk30;      // 30
+    uintptr_t unk38;      // 38
+};
+
+struct CStaticArray : CArrayBase
+{
+    CRTTIType* innerType; // 10
+    int32_t size;         // 18
+    uint32_t pad1C;       // 1C
+    CName name;           // 20
+    CName unk28;          // 28
+};
+
+struct CNativeArray : CArrayBase
+{
+    CRTTIType* innerType; // 10
+    int32_t size;         // 18
+    uint32_t pad1C;       // 1C
+    CName name;           // 20
+    CName unk28;          // 28
 };
 
 struct CBitfield
@@ -315,6 +407,9 @@ struct CClass
 
   bool IsA(const IRTTIType* aType) const;
 
+  uintptr_t GetDefaultInstance() const;
+  DynArray<CProperty*>* GetAllProps() const;
+
   CClass* parent;                           // 10
   CName name;                               // 18
   CName name2;                              // 20
@@ -335,7 +430,7 @@ struct CClass
   int64_t unkA0;                            // A0
   HashMap<uint64_t, CClassFunction*> unkA8; // A8
   int64_t unkD8;                            // D8
-  int64_t unkE0;                            // E0
+  int64_t defaultInstance;                  // E0
   HashMap<uint64_t, CProperty*> unkE8;      // E8
   DynArray<CProperty*> unk118;              // 118 More entries than 0x28, will contain native props
   DynArray<void*> unk128;                   // 128

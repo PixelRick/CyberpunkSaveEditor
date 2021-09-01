@@ -1,35 +1,28 @@
+#include <redx/os/platform_utils.hpp>
 #define NOMINMAX
 #include <Windows.h>
 #include <TlHelp32.h>
 #include <string>
 #include <filesystem>
+#include <unordered_map>
+#include <unordered_set>
+#include <random>
+#include <memory_resource>
+#include <chrono>
 
 #include <spdlog/spdlog.h>
 #include <redx/core/hashing.hpp>
-#include <redx/core/platform.hpp>
+#include <redx/os/platform_utils.hpp>
 
 namespace fs = std::filesystem;
-
-std::string get_last_error()
-{
-  DWORD id = GetLastError();
-
-  if (id != 0)
-  {
-    LPSTR messageBuffer = nullptr;
-    size_t size = FormatMessageA(
-      FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-      NULL, id, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
-    
-    return std::string(messageBuffer, size);
-  }
-
-  return "";
-}
 
 int wmain(int argc, wchar_t* argv[])
 {
   spdlog::set_level(spdlog::level::debug);
+
+  system("PAUSE");
+
+  //---------------------------------------------------------------------------------------
 
   //std::wstring process_wname = L"notepad++.exe";
   std::wstring process_wname = L"Cyberpunk2077.exe";
@@ -47,14 +40,14 @@ int wmain(int argc, wchar_t* argv[])
   HANDLE hToken = NULL;
   if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, &hToken))
   {
-    SPDLOG_ERROR("couldn't open current process with (TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY): {}", get_last_error());
+    SPDLOG_ERROR("couldn't open current process with (TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY): {}", redx::os::last_error_string());
     return -1;
   }
 
   LUID luidDebug;
   if (!LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &luidDebug))
   {
-    SPDLOG_ERROR("couldn't lookup the debugging privilege: {}", get_last_error());
+    SPDLOG_ERROR("couldn't lookup the debugging privilege: {}", redx::os::last_error_string());
     return -1;
   }
 
@@ -65,7 +58,7 @@ int wmain(int argc, wchar_t* argv[])
   if (!AdjustTokenPrivileges(hToken, FALSE, &tokenPriv, sizeof(tokenPriv), NULL, NULL))
   {
     CloseHandle(hToken);
-    SPDLOG_ERROR("couldn't adjust privilege: {}", get_last_error());
+    SPDLOG_ERROR("couldn't adjust privilege: {}", redx::os::last_error_string());
     return -1;
   }
 
@@ -74,7 +67,7 @@ int wmain(int argc, wchar_t* argv[])
   HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
   if (hSnapshot == INVALID_HANDLE_VALUE)
   {
-    SPDLOG_ERROR("couldn't create a processes snapshot: {}", get_last_error());
+    SPDLOG_ERROR("couldn't create a processes snapshot: {}", redx::os::last_error_string());
     return -1;
   }
 
@@ -112,7 +105,7 @@ int wmain(int argc, wchar_t* argv[])
   hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwPID);
   if (hProcess == 0)
   {
-    SPDLOG_ERROR("couldn't open target process: {}", get_last_error());
+    SPDLOG_ERROR("couldn't open target process: {}", redx::os::last_error_string());
     return -2;
   }
 
@@ -127,14 +120,14 @@ int wmain(int argc, wchar_t* argv[])
   if (lpParam == nullptr)
   {
     
-    SPDLOG_ERROR("couldn't allocate memory in remote process: {}", get_last_error());
+    SPDLOG_ERROR("couldn't allocate memory in remote process: {}", redx::os::last_error_string());
     return -1;
   }
 
   SIZE_T nWritten = 0;
   if (!WriteProcessMemory(hProcess, lpParam, dll_wspath.data(), dll_wspath.size() * 2, &nWritten))
   {
-    SPDLOG_ERROR("couldn't write memory in remote process: {}", get_last_error());
+    SPDLOG_ERROR("couldn't write memory in remote process: {}", redx::os::last_error_string());
     VirtualFreeEx(hProcess, lpParam, 0, MEM_RELEASE);
     return -1;
   }
@@ -142,7 +135,7 @@ int wmain(int argc, wchar_t* argv[])
   HANDLE hThread = CreateRemoteThread(hProcess, nullptr, 0, static_cast<LPTHREAD_START_ROUTINE>(pLoadLibrary), lpParam, 0, nullptr);
   if (hThread == nullptr)
   {
-    SPDLOG_ERROR("couldn't create remote thread: {}", get_last_error());
+    SPDLOG_ERROR("couldn't create remote thread: {}", redx::os::last_error_string());
     VirtualFreeEx(hProcess, lpParam, 0, MEM_RELEASE);
     return -1;
   }
