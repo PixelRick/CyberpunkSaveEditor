@@ -88,6 +88,8 @@
     <ClInclude Include="..\..\source\redx\serialization\cnames_blob.hpp" />
     <ClInclude Include="..\..\source\redx\serialization\iserializable.hpp" />
     <ClInclude Include="..\..\source\redx\serialization\resids_blob.hpp" />
+    <ClInclude Include="..\..\source\redx\serialization\serializable.hpp" />
+    <ClInclude Include="..\..\source\redx\serialization\serializer.hpp" />
     <ClInclude Include="..\..\source\redx\tmp\archive_test.hpp" />
     <ClInclude Include="..\..\source\redx\trash\cnameset_old.hpp" />
     <ClInclude Include="..\..\source\redx\trash\serializable_stringpool.hpp" />
@@ -121,6 +123,7 @@
     <ClCompile Include="..\..\source\redx\scripting\cclass.cpp" />
     <ClCompile Include="..\..\source\redx\scripting\cobject.cpp" />
     <ClCompile Include="..\..\source\redx\scripting\cproperty_factory.cpp" />
+    <ClCompile Include="..\..\source\redx\serialization\serializer.cpp" />
     <ClCompile Include="..\..\source\redx\tmp\archive_test.cpp" />
     <ClCompile Include="..\..\source\redx\trash\serializable_stringpool.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">true</ExcludedFromBuild>
