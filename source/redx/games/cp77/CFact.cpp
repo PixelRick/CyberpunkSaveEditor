@@ -1,6 +1,5 @@
 #include "CFact.hpp"
 
-#include <Windows.h>
 #include <fstream>
 #include <sstream>
 #include <nlohmann/json.hpp>

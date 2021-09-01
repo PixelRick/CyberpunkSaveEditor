@@ -33,9 +33,6 @@
     <Filter Include="source\redx\csav\nodes\questSystem\FactsDB">
       <UniqueIdentifier>{348e53d2-60b4-4c7b-8c18-d299dfa0ed02}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\redx\ctypes">
-      <UniqueIdentifier>{e8f2cdb8-bc0a-4056-bba2-cdd7bfe44fe3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="source\redx\scripting\reminder that this needs a rewrite">
       <UniqueIdentifier>{40a24e7b-34af-4cb2-8367-163609214c1b}</UniqueIdentifier>
     </Filter>
@@ -75,6 +72,12 @@
     <Filter Include="source\redx\trash">
       <UniqueIdentifier>{bb518c6a-c305-4a7c-b475-d26cd708901e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\redx\games">
+      <UniqueIdentifier>{c01ce43b-98cf-43cd-a34a-9d97423ccf48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\redx\games\cp77">
+      <UniqueIdentifier>{7c8ececb-6376-48bc-afe1-ddc1f7a4cfe9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\redx\init.cpp">
@@ -89,17 +92,8 @@
     <ClCompile Include="..\..\source\redx\scripting\cproperty_factory.cpp">
       <Filter>source\redx\scripting</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\redx\ctypes\CFact.cpp">
-      <Filter>source\redx\ctypes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\redx\ctypes\TweakDBID.cpp">
-      <Filter>source\redx\ctypes</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\redx\csav\node_tree.cpp">
       <Filter>source\redx\csav</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\redx\ctypes\CEnum.cpp">
-      <Filter>source\redx\ctypes</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\tmp\archive_test.cpp">
       <Filter>source\redx\tmp</Filter>
@@ -151,6 +145,15 @@
     </ClCompile>
     <ClCompile Include="..\..\source\redx\serialization\serializer.cpp">
       <Filter>source\redx\serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\redx\games\cp77\CEnum.cpp">
+      <Filter>source\redx\games\cp77</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\redx\games\cp77\CFact.cpp">
+      <Filter>source\redx\games\cp77</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\redx\games\cp77\TweakDBID.cpp">
+      <Filter>source\redx\games\cp77</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -235,15 +238,6 @@
     <ClInclude Include="..\..\source\redx\csav\nodes\questSystem\FactsDB\FactsTable.hpp">
       <Filter>source\redx\csav\nodes\questSystem\FactsDB</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\ctypes\CFact.hpp">
-      <Filter>source\redx\ctypes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\ctypes\CName.hpp">
-      <Filter>source\redx\ctypes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\ctypes\TweakDBID.hpp">
-      <Filter>source\redx\ctypes</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\redx\ctypes.hpp">
       <Filter>source\redx</Filter>
     </ClInclude>
@@ -264,9 +258,6 @@
     </ClInclude>
     <ClInclude Include="..\..\source\redx\tweakdb\value_pool.hpp">
       <Filter>source\redx\tweakdb</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\ctypes\CEnum.hpp">
-      <Filter>source\redx\ctypes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\tmp\archive_test.hpp">
       <Filter>source\redx\tmp</Filter>
@@ -411,6 +402,18 @@
     </ClInclude>
     <ClInclude Include="..\..\source\redx\containers\array.hpp">
       <Filter>source\redx\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\games\cp77\CEnum.hpp">
+      <Filter>source\redx\games\cp77</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\games\cp77\CFact.hpp">
+      <Filter>source\redx\games\cp77</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\games\cp77\CName.hpp">
+      <Filter>source\redx\games\cp77</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\games\cp77\TweakDBID.hpp">
+      <Filter>source\redx\games\cp77</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

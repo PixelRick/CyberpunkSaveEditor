@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ctypes/CName.hpp"
-#include "ctypes/TweakDBID.hpp"
-#include "ctypes/CFact.hpp"
-#include "ctypes/CEnum.hpp"
+#include <redx/games/cp77/CName.hpp>
+#include <redx/games/cp77/TweakDBID.hpp>
+#include <redx/games/cp77/CFact.hpp>
+#include <redx/games/cp77/CEnum.hpp>
 

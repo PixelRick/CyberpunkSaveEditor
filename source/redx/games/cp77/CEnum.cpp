@@ -1,6 +1,5 @@
 #include "CEnum.hpp"
 
-#include <Windows.h>
 #include <fstream>
 #include <sstream>
 #include <nlohmann/json.hpp>

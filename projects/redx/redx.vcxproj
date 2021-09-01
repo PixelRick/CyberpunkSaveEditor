@@ -60,13 +60,13 @@
     <ClInclude Include="..\..\source\redx\csav\serializers.hpp" />
     <ClInclude Include="..\..\source\redx\csav\serial_tree.hpp" />
     <ClInclude Include="..\..\source\redx\ctypes.hpp" />
-    <ClInclude Include="..\..\source\redx\ctypes\CEnum.hpp" />
-    <ClInclude Include="..\..\source\redx\ctypes\CFact.hpp" />
-    <ClInclude Include="..\..\source\redx\ctypes\CName.hpp" />
-    <ClInclude Include="..\..\source\redx\ctypes\TweakDBID.hpp" />
     <ClInclude Include="..\..\source\redx\depot\directory_entry.hpp" />
     <ClInclude Include="..\..\source\redx\depot\directory_iterator.hpp" />
     <ClInclude Include="..\..\source\redx\depot\treefs.hpp" />
+    <ClInclude Include="..\..\source\redx\games\cp77\CEnum.hpp" />
+    <ClInclude Include="..\..\source\redx\games\cp77\CFact.hpp" />
+    <ClInclude Include="..\..\source\redx\games\cp77\CName.hpp" />
+    <ClInclude Include="..\..\source\redx\games\cp77\TweakDBID.hpp" />
     <ClInclude Include="..\..\source\redx\init.hpp" />
     <ClInclude Include="..\..\source\redx\io\arfile_access.hpp" />
     <ClInclude Include="..\..\source\redx\io\bstream.hpp" />
@@ -111,11 +111,11 @@
   <ItemGroup>
     <ClCompile Include="..\..\source\redx\core\utils.cpp" />
     <ClCompile Include="..\..\source\redx\csav\node_tree.cpp" />
-    <ClCompile Include="..\..\source\redx\ctypes\CEnum.cpp" />
-    <ClCompile Include="..\..\source\redx\ctypes\CFact.cpp" />
-    <ClCompile Include="..\..\source\redx\ctypes\TweakDBID.cpp" />
     <ClCompile Include="..\..\source\redx\depot\directory_entry.cpp" />
     <ClCompile Include="..\..\source\redx\depot\treefs.cpp" />
+    <ClCompile Include="..\..\source\redx\games\cp77\CEnum.cpp" />
+    <ClCompile Include="..\..\source\redx\games\cp77\CFact.cpp" />
+    <ClCompile Include="..\..\source\redx\games\cp77\TweakDBID.cpp" />
     <ClCompile Include="..\..\source\redx\init.cpp" />
     <ClCompile Include="..\..\source\redx\io\arfile_access.cpp" />
     <ClCompile Include="..\..\source\redx\io\bstream.cpp" />
