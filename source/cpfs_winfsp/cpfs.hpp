@@ -1,39 +1,17 @@
 #pragma once
-#include <cpfs_winfsp/winfsp.hpp>
+#include <cpfs_winfsp/winfsp.h>
 
 #include <filesystem>
 
 #include <redx/core.hpp>
-#include <redx/filesystem/archive.hpp>
-#include <redx/filesystem/treefs.hpp>
+#include <redx/os/platform_utils.hpp>
+#include <redx/depot/treefs.hpp>
 #include <redx/oodle/oodle.hpp>
 
 extern FSP_FILE_SYSTEM_INTERFACE s_cpfs_interface;
 
-struct scope_timer
-{
-  scope_timer(std::string_view name)
-    : name(name)
-  {
-    QueryPerformanceFrequency(&Frequency); 
-    QueryPerformanceCounter(&StartingTime);
-  }
-
-  ~scope_timer()
-  {
-    QueryPerformanceCounter(&EndingTime);
-    ElapsedMicroseconds.QuadPart = EndingTime.QuadPart - StartingTime.QuadPart;
-    ElapsedMicroseconds.QuadPart *= 1000000;
-    ElapsedMicroseconds.QuadPart /= Frequency.QuadPart;
-    double time_taken = (double)ElapsedMicroseconds.QuadPart / 1000000.f;
-    // should we change spdlog formatting before printing ?
-    SPDLOG_INFO("{} took {:.9f}s", name, time_taken);
-  }
-
-  LARGE_INTEGER StartingTime, EndingTime, ElapsedMicroseconds;
-  LARGE_INTEGER Frequency;
-  std::string name;
-};
+NTSTATUS fill_winfsp_file_info(FSP_FSCTL_FILE_INFO& fsp_finfo, const cp::depot::directory_entry& de);
+NTSTATUS fill_winfsp_file_info(FSP_FSCTL_FILE_INFO& fsp_finfo, HANDLE handle);
 
 // todo list:
 //  - named streams (:raw for raw access, otherwise try to uncook)
@@ -45,14 +23,18 @@ struct cpfs
     m_volume_params = {};
     m_volume_params.SectorSize = 1;
     m_volume_params.SectorsPerAllocationUnit = 1;
-    m_volume_params.VolumeCreationTime = redx::file_time(redx::clock::now()).hns_since_win_epoch;
+    m_volume_params.VolumeCreationTime = cp::file_time(cp::clock::now()).hns_since_win_epoch.count();
     m_volume_params.VolumeSerialNumber = 0;
     m_volume_params.FileInfoTimeout = 1000;
     m_volume_params.ReparsePointsAccessCheck = 1;
     m_volume_params.ReparsePoints = 1;
     //m_volume_params.AllowOpenInKernelMode = 1;
-    m_volume_params.CaseSensitiveSearch = 0;
-    m_volume_params.CasePreservedNames = 1;
+
+    // i don't think it is possible to only provide case-sensitive search..
+    // so the lowercase naming convention should be kept.
+
+    m_volume_params.CaseSensitiveSearch = 0; 
+    m_volume_params.CasePreservedNames = 0; // todo: check the eventual problems it would cause with a diff dir
     m_volume_params.UnicodeOnDisk = 1;
     m_volume_params.PersistentAcls = 1;
     m_volume_params.NamedStreams = 1;
@@ -91,7 +73,7 @@ struct cpfs
       return false;
     }
 
-    auto game_bin_path_opt = redx::windowz::get_cp_executable_path();
+    auto game_bin_path_opt = cp::os::get_cp_executable_path();
     if (!game_bin_path_opt.has_value())
     {
       MessageBoxA(0, "Game path could not be located", "error", 0);
@@ -157,7 +139,7 @@ struct cpfs
 
   bool load_archives()
   {
-    scope_timer st("load_archive loop");
+    //scope_timer st("load_archive loop");
 
     for (const auto& dirent: std::filesystem::directory_iterator(content_path))
     {
@@ -218,13 +200,11 @@ struct cpfs
     return m_started;
   }
 
-  bool has_diffdir = false;
-  std::filesystem::path diffdir_path;
   std::wstring disk_letter;
   std::wstring volume_label;
 
   std::filesystem::path content_path;
-  redx::filesystem::treefs tfs;
+  cp::depot::treefs tfs;
   std::shared_mutex mtx;
 
 private:

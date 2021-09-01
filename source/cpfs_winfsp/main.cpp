@@ -13,8 +13,6 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/dist_sink.h>
 
-
-
 #include <cpfs_winfsp/resource.h>
 #include <cpfs_winfsp/cpfs.hpp>
 
@@ -22,7 +20,7 @@
 void debug_symlink(const std::filesystem::path& p);
 
 
-#define CONSOLE_LOG
+//#define CONSOLE_LOG_AT_STARTUP
 
 constexpr auto WNDCLS_NAME = L"cpfs_systray";
 static constexpr UINT WMAPP_SYSTRAYCB = (WM_APP + 100);
@@ -106,7 +104,7 @@ int wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int n
   spdlog::set_level(spdlog::level::debug);
   spdlog::set_pattern("[%x %X.%e] [%^-%L-%$] [tid:%t] [%s:%#] %!: %v");
 
-#ifdef CONSOLE_LOG
+#ifdef CONSOLE_LOG_AT_STARTUP
 
   ShowConsole();
 
@@ -118,13 +116,26 @@ int wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int n
   cpfs cpfs;
 
   SPDLOG_INFO("initializing cpfs");
-  cpfs.init(-1);
+#ifdef _DEBUG
+  if (!cpfs.init(-1))
+#else
+  if (!cpfs.init(0))
+#endif
+  {
+    return -1;
+  }
 
   SPDLOG_INFO("loading archives");
-  cpfs.load_archives();
+  if (!cpfs.load_archives())
+  {
+    return -1;
+  }
 
   SPDLOG_INFO("starting cpfs");
-  cpfs.start();
+  if (!cpfs.start())
+  {
+    return -1;
+  }
 
   if (1)
   {
@@ -151,6 +162,14 @@ int wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int n
     debug_symlink("D:\\Desktop\\cpsavedit\\BUF_FILES\\big_folder_test2\\sdsd");
   }
 
+  NOTIFYICONDATAW nid = {sizeof(nid)};
+  nid.hWnd = hwnd;
+  nid.uID = IDI_ICON1;
+  nid.uFlags = NIF_INFO;
+  nid.dwInfoFlags = NIIF_INFO | NIIF_RESPECT_QUIET_TIME;
+  wcscpy_s(nid.szInfoTitle, L"CPFS");
+  wcscpy_s(nid.szInfo, L"successfully mounted");
+  Shell_NotifyIconW(NIM_MODIFY, &nid);
 
   MSG msg;
   bool running = true;
@@ -197,8 +216,7 @@ int wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int n
 
   
 
-  
-  
+  return 0;
 }
 
 BOOL InitCtxMenu()
@@ -225,7 +243,7 @@ BOOL AddNotificationIcon(HWND hWnd)
 
   if (!Shell_NotifyIconW(NIM_ADD, &nid))
   {
-    SPDLOG_CRITICAL("couldn't add notify icon, {}", redx::windowz::get_last_error());
+    SPDLOG_CRITICAL("couldn't add notify icon, {}", cp::os::last_error_string());
     return false;
   }
 
@@ -407,7 +425,7 @@ void debug_symlink(const std::filesystem::path& p)
     }
     else
     {
-      SPDLOG_INFO("GetFileInformationByHandleEx failed:{}", redx::windowz::get_last_error());
+      SPDLOG_INFO("GetFileInformationByHandleEx failed:{}", cp::os::last_error_string());
     }
 
     BY_HANDLE_FILE_INFORMATION ByHandleInfo;
@@ -418,7 +436,7 @@ void debug_symlink(const std::filesystem::path& p)
     }
     else
     {
-      SPDLOG_INFO("GetFileInformationByHandle failed:{}", redx::windowz::get_last_error());
+      SPDLOG_INFO("GetFileInformationByHandle failed:{}", cp::os::last_error_string());
     }
 
     WCHAR wbuf[1000]{};
@@ -428,7 +446,7 @@ void debug_symlink(const std::filesystem::path& p)
     }
     else
     {
-      SPDLOG_INFO("GetFinalPathNameByHandleW failed:{}", redx::windowz::get_last_error());
+      SPDLOG_INFO("GetFinalPathNameByHandleW failed:{}", cp::os::last_error_string());
     }
 
     CloseHandle(Handle);
@@ -449,7 +467,7 @@ void debug_symlink(const std::filesystem::path& p)
     }
     else
     {
-      SPDLOG_INFO("GetFileInformationByHandleEx failed:{}", redx::windowz::get_last_error());
+      SPDLOG_INFO("GetFileInformationByHandleEx failed:{}", cp::os::last_error_string());
     }
 
     char buf[2000];
@@ -476,7 +494,7 @@ void debug_symlink(const std::filesystem::path& p)
     }
     else
     {
-      SPDLOG_INFO("DeviceIoControl failed:{}", redx::windowz::get_last_error());
+      SPDLOG_INFO("DeviceIoControl failed:{}", cp::os::last_error_string());
     }
 
     WCHAR wbuf[1000]{};
@@ -486,7 +504,7 @@ void debug_symlink(const std::filesystem::path& p)
     }
     else
     {
-      SPDLOG_INFO("GetFinalPathNameByHandleW failed:{}", redx::windowz::get_last_error());
+      SPDLOG_INFO("GetFinalPathNameByHandleW failed:{}", cp::os::last_error_string());
     }
 
     CloseHandle(Handle);

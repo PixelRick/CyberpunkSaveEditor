@@ -13,10 +13,13 @@
     <ClCompile Include="..\..\source\cpfs_winfsp\main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\cpfs_winfsp\winfsp.cpp">
+    <ClCompile Include="..\..\source\cpfs_winfsp\utils.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cpfs_winfsp\cpfs.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cpfs_winfsp\file_context.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -24,7 +27,7 @@
     <ClInclude Include="..\..\source\cpfs_winfsp\cpfs.hpp">
       <Filter>source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\cpfs_winfsp\winfsp.hpp">
+    <ClInclude Include="..\..\source\cpfs_winfsp\utils.hpp">
       <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
@@ -32,6 +35,12 @@
     </ClInclude>
     <ClInclude Include="..\..\source\cpfs_winfsp\resource.h">
       <Filter>assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpfs_winfsp\file_context.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cpfs_winfsp\winfsp.h">
+      <Filter>source</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

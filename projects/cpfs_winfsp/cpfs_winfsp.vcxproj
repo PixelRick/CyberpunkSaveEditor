@@ -22,13 +22,16 @@
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\cpfs_winfsp\cpfs.cpp" />
+    <ClCompile Include="..\..\source\cpfs_winfsp\file_context.cpp" />
     <ClCompile Include="..\..\source\cpfs_winfsp\main.cpp" />
-    <ClCompile Include="..\..\source\cpfs_winfsp\winfsp.cpp" />
+    <ClCompile Include="..\..\source\cpfs_winfsp\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\cpfs_winfsp\cpfs.hpp" />
+    <ClInclude Include="..\..\source\cpfs_winfsp\file_context.hpp" />
     <ClInclude Include="..\..\source\cpfs_winfsp\resource.h" />
-    <ClInclude Include="..\..\source\cpfs_winfsp\winfsp.hpp" />
+    <ClInclude Include="..\..\source\cpfs_winfsp\utils.hpp" />
+    <ClInclude Include="..\..\source\cpfs_winfsp\winfsp.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -122,6 +125,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <DelayLoadDLLs>winfsp-x64.dll</DelayLoadDLLs>
+      <StackReserveSize>0x200000</StackReserveSize>
     </Link>
     <CopyFileToFolders>
       <DestinationFolders>$(OutDir)/db</DestinationFolders>
@@ -153,6 +157,7 @@
       </IgnoreSpecificDefaultLibraries>
       <SubSystem>Windows</SubSystem>
       <DelayLoadDLLs>winfsp-x64.dll</DelayLoadDLLs>
+      <StackReserveSize>0x200000</StackReserveSize>
     </Link>
     <CopyFileToFolders>
       <DestinationFolders>$(OutDir)/db</DestinationFolders>
@@ -180,6 +185,7 @@
       <AdditionalDependencies>winfsp-x64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <DelayLoadDLLs>winfsp-x64.dll</DelayLoadDLLs>
+      <StackReserveSize>0x200000</StackReserveSize>
     </Link>
     <CopyFileToFolders>
       <DestinationFolders>$(OutDir)/db</DestinationFolders>
