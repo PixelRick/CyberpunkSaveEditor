@@ -394,6 +394,24 @@
     <ClInclude Include="..\..\source\redx\serialization\serializer.hpp">
       <Filter>source\redx\serialization</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\redx\containers\data_buffer.hpp">
+      <Filter>source\redx\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\containers\dynarray.hpp">
+      <Filter>source\redx\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\containers\packed_enum.hpp">
+      <Filter>source\redx\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\containers\smart_ptr.hpp">
+      <Filter>source\redx\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\containers\type_allocation_traits.hpp">
+      <Filter>source\redx\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\containers\array.hpp">
+      <Filter>source\redx\containers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\..\assets\TweakDBIDs.json">

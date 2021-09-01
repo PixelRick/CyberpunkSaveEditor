@@ -21,6 +21,12 @@
     <ProjectName>redx</ProjectName>
   </PropertyGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\source\redx\containers\array.hpp" />
+    <ClInclude Include="..\..\source\redx\containers\data_buffer.hpp" />
+    <ClInclude Include="..\..\source\redx\containers\dynarray.hpp" />
+    <ClInclude Include="..\..\source\redx\containers\packed_enum.hpp" />
+    <ClInclude Include="..\..\source\redx\containers\smart_ptr.hpp" />
+    <ClInclude Include="..\..\source\redx\containers\type_allocation_traits.hpp" />
     <ClInclude Include="..\..\source\redx\core.hpp" />
     <ClInclude Include="..\..\source\redx\core\cname.hpp" />
     <ClInclude Include="..\..\source\redx\core\gname.hpp" />
