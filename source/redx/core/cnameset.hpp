@@ -7,9 +7,9 @@
 #include <unordered_map>
 
 #include <redx/core/cname.hpp>
-#include <redx/core/streambase.hpp>
 #include <redx/core/hashing.hpp>
 #include <redx/core/utils.hpp>
+#include <redx/io/bstream.hpp> 
 #include <redx/containers/bitfield.hpp>
 
 namespace redx {
@@ -146,7 +146,7 @@ public:
     const size_t descs_cnt = descs_size / sizeof(ser_desc);
     if (descs_size % sizeof(ser_desc))
     {
-      SPDLOG_ERROR("cnameset::read_in: invalid given descs_size");
+      SPDLOG_ERROR("invalid given descs_size");
       return false;
     }
 
@@ -164,7 +164,7 @@ public:
 
       if (&*str.end() > data_end)
       {
-        SPDLOG_ERROR("cnameset::read_in: string out of bounds");
+        SPDLOG_ERROR("string out of bounds");
         return false;
       }
 
@@ -179,17 +179,17 @@ public:
   // todo: remove descs_pos arg (use tell)
 
   template <bool WithNullTerminators = true>
-  void serialize_out(streambase& sb, uint32_t base_spos, uint32_t& out_descs_size, uint32_t& out_data_size)
+  void serialize_out(obstream& st, uint32_t base_spos, uint32_t& out_descs_size, uint32_t& out_data_size)
   {
     out_descs_size = 0;
     out_data_size = 0;
 
     std::vector<ser_desc> descs(size());
 
-    const uint32_t descs_spos = (uint32_t)sb.tell();
-    sb.serialize_pods_array_raw(descs.data(), descs.size()); // dummy
+    const uint32_t descs_spos = (uint32_t)st.tellp();
+    st.write_array(descs);
 
-    const uint32_t data_spos = (uint32_t)sb.tell();
+    const uint32_t data_spos = (uint32_t)st.tellp();
     uint32_t offset = (uint32_t)data_spos - base_spos;
 
     for (uint32_t i = 0; i < descs.size(); ++i)
@@ -197,7 +197,7 @@ public:
       gname gn = m_ids[i].gstr();
       if (!gn)
       {
-        sb.set_error("cnameset::serialize_out: a cname couldn't be resolved to string");
+        STREAM_LOG_AND_SET_ERROR(st, "a cname couldn't be resolved to string");
         return;
       }
 
@@ -207,12 +207,12 @@ public:
       auto& desc = descs[i];
       desc.offset = offset;
 
-      sb.serialize_bytes((char*)strv.data(), strv.size());
+      st.write_bytes(strv.data(), strv.size());
       offset += str_size;
 
       if constexpr (WithNullTerminators)
       {
-        sb.serialize_byte("\0");
+        st << '\0';
         desc.size = str_size + 1;
         offset++;
       }
@@ -222,12 +222,12 @@ public:
       }
     }
 
-    const uint32_t end_spos = (uint32_t)sb.tell();
+    const uint32_t end_spos = (uint32_t)st.tellp();
 
-    sb.seek(descs_spos);
-    sb.serialize_pods_array_raw(descs.data(), descs.size());
+    st.seekp(descs_spos);
+    st.write_array(descs);
 
-    sb.seek(end_spos);
+    st.seekp(end_spos);
 
     out_descs_size = data_spos - descs_spos;
     out_data_size = end_spos - data_spos;

@@ -1,7 +1,8 @@
 #include "node_tree.hpp"
 
 #include <xlz4/lz4.h>
-#include <redx/io/file_stream.hpp>
+#include <redx/io/bstream.hpp>
+#include <redx/io/file_bstream.hpp>
 #include <redx/csav/serial_tree.hpp>
 
 #define XLZ4_CHUNK_SIZE 0x40000
@@ -10,23 +11,29 @@ namespace redx::csav {
 
 struct compressed_chunk_desc
 {
-  static const size_t serialized_size = 12;
+  static constexpr bool is_serializable_pod = false;
+  static constexpr size_t serialized_size = 12;
 
   // data_size is uncompressed size
   uint32_t offset, size, data_size, data_offset;
-
-  friend streambase& operator<<(streambase& ar, compressed_chunk_desc& cd)
-  {
-    return ar << cd.offset << cd.size << cd.data_size;
-  }
 };
+
+inline ibstream& operator>>(ibstream& st, compressed_chunk_desc& x)
+{
+  return st.read_bytes((char*)&x, compressed_chunk_desc::serialized_size);
+}
+
+inline obstream& operator<<(obstream& st, const compressed_chunk_desc& x)
+{
+  return st.write_bytes((const char*)&x, compressed_chunk_desc::serialized_size);
+}
 
 op_status node_tree::load(std::filesystem::path path)
 {
-  file_istream ar(path);
-  serialize_in(ar);
+  std_file_ibstream st(path);
+  serialize_in(st);
 
-  return op_status(ar.error());
+  return op_status(st.fail_msg());
 }
 
 op_status node_tree::save(std::filesystem::path path)
@@ -40,20 +47,14 @@ op_status node_tree::save(std::filesystem::path path)
       std::filesystem::copy(path, oldpath);
   }
 
-  file_ostream ar(path);
-  serialize_out(ar);
+  std_file_obstream st(path);
+  serialize_out(st);
 
-  return op_status(ar.error());
+  return op_status(st.fail_msg());
 }
 
-void node_tree::serialize_in(streambase& ar)
+void node_tree::serialize_in(ibstream& st)
 {
-  if (!ar.is_reader())
-  {
-    ar.set_error("serialize_in cannot be used with output stream");
-    return;
-  }
-
   uint32_t chunkdescs_start = 0;
   uint32_t nodedescs_start = 0;
   uint32_t magic = 0;
@@ -68,57 +69,57 @@ void node_tree::serialize_in(streambase& ar)
   //  HEADER (magic, m_ver..)
   // --------------------------------------------------------
 
-  ar << magic;
+  st >> magic;
   if (magic != 'CSAV' && magic != 'SAVE')
   {
-    ar.set_error("csav file has wrong magic");
+    STREAM_LOG_AND_SET_ERROR(st, "csav file has wrong magic");
     return;
   }
 
-  ar << m_ver.v1;
-  ar << m_ver.v2;
+  st >> m_ver.v1;
+  st >> m_ver.v2;
 
   // DISABLED VERSION TEST
   //if (v1 > 193 or v2 > 9 or v1 < 125)
   //  return false;
 
-  ar.serialize_str_lpfxd(m_ver.suk);
+  st.read_str_lpfxd(m_ver.suk);
 
   // there is a weird if v1 >= 5 check, but previous if already ensured it
-  ar << m_ver.uk0;
-  ar << m_ver.uk1;
+  st >> m_ver.uk0;
+  st >> m_ver.uk1;
 
   if (m_ver.v1 <= 168 and m_ver.v2 == 4)
   {
-    ar.set_error("unsuppported csav m_ver.v1/v2");
+    STREAM_LOG_AND_SET_ERROR(st, "unsuppported csav m_ver.v1/v2");
     return;
   }
 
   m_ver.v3 = 192;
   if (m_ver.v1 >= 83)
   {
-    ar << m_ver.v3;
+    st >> m_ver.v3;
     if (m_ver.v3 > 195) // will change soon i guess
     {
-      ar.set_error("unsuppported csav m_ver.v3");
+      STREAM_LOG_AND_SET_ERROR(st, "unsuppported csav m_ver.v3");
       return;
     }
   }
 
-  chunkdescs_start = (uint32_t)ar.tell();
+  chunkdescs_start = static_cast<uint32_t>(st.tellg());
 
   // --------------------------------------------------------
   //  FOOTER (offset of 'NODE', 'DONE' tag)
   // --------------------------------------------------------
 
   // end stuff
-  ar.seek(-8, std::ios_base::end);
-  uint64_t footer_start = (uint64_t)ar.tell();
-  ar << nodedescs_start;
-  ar << magic;
+  st.seekg(-8, std::ios_base::end);
+  uint64_t footer_start = static_cast<uint64_t>(st.tellg());
+  st >> nodedescs_start;
+  st >> magic;
   if (magic != 'DONE')
   {
-    ar.set_error("missing 'DONE' tag");
+    STREAM_LOG_AND_SET_ERROR(st, "missing 'DONE' tag");
     return;
   }
 
@@ -127,25 +128,29 @@ void node_tree::serialize_in(streambase& ar)
   // --------------------------------------------------------
 
   // check node start tag
-  ar.seek(nodedescs_start);
-  ar << magic;
+  st.seekg(nodedescs_start);
+  st >> magic;
   if (magic != 'NODE')
   {
-    ar.set_error("missing 'NODE' tag");
+    STREAM_LOG_AND_SET_ERROR(st, "missing 'NODE' tag");
     return;
   }
 
   // now read node descs
   size_t nd_cnt = 0;
-  ar.serialize_int_packed(nd_cnt);
+  st.read_int_packed(nd_cnt);
   stree.descs.resize(nd_cnt);
-  for (size_t i = 0; i < nd_cnt; ++i)
+  st.read_array(stree.descs);
+
+  if (!st)
   {
-    ar << stree.descs[i];
+    STREAM_LOG_AND_SET_ERROR(st, "couldn't read descs");
+    return;
   }
-  if ((size_t)ar.tell() != footer_start)
+
+  if (static_cast<uint64_t>(st.tellg()) != footer_start)
   {
-    ar.set_error("unexpected footer position");
+    STREAM_LOG_AND_SET_ERROR(st, "unexpected footer position");
     return;
   }
 
@@ -155,21 +160,15 @@ void node_tree::serialize_in(streambase& ar)
 
   // descriptors (padded with 0 until actual first chunk)
 
-  ar.seek(chunkdescs_start);
-  ar << magic;
+  st.seekg(chunkdescs_start);
+  st >> magic;
   if (magic != 'CLZF')
   {
-    ar.set_error("missing 'CLZF' tag");
+    STREAM_LOG_AND_SET_ERROR(st, "missing 'CLZF' tag");
     return;
   }
 
-  uint32_t cd_cnt = 0;
-  ar << cd_cnt;
-  chunk_descs.resize(cd_cnt);
-  for (uint32_t i = 0; i < cd_cnt; ++i)
-  {
-    ar << chunk_descs[i];
-  }
+  st.read_vec_lpfxd(chunk_descs);
 
   // actual chunks
 
@@ -206,13 +205,13 @@ void node_tree::serialize_in(streambase& ar)
   {
     auto& cd = chunk_descs[i];
 
-    ar.seek(cd.offset);
-    ar << magic;
+    st.seekg(cd.offset);
+    st >> magic;
     if (magic != 'XLZ4')
     {
       if (i > 0)
       {
-        ar.set_error("missing 'XLZ4' tag");
+        STREAM_LOG_AND_SET_ERROR(st, "missing 'XLZ4' tag");
         return;
       }
 
@@ -221,22 +220,22 @@ void node_tree::serialize_in(streambase& ar)
     }
 
     uint32_t data_size = 0;
-    ar << data_size;
+    st >> data_size;
     if (data_size != cd.data_size)
     {
-      ar.set_error("data size prefix differs from descriptor's value");
+      STREAM_LOG_AND_SET_ERROR(st, "data size prefix differs from descriptor's value");
       return;
     }
 
     size_t csize = cd.size-8;
     if (csize > tmp.size())
       tmp.resize(csize);
-    ar.serialize_bytes(tmp.data(), csize);
+    st.read_bytes(tmp.data(), csize);
 
     int res = LZ4_decompress_safe(tmp.data(), nodedata.data() + cd.data_offset, (int)csize, cd.data_size);
     if (res != cd.data_size)
     {
-      ar.set_error("unexpected lz4 decompressed size");
+      STREAM_LOG_AND_SET_ERROR(st, "unexpected lz4 decompressed size");
       return;
     }
   }
@@ -244,11 +243,11 @@ void node_tree::serialize_in(streambase& ar)
   if (m_ver.ps4w)
   {
     size_t offset = chunk_descs[0].offset;
-    ar.seek(offset);
-    ar.serialize_bytes(nodedata.data() + offset, nodedata_size - offset);
+    st.seekg(offset);
+    st.read_bytes(nodedata.data() + offset, nodedata_size - offset);
   }
 
-  if (ar.has_error())
+  if (!st)
   {
     return;
   }
@@ -260,7 +259,7 @@ void node_tree::serialize_in(streambase& ar)
   root = stree.to_tree(chunks_start);
   if (!root)
   {
-    ar.set_error("couldn't lift a tree from serial_tree");
+    STREAM_LOG_AND_SET_ERROR(st, "couldn't lift a tree from serial_tree");
     return;
   }
 
@@ -270,7 +269,7 @@ void node_tree::serialize_in(streambase& ar)
   // Check that the unflattening worked.
   if (tree_size != data_size)
   {
-    ar.set_error("lift tree size differs from serial_tree size");
+    STREAM_LOG_AND_SET_ERROR(st, "lift tree size differs from serial_tree size");
     return;
   }
 
@@ -281,14 +280,8 @@ void node_tree::serialize_in(streambase& ar)
   original_descs = stree.descs;
 }
 
-void node_tree::serialize_out(streambase& ar)
+void node_tree::serialize_out(obstream& st)
 {
-  if (ar.is_reader())
-  {
-    ar.set_error("serialize_out cannot be used with input stream");
-    return;
-  }
-
   if (!root)
     return;
 
@@ -307,33 +300,35 @@ void node_tree::serialize_out(streambase& ar)
   // --------------------------------------------------------
 
   magic = 'CSAV';
-  ar << magic;
+  st << magic;
 
-  ar << m_ver.v1;
-  ar << m_ver.v2;
-  ar.serialize_str_lpfxd(m_ver.suk);
-  ar << m_ver.uk0;
-  ar << m_ver.uk1;
+  st << m_ver.v1;
+  st << m_ver.v2;
+  st.write_str_lpfxd(m_ver.suk);
+  st << m_ver.uk0;
+  st << m_ver.uk1;
 
   if (m_ver.v1 >= 83)
-    ar << m_ver.v3;
+  {
+    st << m_ver.v3;
+  }
 
   // --------------------------------------------------------
   //  WEIRD PREP
   // --------------------------------------------------------
 
-  chunkdescs_start = (uint32_t)ar.tell();
+  chunkdescs_start = reliable_numeric_cast<uint32_t>(st.tellp());
 
   uint32_t expected_raw_size = (uint32_t)root->calcsize();
   size_t max_chunkcnt = LZ4_compressBound(expected_raw_size) / XLZ4_CHUNK_SIZE + 2; // tbl should fit in 1 extra XLZ4_CHUNK_SIZE 
-  size_t chunktbl_maxsize = max_chunkcnt * compressed_chunk_desc::serialized_size + 8;
+  size_t chunktbl_maxsize = (max_chunkcnt * compressed_chunk_desc::serialized_size) + 8;
 
   std::vector<char> tmp;
   tmp.resize(XLZ4_CHUNK_SIZE);
 
   // allocate tbl
-  ar.serialize_bytes(tmp.data(), std::max(chunktbl_maxsize, 0xC21 - (size_t)chunkdescs_start));
-  chunks_start = (uint32_t)ar.tell();
+  st.write_bytes(tmp.data(), std::max(chunktbl_maxsize, 0xC21 - (size_t)chunkdescs_start));
+  chunks_start = (uint32_t)st.tellp();
 
   // --------------------------------------------------------
   //  FLATTENING of node tree
@@ -342,7 +337,7 @@ void node_tree::serialize_out(streambase& ar)
   serial_tree stree;
   if (!stree.from_tree(root, chunks_start))
   {
-    ar.set_error("couldn't flatten node_t tree.");
+    STREAM_LOG_AND_SET_ERROR(st, "couldn't flatten node_t tree.");
     return;
   }
 
@@ -363,8 +358,8 @@ void node_tree::serialize_out(streambase& ar)
   {
     auto& chunk_desc = chunk_descs.emplace_back();
 
-    chunk_desc.data_offset = (uint32_t)(pcur - prealbeg);
-    chunk_desc.offset = (uint32_t)ar.tell();
+    chunk_desc.data_offset = reliable_numeric_cast<uint32_t>(pcur - prealbeg);
+    chunk_desc.offset = reliable_numeric_cast<uint32_t>(st.tellp());
 
     int srcsize = (int)(pend - pcur);
 
@@ -372,7 +367,7 @@ void node_tree::serialize_out(streambase& ar)
     {
       srcsize = std::min(srcsize, XLZ4_CHUNK_SIZE);
       // write decompressed chunk
-      ar.serialize_bytes(pcur, srcsize);
+      st.write_bytes(pcur, srcsize);
       chunk_desc.size = srcsize;
     }
     else
@@ -380,18 +375,18 @@ void node_tree::serialize_out(streambase& ar)
       int csize = LZ4_compress_destSize(pcur, ptmp, &srcsize, XLZ4_CHUNK_SIZE);
       if (csize < 0)
       {
-        ar.set_error("lz4 compression failed");
+        STREAM_LOG_AND_SET_ERROR(st, "lz4 compression failed");
         return;
       }
 
       // write magic
       magic = 'XLZ4';
-      ar << magic;
+      st << magic;
       // write decompressed size
       uint32_t data_size = 0;
-      ar << srcsize;
+      st << srcsize;
       // write compressed chunk
-      ar.serialize_bytes(ptmp, csize);
+      st.write_bytes(ptmp, csize);
 
       chunk_desc.size = csize+8;
     }
@@ -401,31 +396,26 @@ void node_tree::serialize_out(streambase& ar)
   }
   if (pcur > pend)
   {
-    ar.set_error("pcur > pend");
+    STREAM_LOG_AND_SET_ERROR(st, "pcur > pend");
     return;
   }
 
-  nodedescs_start = (uint32_t)ar.tell();
+  nodedescs_start = reliable_numeric_cast<uint32_t>(st.tellp());
 
   // descriptors
 
-  ar.seek(chunkdescs_start);
+  st.seekp(chunkdescs_start);
 
   magic = 'CLZF';
-  ar << magic;
-  uint32_t cd_cnt = (uint32_t)chunk_descs.size();
-  ar << cd_cnt;
+  st << magic;
 
-  for (uint32_t i = 0; i < cd_cnt; ++i)
-  {
-    ar << chunk_descs[i];
-  }
+  st.write_vec_lpfxd(chunk_descs);
 
   // --------------------------------------------------------
   //  NODE DESCRIPTORS
   // --------------------------------------------------------
 
-  ar.seek(nodedescs_start);
+  st.seekp(nodedescs_start);
 
   // experiment: would the game accept big forged file ?
   // std::vector<char> zerobuf(0x1000000);
@@ -433,25 +423,21 @@ void node_tree::serialize_out(streambase& ar)
   // nodedescs_start = ofs.tellp();
 
   magic = 'NODE';
-  ar << magic;
+  st << magic;
 
   // now write node descs
-  const uint32_t node_cnt = (uint32_t)stree.descs.size();
-  int64_t node_cnt_i64 = (int64_t)node_cnt;
-  ar.serialize_int_packed(node_cnt_i64);
-  for (uint32_t i = 0; i < node_cnt; ++i)
-  {
-    ar << stree.descs[i];
-  }
+  const uint32_t node_cnt = reliable_numeric_cast<uint32_t>(stree.descs.size());
+  st.write_int_packed(node_cnt);
+  st.write_array(stree.descs);
 
   // --------------------------------------------------------
   //  FOOTER (offset of 'NODE', 'DONE' tag)
   // --------------------------------------------------------
 
   // end stuff
-  ar << nodedescs_start;
+  st << nodedescs_start;
   magic = 'DONE';
-  ar << magic;
+  st << magic;
 }
 
 } // namespace redx::csav

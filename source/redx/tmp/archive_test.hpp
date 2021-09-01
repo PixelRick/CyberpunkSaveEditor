@@ -7,6 +7,8 @@
 #include <appbase/widgets/redx.hpp>
 #include "redx/scripting/csystem.hpp"
 #include <redx/core.hpp>
+#include <redx/io/bstream.hpp>
+#include <redx/serialization/cnameset.hpp>
 
 #include <redx/containers/bitfield.hpp>
 #include <redx/tmp/resid_set.hpp>

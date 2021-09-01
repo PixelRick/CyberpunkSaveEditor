@@ -2,6 +2,8 @@
 #include <filesystem>
 #include <vector>
 
+#include <redx/core.hpp>
+#include <redx/io/bstream.hpp>
 #include <redx/csav/node.hpp>
 #include <redx/csav/version.hpp>
 #include <redx/csav/serial_tree.hpp>
@@ -28,18 +30,16 @@ struct node_tree
   // This one makes a backup!
   op_status save(std::filesystem::path path);
 
-  friend streambase& operator<<(streambase& ar, node_tree& x)
+  friend ibstream& operator<<(ibstream& st, node_tree& x)
   {
-    if (ar.is_reader())
-    {
-      x.serialize_in(ar);
-    }
-    else
-    {
-      x.serialize_out(ar);
-    }
+    x.serialize_in(st);
+    return st;
+  }
 
-    return ar;
+  friend obstream& operator<<(obstream& st, node_tree& x)
+  {
+    x.serialize_out(st);
+    return st;
   }
 
   std::vector<serial_node_desc> original_descs;
@@ -47,8 +47,8 @@ struct node_tree
 
 protected:
 
-  void serialize_in(streambase& ar);
-  void serialize_out(streambase& ar);
+  void serialize_in(ibstream& st);
+  void serialize_out(obstream& st);
 
   version m_ver;
 };

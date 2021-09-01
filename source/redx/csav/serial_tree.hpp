@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "redx/core.hpp"
+#include "redx/io/bstream.hpp"
 #include "redx/ctypes.hpp"
 #include "redx/csav/node.hpp"
 
@@ -12,18 +13,26 @@ namespace redx::csav {
 
 struct serial_node_desc
 {
-  std::string name;
+  static constexpr bool is_serializable_pod = false;
+
   int32_t next_idx, child_idx;
   uint32_t data_offset, data_size;
-
-  friend streambase& operator<<(streambase& ar, serial_node_desc& x)
-  {
-    ar.serialize_str_lpfxd(x.name);
-    ar << x.next_idx << x.child_idx;
-    ar << x.data_offset << x.data_size;
-    return ar;
-  }
+  std::string name;
 };
+
+inline ibstream& operator>>(ibstream& st, serial_node_desc& x)
+{
+  st.read_str_lpfxd(x.name);
+  st.read_bytes((char*)&x, offsetof(serial_node_desc, name));
+  return st;
+}
+
+inline obstream& operator<<(obstream& st, const serial_node_desc& x)
+{
+  st.write_str_lpfxd(x.name);
+  st.write_bytes((const char*)&x, offsetof(serial_node_desc, name));
+  return st;
+}
 
 struct serial_tree
 {
@@ -64,7 +73,7 @@ struct serial_tree
 
     // fake descriptor, our buffer should be prefixed with zeroes so the *data==idx will pass..
     const uint32_t data_size = (uint32_t)nodedata.size() - data_offset;
-    serial_node_desc root_desc {"root", node_t::null_node_idx, 0, data_offset, data_size};
+    serial_node_desc root_desc {node_t::null_node_idx, 0, data_offset, data_size, "root"};
     return read_node(root_desc, node_t::root_node_idx);
   }
 

@@ -137,6 +137,12 @@
     <ClCompile Include="..\..\source\redx\core\utils.cpp">
       <Filter>source\redx\core</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\redx\io\bstream.cpp">
+      <Filter>source\redx\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\redx\io\file_access_win.cpp">
+      <Filter>source\redx\io</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\redx\tweakdb\tweakdb.hpp">
@@ -310,24 +316,6 @@
     <ClInclude Include="..\..\source\redx\filesystem\depot_file_stream.hpp">
       <Filter>source\redx\filesystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\io\file_istream.hpp">
-      <Filter>source\redx\io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\io\file_ostream.hpp">
-      <Filter>source\redx\io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\io\file_stream.hpp">
-      <Filter>source\redx\io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\io\archive_file_istream.hpp">
-      <Filter>source\redx\io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\io\memory_istream.hpp">
-      <Filter>source\redx\io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\io\stdstream_wrapper.hpp">
-      <Filter>source\redx\io</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\redx\os\platform_utils.hpp">
       <Filter>source\redx\os</Filter>
     </ClInclude>
@@ -381,6 +369,18 @@
     </ClInclude>
     <ClInclude Include="..\..\source\redx\core\utils.hpp">
       <Filter>source\redx\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\io\bstream.hpp">
+      <Filter>source\redx\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\io\file_access.hpp">
+      <Filter>source\redx\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\io\file_bstream.hpp">
+      <Filter>source\redx\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\io\mem_bstream.hpp">
+      <Filter>source\redx\io</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

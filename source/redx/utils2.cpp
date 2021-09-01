@@ -1,5 +1,9 @@
-#include "utils.hpp"
-
+#ifndef WIN32_LEAN_AND_MEAN
+  #define WIN32_LEAN_AND_MEAN
+#endif
+#ifndef NOMINMAX
+  #define NOMINMAX
+#endif
 #include <windows.h>
 #include <ShlObj.h>
 #include <intrin.h>
@@ -9,6 +13,8 @@
 #include <iomanip>
 #include <vector>
 #include "spdlog/spdlog.h"
+
+#include "utils.hpp"
 
 void replace_all_in_str(std::string& s, const std::string& from, const std::string& to)
 {

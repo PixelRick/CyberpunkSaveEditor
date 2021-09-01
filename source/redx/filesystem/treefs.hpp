@@ -7,7 +7,7 @@
 
 #include <redx/core.hpp>
 #include <redx/archive/archive.hpp>
-#include <redx/io/archive_file_istream.hpp>
+//#include <redx/io/archive_file_istream.hpp>
 
 // to diff depots, the file system must be instantiatable
 // goals:
@@ -33,7 +33,7 @@ using file_handle = redx::archive::file_handle;
 
 // it is different from redx::file_istream since the source isn't the same !
 // (could probably get another name..)
-using file_istream = redx::archive_file_istream;
+//using file_istream = redx::archive_file_istream;
 
 namespace detail::treefs {
 

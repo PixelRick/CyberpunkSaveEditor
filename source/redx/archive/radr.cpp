@@ -4,94 +4,120 @@
 
 namespace redx::radr {
 
-void metadata::serialize(streambase& st, bool check_crc)
-{
-  const bool reading = st.is_reader();
+struct metadata_trampoline 
+{ 
+  uint32_t tbls_offset = 8; 
+  uint32_t tbls_size = 0; 
+}; 
 
-  uint32_t tbls_offset = 8;
-  uint32_t tbls_size = 0;
-  uint32_t files_cnt = 0;
-  uint32_t segments_cnt = 0;
-  uint32_t dependencies_cnt = 0;
-  uint64_t crc = 0;
+struct metadata_tbls_header 
+{ 
+  uint64_t crc = 0; 
+  uint32_t files_cnt = 0; 
+  uint32_t segments_cnt = 0; 
+  uint32_t dependencies_cnt = 0; 
+  uint32_t not_serialized_padding; 
+}; 
 
-  if (!reading)
-  {
-    files_cnt = static_cast<uint32_t>(records.size());
-    segments_cnt = static_cast<uint32_t>(segments.size());
-    dependencies_cnt = static_cast<uint32_t>(dependencies.size());
+bool metadata::serialize_in(ibstream& st, bool check_crc) 
+{ 
+  metadata_trampoline trp; 
+  st >> trp; 
+ 
+  if (trp.tbls_offset != 8) 
+  { 
+    STREAM_LOG_AND_SET_ERROR(st, "unexpected tbls_offset"); 
+    return false; 
+  } 
+ 
+  auto tbls_spos = st.tellg(); 
+  metadata_tbls_header hdr; 
+  st >> hdr; 
+ 
+  records.resize(hdr.files_cnt); 
+  segments.resize(hdr.segments_cnt); 
+  dependencies.resize(hdr.dependencies_cnt); 
+ 
+  st.read_array(records); 
+  st.read_array(segments); 
+  st.read_array(dependencies); 
+ 
+  size_t read_size = st.tellg() - tbls_spos; 
+  if (trp.tbls_size != read_size) 
+  { 
+    STREAM_LOG_AND_SET_ERROR(st, "unexpected tbls_size {} for read_size {}", trp.tbls_size, read_size); 
+    return false; 
+  } 
+ 
+  if (!st) 
+  { 
+    records.clear(); 
+    segments.clear(); 
+    dependencies.clear(); 
+    return false; 
+  } 
+ 
+  if (check_crc) 
+  { 
+    uint64_t ccrc = compute_tbls_crc64(); 
+    if (hdr.crc != ccrc) 
+    { 
+      STREAM_LOG_AND_SET_ERROR(st, "crc mismatch hdr:{:016X} computed:{:016X}", hdr.crc, ccrc); 
+      return false; 
+    } 
+  } 
+   
+  return true; 
+} 
+ 
+ 
+bool metadata::serialize_out(obstream& st) const 
+{ 
+  metadata_trampoline trp; 
+  metadata_tbls_header hdr; 
+ 
+  hdr.files_cnt = numeric_cast<uint32_t>(records.size()); 
+  hdr.segments_cnt = numeric_cast<uint32_t>(segments.size()); 
+  hdr.dependencies_cnt = numeric_cast<uint32_t>(dependencies.size()); 
+  hdr.crc = compute_tbls_crc64(); 
+ 
+  trp.tbls_offset = 8; 
+  auto trp_spos = st.tellp(); 
+  st << trp; 
+ 
+  // todo: is there stuff in between sometimes ? 
+ 
+  auto tbls_spos = st.tellp(); 
+  st << hdr; 
+ 
+  // note: records are ordered by hashes 
+ 
+  st.write_array(records); 
+  st.write_array(segments); 
+  st.write_array(dependencies); 
+ 
+  auto end_spos = st.tellp(); 
+  trp.tbls_size = numeric_cast<uint32_t>(end_spos - tbls_spos); 
+ 
+  if (!st) // let's check before calling seek 
+  { 
+    return false; 
+  } 
+ 
+  st.seekp(trp_spos); 
+  st << trp; 
+ 
+  if (!st) // let's check before calling seek 
+  { 
+    return false; 
+  } 
+ 
+  st.seekp(end_spos); 
+ 
+  return !!st; 
+} 
 
-    crc = compute_tbls_crc64();
-  }
-
-  auto start_spos = st.tell();
-  st << tbls_offset;
-  st << tbls_size;
-
-  // todo: is there stuff in between sometimes ?
-
-  auto tbls_spos = st.tell();
-  st << crc;
-  st << files_cnt;
-  st << segments_cnt;
-  st << dependencies_cnt;
-
-  // note: records are ordered by hashes
-
-  if (reading)
-  {
-    if (tbls_offset != 8)
-    {
-      st.set_error("metadata: tbls_offset is expected to be 8");
-      return;
-    }
-
-    records.resize(files_cnt);
-    segments.resize(segments_cnt);
-    dependencies.resize(dependencies_cnt);
-  }
-
-  st.serialize_pods_array_raw(records.data(), files_cnt);
-  st.serialize_pods_array_raw(segments.data(), segments_cnt);
-  st.serialize_pods_array_raw(dependencies.data(), dependencies_cnt);
-
-  if (reading)
-  {
-    size_t read_size = st.tell() - tbls_spos;
-    if (tbls_size != st.tell() - tbls_spos)
-    {
-      st.set_error(fmt::format("metadata: unexpected tbls_size {} for read_size {}", tbls_size, read_size));
-      return;
-    }
-
-    if (st.has_error())
-    {
-      records.clear();
-      segments.clear();
-      dependencies.clear();
-      return;
-    }
-
-    uint64_t ccrc = compute_tbls_crc64();
-    if (crc != ccrc)
-    {
-      st.set_error(fmt::format("metadata: crc mismatch {:016X} {:016X}", crc, ccrc));
-      return;
-    }
-  }
-  else // writing
-  {
-    auto cur_spos = st.tell();
-    tbls_size = static_cast<uint32_t>(tbls_spos - cur_spos);
-
-    st.seek(start_spos);
-    st << tbls_offset;
-    st << tbls_size;
-    st.seek(cur_spos);
-  }
-}
-
-uint64_t metadata::compute_tbls_crc64()
+uint64_t metadata::compute_tbls_crc64() const
 {
   uint32_t cnt = 0;
   crc64_builder b;

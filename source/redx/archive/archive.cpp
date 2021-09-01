@@ -4,8 +4,8 @@
 #include <set>
 
 #include <redx/os/file_reader.hpp>
-#include <redx/io/stdstream_wrapper.hpp>
-#include <redx/io/memory_istream.hpp>
+#include <redx/io/bstream.hpp>
+#include <redx/io/mem_bstream.hpp>
 #include <redx/oodle/oodle.hpp>
 //#include <redx/radr/fdesc.hpp>
 
@@ -56,16 +56,16 @@ std::shared_ptr<archive> archive::load(const std::filesystem::path& path)
     return nullptr;
   }
 
-  memory_istream stmeta(metadata_block_span);
+  mem_ibstream stmeta(metadata_block_span);
 
   redx::radr::metadata md;
-  md.serialize(stmeta, true);
+  md.serialize_in(stmeta, true);
 
-  if (stmeta.has_error())
+  /*if (stmeta.has_error())
   {
     SPDLOG_ERROR("stream error, {}", stmeta.error());
     return nullptr;
-  }
+  }*/
 
   return std::make_shared<archive>(path, std::move(md), std::move(freader), create_tag{});
 }

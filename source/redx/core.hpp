@@ -7,15 +7,11 @@
 #include <redx/core/platform.hpp>
 #include <redx/core/utils.hpp>
 #include <redx/core/hashing.hpp>
-#include <redx/core/streambase.hpp>
-#include <redx/core/iserializable.hpp>
 #include <redx/core/stringpool.hpp>
-#include <redx/core/stringpoolsb.hpp>
 #include <redx/core/gstring.hpp>
 #include <redx/core/gstrid.hpp>
 #include <redx/core/gname.hpp>
 #include <redx/core/cname.hpp>
-#include <redx/core/cnameset.hpp>
 #include <redx/core/tstamp.hpp>
 #include <redx/core/path.hpp>
 #include <redx/core/misc.hpp>

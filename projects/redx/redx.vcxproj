@@ -71,12 +71,10 @@
     <ClInclude Include="..\..\source\redx\filesystem\directory_iterator.hpp" />
     <ClInclude Include="..\..\source\redx\filesystem\treefs.hpp" />
     <ClInclude Include="..\..\source\redx\init.hpp" />
-    <ClInclude Include="..\..\source\redx\io\archive_file_istream.hpp" />
-    <ClInclude Include="..\..\source\redx\io\file_stream.hpp" />
-    <ClInclude Include="..\..\source\redx\io\file_istream.hpp" />
-    <ClInclude Include="..\..\source\redx\io\memory_istream.hpp" />
-    <ClInclude Include="..\..\source\redx\io\file_ostream.hpp" />
-    <ClInclude Include="..\..\source\redx\io\stdstream_wrapper.hpp" />
+    <ClInclude Include="..\..\source\redx\io\bstream.hpp" />
+    <ClInclude Include="..\..\source\redx\io\file_access.hpp" />
+    <ClInclude Include="..\..\source\redx\io\file_bstream.hpp" />
+    <ClInclude Include="..\..\source\redx\io\mem_bstream.hpp" />
     <ClInclude Include="..\..\source\redx\oodle\oodle.hpp" />
     <ClInclude Include="..\..\source\redx\os\file_reader.hpp" />
     <ClInclude Include="..\..\source\redx\os\platform_utils.hpp" />
@@ -116,6 +114,8 @@
     <ClCompile Include="..\..\source\redx\filesystem\directory_entry.cpp" />
     <ClCompile Include="..\..\source\redx\filesystem\treefs.cpp" />
     <ClCompile Include="..\..\source\redx\init.cpp" />
+    <ClCompile Include="..\..\source\redx\io\bstream.cpp" />
+    <ClCompile Include="..\..\source\redx\io\file_access_win.cpp" />
     <ClCompile Include="..\..\source\redx\oodle\oodle.cpp" />
     <ClCompile Include="..\..\source\redx\os\win_utils.cpp" />
     <ClCompile Include="..\..\source\redx\os\win_file_reader.cpp" />

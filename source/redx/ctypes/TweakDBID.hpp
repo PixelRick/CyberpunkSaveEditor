@@ -69,12 +69,12 @@ struct TweakDBID
     return ret;
   }
 
-  friend streambase& operator<<(streambase& ar, TweakDBID& id)
+  /*friend streambase& operator<<(streambase& ar, TweakDBID& id)
   {
     constexpr uint64_t mask = (1ull << 40) - 1;
     id.as_u64 &= mask;
     return ar << id.as_u64;
-  }
+  }*/
 
   friend bool operator<(const TweakDBID& a, const TweakDBID& b)
   {

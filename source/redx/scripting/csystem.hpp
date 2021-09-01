@@ -10,7 +10,7 @@
 #include "redx/csav/serializers.hpp"
 #include "CStringPool.hpp"
 #include "cobject.hpp"
-#include "redx/io/stdstream_wrapper.hpp"
+#include "redx/io/bstream.hpp"
 
 enum class ESystemKind : uint8_t
 {
@@ -244,8 +244,8 @@ public:
       writer.write((char*)m_subsys_names.data(), cnames_cnt * sizeof(CName));
     }
 
-    stdstream_wrapper stw(writer);
-    uint32_t base_spos = (uint32_t)stw.tell();
+    generic_obstream stw(*writer.rdbuf());
+    uint32_t base_spos = (uint32_t)stw.tellp();
 
     // i see no choice but to build objects first to populate the pool
     // the game probably actually uses this pool so they don't have
@@ -279,7 +279,7 @@ public:
     new_header.strpool_descs_offset = 0;
     serctx.strpool.serialize_out(stw, base_spos, new_header.strpool_data_offset, strpool_data_size);
     
-    if (stw.has_error())
+    if (!stw)
       return false;
 
     new_header.obj_descs_offset = new_header.strpool_data_offset + strpool_data_size;

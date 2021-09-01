@@ -6,6 +6,7 @@
 #include <numeric>
 
 #include <redx/core.hpp>
+#include <redx/io/bstream.hpp>
 
 namespace redx::radr {
 
@@ -13,11 +14,6 @@ using file_id = redx::path_id;
 
 struct file_record
 {
-  friend streambase& operator<<(streambase& st, file_record& x)
-  {
-    return st.serialize_pod_raw(x);
-  }
-
   file_id     fid;
   file_time   ftime;
   uint32_t    inl_buffer_segs_cnt;
@@ -31,11 +27,6 @@ static_assert(sizeof(file_record) == 0x38);
 
 struct segment_descriptor
 {
-  friend streambase& operator<<(streambase& st, segment_descriptor& x)
-  {
-    return st.serialize_pod_raw(x);
-  }
-
   inline bool is_segment_compressed() const
   {
     return size != disk_size;
@@ -56,11 +47,6 @@ static_assert(sizeof(segment_descriptor) == 0x10);
 
 struct dependency
 {
-  friend streambase& operator<<(streambase& st, dependency& x)
-  {
-    return st.serialize_pod_raw(x);
-  }
-
   uint64_t hpath;
 };
 
@@ -110,9 +96,10 @@ struct metadata
   metadata() = default;
   ~metadata() = default;
 
-  void serialize(streambase& st, bool check_crc = true);
+  bool serialize_in(ibstream& st, bool check_crc = true); 
+  bool serialize_out(obstream& st) const; 
 
-  uint64_t compute_tbls_crc64();
+  uint64_t compute_tbls_crc64() const;
 
   std::vector<file_record>        records;
   std::vector<segment_descriptor> segments;

@@ -1,5 +1,5 @@
 #include <redx/filesystem/treefs.hpp>
-#include <redx/io/file_stream.hpp>
+#include <redx/io/file_bstream.hpp>
 #include <filesystem>
 
 namespace redx::filesystem {
@@ -129,7 +129,7 @@ constexpr int32_t ardb_root_idx = -1;
 // array of (dirs/files fhash (optional), idx parent, idx fname) = one u64 per file/ folder = 5MB
 bool treefs::load_ardb(const std::filesystem::path& arpath)
 {
-  redx::file_istream ifs;
+  redx::std_file_ibstream ifs;
   ifs.open(arpath);
 
   if (!ifs.is_open())
@@ -139,7 +139,7 @@ bool treefs::load_ardb(const std::filesystem::path& arpath)
   }
 
   ardb_header hdr;
-  ifs.serialize_pod_raw(hdr);
+  ifs >> hdr;
 
   if (!hdr.is_magic_ok())
   {
@@ -153,12 +153,12 @@ bool treefs::load_ardb(const std::filesystem::path& arpath)
   std::string name;
   for (size_t i = 0; i < hdr.names_cnt; ++i)
   {
-    ifs.serialize_str_lpfxd(name);
+    ifs.read_str_lpfxd(name);
     names.emplace_back(name);
   }
 
   std::vector<ardb_record> recs(hdr.entries_cnt);
-  ifs.serialize_pods_array_raw(recs.data(), hdr.entries_cnt);
+  ifs.read_array(recs);
 
   std::vector<int32_t> entry_indices;
 
