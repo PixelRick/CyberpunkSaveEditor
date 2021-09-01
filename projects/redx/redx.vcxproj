@@ -39,7 +39,6 @@
     <ClInclude Include="..\..\source\redx\csav\nodes.hpp" />
     <ClInclude Include="..\..\source\redx\csav\savegame.hpp" />
     <ClInclude Include="..\..\source\redx\csav\version.hpp" />
-    <ClInclude Include="..\..\source\redx\csav\misc\serializable_stringpool.hpp" />
     <ClInclude Include="..\..\source\redx\csav\misc\system_serializer.hpp" />
     <ClInclude Include="..\..\source\redx\csav\node.hpp" />
     <ClInclude Include="..\..\source\redx\csav\nodes\CCharacterCustomization.hpp" />
@@ -76,11 +75,6 @@
     <ClInclude Include="..\..\source\redx\radr\file_info.hpp" />
     <ClInclude Include="..\..\source\redx\radr\radr_format.hpp" />
     <ClInclude Include="..\..\source\redx\radr\srxl\srxl_format.hpp" />
-    <ClInclude Include="..\..\source\redx\rtdt\dynamic.hpp" />
-    <ClInclude Include="..\..\source\redx\rtdt\rttr_helpers.hpp" />
-    <ClInclude Include="..\..\source\redx\rtdt\native.hpp" />
-    <ClInclude Include="..\..\source\redx\rtdt\itype.hpp" />
-    <ClInclude Include="..\..\source\redx\rtdt\Simple.hpp" />
     <ClInclude Include="..\..\source\redx\scripting.hpp" />
     <ClInclude Include="..\..\source\redx\scripting\cclass.hpp" />
     <ClInclude Include="..\..\source\redx\scripting\cobject.hpp" />
@@ -91,14 +85,16 @@
     <ClInclude Include="..\..\source\redx\scripting\csystem_serctx.hpp" />
     <ClInclude Include="..\..\source\redx\scripting\fwd.hpp" />
     <ClInclude Include="..\..\source\redx\scripting\iproperty.hpp" />
-    <ClInclude Include="..\..\source\redx\serialization\cnameset_old.hpp" />
     <ClInclude Include="..\..\source\redx\serialization\cnames_blob.hpp" />
     <ClInclude Include="..\..\source\redx\serialization\iserializable.hpp" />
     <ClInclude Include="..\..\source\redx\serialization\resids_blob.hpp" />
-    <ClInclude Include="..\..\source\redx\serialization\stringset.hpp" />
-    <ClInclude Include="..\..\source\redx\serialization\stringvec.hpp" />
     <ClInclude Include="..\..\source\redx\tmp\archive_test.hpp" />
-    <ClInclude Include="..\..\source\redx\tmp\resid_set.hpp" />
+    <ClInclude Include="..\..\source\redx\trash\cnameset_old.hpp" />
+    <ClInclude Include="..\..\source\redx\trash\serializable_stringpool.hpp" />
+    <ClInclude Include="..\..\source\redx\trash\streambase.hpp" />
+    <ClInclude Include="..\..\source\redx\trash\stringpoolsb.hpp" />
+    <ClInclude Include="..\..\source\redx\trash\stringset.hpp" />
+    <ClInclude Include="..\..\source\redx\trash\stringvec.hpp" />
     <ClInclude Include="..\..\source\redx\tweakdb\tweakdb.hpp" />
     <ClInclude Include="..\..\source\redx\tweakdb\value_pool.hpp" />
     <ClInclude Include="..\..\source\redx\utils.hpp" />
@@ -107,7 +103,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\source\redx\core\utils.cpp" />
     <ClCompile Include="..\..\source\redx\csav\node_tree.cpp" />
-    <ClCompile Include="..\..\source\redx\csav\misc\serializable_stringpool.cpp" />
     <ClCompile Include="..\..\source\redx\ctypes\CEnum.cpp" />
     <ClCompile Include="..\..\source\redx\ctypes\CFact.cpp" />
     <ClCompile Include="..\..\source\redx\ctypes\TweakDBID.cpp" />
@@ -123,11 +118,20 @@
     <ClCompile Include="..\..\source\redx\radr\archive.cpp" />
     <ClCompile Include="..\..\source\redx\radr\radr_format.cpp" />
     <ClCompile Include="..\..\source\redx\radr\srxl\srxl_format.cpp" />
-    <ClCompile Include="..\..\source\redx\rtdt\Source.cpp" />
     <ClCompile Include="..\..\source\redx\scripting\cclass.cpp" />
     <ClCompile Include="..\..\source\redx\scripting\cobject.cpp" />
     <ClCompile Include="..\..\source\redx\scripting\cproperty_factory.cpp" />
     <ClCompile Include="..\..\source\redx\tmp\archive_test.cpp" />
+    <ClCompile Include="..\..\source\redx\trash\serializable_stringpool.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\source\redx\trash\streambase.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='RelWithDeb|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\source\redx\utils2.cpp" />
   </ItemGroup>
   <ItemGroup>

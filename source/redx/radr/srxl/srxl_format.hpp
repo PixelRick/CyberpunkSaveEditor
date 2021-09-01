@@ -7,7 +7,7 @@
 
 #include <redx/core.hpp>
 #include <redx/io/bstream.hpp>
-#include <redx/serialization/stringvec.hpp>
+//#include <redx/serialization/stringvec.hpp>
 
 namespace redx::radr::srxl::format {
 

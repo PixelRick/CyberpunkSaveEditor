@@ -7,10 +7,10 @@
 #include <unordered_map>
 
 #include <redx/core/cname.hpp>
-#include <redx/core/streambase.hpp>
 #include <redx/core/hashing.hpp>
 #include <redx/core/utils.hpp>
 #include <redx/containers/bitfield.hpp>
+#include <redx/io/bstream.hpp>
 
 namespace redx {
 

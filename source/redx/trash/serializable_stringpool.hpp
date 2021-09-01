@@ -12,7 +12,7 @@
 //
 //struct range_desc
 //{
-//  constexpr static size_t serial_size = sizeof(uint32_t);
+//  static constexpr size_t serial_size = sizeof(uint32_t);
 //
 //  range_desc() noexcept = default;
 //
