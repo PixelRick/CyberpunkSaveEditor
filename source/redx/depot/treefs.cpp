@@ -1,10 +1,15 @@
-#include <redx/filesystem/treefs.hpp>
-#include <redx/io/file_bstream.hpp>
+#include <redx/depot/treefs.hpp>
+
 #include <filesystem>
+#include <string_view>
 
-namespace redx::filesystem {
+#include <redx/io/file_access.hpp>
+#include <redx/io/file_bstream.hpp>
+#include <redx/radr/srxl/srxl_format.hpp>
 
-bool treefs::load_archive(const std::filesystem::path& path)
+namespace redx::depot {
+
+bool treefs::load_archive(const std::filesystem::path& p)
 {
   if (m_full)
   {
@@ -12,7 +17,7 @@ bool treefs::load_archive(const std::filesystem::path& path)
     return false;
   }
 
-  if (!std::filesystem::is_regular_file(path))
+  if (!std::filesystem::is_regular_file(p))
   {
     SPDLOG_ERROR("invalid path");
     return false;
@@ -20,35 +25,37 @@ bool treefs::load_archive(const std::filesystem::path& path)
 
   for (const auto& ar : m_archives)
   {
-    if (ar->path() == path)
+    if (ar->path() == p)
     {
       SPDLOG_ERROR("an archive with same path has already been loaded");
       return false;
     }
   }
 
-  auto ar = redx::archive::load(path);
-  if (!ar)
+  auto ar = archive::create();
+  ar->open(p);
+
+  if (!ar->is_open())
   {
     SPDLOG_ERROR("couldn't load archive");
     return false;
   }
 
-  uint16_t ar_idx = static_cast<uint16_t>(m_archives.size());
+  uint16_t ar_idx = reliable_numeric_cast<uint16_t>(m_archives.size());
   if (ar_idx == std::numeric_limits<uint16_t>::max())
   {
     m_full = true;
   }
   m_archives.emplace_back(ar);
 
-  auto ardb_path = std::filesystem::path("./ardbs/") / path.filename().replace_extension("ardb");
-  if (!std::filesystem::is_regular_file(ardb_path))
+  auto srxl_path = std::filesystem::path("./pathdb/") / p.filename().replace_extension("srxl");
+  if (!std::filesystem::is_regular_file(srxl_path))
   {
-    SPDLOG_WARN("{} is missing, all files from loaded archive will only be accessible by file_id", ardb_path.string());
+    SPDLOG_WARN("{} is missing, all files from loaded archive will only be accessible by file_id", srxl_path.string());
   }
   else
   {
-    load_ardb(ardb_path);
+    load_srxl(srxl_path);
   }
 
   // map tree records to archive records
@@ -103,103 +110,90 @@ bool treefs::load_archive(const std::filesystem::path& path)
 }
 
 
-struct ardb_header
-{
-  uint32_t magic = 'ARDB';
-  uint32_t names_cnt;
-  uint32_t dirnames_cnt;
-  uint32_t entries_cnt;
-
-  bool is_magic_ok() const
-  {
-    return magic == 'ARDB';
-  }
-};
-
-struct ardb_record
-{
-  uint32_t name_idx;
-  int32_t parent_idx;
-};
-
-constexpr int32_t ardb_root_idx = -1;
-
 // ardb format (custom thing, not cdpr's)
 // string  fnames (path components)
 // array of (dirs/files fhash (optional), idx parent, idx fname) = one u64 per file/ folder = 5MB
-bool treefs::load_ardb(const std::filesystem::path& arpath)
+bool treefs::load_srxl(const std::filesystem::path& p)
 {
-  redx::std_file_ibstream ifs;
-  ifs.open(arpath);
+  std_file_ibstream st(p);
 
-  if (!ifs.is_open())
+  if (!st.is_open())
   {
-    SPDLOG_ERROR("ardb file not found at {}", arpath.string());
+    SPDLOG_ERROR("srxl file not found at {}", p.string());
     return false;
   }
 
-  ardb_header hdr;
-  ifs >> hdr;
+  redx::radr::srxl::format::srxl srxl;
+  srxl.serialize_in(st);
 
-  if (!hdr.is_magic_ok())
+  if (!st)
   {
-    SPDLOG_ERROR("ardb file has wrong magic");
     return false;
   }
 
-  std::vector<fs_gname> names; // directory names are first
-  names.reserve(hdr.names_cnt);
-
-  std::string name;
-  for (size_t i = 0; i < hdr.names_cnt; ++i)
+  struct path_dir
   {
-    ifs.read_str_lpfxd(name);
-    names.emplace_back(name);
-  }
+    fnv1a64_t hash;
+    std::string_view name;
+    bool is_dir;
+  };
 
-  std::vector<ardb_record> recs(hdr.entries_cnt);
-  ifs.read_array(recs);
+  std::vector<path_dir> components_hashes;
+  bool convert_success{};
 
-  std::vector<int32_t> entry_indices;
-
-  for (size_t i = 0; i < hdr.entries_cnt; ++i)
+  for (size_t i = 0; i < srxl.svec.size(); ++i)
   {
-    const ardb_record& rec = recs[i];
-    const bool is_file = (rec.name_idx >= hdr.dirnames_cnt);
+    auto strv = srxl.svec.at(i);
+    path p(strv, convert_success);
+    if (convert_success)
+    {
+      // don't register root..
+      if (p.strv().empty())
+      {
+        continue;
+      }
 
-    int32_t parent_entry_idx;
-    if (rec.parent_idx == ardb_root_idx)
-    {
-      parent_entry_idx = root_idx;
-    }
-    else if (rec.parent_idx >= i)
-    {
-      SPDLOG_ERROR("unordered record found");
-      return false;
+      strv = p.strv();
+      fnv1a64_t hash = fnv1a64("");
+      const char* const start = strv.data();
+      const char* const end = start + strv.size() + 1; //+1 to get null character
+      const char* prev = start;
+      for (const char* pc = start; pc != end; ++pc)
+      {
+        if (*pc == '\\' || *pc == '\0')
+        {
+          std::string_view component_strv(prev, pc - prev);
+          hash = fnv1a64_continue(hash, component_strv);
+          components_hashes.emplace_back(path_dir{hash, component_strv, true});
+
+          if (*pc == '\0')
+          {
+            break;
+          }
+
+          hash = fnv1a64_continue(hash, "\\");
+          prev = pc + 1;
+        }
+      }
+      components_hashes.back().is_dir = false;
+
+      int32_t parent_entry_idx = root_idx;
+      for (const auto& ch : components_hashes)
+      {
+        parent_entry_idx = insert_child_entry(parent_entry_idx, fs_gname(ch.name), ch.is_dir ? entry_kind::directory : entry_kind::reserved_for_file, true).first;
+        if (parent_entry_idx < 0)
+        {
+          SPDLOG_ERROR("failed to insert entry for {}", ch.name);
+          break;
+        }
+      }
+
+      components_hashes.clear();
     }
     else
     {
-      parent_entry_idx = entry_indices[rec.parent_idx];
+      SPDLOG_ERROR("failed to fix srxl path: {}", strv);
     }
-
-    fs_gname name = names[rec.name_idx];
-
-    // temporary, ardbs have the root entry for some reason..
-    if (name.strv() == "")
-    {
-      assert(parent_entry_idx == root_idx);
-      entry_indices.emplace_back(root_idx);
-      continue;
-    }
-
-    int32_t entry_index = insert_child_entry(parent_entry_idx, name, is_file ? entry_kind::reserved_for_file : entry_kind::directory, true).first;
-    if (entry_index < 0)
-    {
-      SPDLOG_ERROR("failed to insert entry for {}", name.strv());
-      return false;
-    }
-
-    entry_indices.emplace_back(entry_index);
   }
 
   return true;
@@ -293,7 +287,7 @@ std::pair<int32_t, bool> treefs::insert_child_entry(int32_t parent_entry_idx, fs
     return {-1, false};
   }
 
-  entry_idx = static_cast<int32_t>(m_entries.size());
+  entry_idx = reliable_numeric_cast<int32_t>(m_entries.size());
   auto& new_entry = m_entries.emplace_back(pid, name, type, is_depot_path);
 
   new_entry.parent_entry_idx = parent_entry_idx;
@@ -325,5 +319,5 @@ std::pair<int32_t, bool> treefs::insert_child_entry(int32_t parent_entry_idx, fs
   return {entry_idx, true};
 }
 
-} // namespace redx::filesystem
+} // namespace redx::depot
 

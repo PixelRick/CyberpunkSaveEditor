@@ -8,11 +8,11 @@
 #include "redx/scripting/csystem.hpp"
 #include <redx/core.hpp>
 #include <redx/io/bstream.hpp>
-#include <redx/serialization/cnameset.hpp>
+#include <redx/serialization/cnames_blob.hpp>
 
 #include <redx/containers/bitfield.hpp>
-#include <redx/tmp/resid_set.hpp>
-#include <redx/io/memory_istream.hpp>
+#include <redx/serialization/resids_blob.hpp>
+#include <redx/io/mem_bstream.hpp>
 
 
 class archive_test
@@ -272,44 +272,44 @@ public:
     reader.seekg(0);
     reader.read(buffer.get(), buf_size);
 
-    redx::memory_istream ar(buffer.get(), buf_size);
+    redx::mem_ibstream ar(buffer.get(), buf_size);
 
     m_ids.clear();
     m_objects.clear();
     m_handle_objects.clear();
 
-    ar.serialize_pod_raw(m_header);
+    ar >> m_header;
 
     vlotbl_desc resids_tbl_desc {};
     vlotbl_desc strings_tbl_desc {};
     vlotbl_desc objects_tbl_desc {};
 
     if (m_header.vlotbl_flags & vlotbl_resids)
-      ar.serialize_pod_raw(resids_tbl_desc);
+      ar >> resids_tbl_desc;
 
     if (m_header.vlotbl_flags & vlotbl_strings)
-      ar.serialize_pod_raw(strings_tbl_desc);
+      ar >> strings_tbl_desc;
 
     if (m_header.vlotbl_flags & vlotbl_objects)
-      ar.serialize_pod_raw(objects_tbl_desc);
+      ar >> objects_tbl_desc;
 
-    ar.serialize_pod_raw(m_uk1);
+    ar >> m_uk1;
 
     //if (uk1 != 0)
     //  throw std::exception("uk1 != 0, cool :)");
 
     uint16_t ids_cnt = 0;
-    ar.serialize_pod_raw(ids_cnt);
+    ar >> ids_cnt;
 
     if (ids_cnt != m_header.ids_cnt)
       throw std::exception("ids_cnt != m_header.ids_cnt, not cool :(");
 
     m_ids.resize(ids_cnt);
-    ar.serialize_pods_array_raw(m_ids.data(), m_header.ids_cnt);
+    ar.read_array(m_ids);
 
     // end of header
 
-    const uint32_t data_offset = (uint32_t)ar.tell();
+    const uint32_t data_offset = (uint32_t)ar.tellg();
     const uint32_t data_size = buf_size - data_offset;
 
     // res refs
@@ -435,12 +435,12 @@ public:
 
     // ----------------------------------------------
 
-    stdstream_wrapper stw(writer);
-    uint32_t start_spos = (uint32_t)stw.tell();
+    generic_obstream stw(*writer.rdbuf());
+    uint32_t start_spos = (uint32_t)stw.tellp();
     uint32_t blob_size = 0; // we don't know it yet
 
     header_t new_header = m_header;
-    stw.serialize_pod_raw(new_header); 
+    stw << new_header; 
 
     vlotbl_desc resids_tbl_desc {};
     vlotbl_desc strings_tbl_desc {};
@@ -449,38 +449,38 @@ public:
     if (serctx.respool.size() != 0)
     {
       new_header.vlotbl_flags |= vlotbl_resids;
-      stw.serialize_pod_raw(resids_tbl_desc);
+      stw << resids_tbl_desc;
     }
     
     if (serctx.strpool.size() != 0)
     {
       new_header.vlotbl_flags |= vlotbl_strings;
-      stw.serialize_pod_raw(strings_tbl_desc);
+      stw << strings_tbl_desc;
     }
 
     if (serctx.m_objects.size() != 0)
     {
       new_header.vlotbl_flags |= vlotbl_objects;
-      stw.serialize_pod_raw(objects_tbl_desc);
+      stw << objects_tbl_desc;
     }
 
-    stw.serialize_pod_raw(m_uk1);
+    stw << m_uk1;
 
     uint16_t ids_cnt = (uint16_t)m_ids.size();
-    stw.serialize_pod_raw(ids_cnt);
-    stw.serialize_pods_array_raw(m_ids.data(), ids_cnt);
+    stw << ids_cnt;
+    stw.write_array(m_ids);
     new_header.ids_cnt = ids_cnt;
 
     // end of header
 
-    const uint32_t data_spos = (uint32_t)stw.tell();
+    const uint32_t data_spos = (uint32_t)stw.tellp();
     const uint32_t data_offset = data_spos - start_spos;
 
     // rarefs
 
     if (serctx.respool.size() != 0)
     {
-      const uint32_t descs_offset = (uint32_t)stw.tell() - data_spos;
+      const uint32_t descs_offset = (uint32_t)stw.tellp() - data_spos;
       uint32_t descs_size = 0;
       uint32_t data_size = 0;
       serctx.respool.serialize_out(stw, data_spos, descs_size, data_size, m_uk1 != 0);
@@ -492,7 +492,7 @@ public:
 
     if (serctx.strpool.size() != 0)
     {
-      const uint32_t descs_offset = (uint32_t)stw.tell() - data_spos;
+      const uint32_t descs_offset = (uint32_t)stw.tellp() - data_spos;
       uint32_t descs_size = 0;
       uint32_t data_size = 0;
       serctx.strpool.serialize_out(stw, data_spos, descs_size, data_size);
@@ -502,7 +502,7 @@ public:
 
     // objects
 
-    objects_tbl_desc.descs_offset = (uint32_t)stw.tell() - data_spos;
+    objects_tbl_desc.descs_offset = (uint32_t)stw.tellp() - data_spos;
     const size_t obj_descs_size = obj_descs.size() * sizeof(obj_descs[0]);
     objects_tbl_desc.data_offset = (uint32_t)(objects_tbl_desc.descs_offset + obj_descs_size);
 
@@ -510,35 +510,35 @@ public:
     for (auto& desc : obj_descs)
       desc.data_offset += objects_tbl_desc.data_offset;
 
-    stw.serialize_pods_array_raw(obj_descs.data(), obj_descs.size());
+    stw.write_array(obj_descs);
 
     auto objdata = objects_ss.str(); // todo: fix
-    stw.serialize_bytes(objdata.data(), objdata.size());
-    uint32_t end_spos = (uint32_t)stw.tell();
+    stw.write_bytes(objdata.data(), objdata.size());
+    uint32_t end_spos = (uint32_t)stw.tellp();
 
     // at this point let's overwrite the header
 
-    stw.seek(start_spos);
+    stw.seekp(start_spos);
     
-    stw.serialize_pod_raw(new_header); 
+    stw << new_header; 
 
     if (new_header.vlotbl_flags & vlotbl_resids)
     {
-      stw.serialize_pod_raw(resids_tbl_desc);
+      stw << resids_tbl_desc;
     }
     
     if (new_header.vlotbl_flags & vlotbl_strings)
     {
-      stw.serialize_pod_raw(strings_tbl_desc);
+      stw << strings_tbl_desc;
     }
 
     if (new_header.vlotbl_flags & vlotbl_objects)
     {
-      stw.serialize_pod_raw(objects_tbl_desc);
+      stw << objects_tbl_desc;
     }
 
     // return to end of data
-    stw.seek(end_spos);
+    stw.seekp(end_spos);
 
     return true;
   }

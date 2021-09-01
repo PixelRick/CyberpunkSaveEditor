@@ -1,48 +1,51 @@
-#include <redx/archive/archive.hpp>
+#include <redx/radr/archive.hpp>
 
 #include <fstream>
 #include <set>
 
-#include <redx/os/file_reader.hpp>
-#include <redx/io/bstream.hpp>
+#include <redx/io/file_access.hpp>
 #include <redx/io/mem_bstream.hpp>
 #include <redx/oodle/oodle.hpp>
 //#include <redx/radr/fdesc.hpp>
 
-namespace redx {
+namespace redx::radr {
 
 // check_for_corruption not implemented yet
-std::shared_ptr<archive> archive::load(const std::filesystem::path& path)
+bool archive::open(const std::filesystem::path& p)
 {
-  os::file_reader freader;
-
-  freader.open(path);
-
-  if (!freader.is_open())
+  if (is_open())
   {
-    SPDLOG_ERROR("archive file not found at {}", path.string());
-    return nullptr;
+    SPDLOG_ERROR("already open");
+    return false;
   }
 
-  bool ok{};
+  m_freader = std_file_access::create(p, std::ios::in);
 
-  redx::radr::header hdr;
-  ok = freader.read(std::span<char>((char*)&hdr, sizeof(hdr))); // todo: reader stream wrapper
+  if (!m_freader->is_open())
+  {
+    SPDLOG_ERROR("couldn't open archive file");
+    return false;
+  }
+
+  bool ok = {};
+
+  format::header hdr;
+  ok = m_freader->read(std::span<char>((char*)&hdr, sizeof(hdr))); // todo: reader stream wrapper
   if (!ok)
   {
-    return nullptr;
+    return false;
   }
 
   if (!hdr.is_magic_ok())
   {
     SPDLOG_ERROR("archive file has wrong magic");
-    return nullptr;
+    return false;
   }
 
-  ok = freader.seek(hdr.metadata_offset);
+  ok = m_freader->seekpos(hdr.metadata_offset);
   if (!ok)
   {
-    return nullptr;
+    return false;
   }
 
   // buffering is disabled, let's fetch the whole metadata block
@@ -50,30 +53,24 @@ std::shared_ptr<archive> archive::load(const std::filesystem::path& path)
   auto metadata_block = std::make_unique<char[]>(hdr.metadata_size);
   std::span<char> metadata_block_span(metadata_block.get(), hdr.metadata_size);
 
-  ok = freader.read(metadata_block_span);
+  ok = m_freader->read(metadata_block_span);
   if (!ok)
   {
-    return nullptr;
+    SPDLOG_ERROR("couldn't read metadata");
+    return false;
   }
 
   mem_ibstream stmeta(metadata_block_span);
 
-  redx::radr::metadata md;
-  md.serialize_in(stmeta, true);
+  format::metadata md;
+  stmeta >> md;
 
-  /*if (stmeta.has_error())
+  if (!stmeta)
   {
-    SPDLOG_ERROR("stream error, {}", stmeta.error());
-    return nullptr;
-  }*/
+    SPDLOG_ERROR("metadata serialization error");
+    return false;
+  }
 
-  return std::make_shared<archive>(path, std::move(md), std::move(freader), create_tag{});
-}
-
-archive::archive(const std::filesystem::path& p, radr::metadata&& md, os::file_reader&& freader, create_tag&&)
-  : m_path(p)
-  , m_freader(std::move(freader))
-{
   std::swap(m_dependencies, md.dependencies);
   std::swap(m_segments, md.segments);
 
@@ -82,6 +79,8 @@ archive::archive(const std::filesystem::path& p, radr::metadata&& md, os::file_r
   {
     m_records.emplace_back(record);
   }
+
+  return true;
 }
 
 bool archive::read_file(uint32_t idx, const std::span<char>& dst) const
@@ -102,7 +101,7 @@ bool archive::read_file(uint32_t idx, const std::span<char>& dst) const
 
   // read and decompress first chunks
 
-  redx::radr::segment_descriptor sd0 = m_segments[rec.segs_irange.beg()];
+  segment_descriptor sd0 = m_segments[rec.segs_irange.beg()];
 
   const size_t std0_size = sd0.size;
 
@@ -125,7 +124,7 @@ bool archive::read_file(uint32_t idx, const std::span<char>& dst) const
   return success;
 }
 
-archive::file_info archive::get_file_info(uint32_t index) const
+file_info archive::get_file_info(uint32_t index) const
 {
   file_info ret;
 
@@ -172,16 +171,16 @@ bool archive::read_segments_raw(u32range segs_irange, const std::span<char>& dst
 
   for (auto seg_it = segspan.begin(); seg_it != segspan.end(); /**/)
   {
-    redx::radr::segment_descriptor bulk_sd = *seg_it++;
+    segment_descriptor bulk_sd = *seg_it++;
     bulk_sd.size = 0; // unused
 
     while (seg_it != segspan.end())
     {
-      redx::radr::segment_descriptor seg = *seg_it++;
+      segment_descriptor seg = *seg_it++;
       if (seg.offset_in_archive == bulk_sd.end_offset_in_archive())
       {
         bulk_sd.disk_size += seg.disk_size;
-      }
+      } 
       else
       {
         break;
@@ -212,7 +211,7 @@ bool archive::read_segments_raw(u32range segs_irange, const std::span<char>& dst
   return true;
 }
 
-bool archive::read_segment(const redx::radr::segment_descriptor& sd, const std::span<char>& dst, bool decompress) const
+bool archive::read_segment(const segment_descriptor& sd, const std::span<char>& dst, bool decompress) const
 {
   decompress = decompress && sd.is_segment_compressed();
 
@@ -269,17 +268,17 @@ bool archive::read(size_t offset, const std::span<char>& dst) const
   //m_ifs.seekg(offset);
   //m_ifs.read(dst.data(), dst.size());
 
-  if (!m_freader.is_open())
+  if (!m_freader->is_open())
   {
     return false;
   }
 
   bool ok = true;
-  ok &= m_freader.seek(offset);
-  ok &= m_freader.read(dst);
+  ok &= m_freader->seekpos(offset);
+  ok &= m_freader->read(dst);
 
   return ok;
 }
 
-} // namespace redx
+} // namespace redx::radr
 

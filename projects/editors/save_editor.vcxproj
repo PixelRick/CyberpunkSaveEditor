@@ -27,9 +27,6 @@
     <ProjectReference Include="..\external\imgui.vcxproj">
       <Project>{b0e4d3c6-c1ba-4488-9619-a55ae7b9a8d5}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\external\rttr.vcxproj">
-      <Project>{fc19f68c-b775-452c-9eb0-f49c2bac5dc2}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\external\xlz4.vcxproj">
       <Project>{e368f9af-5f85-4ad4-8e6f-2056fc877d38}</Project>
     </ProjectReference>

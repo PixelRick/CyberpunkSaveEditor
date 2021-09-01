@@ -11,21 +11,26 @@ namespace redx::csav {
 
 struct compressed_chunk_desc
 {
-  static constexpr bool is_serializable_pod = false;
-  static constexpr size_t serialized_size = 12;
-
   // data_size is uncompressed size
-  uint32_t offset, size, data_size, data_offset;
+  uint32_t offset, size, data_size;
 };
 
-inline ibstream& operator>>(ibstream& st, compressed_chunk_desc& x)
+struct compressed_chunk_desc2
+  : compressed_chunk_desc
 {
-  return st.read_bytes((char*)&x, compressed_chunk_desc::serialized_size);
+  uint32_t data_offset;
+};
+
+static_assert(sizeof(compressed_chunk_desc2) == 16);
+
+inline ibstream& operator>>(ibstream& st, compressed_chunk_desc2& x)
+{
+  return st.read_bytes((char*)&x, sizeof(compressed_chunk_desc));
 }
 
-inline obstream& operator<<(obstream& st, const compressed_chunk_desc& x)
+inline obstream& operator<<(obstream& st, const compressed_chunk_desc2& x)
 {
-  return st.write_bytes((const char*)&x, compressed_chunk_desc::serialized_size);
+  return st.write_bytes((const char*)&x, sizeof(compressed_chunk_desc));
 }
 
 op_status node_tree::load(std::filesystem::path path)
@@ -62,7 +67,7 @@ void node_tree::serialize_in(ibstream& st)
 
 
   serial_tree stree;
-  std::vector<compressed_chunk_desc> chunk_descs;
+  std::vector<compressed_chunk_desc2> chunk_descs;
   std::vector<char>& nodedata = stree.nodedata;
 
   // --------------------------------------------------------
@@ -321,7 +326,7 @@ void node_tree::serialize_out(obstream& st)
 
   uint32_t expected_raw_size = (uint32_t)root->calcsize();
   size_t max_chunkcnt = LZ4_compressBound(expected_raw_size) / XLZ4_CHUNK_SIZE + 2; // tbl should fit in 1 extra XLZ4_CHUNK_SIZE 
-  size_t chunktbl_maxsize = (max_chunkcnt * compressed_chunk_desc::serialized_size) + 8;
+  size_t chunktbl_maxsize = (max_chunkcnt * sizeof(compressed_chunk_desc)) + 8;
 
   std::vector<char> tmp;
   tmp.resize(XLZ4_CHUNK_SIZE);
@@ -358,7 +363,7 @@ void node_tree::serialize_out(obstream& st)
   {
     auto& chunk_desc = chunk_descs.emplace_back();
 
-    chunk_desc.data_offset = reliable_numeric_cast<uint32_t>(pcur - prealbeg);
+    //chunk_desc.data_offset = reliable_numeric_cast<uint32_t>(pcur - prealbeg);
     chunk_desc.offset = reliable_numeric_cast<uint32_t>(st.tellp());
 
     int srcsize = (int)(pend - pcur);

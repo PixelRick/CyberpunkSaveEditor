@@ -5,8 +5,8 @@
 #include <spdlog/spdlog.h>
 
 #include "fwd.hpp"
-#include <redx/core/cnameset.hpp>
-#include <redx/tmp/resid_set.hpp>
+#include <redx/serialization/cnames_blob.hpp>
+#include <redx/serialization/resids_blob.hpp>
 
 class CSystemSerCtx
 {
@@ -23,8 +23,8 @@ protected:
 
 public:
 
-  redx::cnameset strpool;
-  redx::resid_set respool;
+  redx::cnames_blob strpool;
+  redx::resids_blob respool;
 
   CSystemSerCtx()
   {

@@ -15,69 +15,14 @@ namespace redx {
 
 using bstreampos = uint64_t;
 
-// binary serialization traits
-//
-// these are the attributes you can define in your serializable types:
-// struct some_serializable_class
-// {
-//   // when is_trivially_copyable is false, or you wanna explicitly prevent someone from serializing it as-is:
-//   static constexpr bool is_serializable_pod = false/true;
-//
-//   // to delimit serialization while not resorting to packing
-//   T not_serialized_padding;
-// };
-//
-
-namespace detail {
-
-template <typename T>
-class pod_serialization_size
-{
-  template <typename U>
-  static std::integral_constant<size_t, U::pod_serialization_size>
-  get_value(decltype(&U::pod_serialization_size));
-
-  template <typename U>
-  static std::integral_constant<size_t, offsetof(U, not_serialized_padding)>
-  get_value(decltype(&U::not_serialized_padding));
-
-  template <typename U>
-  static std::integral_constant<size_t, sizeof(U)>
-  get_value(...);
-
-public:
-  static constexpr size_t value = decltype(get_value<T>(0))::value;
-};
-
 template <class T, class = void>
-struct is_serializable_pod
+struct is_trivially_serializable
 {
   static constexpr bool value = std::is_trivially_copyable_v<T>;
 };
 
-template <class T>
-struct is_serializable_pod<
-  T, typename std::enable_if<std::is_same<decltype(T::is_serializable_pod), const bool>::value>::type>
-{
-  static constexpr bool value = T::is_serializable_pod;
-};
-
-} // namespace detail
-
 template <typename T>
-inline constexpr size_t pod_serialization_size_v = detail::pod_serialization_size<T>::value;
-
-template <typename T>
-inline constexpr bool is_serializable_pod_v = detail::is_serializable_pod<T>::value;
-
-// do not specialize this
-template <typename T>
-struct serialization_traits
-{
-  static constexpr bool   is_serializable_pod   = is_serializable_pod_v<T>;
-  static constexpr size_t pod_serialization_size  = pod_serialization_size_v<T>;
-};
-
+inline constexpr bool is_trivially_serializable_v = is_trivially_serializable<T>::value;
 
 // base class for ibstream and obstream.
 struct bstream
@@ -178,14 +123,14 @@ struct ibstream
 
   // little-endian only
 
-  // read pod types
+  // read trivial types
   template <typename T, std::enable_if_t< 
-    is_serializable_pod_v<T> && 
+    is_trivially_serializable_v<T> && 
     !std::is_arithmetic_v<T> && 
     !std::is_const_v<T>, bool> = true> 
   FORCE_INLINE ibstream& operator>>(T& val) 
   { 
-    return read_bytes((char*)&val, pod_serialization_size_v<T>); 
+    return read_bytes((char*)&val, sizeof(T)); 
   }
 
   // read arithmetic types of size >1
@@ -291,8 +236,8 @@ struct ibstream
 
     return 0;
   }
-
-  ibstream& read_bytes(char* dst, size_t count)
+  
+  ibstream& read_bytes(void* dst, size_t count)
   {
     auto& sb = sbuf();
     const std::streamsize ssize = reliable_numeric_cast<std::streamsize>(count);
@@ -300,7 +245,7 @@ struct ibstream
 
     if (!fail())
     {
-      const auto rsize = sb.sgetn(dst, ssize);
+      const auto rsize = sb.sgetn((char*)dst, ssize);
       if (rsize != ssize)
       {
         set_fail();
@@ -339,7 +284,7 @@ struct ibstream
   template <typename T, std::enable_if_t<!std::is_const_v<T>, bool> = true>
   inline ibstream& read_array(T* arr, size_t count)
   {
-    if constexpr (is_serializable_pod_v<T> && pod_serialization_size_v<T> == sizeof(T))
+    if constexpr (is_trivially_serializable_v<T>)
     {
       read_bytes(reinterpret_cast<char*>(arr), count * sizeof(T));
     }
@@ -380,14 +325,14 @@ struct ibstream
     return read_array<T>(span.data(), span.size());
   }
 
-  template <typename T, typename = std::enable_if_t<std::is_integral_v<T> && !std::is_const_v<T>>>
+  template <typename T, std::enable_if_t<std::is_integral_v<T> && !std::is_const_v<T>, bool> = true>
   FORCE_INLINE ibstream& read_int_packed(T& out_value)
   {
     out_value = static_cast<T>(read_int64_packed());
     return *this;
   }
 
-  template <typename T, typename = std::enable_if_t<std::is_integral_v<T> && !std::is_const_v<T>>>
+  template <typename T, std::enable_if_t<std::is_integral_v<T> && !std::is_const_v<T>, bool> = true>
   FORCE_INLINE T read_int_packed()
   {
     return static_cast<T>(read_int64_packed());
@@ -482,13 +427,13 @@ struct obstream
 
   // little-endian only
 
-  // write pod types
+  // write trivial types
   template <typename T, std::enable_if_t<
-    is_serializable_pod_v<T> &&
+    is_trivially_serializable_v<T> &&
     !std::is_arithmetic_v<T>, bool> = true>
   FORCE_INLINE obstream& operator<<(const T& val)
   {
-    return write_bytes((const char*)&val, pod_serialization_size_v<T>);
+    return write_bytes((const char*)&val, sizeof(T));
   }
 
   // write arithmetic types of size >1
@@ -574,7 +519,7 @@ struct obstream
     return *this;
   }
 
-  obstream& write_bytes(const char* src, size_t count)
+  obstream& write_bytes(const void* src, size_t count)
   {
     auto& sb = sbuf();
     const std::streamsize ssize = reliable_numeric_cast<std::streamsize>(count);
@@ -582,7 +527,7 @@ struct obstream
 
     if (!fail())
     {
-      if (sb.sputn(src, ssize) != ssize)
+      if (sb.sputn((const char*)src, ssize) != ssize)
       {
         set_fail();
       }
@@ -631,18 +576,11 @@ struct obstream
     return write_bytes(span.data(), span.size());
   }
 
-  template <typename T, std::enable_if_t<
-    is_serializable_pod_v<T> || std::is_trivially_copyable_v<T>, bool> = true>
-  FORCE_INLINE obstream& write_pod(const T& val)
-  {
-    return write_bytes((const char*)&val, pod_serialization_size_v<T>);
-  }
-
   // depending on T, either writes the bytes span or writes element by element
   template <typename T>
   inline obstream& write_array(const T* arr, size_t count)
   {
-    if constexpr (is_serializable_pod_v<T> && pod_serialization_size_v<T> == sizeof(T))
+    if constexpr (is_trivially_serializable_v<T>)
     {
       write_bytes(reinterpret_cast<const char*>(arr), count * sizeof(T));
     }
@@ -672,7 +610,7 @@ struct obstream
     return write_array<T>(span.data(), span.size());
   }
 
-  template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
+  template <typename T, std::enable_if_t<std::is_integral_v<T>, bool> = true>
   FORCE_INLINE obstream& write_int_packed(const T& value)
   {
     write_int64_packed(static_cast<int64_t>(value));

@@ -5,7 +5,7 @@
 #include <array>
 #include <cmath>
 
-#include <redx/core/iserializable.hpp>
+#include <redx/serialization/iserializable.hpp>
 #include <redx/core/utils.hpp>
 
 namespace redx {

@@ -1,6 +1,5 @@
 #pragma once
 #include <inttypes.h>
-#include <stdlib.h>
 #include <optional>
 #include <vector>
 #include <array>
@@ -9,8 +8,8 @@
 #include <redx/core/cname.hpp>
 #include <redx/core/hashing.hpp>
 #include <redx/core/utils.hpp>
-#include <redx/io/bstream.hpp> 
-#include <redx/containers/bitfield.hpp>
+#include <redx/io/bstream.hpp>
+#include <redx/serialization/stringset.hpp>
 
 namespace redx {
 
@@ -18,19 +17,6 @@ namespace redx {
 
 struct cnameset
 {
-protected:
-
-  struct ser_desc
-  {
-    union
-    {
-      redx::bfm32<uint32_t, 0, 24> offset;
-      redx::bfm32<uint8_t, 24, 8> size;
-    };
-  };
-
-public:
-
   using container_type = std::vector<cname>;
 
   cnameset() {}
@@ -138,63 +124,40 @@ public:
     return m_ids[idx];
   }
 
-  template <bool WithNullTerminators = true>
-  bool read_in(const char* buffer, uint32_t descs_offset, uint32_t descs_size, uint32_t data_size)
+  template <size_t StringSizeBits>
+  void serialize_in(ibstream& st, uint32_t base_offset, uint32_t descs_size, uint32_t data_size)
   {
     clear();
 
-    const size_t descs_cnt = descs_size / sizeof(ser_desc);
-    if (descs_size % sizeof(ser_desc))
+    stringvec<relspan_packed<StringSizeBits>> svec;
+    svec.serialize_in(st, base_offset, descs_size, data_size);
+
+    if (!st)
     {
-      SPDLOG_ERROR("invalid given descs_size");
-      return false;
+      return;
     }
 
-    const char* pdescs = buffer + descs_offset;
-    const char* data = pdescs + descs_size;
-    const char* data_end = data + data_size;
-    std::span<const ser_desc> descs(reinterpret_cast<const ser_desc*>(pdescs), descs_cnt);
-    
-    for (uint32_t i = 0; i < descs.size(); ++i)
+    uint32_t idx = 0;
+    for (uint32_t i = 0; i < svec.size(); ++i)
     {
-      const auto& desc = descs[i];
-
-      const uint32_t str_size = WithNullTerminators ? desc.size() - 1 : desc.size();
-      std::string_view str(buffer + desc.offset(), str_size);
-
-      if (&*str.end() > data_end)
-      {
-        SPDLOG_ERROR("string out of bounds");
-        return false;
-      }
-
-      cname cn(str);
+      cname cn(svec.at(i));
       m_ids.emplace_back(cn);
-      m_idxmap.emplace(cn, i);
+      m_idxmap.emplace(cn, idx++);
     }
-
-    return true;
   }
-  
-  // todo: remove descs_pos arg (use tell)
 
-  template <bool WithNullTerminators = true>
-  void serialize_out(obstream& st, uint32_t base_spos, uint32_t& out_descs_size, uint32_t& out_data_size)
+  template <size_t StringSizeBits>
+  void serialize_out(obstream& st, uint32_t base_offset, uint32_t& out_descs_size, uint32_t& out_data_size)
   {
     out_descs_size = 0;
     out_data_size = 0;
 
-    std::vector<ser_desc> descs(size());
+    stringset<relspan_packed<StringSizeBits>> sset;
 
-    const uint32_t descs_spos = (uint32_t)st.tellp();
-    st.write_array(descs);
-
-    const uint32_t data_spos = (uint32_t)st.tellp();
-    uint32_t offset = (uint32_t)data_spos - base_spos;
-
-    for (uint32_t i = 0; i < descs.size(); ++i)
+    for (auto& cn : m_ids)
     {
-      gname gn = m_ids[i].gstr();
+      gname gn = cn.gstr();
+
       if (!gn)
       {
         STREAM_LOG_AND_SET_ERROR(st, "a cname couldn't be resolved to string");
@@ -202,35 +165,10 @@ public:
       }
 
       const std::string_view strv = gn.strv();
-      const uint32_t str_size = (uint32_t)strv.size();
-
-      auto& desc = descs[i];
-      desc.offset = offset;
-
-      st.write_bytes(strv.data(), strv.size());
-      offset += str_size;
-
-      if constexpr (WithNullTerminators)
-      {
-        st << '\0';
-        desc.size = str_size + 1;
-        offset++;
-      }
-      else
-      {
-        desc.size = str_size;
-      }
+      sset.register_string(strv);
     }
 
-    const uint32_t end_spos = (uint32_t)st.tellp();
-
-    st.seekp(descs_spos);
-    st.write_array(descs);
-
-    st.seekp(end_spos);
-
-    out_descs_size = data_spos - descs_spos;
-    out_data_size = end_spos - data_spos;
+    sset.serialize_out(st, base_offset, out_descs_size, out_data_size);
   }
 
 protected:

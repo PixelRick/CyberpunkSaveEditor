@@ -18,8 +18,6 @@ namespace redx {
 struct cname
   : public gstrid<gname::pool_tag>
 {
-  static constexpr bool is_serializable_pod = false; // cname are cp types
-
   using base = gstrid<gname::pool_tag>;
 
   using base::base;

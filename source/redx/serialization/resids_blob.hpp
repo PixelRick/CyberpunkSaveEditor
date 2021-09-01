@@ -35,7 +35,7 @@ struct resource_id
   }
 };
 
-struct resid_set
+struct resids_blob
 {
 protected:
 
@@ -53,7 +53,7 @@ public:
 
   using container_type = std::vector<resource_id>;
 
-  resid_set() {}
+  resids_blob() {}
 
   void clear()
   {
@@ -133,7 +133,7 @@ public:
     const size_t descs_cnt = descs_size / sizeof(ser_desc);
     if (descs_size % sizeof(ser_desc))
     {
-      SPDLOG_ERROR("resid_set::read_in: invalid given descs_size");
+      SPDLOG_ERROR("invalid given descs_size");
       return false;
     }
 
@@ -152,7 +152,7 @@ public:
         uint64_t* phash = (uint64_t*)(buffer + desc.offset());
         if (phash + 1 > (uint64_t*)data_end)
         {
-          SPDLOG_ERROR("resid_set::read_in: hash out of bounds");
+          SPDLOG_ERROR("hash out of bounds");
           return false;
         }
         cn = cname(*phash);
@@ -162,7 +162,7 @@ public:
         std::string_view str(buffer + desc.offset(), desc.size());
         if (&*str.end() > data_end)
         {
-          SPDLOG_ERROR("resid_set::read_in: string out of bounds");
+          SPDLOG_ERROR("string out of bounds");
           return false;
         }
         cn = str;
@@ -178,17 +178,17 @@ public:
   // todo: remove descs_pos arg (use tell)
 
   template <bool AddNullTerminators = false>
-  void serialize_out(streambase& sb, uint32_t base_spos, uint32_t& out_descs_size, uint32_t& out_data_size, bool as_hash)
+  void serialize_out(obstream& st, uint32_t base_spos, uint32_t& out_descs_size, uint32_t& out_data_size, bool as_hash)
   {
     out_descs_size = 0;
     out_data_size = 0;
 
     std::vector<ser_desc> descs(size());
 
-    const uint32_t descs_spos = (uint32_t)sb.tell();
-    sb.serialize_pods_array_raw(descs.data(), descs.size()); // dummy
+    const uint32_t descs_spos = (uint32_t)st.tellp();
+    st.write_array(descs.data(), descs.size()); // dummy
 
-    const uint32_t data_spos = (uint32_t)sb.tell();
+    const uint32_t data_spos = (uint32_t)st.tellp();
     uint32_t offset = data_spos - base_spos;
 
     for (uint32_t i = 0; i < descs.size(); ++i)
@@ -202,7 +202,7 @@ public:
         desc.size = 8;
         desc.flag = rid.flag;
 
-        sb.serialize_pod_raw(rid.path.hash);
+        st << rid.path.hash;
         offset += 8;
       }
       else
@@ -210,7 +210,7 @@ public:
         gname gn = rid.path.gstr();
         if (!gn)
         {
-          sb.set_error("resid_set::serialize_out: a res path couldn't be resolved to string");
+          STREAM_LOG_AND_SET_ERROR(st, "a res path couldn't be resolved to string");
           return;
         }
 
@@ -222,23 +222,23 @@ public:
         desc.size = (uint32_t)str_size;
         desc.flag = rid.flag;
 
-        sb.serialize_bytes((void*)strv.data(), strv.size());
+        st.write_bytes(strv.data(), strv.size());
         offset += str_size;
 
         if constexpr (AddNullTerminators)
         {
-          sb.serialize_byte('\0');
+          st.write_byte('\0');
           offset++;
         }
       }
     }
 
-    const uint32_t end_spos = (uint32_t)sb.tell();
+    const uint32_t end_spos = (uint32_t)st.tellp();
 
-    sb.seek(descs_spos);
-    sb.serialize_pods_array_raw(descs.data(), descs.size());
+    st.seekp(descs_spos);
+    st.write_array(descs.data(), descs.size());
 
-    sb.seek(end_spos);
+    st.seekp(end_spos);
 
     out_descs_size = data_spos - descs_spos;
     out_data_size = end_spos - data_spos;

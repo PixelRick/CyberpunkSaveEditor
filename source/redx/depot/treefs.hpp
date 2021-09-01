@@ -6,17 +6,10 @@
 #include <stack>
 
 #include <redx/core.hpp>
-#include <redx/archive/archive.hpp>
-//#include <redx/io/archive_file_istream.hpp>
+#include <redx/radr/archive.hpp>
+#include <redx/io/arfile_access.hpp>
 
-// to diff depots, the file system must be instantiatable
-// goals:
-//  - minimize memory usage for one instance (for the dokany-based project)
-//  - provide std-like features to make it easy to learn&use
-//  
-//
-
-namespace redx::filesystem {
+namespace redx::depot {
 
 constexpr auto unidentified_files_directory_name = "unidentified_files";
 
@@ -27,13 +20,14 @@ struct recursive_directory_iterator;
 
 // fse: file system entry
 
-using fs_gname = gstring<'RADR'>;
-using file_info = redx::archive::file_info;
-using file_handle = redx::archive::file_handle;
+using fs_gname = gstring<'TFSN'>;
+using file_info = redx::radr::file_info;
+using file_id = redx::radr::file_id;
+using archive = redx::radr::archive;
 
-// it is different from redx::file_istream since the source isn't the same !
+// it is different from redx::os::file_istream since the source isn't the same !
 // (could probably get another name..)
-//using file_istream = redx::archive_file_istream;
+using file_access = redx::arfile_access;
 
 namespace detail::treefs {
 
@@ -52,7 +46,7 @@ struct entry
   enum flag : uint8_t
   {
     none = 0,
-    has_depot_path = 1,
+    has_depot_path            = 1 << 0,
   };
 
   //entry() : first_child() {}
@@ -89,7 +83,12 @@ struct entry
   int32_t     parent_entry_idx = -1;
   int32_t     next_entry_idx = -1;
 
-  fs_gname    name;
+  union // saving some space
+  {
+    // not using entry_index here to keep the union trivial
+    int32_t  first_child_entry_idx = -1;
+    int32_t  file_idx;
+  };
 
   entry_kind  kind = entry_kind::none;
 
@@ -99,15 +98,10 @@ struct entry
   uint8_t     override_cnt = 0; // when multiple archives contain the file
   uint8_t     flags = flag::none;
 
-  union // saving some space
-  {
-    // not using entry_index here to keep the union trivial
-    int32_t  first_child_entry_idx = -1;
-    int32_t  file_idx;
-  };
+  fs_gname    name; // depending on the impl, it's 4 bytes or 16
 };
 
-static_assert(sizeof(entry) <= 0x20);
+static_assert(sizeof(entry) <= 0x30);
 static_assert(std::is_default_constructible_v<entry>);
 
 } // namespace detail::treefs
@@ -152,9 +146,9 @@ public:
   ~treefs() = default;
 
   // load paths from custom format
-  bool load_ardb(const std::filesystem::path& arpath);
+  bool load_srxl(const std::filesystem::path& p);
 
-  bool load_archive(const std::filesystem::path& path);
+  bool load_archive(const std::filesystem::path& p);
 
   // returns total size with files' first segment decompressed
   size_t get_total_size() const
@@ -169,7 +163,7 @@ public:
     return m_total_compressed_size;
   }
 
-  file_handle get_file_handle(path_id pid)
+  bool open_archive_file_istream(arfile_access& fa, path_id pid)
   {
     auto idx = find_entry_idx(pid);
     if (idx >= 0)
@@ -177,10 +171,10 @@ public:
       const auto& e = m_entries[idx];
       if (e.is_file())
       {
-        return m_archives[e.archive_idx]->get_file_handle(e.file_idx);
+        return fa.open(m_archives[e.archive_idx], e.file_idx);
       }
     }
-    return file_handle();
+    return false;
   }
 
   std::optional<path> get_depot_path(path_id pid) const
@@ -312,7 +306,7 @@ private:
   };
 
   struct pidlink_eq {
-    size_t operator()(const pidlink& a, const pidlink& b) const { return a.pid.hash() == b.pid.hash(); }
+    size_t operator()(const pidlink& a, const pidlink& b) const { return a.pid == b.pid; }
   };
 
   std::unordered_set<pidlink, pidlink_hash, pidlink_eq> m_pidlinks;
@@ -325,5 +319,5 @@ private:
   mutable bool m_cached_info_dirty = true;
 };
 
-} // namespace redx::filesystem
+} // namespace redx::depot
 

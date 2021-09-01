@@ -11,6 +11,7 @@
 #include "CStringPool.hpp"
 #include "cobject.hpp"
 #include "redx/io/bstream.hpp"
+#include "redx/serialization/cnames_blob.hpp"
 
 enum class ESystemKind : uint8_t
 {
@@ -143,7 +144,7 @@ public:
     //reader.seekg((size_t)blob_spos + base_offset);
 
     //CStringPool strpool;
-    redx::cnameset& strpool = m_serctx.strpool;
+    redx::cnames_blob& strpool = m_serctx.strpool;
     if (!strpool.read_in(blob.get(), 0, strpool_descs_size, strpool_data_size))
       return false;
 

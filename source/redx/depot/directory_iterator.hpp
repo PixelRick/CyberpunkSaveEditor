@@ -1,15 +1,15 @@
 #pragma once
-#include <redx/filesystem/path.hpp>
-#include <redx/filesystem/treefs.hpp>
-#include <redx/filesystem/directory_entry.hpp>
+#include <redx/core/path.hpp>
+#include <redx/depot/treefs.hpp>
+#include <redx/depot/directory_entry.hpp>
 
-namespace redx::filesystem {
+namespace redx::depot {
 
 // let's assume that the treefs is stable once loaded
 // so that we don't have to do complicated synchronization
 struct directory_iterator
 {
-  using path_type         = redx::filesystem::path;
+  using path_type         = redx::path;
   using value_type        = directory_entry;
   using difference_type   = std::ptrdiff_t;
   using pointer           = const directory_entry*;
@@ -84,7 +84,7 @@ inline directory_iterator end(const directory_iterator&) noexcept
 // so that we don't have to do complicated synchronization
 struct recursive_directory_iterator
 {
-  using path_type         = redx::filesystem::path;
+  using path_type         = redx::path;
   using value_type        = directory_entry;
   using difference_type   = std::ptrdiff_t;
   using pointer           = const directory_entry*;
@@ -164,5 +164,5 @@ inline recursive_directory_iterator end(const recursive_directory_iterator&) noe
   return recursive_directory_iterator();
 }
 
-} // redx::filesystem
+} // redx::depot
 

@@ -1,6 +1,6 @@
-#include <redx/filesystem/directory_entry.hpp>
+#include <redx/depot/directory_entry.hpp>
 
-namespace redx::filesystem {
+namespace redx::depot {
 
 void directory_entry::assign_entry(int32_t entry_idx, bool refresh_tfs_path)
 {
@@ -42,5 +42,5 @@ void directory_entry::assign_entry(int32_t entry_idx, bool refresh_tfs_path)
   }
 }
 
-} // redx::filesystem
+} // redx::depot
 

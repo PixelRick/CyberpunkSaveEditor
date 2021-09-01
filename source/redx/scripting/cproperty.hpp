@@ -11,7 +11,7 @@
 #include "redx/core.hpp"
 #include "redx/ctypes.hpp"
 
-#include <redx/tmp/resid_set.hpp>
+#include <redx/serialization/resids_blob.hpp>
 
 #include "fwd.hpp"
 #include "CStringPool.hpp"

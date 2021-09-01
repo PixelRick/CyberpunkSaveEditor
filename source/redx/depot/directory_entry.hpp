@@ -1,8 +1,8 @@
 #pragma once
 #include <redx/core/path.hpp>
-#include <redx/filesystem/treefs.hpp>
+#include <redx/depot/treefs.hpp>
 
-namespace redx::filesystem {
+namespace redx::depot {
 
 // this is a sensible struct
 // needs as much optimization as it can
@@ -130,7 +130,7 @@ struct directory_entry
   }
 
   // return value is undefined if this is not a file entry
-  inline redx::archive::file_id archive_file_id() const
+  inline file_id file_id() const
   {
     return m_info.id;
   }
@@ -163,7 +163,7 @@ struct directory_entry
   }
 
   // return value is undefined if this is not a file entry
-  inline const redx::archive::file_info& get_file_info() const
+  inline const file_info& get_file_info() const
   {
     return m_info;
   }
@@ -231,27 +231,22 @@ struct directory_entry
     }
   }
 
-  file_handle get_file_handle() const
-  {
-    return m_ar->get_file_handle(m_entry.file_idx);
-  }
-
 protected:
 
   void assign_entry(int32_t entry_idx, bool refresh_tfs_path = true);
 
 private:
 
-  const treefs* m_tfs = nullptr;
-  path_id       m_pid;
-  path_type     m_path;
-  bool          m_by_pid = false;
+  const treefs*   m_tfs = nullptr;
+  path_id         m_pid;
+  path_type       m_path;
+  bool            m_by_pid = false;
 
-  path_type     m_tfs_parent_path; // the path of the entry's directory in the tree
-  treefs::entry m_entry;
-  file_info     m_info;
-  const archive* m_ar;
+  path_type       m_tfs_parent_path; // the path of the entry's directory in the tree
+  treefs::entry   m_entry;
+  file_info       m_info;
+  const archive*  m_ar;
 };
 
-} // redx::filesystem
+} // redx::depot
 

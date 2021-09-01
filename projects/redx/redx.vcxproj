@@ -21,23 +21,17 @@
     <ProjectName>redx</ProjectName>
   </PropertyGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\source\redx\archive\archive.hpp" />
-    <ClInclude Include="..\..\source\redx\archive\radr.hpp" />
     <ClInclude Include="..\..\source\redx\core.hpp" />
     <ClInclude Include="..\..\source\redx\core\cname.hpp" />
-    <ClInclude Include="..\..\source\redx\core\cnameset.hpp" />
     <ClInclude Include="..\..\source\redx\core\gname.hpp" />
     <ClInclude Include="..\..\source\redx\core\gstrid.hpp" />
     <ClInclude Include="..\..\source\redx\core\gstring.hpp" />
     <ClInclude Include="..\..\source\redx\core\hashing.hpp" />
     <ClInclude Include="..\..\source\redx\core\hashing_tables.hpp" />
-    <ClInclude Include="..\..\source\redx\core\iserializable.hpp" />
     <ClInclude Include="..\..\source\redx\core\misc.hpp" />
     <ClInclude Include="..\..\source\redx\core\path.hpp" />
     <ClInclude Include="..\..\source\redx\core\platform.hpp" />
-    <ClInclude Include="..\..\source\redx\core\streambase.hpp" />
     <ClInclude Include="..\..\source\redx\core\stringpool.hpp" />
-    <ClInclude Include="..\..\source\redx\core\stringpoolsb.hpp" />
     <ClInclude Include="..\..\source\redx\core\tstamp.hpp" />
     <ClInclude Include="..\..\source\redx\core\utils.hpp" />
     <ClInclude Include="..\..\source\redx\csav.hpp" />
@@ -65,12 +59,11 @@
     <ClInclude Include="..\..\source\redx\ctypes\CFact.hpp" />
     <ClInclude Include="..\..\source\redx\ctypes\CName.hpp" />
     <ClInclude Include="..\..\source\redx\ctypes\TweakDBID.hpp" />
-    <ClInclude Include="..\..\source\redx\filesystem\depot.hpp" />
-    <ClInclude Include="..\..\source\redx\filesystem\depot_file_stream.hpp" />
-    <ClInclude Include="..\..\source\redx\filesystem\directory_entry.hpp" />
-    <ClInclude Include="..\..\source\redx\filesystem\directory_iterator.hpp" />
-    <ClInclude Include="..\..\source\redx\filesystem\treefs.hpp" />
+    <ClInclude Include="..\..\source\redx\depot\directory_entry.hpp" />
+    <ClInclude Include="..\..\source\redx\depot\directory_iterator.hpp" />
+    <ClInclude Include="..\..\source\redx\depot\treefs.hpp" />
     <ClInclude Include="..\..\source\redx\init.hpp" />
+    <ClInclude Include="..\..\source\redx\io\arfile_access.hpp" />
     <ClInclude Include="..\..\source\redx\io\bstream.hpp" />
     <ClInclude Include="..\..\source\redx\io\file_access.hpp" />
     <ClInclude Include="..\..\source\redx\io\file_bstream.hpp" />
@@ -79,6 +72,10 @@
     <ClInclude Include="..\..\source\redx\os\file_reader.hpp" />
     <ClInclude Include="..\..\source\redx\os\platform_utils.hpp" />
     <ClInclude Include="..\..\source\redx\radr.hpp" />
+    <ClInclude Include="..\..\source\redx\radr\archive.hpp" />
+    <ClInclude Include="..\..\source\redx\radr\file_info.hpp" />
+    <ClInclude Include="..\..\source\redx\radr\radr_format.hpp" />
+    <ClInclude Include="..\..\source\redx\radr\srxl\srxl_format.hpp" />
     <ClInclude Include="..\..\source\redx\rtdt\dynamic.hpp" />
     <ClInclude Include="..\..\source\redx\rtdt\rttr_helpers.hpp" />
     <ClInclude Include="..\..\source\redx\rtdt\native.hpp" />
@@ -94,6 +91,12 @@
     <ClInclude Include="..\..\source\redx\scripting\csystem_serctx.hpp" />
     <ClInclude Include="..\..\source\redx\scripting\fwd.hpp" />
     <ClInclude Include="..\..\source\redx\scripting\iproperty.hpp" />
+    <ClInclude Include="..\..\source\redx\serialization\cnameset_old.hpp" />
+    <ClInclude Include="..\..\source\redx\serialization\cnames_blob.hpp" />
+    <ClInclude Include="..\..\source\redx\serialization\iserializable.hpp" />
+    <ClInclude Include="..\..\source\redx\serialization\resids_blob.hpp" />
+    <ClInclude Include="..\..\source\redx\serialization\stringset.hpp" />
+    <ClInclude Include="..\..\source\redx\serialization\stringvec.hpp" />
     <ClInclude Include="..\..\source\redx\tmp\archive_test.hpp" />
     <ClInclude Include="..\..\source\redx\tmp\resid_set.hpp" />
     <ClInclude Include="..\..\source\redx\tweakdb\tweakdb.hpp" />
@@ -102,23 +105,24 @@
     <ClInclude Include="..\..\source\redx\containers\bitfield.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\source\redx\archive\archive.cpp" />
-    <ClCompile Include="..\..\source\redx\archive\radr.cpp" />
-    <ClCompile Include="..\..\source\redx\core\streambase.cpp" />
     <ClCompile Include="..\..\source\redx\core\utils.cpp" />
     <ClCompile Include="..\..\source\redx\csav\node_tree.cpp" />
     <ClCompile Include="..\..\source\redx\csav\misc\serializable_stringpool.cpp" />
     <ClCompile Include="..\..\source\redx\ctypes\CEnum.cpp" />
     <ClCompile Include="..\..\source\redx\ctypes\CFact.cpp" />
     <ClCompile Include="..\..\source\redx\ctypes\TweakDBID.cpp" />
-    <ClCompile Include="..\..\source\redx\filesystem\directory_entry.cpp" />
-    <ClCompile Include="..\..\source\redx\filesystem\treefs.cpp" />
+    <ClCompile Include="..\..\source\redx\depot\directory_entry.cpp" />
+    <ClCompile Include="..\..\source\redx\depot\treefs.cpp" />
     <ClCompile Include="..\..\source\redx\init.cpp" />
+    <ClCompile Include="..\..\source\redx\io\arfile_access.cpp" />
     <ClCompile Include="..\..\source\redx\io\bstream.cpp" />
     <ClCompile Include="..\..\source\redx\io\file_access_win.cpp" />
     <ClCompile Include="..\..\source\redx\oodle\oodle.cpp" />
     <ClCompile Include="..\..\source\redx\os\win_utils.cpp" />
     <ClCompile Include="..\..\source\redx\os\win_file_reader.cpp" />
+    <ClCompile Include="..\..\source\redx\radr\archive.cpp" />
+    <ClCompile Include="..\..\source\redx\radr\radr_format.cpp" />
+    <ClCompile Include="..\..\source\redx\radr\srxl\srxl_format.cpp" />
     <ClCompile Include="..\..\source\redx\rtdt\Source.cpp" />
     <ClCompile Include="..\..\source\redx\scripting\cclass.cpp" />
     <ClCompile Include="..\..\source\redx\scripting\cobject.cpp" />

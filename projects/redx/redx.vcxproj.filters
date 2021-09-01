@@ -51,17 +51,11 @@
     <Filter Include="source\redx\stream">
       <UniqueIdentifier>{51bf6c62-d0bb-4ce0-8d80-69f380db5422}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\redx\filesystem">
-      <UniqueIdentifier>{be7111d4-2f61-4bc4-935c-425b5eb0f329}</UniqueIdentifier>
-    </Filter>
     <Filter Include="assets\ardbs">
       <UniqueIdentifier>{335ef4d0-c866-4427-b2c4-85fc8272cc4d}</UniqueIdentifier>
     </Filter>
     <Filter Include="source\redx\containers">
       <UniqueIdentifier>{fd69be9e-c7a2-49a7-9604-b7f61ccd5f92}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\redx\archive">
-      <UniqueIdentifier>{5d3a2509-5843-4e33-8fef-a552332c53bc}</UniqueIdentifier>
     </Filter>
     <Filter Include="source\redx\io">
       <UniqueIdentifier>{326b2e3b-6d1a-41c0-af11-20a487e7287f}</UniqueIdentifier>
@@ -71,6 +65,21 @@
     </Filter>
     <Filter Include="source\redx\core">
       <UniqueIdentifier>{cb09fa96-fdc6-442f-b175-0a00e3713f05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\redx\radr">
+      <UniqueIdentifier>{5d3a2509-5843-4e33-8fef-a552332c53bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\redx\radr\srxl">
+      <UniqueIdentifier>{8345ea46-5a5e-4236-8075-354f2b037323}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\redx\depot">
+      <UniqueIdentifier>{be7111d4-2f61-4bc4-935c-425b5eb0f329}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\redx\serialization">
+      <UniqueIdentifier>{dc845405-c129-4187-a5df-49076c2b3476}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\redx\trash">
+      <UniqueIdentifier>{bb518c6a-c305-4a7c-b475-d26cd708901e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -113,26 +122,11 @@
     <ClCompile Include="..\..\source\redx\oodle\oodle.cpp">
       <Filter>source\redx\oodle</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\redx\filesystem\treefs.cpp">
-      <Filter>source\redx\filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\redx\archive\archive.cpp">
-      <Filter>source\redx\archive</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\redx\archive\radr.cpp">
-      <Filter>source\redx\archive</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\redx\filesystem\directory_entry.cpp">
-      <Filter>source\redx\filesystem</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\redx\os\win_utils.cpp">
       <Filter>source\redx\os</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\os\win_file_reader.cpp">
       <Filter>source\redx\os</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\redx\core\streambase.cpp">
-      <Filter>source\redx\core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\core\utils.cpp">
       <Filter>source\redx\core</Filter>
@@ -141,6 +135,24 @@
       <Filter>source\redx\io</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\io\file_access_win.cpp">
+      <Filter>source\redx\io</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\redx\radr\archive.cpp">
+      <Filter>source\redx\radr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\redx\radr\radr_format.cpp">
+      <Filter>source\redx\radr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\redx\radr\srxl\srxl_format.cpp">
+      <Filter>source\redx\radr\srxl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\redx\depot\directory_entry.cpp">
+      <Filter>source\redx\depot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\redx\depot\treefs.cpp">
+      <Filter>source\redx\depot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\redx\io\arfile_access.cpp">
       <Filter>source\redx\io</Filter>
     </ClCompile>
   </ItemGroup>
@@ -289,32 +301,11 @@
     <ClInclude Include="..\..\source\redx\oodle\oodle.hpp">
       <Filter>source\redx\oodle</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\filesystem\treefs.hpp">
-      <Filter>source\redx\filesystem</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\redx\containers\bitfield.hpp">
       <Filter>source\redx\containers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\tmp\resid_set.hpp">
       <Filter>source\redx\tmp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\archive\archive.hpp">
-      <Filter>source\redx\archive</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\archive\radr.hpp">
-      <Filter>source\redx\archive</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\filesystem\directory_entry.hpp">
-      <Filter>source\redx\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\filesystem\directory_iterator.hpp">
-      <Filter>source\redx\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\filesystem\depot.hpp">
-      <Filter>source\redx\filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\filesystem\depot_file_stream.hpp">
-      <Filter>source\redx\filesystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\os\platform_utils.hpp">
       <Filter>source\redx\os</Filter>
@@ -323,9 +314,6 @@
       <Filter>source\redx\os</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\core\cname.hpp">
-      <Filter>source\redx\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\core\cnameset.hpp">
       <Filter>source\redx\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\core\gname.hpp">
@@ -343,9 +331,6 @@
     <ClInclude Include="..\..\source\redx\core\hashing_tables.hpp">
       <Filter>source\redx\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\core\iserializable.hpp">
-      <Filter>source\redx\core</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\redx\core\misc.hpp">
       <Filter>source\redx\core</Filter>
     </ClInclude>
@@ -355,13 +340,7 @@
     <ClInclude Include="..\..\source\redx\core\platform.hpp">
       <Filter>source\redx\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\core\streambase.hpp">
-      <Filter>source\redx\core</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\redx\core\stringpool.hpp">
-      <Filter>source\redx\core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\core\stringpoolsb.hpp">
       <Filter>source\redx\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\core\tstamp.hpp">
@@ -381,6 +360,48 @@
     </ClInclude>
     <ClInclude Include="..\..\source\redx\io\mem_bstream.hpp">
       <Filter>source\redx\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\radr\archive.hpp">
+      <Filter>source\redx\radr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\radr\file_info.hpp">
+      <Filter>source\redx\radr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\radr\radr_format.hpp">
+      <Filter>source\redx\radr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\radr\srxl\srxl_format.hpp">
+      <Filter>source\redx\radr\srxl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\depot\directory_entry.hpp">
+      <Filter>source\redx\depot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\depot\directory_iterator.hpp">
+      <Filter>source\redx\depot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\depot\treefs.hpp">
+      <Filter>source\redx\depot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\io\arfile_access.hpp">
+      <Filter>source\redx\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\serialization\resids_blob.hpp">
+      <Filter>source\redx\serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\serialization\iserializable.hpp">
+      <Filter>source\redx\serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\serialization\cnames_blob.hpp">
+      <Filter>source\redx\serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\serialization\stringset.hpp">
+      <Filter>source\redx\trash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\serialization\stringvec.hpp">
+      <Filter>source\redx\trash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\serialization\cnameset_old.hpp">
+      <Filter>source\redx\trash</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

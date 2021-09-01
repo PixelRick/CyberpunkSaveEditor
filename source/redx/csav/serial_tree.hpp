@@ -13,8 +13,6 @@ namespace redx::csav {
 
 struct serial_node_desc
 {
-  static constexpr bool is_serializable_pod = false;
-
   int32_t next_idx, child_idx;
   uint32_t data_offset, data_size;
   std::string name;
