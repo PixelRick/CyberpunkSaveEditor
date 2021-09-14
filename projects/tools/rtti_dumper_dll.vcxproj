@@ -21,7 +21,7 @@
     <ProjectName>rtti_dumper_dll</ProjectName>
   </PropertyGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\source\cpinternals\common\utils.cpp" />
+    <ClCompile Include="..\..\source\redx\core\utils.cpp" />
     <ClCompile Include="..\..\source\tools\rtti_dumper_dll\main.cpp" />
     <ClCompile Include="..\..\source\tools\rtti_dumper_dll\rtti.cpp" />
   </ItemGroup>

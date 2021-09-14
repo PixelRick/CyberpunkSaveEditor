@@ -13,11 +13,11 @@
     <ClCompile Include="..\..\source\tools\rtti_dumper_dll\main.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\cpinternals\common\utils.cpp">
-      <Filter>source\extdep</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\tools\rtti_dumper_dll\rtti.cpp">
       <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\redx\core\utils.cpp">
+      <Filter>source\extdep</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -18,7 +18,7 @@ std::string bytes_to_hex(const void* buf, size_t len)
 }
 
 
-#define GEN_OLD_DB_FORMAT 0
+#define GEN_OLD_DB_FORMAT 1
 
 namespace dumper {
 
@@ -1113,12 +1113,12 @@ void dump()
   }
 #else
   {
-    std::ofstream file(path / L"JClasses_1.3.json");
+    std::ofstream file(path / L"JClasses_1.31.json");
     file << jclasses.dump(2);
   }
 
   {
-    std::ofstream file(path / L"JEnums_1.3.json");
+    std::ofstream file(path / L"JEnums_1.31.json");
     file << jenums.dump(2);
   }
 #endif
