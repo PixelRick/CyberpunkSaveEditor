@@ -17,6 +17,15 @@ namespace std { using tcb::span; }
 
 namespace redx {
 
+//--------------------------------------------------------
+//  std lib helpers
+
+template <typename EnumT>
+constexpr std::underlying_type_t<EnumT> to_underlying(EnumT e) noexcept
+{
+  return static_cast<std::underlying_type_t<EnumT>>(e);
+}
+
 template <typename T>
 struct type_identity
 {
@@ -36,11 +45,26 @@ template <typename T>
 using remove_cvref_t = typename remove_cvref<T>::type;
 
 template <typename T, class = void>
-constexpr inline bool is_iterator_v = false;
+inline constexpr bool is_iterator_v = false;
 
 template <typename T>
-constexpr inline bool is_iterator_v<T, std::void_t<typename std::iterator_traits<T>::iterator_category>> = true;
+inline constexpr bool is_iterator_v<T, std::void_t<typename std::iterator_traits<T>::iterator_category>> = true;
 
+struct nop_mutex
+{
+  nop_mutex(const nop_mutex&) = delete;
+  nop_mutex& operator=(const nop_mutex&) = delete;
+
+  FORCE_INLINE void lock() const noexcept {}
+  FORCE_INLINE void try_lock() const noexcept {}
+  FORCE_INLINE void unlock() const noexcept {}
+  FORCE_INLINE void lock_shared() const noexcept {}
+  FORCE_INLINE void try_lock_shared() const noexcept {}
+  FORCE_INLINE void unlock_shared() const noexcept {}
+};
+
+//--------------------------------------------------------
+//  casts helpers
 
 template <typename To, typename From>
 class is_unsafe_numeric_cast
@@ -56,7 +80,7 @@ public:
 };
 
 template <typename To, typename From>
-constexpr inline bool is_unsafe_numeric_cast_v = is_unsafe_numeric_cast<To, From>::value;
+inline constexpr bool is_unsafe_numeric_cast_v = is_unsafe_numeric_cast<To, From>::value;
 
 // this one checks for overflow in debug mode only
 template <typename T, typename U>
@@ -99,67 +123,60 @@ FORCE_INLINE T numeric_cast(U x)
 template <typename T, typename U>
 FORCE_INLINE T numeric_cast(U x, bool& ok)
 {
-  auto ret = static_cast<T>(x);
+  const T ret = static_cast<T>(x);
+  ok = true;
 
   if constexpr (is_unsafe_numeric_cast_v<T, U>)
   {
     if (static_cast<U>(ret) != x)
     {
-      SPDLOG_ERROR("numeric_cast error {} -> {}", x, ret);
+      // print only in debug since caller is in charge of handling the error
+      SPDLOG_DEBUG("numeric_cast error {} -> {}", x, ret);
       ok = false;
     }
   }
 
-  ok = true;
   return ret;
 }
 
+//--------------------------------------------------------
+//  alignment helpers
 
 // alignment is assumed to be a power of two
-FORCE_INLINE constexpr uintptr_t align_up(uintptr_t address, size_t alignment)
+template <typename T, std::enable_if_t<std::is_arithmetic_v<T>, bool> = true>
+FORCE_INLINE constexpr [[nodiscard]] T align_up(T address, size_t alignment)
 {
   return (address + alignment - 1) & ~(alignment - 1);
 }
 
 // alignment is assumed to be a power of two
-FORCE_INLINE constexpr void* align_up(void* address, size_t alignment)
+FORCE_INLINE constexpr [[nodiscard]] void* align_up(void* address, size_t alignment)
 {
   return (void*)(align_up(reinterpret_cast<uintptr_t>(address), alignment));
 }
 
 // alignment is assumed to be a power of two
-FORCE_INLINE constexpr uintptr_t align_down(uintptr_t address, size_t alignment)
+template <typename T, std::enable_if_t<std::is_arithmetic_v<T>, bool> = true>
+FORCE_INLINE constexpr [[nodiscard]] T align_down(T address, size_t alignment)
 {
   return (address) & ~(alignment - 1);
 }
 
 // alignment is assumed to be a power of two
-FORCE_INLINE constexpr void* align_down(void* address, size_t alignment)
+FORCE_INLINE constexpr [[nodiscard]] void* align_down(void* address, size_t alignment)
 {
   return (void*)(align_down(reinterpret_cast<uintptr_t>(address), alignment));
 }
 
 template <size_t alignment>
-FORCE_INLINE constexpr void* align_up(void* address)
+FORCE_INLINE constexpr [[nodiscard]] void* align_up(void* address)
 {
   static_assert((alignment & (alignment - 1)) == 0, "alignment must be a power of two");
   return (void*)(((uintptr_t)address + alignment - 1) & ~(alignment - 1));
 }
 
-
-struct nop_mutex
-{
-  nop_mutex(const nop_mutex&) = delete;
-  nop_mutex& operator=(const nop_mutex&) = delete;
-
-  FORCE_INLINE void lock() const noexcept {}
-  FORCE_INLINE void try_lock() const noexcept {}
-  FORCE_INLINE void unlock() const noexcept {}
-  FORCE_INLINE void lock_shared() const noexcept {}
-  FORCE_INLINE void try_lock_shared() const noexcept {}
-  FORCE_INLINE void unlock_shared() const noexcept {}
-};
-
+//--------------------------------------------------------
+//  string helpers
 
 inline bool starts_with(const std::string& str, const std::string& with)
 {
@@ -167,6 +184,8 @@ inline bool starts_with(const std::string& str, const std::string& with)
     && std::equal(with.begin(), with.end(), str.begin());
 }
 
+//--------------------------------------------------------
+//  ranges
 
 template <typename T, typename = std::enable_if_t<std::is_arithmetic_v<T>>>
 struct integer_range
@@ -284,6 +303,9 @@ using u64range = integer_range<uint64_t>;
 using i32range = integer_range<int32_t>;
 using i64range = integer_range<int64_t>;
 
+//--------------------------------------------------------
+//  bit-ops
+
 template <typename T>
 constexpr T ror(T x, int16_t n) noexcept
 {
@@ -315,29 +337,33 @@ template <typename T, std::enable_if_t<sizeof(T) <= 4, int> = 0>
 FORCE_INLINE unsigned long ctz(const T value) noexcept
 {
   unsigned long index = 0;
-  return _BitScanForward(&index, static_cast<DWORD>(value)) ? index : sizeof(T) * 8;
+  return _BitScanForward(&index, static_cast<uint32_t>(value)) ? index : sizeof(T) * 8;
 }
 
+#ifdef _M_X64
 template <typename T, std::enable_if_t<sizeof(T) == 8, int> = 0>
 FORCE_INLINE unsigned long ctz(const T value) noexcept
 {
   unsigned long index = 0;
-  return _BitScanForward64(&index, static_cast<DWORD64>(value)) ? index : 64;
+  return _BitScanForward64(&index, static_cast<uint64_t>(value)) ? index : 64;
 }
+#endif
 
 template <typename T, std::enable_if_t<sizeof(T) <= 4, int> = 0>
 FORCE_INLINE unsigned long clz(const T value) noexcept
 {
   unsigned long index = 0;
-  return _BitScanReverse(&index, static_cast<DWORD>(value)) ? ((sizeof(T) * 8) - (index + 1)) : (sizeof(T) * 8);
+  return _BitScanReverse(&index, static_cast<uint32_t>(value)) ? ((sizeof(T) * 8) - (index + 1)) : (sizeof(T) * 8);
 }
 
+#ifdef _M_X64
 template <typename T, std::enable_if_t<sizeof(T) == 8, int> = 0>
 FORCE_INLINE unsigned long clz(const T value) noexcept
 {
   unsigned long index = 0;
-  return _BitScanReverse64(&index, static_cast<DWORD64>(value)) ? (63 - index) : 64;
+  return _BitScanReverse64(&index, static_cast<uint64_t>(value)) ? (63 - index) : 64;
 }
+#endif
 
 template <int LSB, int Size, typename T>
 FORCE_INLINE T read_bitfield(T& v) noexcept
@@ -361,6 +387,53 @@ constexpr uint32_t byteswap(uint32_t value) noexcept
   uint32_t tmp = ((value << 8) & 0xFF00FF00) | ((value >> 8) & 0x00FF00FF);
   return (tmp << 16) | (tmp >> 16);
 }
+
+//--------------------------------------------------------
+//  misc
+
+struct fourcc
+{
+  constexpr fourcc() = default;
+
+  constexpr explicit fourcc(uint32_t val)
+    : m_val(val) {}
+
+  fourcc& operator=(uint32_t val)
+  {
+    m_val = val;
+  }
+
+  constexpr bool operator==(const fourcc& rhs) const noexcept
+  {
+    return (m_val == rhs.m_val);
+  }
+
+  constexpr bool operator!=(const fourcc& rhs) const noexcept
+  {
+    return !operator==(rhs);
+  }
+
+  std::string str() const
+  {
+    const uint32_t reversed = byteswap(m_val);
+    const char* pc = reinterpret_cast<const char*>(&reversed);
+    return std::string(pc, pc + 4);
+  }
+
+  constexpr operator uint32_t() const noexcept
+  {
+    return m_val;
+  }
+
+private:
+
+  uint32_t m_val = 'NONE';
+};
+
+static_assert(std::is_trivially_copyable_v<fourcc>);
+
+//--------------------------------------------------------
+//  container helpers
 
 template <typename T>
 typename std::vector<T>::iterator 
@@ -397,17 +470,26 @@ insert_sorted_nodupe(std::vector<T>& vec, typename std::vector<T>::iterator star
   return std::make_pair(vec.insert(it, item), true);
 }
 
-std::vector<uintptr_t> sse2_strstr_masked(uintptr_t hs, size_t m, const uint8_t* needle, size_t n, const char* mask, size_t maxcnt = 0);
-std::vector<uintptr_t> sse2_strstr(uintptr_t hs, size_t m, const uint8_t* needle, size_t n, size_t maxcnt = 0);
+//--------------------------------------------------------
+//  fast binary search
 
-inline std::vector<uintptr_t> sse2_strstr_masked(const void* hs, size_t m, const uint8_t* needle, size_t n, const char* mask, size_t maxcnt = 0)
+inline constexpr uintptr_t sse2_strstr_npos = uintptr_t(-1);
+
+// values > 0xFF are considered wildcards
+// mask must not begin nor end with a wildcard value
+uintptr_t sse2_strstr_masked(uintptr_t haystack, size_t haystack_size, const wchar_t* masked_needle, size_t needle_size);
+uintptr_t sse2_strstr(uintptr_t haystack, size_t haystack_sizem, const char* needle, size_t needle_size);
+
+// values > 0xFF are considered wildcards
+// mask must not begin nor end with a wildcard value
+inline uintptr_t sse2_strstr_masked(const void* haystack, size_t haystack_size, const wchar_t* masked_needle, size_t needle_size)
 {
-  return sse2_strstr_masked((uintptr_t)hs, m, needle, n, mask, maxcnt);
+  return sse2_strstr_masked((uintptr_t)haystack, haystack_size, masked_needle, needle_size);
 }
 
-inline std::vector<uintptr_t> sse2_strstr(const void* hs, size_t m, const uint8_t* needle, size_t n, size_t maxcnt = 0)
+inline uintptr_t sse2_strstr(const void* haystack, size_t haystack_size, const char* needle, size_t needle_size)
 {
-  return sse2_strstr((uintptr_t)hs, m, needle, n, maxcnt);
+  return sse2_strstr((uintptr_t)haystack, haystack_size, needle, needle_size);
 }
 
 } // namespace redx
