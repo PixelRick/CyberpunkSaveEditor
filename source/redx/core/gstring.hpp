@@ -177,7 +177,8 @@ inline std::ostream& operator<<(std::ostream& os, const gstring<PoolTag>& x)
   return os << x.string(); 
 }
 
-// requires C++20
+// todo: check how it gets compiled
+//       maybe try a character pack version..
 
 template <uint32_t PoolTag>
 struct literal_gstring_helper

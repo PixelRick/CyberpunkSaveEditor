@@ -10,6 +10,8 @@
 namespace redx {
 
 // CRITICAL: this must remain AFAP!
+//   this versus std::system::path is night and day for CPFS
+//   everything has to be called at least half a million times
 
 // resource paths:
 // - are lower case ascii

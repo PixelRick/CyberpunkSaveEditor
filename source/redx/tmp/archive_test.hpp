@@ -201,6 +201,7 @@ public:
     return modified;
   }
 
+  // todo: template with static constexpr flag !!!
   struct vlotbl_desc
     : trivially_serializable<vlotbl_desc>
   {

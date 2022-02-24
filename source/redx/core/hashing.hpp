@@ -358,6 +358,9 @@ constexpr uint64_t crc64_combine(uint64_t crc1, uint64_t crc2, size_t len2)
 //--------------------------------------------------------
 //  FNV1A32
 
+// TODO: check that it gets computed at compile-time in every case for which it can !
+//       for instance "text"_fnv1a32 was translated to a call when used as an argument instead of assignment..
+
 constexpr uint32_t fnv1a32_continue(uint32_t hash, std::string_view str)
 {
   constexpr uint32_t prime = 0x01000193;
