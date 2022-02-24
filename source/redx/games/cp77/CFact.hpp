@@ -135,7 +135,7 @@ struct CFact_resolver
     return gname(fmt::format("<unknown_fact:{:08X}>", hash));
   }
 
-  const std::vector<gname>& sorted_names() const { return m_list; }
+  const std::vector<gname>& get_sorted_names() const { return m_list; }
 
   void feed(const std::vector<gname>& names);
 

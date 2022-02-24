@@ -39,7 +39,7 @@ op_status node_tree::load(std::filesystem::path path)
   std_file_ibstream st(path);
   serialize_in(st);
 
-  return op_status(st.fail_msg());
+  return op_status(st.get_fail_msg());
 }
 
 op_status node_tree::save(std::filesystem::path path)
@@ -56,7 +56,7 @@ op_status node_tree::save(std::filesystem::path path)
   std_file_obstream st(path);
   serialize_out(st);
 
-  return op_status(st.fail_msg());
+  return op_status(st.get_fail_msg());
 }
 
 void node_tree::serialize_in(ibstream& st)

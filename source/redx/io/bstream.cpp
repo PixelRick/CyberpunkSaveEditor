@@ -38,7 +38,7 @@ ibstream& ibstream::read_str_lpfxd(std::string& s)
     s = "";
   }
 
-  if (fail())
+  if (has_failed())
   {
     s = "";
   }
@@ -86,7 +86,7 @@ int64_t ibstream::read_int64_packed()
     }
   }
 
-  if (fail())
+  if (has_failed())
   {
     return 0;
   }

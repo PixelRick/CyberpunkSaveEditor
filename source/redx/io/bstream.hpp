@@ -80,7 +80,7 @@ struct bstream
 
   explicit FORCE_INLINE operator bool() const noexcept
   {
-    return !fail();
+    return !has_failed();
   }
 
   FORCE_INLINE bool operator!() const noexcept
@@ -88,14 +88,14 @@ struct bstream
     return !bool(*this);
   }
 
-  FORCE_INLINE std::streambuf& sbuf() const noexcept
+  FORCE_INLINE std::streambuf& get_sbuf() const noexcept
   {
     return m_sbuf;
   }
 
 #pragma region state
 
-  [[nodiscard]] FORCE_INLINE bool fail() const noexcept
+  [[nodiscard]] FORCE_INLINE bool has_failed() const noexcept
   {
     return m_fail;
   }
@@ -130,9 +130,9 @@ struct bstream
     m_fail_msg.reset();
   }
 
-  inline std::string fail_msg() const
+  inline std::string get_fail_msg() const
   {
-    return m_fail_msg.value_or(fail() ? "unknown error" : "");
+    return m_fail_msg.value_or(has_failed() ? "unknown error" : "");
   }
 
 #pragma endregion
@@ -152,6 +152,7 @@ private:
   bool m_fail = false;
 };
 
+
 // base class for input byte streams.
 struct ibstream
   : bstream
@@ -164,7 +165,7 @@ struct ibstream
 
   // little-endian only
 
-  // read trivial types
+  // read explicitly trivial types
   template <typename T, std::enable_if_t< 
     is_trivially_serializable_v<T> && 
     !std::is_arithmetic_v<T> && 
@@ -209,9 +210,9 @@ struct ibstream
 
   inline bstreampos tellg() const
   {
-    auto& sb = sbuf();
+    auto& sb = get_sbuf();
 
-    if (!fail())
+    if (!has_failed())
     {
       return sb.pubseekoff(0, std::ios::cur, std::ios::in);
     }
@@ -222,7 +223,7 @@ struct ibstream
   // doesn't clear fail, it's safer this way..
   inline bstream& seekg(bstreampos pos)
   {
-    auto& sb = sbuf();
+    auto& sb = get_sbuf();
 
     if (!sb.pubseekpos(std::streampos(pos), std::ios::in))
     {
@@ -236,7 +237,7 @@ struct ibstream
   // doesn't clear fail, it's safer this way..
   inline bstream& seekg(std::streamoff off, std::ios::seekdir dir)
   {
-    auto& sb = sbuf();
+    auto& sb = get_sbuf();
 
     if (!sb.pubseekoff(off, dir, std::ios::in))
     {
@@ -249,8 +250,8 @@ struct ibstream
 
   std::streamsize size()
   {
-    auto& sb = sbuf();
-    if (!fail())
+    auto& sb = get_sbuf();
+    if (!has_failed())
     {
       auto saved = sb.pubseekoff(0, std::ios::cur);;
       auto ret = sb.pubseekoff(0, std::ios::end);
@@ -263,9 +264,9 @@ struct ibstream
 
   char read_byte()
   {
-    auto& sb = sbuf();
+    auto& sb = get_sbuf();
 
-    if (!fail())
+    if (!has_failed())
     {
       auto onec = sb.sbumpc();
       if (!traits_type::eq_int_type(onec, traits_type::eof()))
@@ -280,11 +281,11 @@ struct ibstream
   
   ibstream& read_bytes(void* dst, size_t count)
   {
-    auto& sb = sbuf();
+    auto& sb = get_sbuf();
     const std::streamsize ssize = reliable_numeric_cast<std::streamsize>(count);
     // skip checking for overflow.. 
 
-    if (!fail())
+    if (!has_failed())
     {
       const auto rsize = sb.sgetn((char*)dst, ssize);
       if (rsize != ssize)
@@ -309,6 +310,7 @@ struct ibstream
   template <typename T, std::enable_if_t<std::is_arithmetic_v<T> && (sizeof(T) > 1), bool> = true>
   FORCE_INLINE T read()
   {
+    static_assert(is_ibstreamable_v<T>, "T is not ibstreamable");
     T ret = {};
     *this >> ret;
     return ret;
@@ -318,6 +320,7 @@ struct ibstream
   template <typename T, std::enable_if_t<std::is_arithmetic_v<T> && (sizeof(T) == 1), bool> = true>
   FORCE_INLINE T read()
   {
+    static_assert(is_ibstreamable_v<T>, "T is not ibstreamable");
     return static_cast<T>(read_byte());
   }
 
@@ -325,6 +328,8 @@ struct ibstream
   template <typename T, std::enable_if_t<!std::is_const_v<T>, bool> = true>
   inline ibstream& read_array(T* arr, size_t count)
   {
+    static_assert(is_ibstreamable_v<T>, "T is not ibstreamable");
+
     if constexpr (is_trivially_serializable_v<T>)
     {
       read_bytes(reinterpret_cast<char*>(arr), count * sizeof(T));
@@ -340,7 +345,7 @@ struct ibstream
 
     if constexpr (std::is_default_constructible_v<T> && std::is_copy_assignable_v<T>)
     {
-      if (fail())
+      if (has_failed())
       {
         for (size_t i = 0; i < count; ++i)
         {
@@ -356,6 +361,7 @@ struct ibstream
   template <typename T, std::enable_if_t<!std::is_const_v<T>, bool> = true>
   FORCE_INLINE ibstream& read_array(const std::span<T>& span)
   {
+    static_assert(is_ibstreamable_v<T>, "T is not ibstreamable");
     return read_array<T>(span.data(), span.size());
   }
 
@@ -363,6 +369,7 @@ struct ibstream
   template <typename T, std::enable_if_t<!std::is_const_v<T> && !std::is_same_v<T, bool>, bool> = true>
   FORCE_INLINE ibstream& read_array(std::vector<T>& span)
   {
+    static_assert(is_ibstreamable_v<T>, "T is not ibstreamable");
     return read_array<T>(span.data(), span.size());
   }
 
@@ -383,7 +390,9 @@ struct ibstream
   template <typename T, std::enable_if_t<!std::is_const_v<T>, bool> = true>
   ibstream& read_vec_lpfxd(std::vector<T>& vec)
   {
-    if (!fail())
+    static_assert(is_ibstreamable_v<T>, "T is not ibstreamable");
+
+    if (!has_failed())
     {
       uint32_t cnt = 0;
       *this >> cnt;
@@ -399,7 +408,7 @@ struct ibstream
       }
     }
 
-    if (fail())
+    if (has_failed())
     {
       vec.clear();
     }
@@ -407,7 +416,7 @@ struct ibstream
     return *this;
   }
 
-  // std::vector<bool> uses a bitfield impl
+  // std::vector<bool> uses a flagfield impl
   // so let's use 1 byte per bool intermediate vec
   ibstream& read_vec_lpfxd(std::vector<bool>& vec)
   {
@@ -416,7 +425,7 @@ struct ibstream
     std::vector<uint8_t> u8vec;
     read_vec_lpfxd(u8vec);
 
-    if (!fail())
+    if (!has_failed())
     {
       vec.reserve(u8vec.size());
       std::copy(u8vec.begin(), u8vec.end(), std::back_inserter(vec));
@@ -456,6 +465,7 @@ private:
   dummy_buf m_dummy;
 };
 
+
 // base class for output byte streams.
 struct obstream
   : bstream
@@ -468,7 +478,7 @@ struct obstream
 
   // little-endian only
 
-  // write trivial types
+  // write explicitly trivial types
   template <typename T, std::enable_if_t<
     is_trivially_serializable_v<T> &&
     !std::is_arithmetic_v<T>, bool> = true>
@@ -507,9 +517,9 @@ struct obstream
 
   inline bstreampos tellp() const
   {
-    auto& sb = sbuf();
+    auto& sb = get_sbuf();
 
-    if (!fail())
+    if (!has_failed())
     {
       return sb.pubseekoff(0, std::ios::cur, std::ios::out);
     }
@@ -520,7 +530,7 @@ struct obstream
   // doesn't clear fail, it's safer this way..
   inline bstream& seekp(bstreampos pos)
   {
-    auto& sb = sbuf();
+    auto& sb = get_sbuf();
 
     if (!sb.pubseekpos(std::streampos(pos), std::ios::out))
     {
@@ -534,7 +544,7 @@ struct obstream
   // doesn't clear fail, it's safer this way..
   inline bstream& seekp(std::streamoff off, std::ios::seekdir dir)
   {
-    auto& sb = sbuf();
+    auto& sb = get_sbuf();
 
     if (!sb.pubseekoff(off, dir, std::ios::out))
     {
@@ -547,9 +557,9 @@ struct obstream
 
   obstream& write_byte(char b)
   {
-    auto& sb = sbuf();
+    auto& sb = get_sbuf();
 
-    if (!fail())
+    if (!has_failed())
     {
       if (traits_type::eq_int_type(sb.sputc(b), traits_type::eof()))
       {
@@ -562,11 +572,11 @@ struct obstream
 
   obstream& write_bytes(const void* src, size_t count)
   {
-    auto& sb = sbuf();
+    auto& sb = get_sbuf();
     const std::streamsize ssize = reliable_numeric_cast<std::streamsize>(count);
     // skip checking for overflow.. 
 
-    if (!fail())
+    if (!has_failed())
     {
       if (sb.sputn((const char*)src, ssize) != ssize)
       {
@@ -579,9 +589,9 @@ struct obstream
 
   obstream& flush()
   {
-    auto& sb = sbuf();
+    auto& sb = get_sbuf();
 
-    if (!fail() && traits_type::eq_int_type(sb.pubsync(), traits_type::eof()))
+    if (!has_failed() && traits_type::eq_int_type(sb.pubsync(), traits_type::eof()))
     {
       set_fail();
     }
@@ -597,6 +607,7 @@ struct obstream
   template <typename T, std::enable_if_t<std::is_arithmetic_v<T> && (sizeof(T) > 1), bool> = true>
   FORCE_INLINE obstream& write(const T& value)
   {
+    static_assert(is_ibstreamable_v<T>, "T is not obstreamable");
     return *this << value;
   }
 
@@ -621,6 +632,8 @@ struct obstream
   template <typename T>
   inline obstream& write_array(const T* arr, size_t count)
   {
+    static_assert(is_ibstreamable_v<T>, "T is not obstreamable");
+
     if constexpr (is_trivially_serializable_v<T>)
     {
       write_bytes(reinterpret_cast<const char*>(arr), count * sizeof(T));
@@ -641,6 +654,7 @@ struct obstream
   template <typename T>
   FORCE_INLINE obstream& write_array(const std::span<const T>& span)
   {
+    static_assert(is_ibstreamable_v<T>, "T is not obstreamable");
     return write_array<T>(span.data(), span.size());
   }
 
@@ -648,6 +662,7 @@ struct obstream
   template <typename T, std::enable_if_t<!std::is_same_v<T, bool>, bool> = true>
   FORCE_INLINE obstream& write_array(const std::vector<T>& span)
   {
+    static_assert(is_ibstreamable_v<T>, "T is not obstreamable");
     return write_array<T>(span.data(), span.size());
   }
 
@@ -662,7 +677,9 @@ struct obstream
   template <typename T>
   obstream& write_vec_lpfxd(const std::vector<T>& vec)
   {
-    if (!fail())
+    static_assert(is_ibstreamable_v<T>, "T is not obstreamable");
+
+    if (!has_failed())
     {
       size_t cnt = vec.size();
       if (cnt > 0x1000000)
@@ -680,11 +697,11 @@ struct obstream
     return *this;
   }
 
-  // std::vector<bool> uses a bitfield impl
+  // std::vector<bool> uses a flagfield impl
   // so let's use 1 byte per bool intermediate vec
   obstream& write_vec_lpfxd(const std::vector<bool>& vec)
   {
-    if (!fail())
+    if (!has_failed())
     {
       std::vector<uint8_t> u8vec;
       u8vec.resize(vec.size());

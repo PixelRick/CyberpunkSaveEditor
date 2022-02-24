@@ -177,7 +177,7 @@ struct cname_db
   //  return gname();
   //}
 
-  FORCE_INLINE const std::vector<gname>& sorted_names() const noexcept
+  FORCE_INLINE const std::vector<gname>& get_sorted_names() const noexcept
   {
     return m_full_list;
   }

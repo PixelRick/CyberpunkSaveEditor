@@ -153,7 +153,7 @@ struct TweakDBID_resolver
     return gname(fmt::format("<tdbid:{:08X}:{:02X}>", id.crc, id.slen));
   }
 
-  const std::vector<gname>& sorted_names(TweakDBID_category cat = TweakDBID_category::Unknown) const
+  const std::vector<gname>& get_sorted_names(TweakDBID_category cat = TweakDBID_category::Unknown) const
   {
     switch (cat)
     {
