@@ -73,8 +73,8 @@ protected:
   // assumes writeable internal buffer is being used
   void resize_buffer(std::streamsize new_size)
   {
-    CP_ASSERT(m_buf.get() == eback());
-    CP_ASSERT(!m_readonly);
+    REDX_ASSERT(m_buf.get() == eback());
+    REDX_ASSERT(!m_readonly);
 
     const auto old_buf = eback();
     const std::streamsize old_size = epptr() - old_buf;
@@ -105,7 +105,7 @@ protected:
     const auto gp = gptr();
     const auto pp = pptr();
 
-    CP_ASSERT(m_readonly ^ (pp != nullptr));
+    REDX_ASSERT(m_readonly ^ (pp != nullptr));
 
     // new end of sequence
     if (pp > m_egp)
@@ -276,7 +276,7 @@ protected:
       }
     }
 
-    CP_ASSERT(new_size > 0);
+    REDX_ASSERT(new_size > 0);
     if (new_size == old_size)
     {
       // can't grow

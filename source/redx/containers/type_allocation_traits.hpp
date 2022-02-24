@@ -39,8 +39,8 @@ public:
 
   static inline void* allocate(size_t count, size_t elt_size, size_t alignment)
   {
-    CP_ASSERT(elt_size % Alignment == 0);
-    CP_ASSERT(Alignment == alignment);
+    REDX_ASSERT(elt_size % Alignment == 0);
+    REDX_ASSERT(Alignment == alignment);
     return static_cast<void*>(underlying_allocator().allocate(elt_size * count));
   }
 

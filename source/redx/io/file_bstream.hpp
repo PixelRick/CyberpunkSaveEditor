@@ -403,8 +403,8 @@ protected:
 //  {
 //    if (m_pending_flush)
 //    {
-//      CP_ASSERT(is_open());
-//      CP_ASSERT(m_can_write);
+//      REDX_ASSERT(is_open());
+//      REDX_ASSERT(m_can_write);
 //
 //      if (!m_file.seekpos(m_buf_pos))
 //      {
@@ -441,9 +441,9 @@ protected:
 //  // it doesn't update the buffer size
 //  bool buffer_current()
 //  {
-//    CP_ASSERT(is_open());
-//    CP_ASSERT(!m_pending_flush);
-//    CP_ASSERT(m_wend == m_bbeg);
+//    REDX_ASSERT(is_open());
+//    REDX_ASSERT(!m_pending_flush);
+//    REDX_ASSERT(m_wend == m_bbeg);
 //
 //    if (m_buf_size == 0)
 //      return true;

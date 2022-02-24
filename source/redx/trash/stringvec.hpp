@@ -29,8 +29,8 @@ public:
 
   relspan_packed(size_t offset, size_t size)
   {
-    CP_ASSERT(offset < (std::numeric_limits<uint32_t>::max)() );
-    CP_ASSERT(size < (std::numeric_limits<uint32_t>::max)() );
+    REDX_ASSERT(offset < (std::numeric_limits<uint32_t>::max)() );
+    REDX_ASSERT(size < (std::numeric_limits<uint32_t>::max)() );
     this->set_offset(reliable_numeric_cast<uint32_t>(offset));
     this->set_size(reliable_numeric_cast<uint32_t>(size));
   }
@@ -90,8 +90,8 @@ struct relspan
 
   relspan(size_t offset, size_t size)
   {
-    CP_ASSERT(offset < max_offset);
-    CP_ASSERT(size < max_size);
+    REDX_ASSERT(offset < max_offset);
+    REDX_ASSERT(size < max_size);
     this->set_offset(offset);
     this->set_size(size);
   }

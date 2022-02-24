@@ -18,16 +18,16 @@
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/fmt.h>
 
-#define CP_ENSURE(expr) do { if (!(expr)){ SPDLOG_CRITICAL("assertion failed: ({})", #expr); DEBUG_BREAK(); } } while(0)
+#define REDX_ENSURE(expr) do { if (!(expr)){ SPDLOG_CRITICAL("assertion failed: ({})", #expr); DEBUG_BREAK(); } } while(0)
 
 #ifdef _DEBUG
-#define CP_ASSERT(expr) CP_ENSURE(expr)
+#define REDX_ASSERT(expr) REDX_ENSURE(expr)
 #else
-#define CP_ASSERT(expr)
+#define REDX_ASSERT(expr)
 #endif
 
 #ifdef _DEBUG
-#define CP_VERIFY(expr) CP_ENSURE(expr)
+#define REDX_VERIFY(expr) REDX_ENSURE(expr)
 #else
-#define CP_VERIFY(expr) std::ignore = (expr)
+#define REDX_VERIFY(expr) std::ignore = (expr)
 #endif
