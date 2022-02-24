@@ -21,6 +21,7 @@ struct cnames_blob
 protected:
 
   struct ser_desc
+    : trivially_serializable<ser_desc>
   {
     union
     {

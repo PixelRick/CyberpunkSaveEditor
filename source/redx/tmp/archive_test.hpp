@@ -202,6 +202,7 @@ public:
   }
 
   struct vlotbl_desc
+    : trivially_serializable<vlotbl_desc>
   {
     uint32_t descs_offset = 0;
     uint32_t data_offset = 0;
@@ -215,6 +216,7 @@ public:
   };
 
   struct header_t
+    : trivially_serializable<header_t>
   {
     uint16_t uk1                    = 0; // probably version
     uint16_t vlotbl_flags           = 0;
@@ -230,6 +232,7 @@ public:
   };
 
   struct obj_desc_t
+    : trivially_serializable<obj_desc_t>
   {
     obj_desc_t() = default;
 

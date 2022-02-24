@@ -33,6 +33,7 @@ struct version
 
 
 struct header
+  : trivially_serializable<header>
 {
   bool is_magic_ok() const
   {
@@ -50,6 +51,7 @@ struct header
 static_assert(sizeof(header) == 0x18);
 
 struct record
+  : trivially_serializable<record>
 {
   uint32_t  name_idx : 31;
   uint32_t  is_directory : 1;

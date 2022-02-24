@@ -15,10 +15,15 @@ namespace redx {
 
 using bstreampos = uint64_t;
 
-template <class T, class = void>
+
+// inherit from this to declare a struct trivially serializable
+template <class T>
+struct trivially_serializable {};
+
+template <class T>
 struct is_trivially_serializable
 {
-  static constexpr bool value = std::is_trivially_copyable_v<T>;
+  static constexpr bool value = std::is_base_of_v<trivially_serializable<T>, T>;
 };
 
 template <typename T>

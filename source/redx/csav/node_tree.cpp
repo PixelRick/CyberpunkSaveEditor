@@ -10,6 +10,7 @@
 namespace redx::csav {
 
 struct compressed_chunk_desc
+  : trivially_serializable<compressed_chunk_desc>
 {
   // data_size is uncompressed size
   uint32_t offset, size, data_size;

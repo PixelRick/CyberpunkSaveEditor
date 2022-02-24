@@ -32,6 +32,7 @@ struct version
 
 
 struct header
+  : trivially_serializable<header>
 {
   bool is_magic_ok() const
   {
@@ -49,6 +50,7 @@ struct header
 
 
 struct file_record
+  : trivially_serializable<file_record>
 {
   file_id     fid;
   file_time   ftime;
@@ -63,6 +65,7 @@ static_assert(sizeof(file_record) == 0x38);
 
 
 struct segment_descriptor
+  : trivially_serializable<segment_descriptor>
 {
   inline bool is_segment_compressed() const
   {
@@ -83,6 +86,7 @@ static_assert(sizeof(segment_descriptor) == 0x10);
 
 
 struct dependency
+  : trivially_serializable<dependency>
 {
   uint64_t hpath;
 };
@@ -91,6 +95,7 @@ static_assert(sizeof(dependency) == 0x8);
 
 
 struct metadata_trampoline
+  : trivially_serializable<metadata_trampoline>
 {
   uint32_t tbls_offset = 8;
   uint32_t tbls_size = 0;
@@ -98,6 +103,7 @@ struct metadata_trampoline
 
 #pragma pack(push, 4)
 struct metadata_tbls_header
+  : trivially_serializable<metadata_tbls_header>
 {
   uint64_t crc = 0;
   uint32_t files_cnt = 0;
