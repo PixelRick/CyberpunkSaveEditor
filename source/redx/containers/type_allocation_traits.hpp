@@ -1,9 +1,7 @@
 #pragma once
 #include <type_traits>
-#include <utility>
-#include <iterator>
+#include <memory>
 #include <algorithm>
-#include <initializer_list>
 
 #include <redx/core.hpp>
 
@@ -17,7 +15,7 @@
 
 namespace redx {
 
-// rttr requires a polymorphic allocator class.
+// rtts requires a polymorphic allocator class.
 // Having a different one for each T is redundant when the standard allocator
 // actually just calls new/delete with a few optimizations based on aligment and allocation total size.
 // So the idea here is to have a default allocator that isn't type-aware, but only aware of alignment.
@@ -32,8 +30,8 @@ struct default_stateless_allocator
 {
 private:
 
-  using compatible_storage = std::aligned_storage<1, Alignment>;
-  using underlying_allocator = std::allocator<std::aligned_storage<1, Alignment>>;
+  using compatible_storage = std::aligned_storage_t<1, Alignment>;
+  using underlying_allocator = std::allocator<std::aligned_storage_t<1, Alignment>>;
 
 public:
 

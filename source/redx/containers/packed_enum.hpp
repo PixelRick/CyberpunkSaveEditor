@@ -16,18 +16,18 @@ struct packed_enum
 
   FORCE_INLINE packed_enum& operator=(const enum_type& value)
   {
-    ut_value = static_cast<underlying_type>(value);
+    m_ut_value = static_cast<underlying_type>(value);
     return *this;
   }
 
   FORCE_INLINE operator enum_type() const
   {
-    return static_cast<enum_type>(ut_value);
+    return static_cast<enum_type>(m_ut_value);
   }
 
 private:
 
-  underlying_type ut_value;
+  underlying_type m_ut_value;
 };
 
 } // namespace redx

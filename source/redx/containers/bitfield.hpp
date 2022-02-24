@@ -25,13 +25,13 @@ public:
       throw std::range_error("bitfield_member::operator=: value overflow");
     }
 
-    packed = (packed & ~(mask << BitIndex)) | ((value & mask) << BitIndex); 
+    m_packed = (m_packed & ~(mask << BitIndex)) | ((value & mask) << BitIndex); 
     return *this; 
   }
  
   T operator()() const 
   { 
-    return (packed >> BitIndex) & mask; 
+    return (m_packed >> BitIndex) & mask; 
   } 
 
   operator T() const 
@@ -46,7 +46,7 @@ public:
 
 private: 
  
-  PackT packed; 
+  PackT m_packed; 
 }; 
  
 template <typename T, size_t BitIndex, size_t Bits = 1> 
