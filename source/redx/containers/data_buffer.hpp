@@ -1,37 +1,38 @@
 #pragma once
 #include <type_traits>
-#include <memory>
 
 #include <redx/core.hpp>
 
 namespace redx {
 
 // buffer with dynamic alignment
-// only uses default allocation for now.. (maybe move rt_allocator to common ?)
+// only uses default allocation for now.. (maybe move rtts::object_allocator to common ?)
 struct data_buffer
 {
-  data_buffer()
-    : m_buf(nullptr, *this) {}
+  data_buffer() noexcept = default;
 
   data_buffer(const data_buffer&) = delete;
   data_buffer& operator=(const data_buffer&) = delete;
 
   data_buffer(data_buffer&&) = default;
-  data_buffer& operator=(data_buffer&& other)
+  data_buffer& operator=(data_buffer&& other) = default;
+
+  ~data_buffer()
   {
-    m_buf.swap(other.m_buf);
-    std::swap(m_size, other.m_size);
-    std::swap(m_alignment, other.m_alignment);
+    if (m_buf)
+    {
+      deallocate();
+    }
   }
 
   void* data()
   {
-    return m_buf.get();
+    return m_buf;
   }
 
   const void* data() const
   {
-    return m_buf.get();
+    return m_buf;
   }
 
   size_t size() const
@@ -44,43 +45,35 @@ struct data_buffer
     return m_alignment;
   }
 
-  void reset(size_t size = 0, size_t alignment = 0)
+  void reset()
   {
-    m_buf.reset();
+    if (m_buf)
+    {
+      deallocate();
+      m_buf = nullptr;
+      m_size = 0;
+    }
+  }
+
+  void reset(size_t size, size_t alignment = 0)
+  {
+    reset();
     m_alignment = alignment;
-    m_size = 0;
-    void* p = nullptr;
     if (size)
     {
-      if (alignment > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
-      {
-        p = ::operator new (size, std::align_val_t{alignment});
-      }
-      else
-      {
-        p = ::operator new (size);
-      }
-      m_size = p ? size : 0;
-      m_buf.reset(p);
+      m_buf = aligned_storage_allocator::allocate(size, m_alignment);
+      m_size = m_buf ? size : 0;
     }
   }
 
 private:
 
-  // deleter
-  void operator()(void* p) const
+  void deallocate() const
   {
-    if (m_alignment > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
-    {
-      ::operator delete (p, m_size, std::align_val_t{m_alignment});
-    }
-    else
-    {
-      ::operator delete (p, m_size);
-    }
+    aligned_storage_allocator::deallocate(m_buf, m_size, m_alignment);
   };
 
-  std::unique_ptr<void, data_buffer&> m_buf;
+  void* m_buf = nullptr;
   size_t m_size = 0;
   size_t m_alignment = 0;
 };
