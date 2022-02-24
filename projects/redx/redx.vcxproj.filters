@@ -415,6 +415,9 @@
     <ClInclude Include="..\..\source\redx\games\cp77\TweakDBID.hpp">
       <Filter>source\redx\games\cp77</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\redx\core\memory.hpp">
+      <Filter>source\redx\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\..\assets\TweakDBIDs.json">

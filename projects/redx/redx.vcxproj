@@ -37,6 +37,7 @@
     <ClInclude Include="..\..\source\redx\core\misc.hpp" />
     <ClInclude Include="..\..\source\redx\core\path.hpp" />
     <ClInclude Include="..\..\source\redx\core\platform.hpp" />
+    <ClInclude Include="..\..\source\redx\core\memory.hpp" />
     <ClInclude Include="..\..\source\redx\core\stringpool.hpp" />
     <ClInclude Include="..\..\source\redx\core\tstamp.hpp" />
     <ClInclude Include="..\..\source\redx\core\utils.hpp" />

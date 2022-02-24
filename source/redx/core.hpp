@@ -15,6 +15,7 @@
 #include <redx/core/tstamp.hpp>
 #include <redx/core/path.hpp>
 #include <redx/core/misc.hpp>
+#include <redx/core/memory.hpp>
 #include <redx/os/platform_utils.hpp>
 
 #include "ctypes.hpp"
