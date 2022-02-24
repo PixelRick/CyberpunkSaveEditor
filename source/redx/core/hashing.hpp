@@ -480,14 +480,19 @@ constexpr uint32_t murmur3_32(const char* const data, size_t len, uint32_t seed 
   {
     case 3:
       k1 ^= (uint8_t)tail[2] << 16;
+      [[fallthrough]];
     case 2:
       k1 ^= (uint8_t)tail[1] << 8;
+      [[fallthrough]];
     case 1:
       k1 ^= (uint8_t)tail[0];
       k1 *= c1;
       k1 = rol(k1, 15);
       k1 *= c2;
       h1 ^= k1;
+      break;
+    default:
+      break;
   };
 
   //----------
@@ -752,9 +757,9 @@ protected:
 protected:
 
   uint64_t  m_cb = 0;
-  uint32_t  m_digest[5];
+  uint32_t  m_digest[5]{};
   uint32_t  m_len = 0;
-  uint8_t   m_buf[64];
+  uint8_t   m_buf[64]{};
 };
 
 inline sha1_digest sha1(const char* const data, size_t len)
