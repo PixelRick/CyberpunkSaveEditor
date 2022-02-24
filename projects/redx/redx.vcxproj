@@ -74,7 +74,7 @@
     <ClInclude Include="..\..\source\redx\io\file_access.hpp" />
     <ClInclude Include="..\..\source\redx\io\file_bstream.hpp" />
     <ClInclude Include="..\..\source\redx\io\mem_bstream.hpp" />
-    <ClInclude Include="..\..\source\redx\oodle\oodle.hpp" />
+    <ClInclude Include="..\..\source\redx\io\oodle\oodle.hpp" />
     <ClInclude Include="..\..\source\redx\os\file_reader.hpp" />
     <ClInclude Include="..\..\source\redx\os\platform_utils.hpp" />
     <ClInclude Include="..\..\source\redx\radr.hpp" />
@@ -121,7 +121,7 @@
     <ClCompile Include="..\..\source\redx\io\arfile_access.cpp" />
     <ClCompile Include="..\..\source\redx\io\bstream.cpp" />
     <ClCompile Include="..\..\source\redx\io\file_access_win.cpp" />
-    <ClCompile Include="..\..\source\redx\oodle\oodle.cpp" />
+    <ClCompile Include="..\..\source\redx\io\oodle\oodle.cpp" />
     <ClCompile Include="..\..\source\redx\os\win_utils.cpp" />
     <ClCompile Include="..\..\source\redx\os\win_file_reader.cpp" />
     <ClCompile Include="..\..\source\redx\radr\archive.cpp" />

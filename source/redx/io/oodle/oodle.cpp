@@ -7,7 +7,7 @@
 #endif
 #include <windows.h>
 
-#include <redx/oodle/oodle.hpp>
+#include <redx/io/oodle/oodle.hpp>
 #include <redx/os/platform_utils.hpp>
 
 #define LIBNAME "oo2ext_7_win64.dll"

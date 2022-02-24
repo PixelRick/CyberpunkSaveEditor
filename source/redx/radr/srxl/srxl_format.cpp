@@ -2,7 +2,7 @@
 
 #include <redx/core.hpp>
 #include <redx/io/mem_bstream.hpp>
-#include <redx/oodle/oodle.hpp>
+#include <redx/io/oodle/oodle.hpp>
 
 namespace redx::radr::srxl::format {
 

@@ -39,9 +39,6 @@
     <Filter Include="source\redx\tmp">
       <UniqueIdentifier>{a0a9252c-0b0a-41c4-870d-2d766c2bdd0f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\redx\oodle">
-      <UniqueIdentifier>{f5ea1935-d081-4bfb-8f82-c8dfd690aa2b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="assets\ardbs">
       <UniqueIdentifier>{335ef4d0-c866-4427-b2c4-85fc8272cc4d}</UniqueIdentifier>
     </Filter>
@@ -78,6 +75,9 @@
     <Filter Include="source\redx\games\cp77">
       <UniqueIdentifier>{7c8ececb-6376-48bc-afe1-ddc1f7a4cfe9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\redx\io\oodle">
+      <UniqueIdentifier>{f5ea1935-d081-4bfb-8f82-c8dfd690aa2b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\redx\init.cpp">
@@ -100,9 +100,6 @@
     </ClCompile>
     <ClCompile Include="..\..\source\redx\utils2.cpp">
       <Filter>source\redx</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\redx\oodle\oodle.cpp">
-      <Filter>source\redx\oodle</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\os\win_utils.cpp">
       <Filter>source\redx\os</Filter>
@@ -154,6 +151,9 @@
     </ClCompile>
     <ClCompile Include="..\..\source\redx\games\cp77\TweakDBID.cpp">
       <Filter>source\redx\games\cp77</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\redx\io\oodle\oodle.cpp">
+      <Filter>source\redx\io\oodle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -267,9 +267,6 @@
     </ClInclude>
     <ClInclude Include="..\..\source\redx\radr.hpp">
       <Filter>source\redx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\oodle\oodle.hpp">
-      <Filter>source\redx\oodle</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\containers\bitfield.hpp">
       <Filter>source\redx\containers</Filter>
@@ -417,6 +414,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\redx\core\memory.hpp">
       <Filter>source\redx\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\io\oodle\oodle.hpp">
+      <Filter>source\redx\io\oodle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -6,7 +6,7 @@
 #include <redx/core.hpp>
 #include <redx/os/platform_utils.hpp>
 #include <redx/depot/treefs.hpp>
-#include <redx/oodle/oodle.hpp>
+#include <redx/io/oodle/oodle.hpp>
 
 extern FSP_FILE_SYSTEM_INTERFACE s_cpfs_interface;
 

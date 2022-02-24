@@ -5,7 +5,7 @@
 
 #include <redx/io/file_access.hpp>
 #include <redx/io/mem_bstream.hpp>
-#include <redx/oodle/oodle.hpp>
+#include <redx/io/oodle/oodle.hpp>
 //#include <redx/radr/fdesc.hpp>
 
 namespace redx::radr {
