@@ -17,7 +17,7 @@ struct WidCFact
   static inline bool ItemGetter(void* data, int n, const char** out_str)
   { 
     static std::string tmp;
-    auto& namelist = redx::CFact_resolver::get().sorted_names();
+    auto& namelist = redx::CFact_resolver::get().get_sorted_names();
     if (n == 0)
       *out_str = (const char*)data;
     else
@@ -33,7 +33,7 @@ struct WidCFact
     scoped_imgui_id _sii(&x);
     bool modified = false;
 
-    auto& namelist = redx::CFact_resolver::get().sorted_names();
+    auto& namelist = redx::CFact_resolver::get().get_sorted_names();
 
     // tricky ;)
     int current_item_idx = 0;
@@ -76,7 +76,7 @@ struct TweakDBID_widget
     scoped_imgui_id _sii(&x);
     bool modified = false;
 
-    auto& namelist = TweakDBID_resolver::get().sorted_names(cat);
+    auto& namelist = TweakDBID_resolver::get().get_sorted_names(cat);
 
     // tricky ;)
     int item_current = 0;
@@ -157,7 +157,7 @@ struct CName_widget
 
     ImGui::SameLine();
 
-    auto& namelist = CName_resolver::get().sorted_names();
+    auto& namelist = CName_resolver::get().get_sorted_names();
 
     // tricky ;)
     int item_current = 0;
@@ -176,7 +176,7 @@ struct CName_widget
 
   static inline bool ItemGetter(void* data, int n, const char** out_str)
   { 
-    auto& namelist = CName_resolver::get().sorted_names();
+    auto& namelist = CName_resolver::get().get_sorted_names();
     if (n == 0)
       *out_str = (const char*)data;
     else
