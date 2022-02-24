@@ -376,7 +376,7 @@ constexpr uint32_t fnv1a32_continue(uint32_t hash, std::string_view str)
 
 constexpr uint32_t fnv1a32(std::string_view str)
 {
-  constexpr uint32_t basis = 0X811C9DC5;
+  constexpr uint32_t basis = 0x811C9DC5;
 
   return fnv1a32_continue(basis, str);
 }
