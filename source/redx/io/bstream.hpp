@@ -2,6 +2,7 @@
 #include <inttypes.h>
 #include <optional>
 #include <ios>
+#include <type_traits>
 
 #include <redx/core/platform.hpp>
 #include <redx/core/utils.hpp>
@@ -12,6 +13,9 @@
 // ones with a shared underlying bstreambuf..
 
 namespace redx {
+
+struct ibstream;
+struct obstream;
 
 using bstreampos = uint64_t;
 
@@ -28,6 +32,38 @@ struct is_trivially_serializable
 
 template <typename T>
 inline constexpr bool is_trivially_serializable_v = is_trivially_serializable<T>::value;
+
+template <typename T, typename = void>
+struct is_ibstreamable
+  : std::false_type {};
+
+template <typename T>
+struct is_ibstreamable<T,
+  std::void_t<decltype(std::declval<ibstream&>() >> std::declval<T&>())>>
+  : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_ibstreamable_v = is_ibstreamable<T>::value;
+
+template <typename T, typename = void>
+struct is_obstreamable
+  : std::false_type {};
+
+template <typename T>
+struct is_obstreamable<T,
+  std::void_t<decltype(std::declval<obstream&>() << std::declval<T>())>>
+  : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_obstreamable_v = is_obstreamable<T>::value;
+
+template <typename T, typename = void>
+struct is_bstreamable
+  : std::bool_constant<is_ibstreamable_v<T> && is_obstreamable_v<T>> {};
+
+template <typename T>
+inline constexpr bool is_bstreamable_v = is_bstreamable<T>::value;
+
 
 // base class for ibstream and obstream.
 struct bstream
