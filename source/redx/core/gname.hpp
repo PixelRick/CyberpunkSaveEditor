@@ -26,11 +26,11 @@ constexpr literal_gname_helper::singleton<Builder>::gstring_builder operator""_g
   return literal_gname_helper::singleton<Builder>::gstring_builder();
 }
 
-template <literal_gname_helper::builder Builder>
-constexpr literal_gname_helper::singleton<Builder>::gstrid_builder operator""_gndef_id()
-{
-  return literal_gname_helper::singleton<Builder>::gstrid_builder();
-}
+//template <literal_gname_helper::builder Builder>
+//constexpr literal_gname_helper::singleton<Builder>::gstrid_builder operator""_gndef_id()
+//{
+//  return literal_gname_helper::singleton<Builder>::gstrid_builder();
+//}
 
 #else
 

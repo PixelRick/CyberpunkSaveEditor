@@ -200,9 +200,9 @@ protected:
 
 protected:
 
-  struct identity_op_32 {
-    size_t operator()(uint32_t key) const { return key; }
-  };
+  //struct identity_op_32 {
+  //  size_t operator()(uint32_t key) const { return key; }
+  //};
 
   std::vector<gname> m_full_list;
   //std::unordered_map<uint32_t, gname, identity_op_32> m_invmap_32;
