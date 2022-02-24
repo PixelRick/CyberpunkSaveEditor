@@ -1,422 +1,418 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="source">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;hpp;h;cxx;asm</Extensions>
-    </Filter>
-    <Filter Include="source\redx">
-      <UniqueIdentifier>{09b1fce1-30a3-4684-b834-7bac9fa99a4c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="assets">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>json</Extensions>
     </Filter>
-    <Filter Include="source\redx\tweakdb">
-      <UniqueIdentifier>{22691e45-30ed-4c2e-b9b2-b2ae3e4eeb34}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\redx\csav">
-      <UniqueIdentifier>{db710764-70b8-4d46-a8a4-eed03168d60b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\redx\scripting">
-      <UniqueIdentifier>{f308e8c7-0808-485d-956b-0c3b5385c7bd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\redx\csav\nodes">
-      <UniqueIdentifier>{88182e9b-3b43-4b9a-a045-820af8bbbd3e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\redx\csav\misc">
-      <UniqueIdentifier>{74b966bf-d6f5-499e-abba-12d63ff1f9a2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\redx\csav\nodes\questSystem">
-      <UniqueIdentifier>{42b0a48f-ef59-4045-a11c-887cb39a44e8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\redx\csav\nodes\questSystem\FactsDB">
-      <UniqueIdentifier>{348e53d2-60b4-4c7b-8c18-d299dfa0ed02}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\redx\scripting\reminder that this needs a rewrite">
-      <UniqueIdentifier>{40a24e7b-34af-4cb2-8367-163609214c1b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\redx\tmp">
-      <UniqueIdentifier>{a0a9252c-0b0a-41c4-870d-2d766c2bdd0f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="assets\ardbs">
       <UniqueIdentifier>{335ef4d0-c866-4427-b2c4-85fc8272cc4d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\redx\containers">
+    <Filter Include="source">
+      <UniqueIdentifier>{09b1fce1-30a3-4684-b834-7bac9fa99a4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\tweakdb">
+      <UniqueIdentifier>{22691e45-30ed-4c2e-b9b2-b2ae3e4eeb34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\csav">
+      <UniqueIdentifier>{db710764-70b8-4d46-a8a4-eed03168d60b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\csav\nodes">
+      <UniqueIdentifier>{88182e9b-3b43-4b9a-a045-820af8bbbd3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\csav\nodes\questSystem">
+      <UniqueIdentifier>{42b0a48f-ef59-4045-a11c-887cb39a44e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\csav\nodes\questSystem\FactsDB">
+      <UniqueIdentifier>{348e53d2-60b4-4c7b-8c18-d299dfa0ed02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\csav\misc">
+      <UniqueIdentifier>{74b966bf-d6f5-499e-abba-12d63ff1f9a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\scripting">
+      <UniqueIdentifier>{f308e8c7-0808-485d-956b-0c3b5385c7bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\scripting\reminder that this needs a rewrite">
+      <UniqueIdentifier>{40a24e7b-34af-4cb2-8367-163609214c1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\tmp">
+      <UniqueIdentifier>{a0a9252c-0b0a-41c4-870d-2d766c2bdd0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\containers">
       <UniqueIdentifier>{fd69be9e-c7a2-49a7-9604-b7f61ccd5f92}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\redx\io">
+    <Filter Include="source\io">
       <UniqueIdentifier>{326b2e3b-6d1a-41c0-af11-20a487e7287f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\redx\os">
+    <Filter Include="source\io\oodle">
+      <UniqueIdentifier>{f5ea1935-d081-4bfb-8f82-c8dfd690aa2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\os">
       <UniqueIdentifier>{fd80afad-0208-4fb4-a1aa-47d8f3d73774}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\redx\core">
+    <Filter Include="source\core">
       <UniqueIdentifier>{cb09fa96-fdc6-442f-b175-0a00e3713f05}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\redx\radr">
+    <Filter Include="source\radr">
       <UniqueIdentifier>{5d3a2509-5843-4e33-8fef-a552332c53bc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\redx\radr\srxl">
+    <Filter Include="source\radr\srxl">
       <UniqueIdentifier>{8345ea46-5a5e-4236-8075-354f2b037323}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\redx\depot">
+    <Filter Include="source\depot">
       <UniqueIdentifier>{be7111d4-2f61-4bc4-935c-425b5eb0f329}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\redx\serialization">
+    <Filter Include="source\serialization">
       <UniqueIdentifier>{dc845405-c129-4187-a5df-49076c2b3476}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\redx\trash">
+    <Filter Include="source\trash">
       <UniqueIdentifier>{bb518c6a-c305-4a7c-b475-d26cd708901e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\redx\games">
+    <Filter Include="source\games">
       <UniqueIdentifier>{c01ce43b-98cf-43cd-a34a-9d97423ccf48}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\redx\games\cp77">
+    <Filter Include="source\games\cp77">
       <UniqueIdentifier>{7c8ececb-6376-48bc-afe1-ddc1f7a4cfe9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\redx\io\oodle">
-      <UniqueIdentifier>{f5ea1935-d081-4bfb-8f82-c8dfd690aa2b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\redx\init.cpp">
-      <Filter>source\redx</Filter>
+      <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\scripting\cclass.cpp">
-      <Filter>source\redx\scripting</Filter>
+      <Filter>source\scripting</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\scripting\cobject.cpp">
-      <Filter>source\redx\scripting</Filter>
+      <Filter>source\scripting</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\scripting\cproperty_factory.cpp">
-      <Filter>source\redx\scripting</Filter>
+      <Filter>source\scripting</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\csav\node_tree.cpp">
-      <Filter>source\redx\csav</Filter>
+      <Filter>source\csav</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\tmp\archive_test.cpp">
-      <Filter>source\redx\tmp</Filter>
+      <Filter>source\tmp</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\utils2.cpp">
-      <Filter>source\redx</Filter>
+      <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\os\win_utils.cpp">
-      <Filter>source\redx\os</Filter>
+      <Filter>source\os</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\os\win_file_reader.cpp">
-      <Filter>source\redx\os</Filter>
+      <Filter>source\os</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\core\utils.cpp">
-      <Filter>source\redx\core</Filter>
+      <Filter>source\core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\io\bstream.cpp">
-      <Filter>source\redx\io</Filter>
+      <Filter>source\io</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\io\file_access_win.cpp">
-      <Filter>source\redx\io</Filter>
+      <Filter>source\io</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\radr\archive.cpp">
-      <Filter>source\redx\radr</Filter>
+      <Filter>source\radr</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\radr\radr_format.cpp">
-      <Filter>source\redx\radr</Filter>
+      <Filter>source\radr</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\radr\srxl\srxl_format.cpp">
-      <Filter>source\redx\radr\srxl</Filter>
+      <Filter>source\radr\srxl</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\depot\directory_entry.cpp">
-      <Filter>source\redx\depot</Filter>
+      <Filter>source\depot</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\depot\treefs.cpp">
-      <Filter>source\redx\depot</Filter>
+      <Filter>source\depot</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\io\arfile_access.cpp">
-      <Filter>source\redx\io</Filter>
+      <Filter>source\io</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\trash\serializable_stringpool.cpp">
-      <Filter>source\redx\trash</Filter>
+      <Filter>source\trash</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\trash\streambase.cpp">
-      <Filter>source\redx\trash</Filter>
+      <Filter>source\trash</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\serialization\serializer.cpp">
-      <Filter>source\redx\serialization</Filter>
+      <Filter>source\serialization</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\games\cp77\CEnum.cpp">
-      <Filter>source\redx\games\cp77</Filter>
+      <Filter>source\games\cp77</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\games\cp77\CFact.cpp">
-      <Filter>source\redx\games\cp77</Filter>
+      <Filter>source\games\cp77</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\games\cp77\TweakDBID.cpp">
-      <Filter>source\redx\games\cp77</Filter>
+      <Filter>source\games\cp77</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\redx\io\oodle\oodle.cpp">
-      <Filter>source\redx\io\oodle</Filter>
+      <Filter>source\io\oodle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\redx\tweakdb\tweakdb.hpp">
-      <Filter>source\redx\tweakdb</Filter>
+      <Filter>source\tweakdb</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\core.hpp">
-      <Filter>source\redx</Filter>
+      <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\misc\system_serializer.hpp">
-      <Filter>source\redx\csav\misc</Filter>
+      <Filter>source\csav\misc</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\init.hpp">
-      <Filter>source\redx</Filter>
+      <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\version.hpp">
-      <Filter>source\redx\csav</Filter>
+      <Filter>source\csav</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\node.hpp">
-      <Filter>source\redx\csav</Filter>
+      <Filter>source\csav</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\serial_tree.hpp">
-      <Filter>source\redx\csav</Filter>
+      <Filter>source\csav</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\serializers.hpp">
-      <Filter>source\redx\csav</Filter>
+      <Filter>source\csav</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\scripting\cclass.hpp">
-      <Filter>source\redx\scripting</Filter>
+      <Filter>source\scripting</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\scripting\cobject.hpp">
-      <Filter>source\redx\scripting</Filter>
+      <Filter>source\scripting</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\scripting\cproperty.hpp">
-      <Filter>source\redx\scripting</Filter>
+      <Filter>source\scripting</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\scripting\cproperty_factory.hpp">
-      <Filter>source\redx\scripting</Filter>
+      <Filter>source\scripting</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\scripting\CStringPool.hpp">
-      <Filter>source\redx\scripting</Filter>
+      <Filter>source\scripting</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\scripting\csystem.hpp">
-      <Filter>source\redx\scripting</Filter>
+      <Filter>source\scripting</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\scripting\csystem_serctx.hpp">
-      <Filter>source\redx\scripting</Filter>
+      <Filter>source\scripting</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\scripting\fwd.hpp">
-      <Filter>source\redx\scripting</Filter>
+      <Filter>source\scripting</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\scripting\iproperty.hpp">
-      <Filter>source\redx\scripting</Filter>
+      <Filter>source\scripting</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\nodes\CCharacterCustomization.hpp">
-      <Filter>source\redx\csav\nodes</Filter>
+      <Filter>source\csav\nodes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\nodes\CGenericSystem.hpp">
-      <Filter>source\redx\csav\nodes</Filter>
+      <Filter>source\csav\nodes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\nodes\CInventory.hpp">
-      <Filter>source\redx\csav\nodes</Filter>
+      <Filter>source\csav\nodes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\nodes\CItemData.hpp">
-      <Filter>source\redx\csav\nodes</Filter>
+      <Filter>source\csav\nodes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\nodes\CPSData.hpp">
-      <Filter>source\redx\csav\nodes</Filter>
+      <Filter>source\csav\nodes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\nodes\CStats.hpp">
-      <Filter>source\redx\csav\nodes</Filter>
+      <Filter>source\csav\nodes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\nodes\CStatsPool.hpp">
-      <Filter>source\redx\csav\nodes</Filter>
+      <Filter>source\csav\nodes</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\nodes\questSystem\FactsDB.hpp">
-      <Filter>source\redx\csav\nodes\questSystem</Filter>
+      <Filter>source\csav\nodes\questSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\nodes\questSystem\FactsDB\FactsDB.hpp">
-      <Filter>source\redx\csav\nodes\questSystem\FactsDB</Filter>
+      <Filter>source\csav\nodes\questSystem\FactsDB</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\nodes\questSystem\FactsDB\FactsTable.hpp">
-      <Filter>source\redx\csav\nodes\questSystem\FactsDB</Filter>
+      <Filter>source\csav\nodes\questSystem\FactsDB</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\ctypes.hpp">
-      <Filter>source\redx</Filter>
+      <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\nodes.hpp">
-      <Filter>source\redx\csav</Filter>
+      <Filter>source\csav</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\savegame.hpp">
-      <Filter>source\redx\csav</Filter>
+      <Filter>source\csav</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav\node_tree.hpp">
-      <Filter>source\redx\csav</Filter>
+      <Filter>source\csav</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav.hpp">
-      <Filter>source\redx</Filter>
+      <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\scripting.hpp">
-      <Filter>source\redx</Filter>
+      <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\tweakdb\value_pool.hpp">
-      <Filter>source\redx\tweakdb</Filter>
+      <Filter>source\tweakdb</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\tmp\archive_test.hpp">
-      <Filter>source\redx\tmp</Filter>
+      <Filter>source\tmp</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\utils.hpp">
-      <Filter>source\redx</Filter>
+      <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\radr.hpp">
-      <Filter>source\redx</Filter>
+      <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\containers\bitfield.hpp">
-      <Filter>source\redx\containers</Filter>
+      <Filter>source\containers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\os\platform_utils.hpp">
-      <Filter>source\redx\os</Filter>
+      <Filter>source\os</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\os\file_reader.hpp">
-      <Filter>source\redx\os</Filter>
+      <Filter>source\os</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\core\cname.hpp">
-      <Filter>source\redx\core</Filter>
+      <Filter>source\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\core\gname.hpp">
-      <Filter>source\redx\core</Filter>
+      <Filter>source\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\core\gstrid.hpp">
-      <Filter>source\redx\core</Filter>
+      <Filter>source\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\core\gstring.hpp">
-      <Filter>source\redx\core</Filter>
+      <Filter>source\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\core\hashing.hpp">
-      <Filter>source\redx\core</Filter>
+      <Filter>source\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\core\hashing_tables.hpp">
-      <Filter>source\redx\core</Filter>
+      <Filter>source\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\core\misc.hpp">
-      <Filter>source\redx\core</Filter>
+      <Filter>source\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\core\path.hpp">
-      <Filter>source\redx\core</Filter>
+      <Filter>source\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\core\platform.hpp">
-      <Filter>source\redx\core</Filter>
+      <Filter>source\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\core\stringpool.hpp">
-      <Filter>source\redx\core</Filter>
+      <Filter>source\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\core\tstamp.hpp">
-      <Filter>source\redx\core</Filter>
+      <Filter>source\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\core\utils.hpp">
-      <Filter>source\redx\core</Filter>
+      <Filter>source\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\io\bstream.hpp">
-      <Filter>source\redx\io</Filter>
+      <Filter>source\io</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\io\file_access.hpp">
-      <Filter>source\redx\io</Filter>
+      <Filter>source\io</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\io\file_bstream.hpp">
-      <Filter>source\redx\io</Filter>
+      <Filter>source\io</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\io\mem_bstream.hpp">
-      <Filter>source\redx\io</Filter>
+      <Filter>source\io</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\radr\archive.hpp">
-      <Filter>source\redx\radr</Filter>
+      <Filter>source\radr</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\radr\file_info.hpp">
-      <Filter>source\redx\radr</Filter>
+      <Filter>source\radr</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\radr\radr_format.hpp">
-      <Filter>source\redx\radr</Filter>
+      <Filter>source\radr</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\radr\srxl\srxl_format.hpp">
-      <Filter>source\redx\radr\srxl</Filter>
+      <Filter>source\radr\srxl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\depot\directory_entry.hpp">
-      <Filter>source\redx\depot</Filter>
+      <Filter>source\depot</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\depot\directory_iterator.hpp">
-      <Filter>source\redx\depot</Filter>
+      <Filter>source\depot</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\depot\treefs.hpp">
-      <Filter>source\redx\depot</Filter>
+      <Filter>source\depot</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\io\arfile_access.hpp">
-      <Filter>source\redx\io</Filter>
+      <Filter>source\io</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\serialization\resids_blob.hpp">
-      <Filter>source\redx\serialization</Filter>
+      <Filter>source\serialization</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\serialization\iserializable.hpp">
-      <Filter>source\redx\serialization</Filter>
+      <Filter>source\serialization</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\serialization\cnames_blob.hpp">
-      <Filter>source\redx\serialization</Filter>
+      <Filter>source\serialization</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\trash\cnameset_old.hpp">
-      <Filter>source\redx\trash</Filter>
+      <Filter>source\trash</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\trash\serializable_stringpool.hpp">
-      <Filter>source\redx\trash</Filter>
+      <Filter>source\trash</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\trash\streambase.hpp">
-      <Filter>source\redx\trash</Filter>
+      <Filter>source\trash</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\trash\stringpoolsb.hpp">
-      <Filter>source\redx\trash</Filter>
+      <Filter>source\trash</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\trash\stringset.hpp">
-      <Filter>source\redx\trash</Filter>
+      <Filter>source\trash</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\trash\stringvec.hpp">
-      <Filter>source\redx\trash</Filter>
+      <Filter>source\trash</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\serialization\serializable.hpp">
-      <Filter>source\redx\serialization</Filter>
+      <Filter>source\serialization</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\serialization\serializer.hpp">
-      <Filter>source\redx\serialization</Filter>
+      <Filter>source\serialization</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\containers\data_buffer.hpp">
-      <Filter>source\redx\containers</Filter>
+      <Filter>source\containers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\containers\dynarray.hpp">
-      <Filter>source\redx\containers</Filter>
+      <Filter>source\containers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\containers\packed_enum.hpp">
-      <Filter>source\redx\containers</Filter>
+      <Filter>source\containers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\containers\smart_ptr.hpp">
-      <Filter>source\redx\containers</Filter>
+      <Filter>source\containers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\containers\type_allocation_traits.hpp">
-      <Filter>source\redx\containers</Filter>
+      <Filter>source\containers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\containers\array.hpp">
-      <Filter>source\redx\containers</Filter>
+      <Filter>source\containers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\games\cp77\CEnum.hpp">
-      <Filter>source\redx\games\cp77</Filter>
+      <Filter>source\games\cp77</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\games\cp77\CFact.hpp">
-      <Filter>source\redx\games\cp77</Filter>
+      <Filter>source\games\cp77</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\games\cp77\CName.hpp">
-      <Filter>source\redx\games\cp77</Filter>
+      <Filter>source\games\cp77</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\games\cp77\TweakDBID.hpp">
-      <Filter>source\redx\games\cp77</Filter>
+      <Filter>source\games\cp77</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\core\memory.hpp">
-      <Filter>source\redx\core</Filter>
+      <Filter>source\core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\io\oodle\oodle.hpp">
-      <Filter>source\redx\io\oodle</Filter>
+      <Filter>source\io\oodle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -534,7 +530,7 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="gstring.natvis">
-      <Filter>source\redx\core</Filter>
+      <Filter>source\core</Filter>
     </Natvis>
   </ItemGroup>
 </Project>

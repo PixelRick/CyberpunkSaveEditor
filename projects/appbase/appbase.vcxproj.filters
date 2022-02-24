@@ -11,11 +11,11 @@
     <Filter Include="source\widgets\cnodes">
       <UniqueIdentifier>{0e6cc1f3-d292-4856-9b38-df4f357ed52e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\widgets\node_editors">
-      <UniqueIdentifier>{189626dc-7d81-41aa-b4e0-aa26a221b3a4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="source\widgets\cnodes\questSystem">
       <UniqueIdentifier>{40f3a0d5-b820-47b7-b7ce-818066e0bb99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\widgets\node_editors">
+      <UniqueIdentifier>{189626dc-7d81-41aa-b4e0-aa26a221b3a4}</UniqueIdentifier>
     </Filter>
     <Filter Include="source\extras">
       <UniqueIdentifier>{6b1d2696-acee-48a7-9b08-029238fc411c}</UniqueIdentifier>
