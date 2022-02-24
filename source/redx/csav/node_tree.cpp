@@ -20,19 +20,19 @@ struct compressed_chunk_desc2
   : compressed_chunk_desc
 {
   uint32_t data_offset;
+
+  friend inline ibstream& operator>>(ibstream& st, compressed_chunk_desc2& x)
+  {
+    return st.read_bytes((char*)&x, sizeof(compressed_chunk_desc));
+  }
+
+  friend inline obstream& operator<<(obstream& st, const compressed_chunk_desc2& x)
+  {
+    return st.write_bytes((const char*)&x, sizeof(compressed_chunk_desc));
+  }
 };
 
 static_assert(sizeof(compressed_chunk_desc2) == 16);
-
-inline ibstream& operator>>(ibstream& st, compressed_chunk_desc2& x)
-{
-  return st.read_bytes((char*)&x, sizeof(compressed_chunk_desc));
-}
-
-inline obstream& operator<<(obstream& st, const compressed_chunk_desc2& x)
-{
-  return st.write_bytes((const char*)&x, sizeof(compressed_chunk_desc));
-}
 
 op_status node_tree::load(std::filesystem::path path)
 {
