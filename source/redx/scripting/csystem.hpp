@@ -118,7 +118,6 @@ public:
     m_subsys_names.clear();
     if (m_header.cnames_cnt > 1 && do_cnames)
     {
-
       uint32_t cnames_cnt = 0;
       reader >> cbytes_ref(cnames_cnt);
       
