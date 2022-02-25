@@ -1,4 +1,4 @@
 #pragma once
 
-#define VERSION_STRING "v0.5.4-alpha.14b (CP_v1.3)"
+#define VERSION_STRING "v0.6.0-alpha.0 (CP_v1.5Kosher)"
 
