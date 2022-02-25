@@ -169,7 +169,7 @@ public:
         return false;
       }
 
-      cname cn(str);
+      cname cn(str, true);
       m_ids.emplace_back(cn);
       m_idxmap.emplace(cn, i);
     }
