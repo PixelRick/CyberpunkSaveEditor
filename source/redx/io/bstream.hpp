@@ -182,7 +182,6 @@ struct ibstream
     !std::is_const_v<T>, bool> = true>
   FORCE_INLINE ibstream& operator>>(T& val)
   {
-    val = static_cast<T>(read_byte());
     return read_bytes((char*)&val, sizeof(T)); 
   }
 
