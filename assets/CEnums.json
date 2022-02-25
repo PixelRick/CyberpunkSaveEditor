@@ -323,6 +323,21 @@
     "TweakDB",
     "Override"
   ],
+  "AimAssistSettingConfig": [
+    "Default",
+    "Scanning",
+    "LeftHandCyberwareCharge",
+    "LeftHandCyberware",
+    "MeleeCombat",
+    "MeleeCombatIdle",
+    "AimingLimbCyber",
+    "Aiming",
+    "QuickMelee",
+    "VehicleCombat",
+    "Sprinting",
+    "LimbCyber",
+    "Count"
+  ],
   "AttitudeChange": [
     "DONT_CHANGE",
     "FRIENDLY",
@@ -375,20 +390,33 @@
     "Medium",
     "High",
     "Ultra",
-    "RTXMedium",
-    "RTXUltra",
+    "RaytracingLow",
+    "RaytracingMedium",
+    "RaytracingUltra",
     "Cinematic",
-    "Cinematic_RTX",
+    "Cinematic_Raytracing",
     "CinematicEXR",
-    "CinematicEXR_RTX",
-    "Console",
-    "ConsolePro",
-    "ConsoleEarlyNextGen",
-    "ConsoleEarlyNextGenQuality",
+    "CinematicEXR_Raytracing",
+    "PlayStation4",
+    "XboxOne",
+    "PlayStation4Pro",
+    "XboxOneX",
+    "PlayStation5_Performance",
+    "PlayStation5_Quality",
+    "PlayStation5_Backcompat_Performance",
+    "PlayStation5_Backcompat_Quality",
+    "XboxSeriesS",
+    "XboxSeriesS_Backcompat",
+    "XboxSeriesX_Performance",
+    "XboxSeriesX_Quality",
+    "XboxSeriesX_Backcompat_Performance",
+    "XboxSeriesX_Backcompat_Quality",
     "GeForceNow",
     "IconsGeneration",
     "SafeMode",
-    "Auto"
+    "Auto",
+    "GGP_Performance",
+    "GGP_Quality"
   ],
   "ConfigMeshQualityLevel": [
     "Default",
@@ -422,6 +450,12 @@
   "CraftingNotificationType": [
     "NoPerks",
     "NotEnoughMaterial"
+  ],
+  "CurrencyNotificationAnimState": [
+    "Inactive",
+    "Intro",
+    "Active",
+    "Outro"
   ],
   "CustomButtonType": [
     "UnlockAllVehicles",
@@ -516,6 +550,12 @@
   "EAIBackgroundCombatStep": [
     "ChangeCover",
     "ChangeTarget"
+  ],
+  "EAIBlockDirection": [
+    "Undefined",
+    "Center",
+    "Left",
+    "Right"
   ],
   "EAICombatPreset": [
     "None",
@@ -972,8 +1012,11 @@
     "PLATFORM_PC",
     "PLATFORM_XboxOne",
     "PLATFORM_PS4",
+    "PLATFORM_PS5",
+    "PLATFORM_XSX",
     "PLATFORM_WindowsServer",
-    "PLATFORM_LinuxServer"
+    "PLATFORM_LinuxServer",
+    "PLATFORM_GGP"
   ],
   "ECooldownGameControllerMode": [
     "COOLDOWNS",
@@ -1004,6 +1047,11 @@
     "ECCTV_All",
     "ECCTV_OnlyOffscreen",
     "ECCTV_OnlyOnscreen"
+  ],
+  "ECustomFilterDPadNavigationOption": [
+    "SelectNext",
+    "SelectPrev",
+    "Toggle"
   ],
   "ECustomMaterialParam": [
     "ECMP_CustomParam0",
@@ -1270,7 +1318,10 @@
     "EMM_TodvisRuntimePreview",
     "EMM_TodvisBakePreview",
     "EMM_RainMask",
-    "EMM_VolFogDensity"
+    "EMM_VolFogDensity",
+    "EMM_PBRValidationBaseColor",
+    "EMM_PBRValidationMetalness",
+    "EMM_GreyPlayMode"
   ],
   "EEquipmentSide": [
     "Left",
@@ -1386,6 +1437,7 @@
   ],
   "EGameplayChallengeLevel": [
     "NONE",
+    "TRIVIAL",
     "EASY",
     "MEDIUM",
     "HARD",
@@ -1420,7 +1472,8 @@
     "ClearPathAd",
     "DistractVendingMachine",
     "NPC",
-    "Clue"
+    "Clue",
+    "PlayerStash"
   ],
   "EGenericNotificationPriority": [
     "Default",
@@ -1815,8 +1868,12 @@
     "IK_Pad_Fake_LeftAxis",
     "IK_Pad_Fake_RightAxis",
     "IK_Pad_Fake_RelativeLeftAxis",
+    "IK_Pad_Fake_RelativeRightAxis",
     "IK_Pad_Fake_DigitLeftRight",
     "IK_Pad_Fake_DigitUpDown",
+    "IK_STADIA_CAPTURE",
+    "IK_SWITCH_CAPTURE",
+    "IK_CAPTURE",
     "IK_Last",
     "IK_Count"
   ],
@@ -1835,14 +1892,6 @@
   "EItemOperationType": [
     "ADD",
     "REMOVE"
-  ],
-  "EItemSlotCheckType": [
-    "NONE",
-    "TAG",
-    "TYPE",
-    "CATEGORY",
-    "EVOLUTION",
-    "FULLY_MODDED"
   ],
   "EJuryrigTrapState": [
     "UNARMED",
@@ -1945,7 +1994,8 @@
     "Default",
     "Available",
     "Unavailable",
-    "Inactive"
+    "Inactive",
+    "None"
   ],
   "EMaterialModifier": [
     "EMATMOD_HitProxy",
@@ -1975,6 +2025,8 @@
     "EMATMOD_AutoHideDistance",
     "EMATMOD_Rain",
     "EMATMOD_PlanarReflections",
+    "EMATMOD_WaterSim",
+    "EMATMOD_TransparencyClipParams",
     "EMATMOD_MAX"
   ],
   "EMaterialPriority": [
@@ -2252,7 +2304,8 @@
   "EPersonalLinkConnectionStatus": [
     "NOT_CONNECTED",
     "CONNECTING",
-    "CONNECTED"
+    "CONNECTED",
+    "DISCONNECTING"
   ],
   "EPersonalLinkSlotSide": [
     "FRONT",
@@ -2301,7 +2354,8 @@
     "Heat_2",
     "Heat_3",
     "Heat_4",
-    "Size"
+    "Size",
+    "Invalid"
   ],
   "EPreventionPsychoLogicType": [
     "Start",
@@ -2647,6 +2701,7 @@
     "LoadSaveFileInGame",
     "LoadSaveFile",
     "DeleteSaveFile",
+    "TransferSaveFile",
     "CorruptedSaveFile",
     "NoPlayerProfile",
     "GameSaved",
@@ -2660,6 +2715,9 @@
     "ControllerReconnected",
     "FirstModalHighPriority",
     "ControllerDisconnected",
+    "TrialPeriodEnded",
+    "TrialPeriodTimer",
+    "FailedToRemoveTransferredSave",
     "MAX"
   ],
   "ESystems": [
@@ -2931,9 +2989,7 @@
     "LEAVE"
   ],
   "EWorldMapView": [
-    "Map",
-    "FloorPlan",
-    "TimeSkip"
+    "Map"
   ],
   "EWoundedBodyPart": [
     "Invalid",
@@ -3244,6 +3300,7 @@
     "BCC_IndirectUAV",
     "BCC_Index16BitUAV",
     "BCC_Raw",
+    "BCC_ShaderTable",
     "BCC_Invalid"
   ],
   "GpuWrapApieIndexBufferChunkType": [
@@ -3296,7 +3353,9 @@
     "TEXFMT_R16G16_Unorm",
     "TEXFMT_R16G16_Sint",
     "TEXFMT_R16G16_Snorm",
-    "TEXFMT_B5G6R5_Unorm"
+    "TEXFMT_B5G6R5_Unorm",
+    "TEXFMT_B8G8R8A8",
+    "TEXFMT_B8G8R8A8_SRGB"
   ],
   "GpuWrapApieTextureGroup": [
     "TEXG_Generic_Color",
@@ -3387,6 +3446,7 @@
   ],
   "HubMenuItems": [
     "None",
+    "Default",
     "Crafting",
     "Character",
     "Inventory",
@@ -3567,7 +3627,8 @@
     "Money",
     "Equipped",
     "Owned",
-    "Buyback"
+    "Buyback",
+    "DLCNew"
   ],
   "ItemSortMode": [
     "Default",
@@ -3587,6 +3648,13 @@
   "ItemViewModes": [
     "Item",
     "Mod"
+  ],
+  "LadderCameraParams": [
+    "None",
+    "Enter",
+    "Default",
+    "CameraReset",
+    "Exit"
   ],
   "LandingType": [
     "Off",
@@ -3652,6 +3720,10 @@
     "FACE_REGION_JAW",
     "FACE_REGION_EARS",
     "FACE_REGION_NONE"
+  ],
+  "MountType": [
+    "Hijack",
+    "Regular"
   ],
   "NavGenAgentSize": [
     "Human"
@@ -3792,17 +3864,10 @@
     "Cool",
     "Intelligence"
   ],
-  "PersistenceSource": [
-    "AddThreat",
-    "SetNewCombatTarget",
-    "CommandAimWithWeapon",
-    "CommandForceShoot",
-    "CommandInjectCombatTarget",
-    "CommandMeleeAttack",
-    "CommandShoot",
-    "CommandThrowGrenade",
-    "CommandInjectThreat",
-    "TrackedBySecuritySystemAgent"
+  "PlayerChangeCameraAndLeaveVehiclePhase": [
+    "ToggleCamera",
+    "ExitVehicle",
+    "Done"
   ],
   "PlayerCombatControllerRefreshPolicyEnum": [
     "Persistent",
@@ -3899,7 +3964,8 @@
   "RipperdocFilter": [
     "All",
     "Vendor",
-    "Player"
+    "Player",
+    "Buyback"
   ],
   "RipperdocModes": [
     "Default",
@@ -4041,6 +4107,11 @@
     "NoBuffers_Fullscreen",
     "NoBuffers_PointList"
   ],
+  "TestCasePhase": [
+    "Setup",
+    "Body",
+    "Wrapup"
+  ],
   "ThrowType": [
     "Quick",
     "Charge"
@@ -4059,6 +4130,21 @@
     "UseNavigation",
     "ForceIgnored",
     "ForceBlocking"
+  ],
+  "TransferSaveAction": [
+    "Export",
+    "Import"
+  ],
+  "TransferSaveState": [
+    "ExportConfirmation",
+    "ExportSpinner",
+    "ExportSuccess",
+    "ExportFailed",
+    "ImportSpinner",
+    "ImportLoading",
+    "ImportNoSave",
+    "ImportFailed",
+    "ImportNotEnoughSpace"
   ],
   "TweakWeaponPose": [
     "Nothing",
@@ -4120,6 +4206,7 @@
     "EquippedItem",
     "BuyAndEquipCyberware",
     "BuyNotEquipableCyberware",
+    "SellCyberware",
     "DisassembeIconic"
   ],
   "VisualState": [
@@ -4148,8 +4235,7 @@
   ],
   "WorldMapTooltipType": [
     "Default",
-    "Police",
-    "District"
+    "Police"
   ],
   "aimTypeEnum": [
     "AimIn",
@@ -4892,6 +4978,7 @@
     "Light_Robot",
     "Light_Android",
     "Light_Mech",
+    "Light_Water",
     "Normal",
     "Normal_Hard",
     "Normal_Soft",
@@ -4900,6 +4987,7 @@
     "Normal_Robot",
     "Normal_Android",
     "Normal_Mech",
+    "Normal_Water",
     "Heavy",
     "Heavy_Hard",
     "Heavy_Soft",
@@ -4908,6 +4996,7 @@
     "Heavy_Robot",
     "Heavy_Android",
     "Heavy_Mech",
+    "Heavy_Water",
     "Slash",
     "Slash_Hard",
     "Slash_Soft",
@@ -4916,6 +5005,7 @@
     "Slash_Robot",
     "Slash_Android",
     "Slash_Mech",
+    "Slash_Water",
     "Cut",
     "Cut_Hard",
     "Cut_Soft",
@@ -4924,6 +5014,7 @@
     "Cut_Robot",
     "Cut_Android",
     "Cut_Mech",
+    "Cut_Water",
     "Stab",
     "Stab_Hard",
     "Stab_Soft",
@@ -4932,6 +5023,7 @@
     "Stab_Robot",
     "Stab_Android",
     "Stab_Mech",
+    "Stab_Water",
     "Finisher",
     "Finisher_Hard",
     "Finisher_Soft",
@@ -4940,6 +5032,7 @@
     "Finisher_Robot",
     "Finisher_Android",
     "Finisher_Mech",
+    "Finisher_Water",
     "Weak",
     "Weak_Hard",
     "Weak_Soft",
@@ -4947,7 +5040,8 @@
     "Weak_Flesh",
     "Weak_Robot",
     "Weak_Android",
-    "Weak_Mech"
+    "Weak_Mech",
+    "Weak_Water"
   ],
   "audioMeleeHitType": [
     "Light",
@@ -4964,7 +5058,10 @@
     "Soft",
     "Solid",
     "Flesh",
-    "Robot"
+    "Robot",
+    "Android",
+    "Mech",
+    "Water"
   ],
   "audioMixParamsAction": [
     "Mull",
@@ -5028,6 +5125,17 @@
     "FindingMaximumFaceAlignemnt",
     "LocalSpaceSideDirections",
     "FindingMaximumFaceAligment2Sides"
+  ],
+  "audioTriggerEffectMode": [
+    "Off",
+    "Feedback",
+    "Weapon",
+    "Vibration"
+  ],
+  "audioTriggerEffectTarget": [
+    "L2",
+    "R2",
+    "Both"
   ],
   "audioVoBarkType": [
     "None",
@@ -5247,10 +5355,6 @@
     "Leg",
     "Arm"
   ],
-  "entColliderComponentSimulationType": [
-    "Kinematic",
-    "Dynamic"
-  ],
   "entDebug_ShapeType": [
     "Sphere",
     "Box",
@@ -5299,7 +5403,8 @@
   "entRepellingType": [
     "Debris",
     "BigObjects",
-    "WindImpulse"
+    "WindImpulse",
+    "WaterImpulse"
   ],
   "entTemplateComponentResolveMode": [
     "AutoSelect",
@@ -5664,22 +5769,6 @@
     "Alarmed",
     "Panic"
   ],
-  "gameGOGRewardsSystemErrors": [
-    "None",
-    "RequestFailed",
-    "TemporaryFailure",
-    "NoInternetConnection",
-    "NotSignedInGalaxy",
-    "NotSignedInLauncher"
-  ],
-  "gameGOGRewardsSystemStatus": [
-    "Uninitialized",
-    "GeneratingCPID",
-    "CheckingRegistrationStatus",
-    "RegistrationPending",
-    "Registered",
-    "Error"
-  ],
   "gameGameVersion": [
     "CP77_Initial",
     "CP77_Development",
@@ -5704,6 +5793,9 @@
     "CP77_Patch_1_2_Hotfix4_dlc1",
     "CP77_Patch_1_3",
     "CP77_Patch_1_3_Hotfix1",
+    "CP77_Patch_1_4",
+    "CP77_Patch_1_3_Development",
+    "CP77_Patch_1_5",
     "Current"
   ],
   "gameGameplayEventFlag": [
@@ -5838,8 +5930,10 @@
     "SideQuest",
     "MinorQuest",
     "StreetStory",
+    "CyberPsycho",
     "Contract",
-    "VehicleQuest"
+    "VehicleQuest",
+    "ApartmentQuest"
   ],
   "gameKillType": [
     "Normal",
@@ -5880,7 +5974,10 @@
   "gameMountingSlotRole": [
     "Invalid",
     "Driver",
-    "Passenger"
+    "Passenger",
+    "Passenger_FR",
+    "Passenger_BL",
+    "Passenger_BR"
   ],
   "gameMovingPlatformLoopType": [
     "NoLooping",
@@ -5913,6 +6010,23 @@
     "Crouch",
     "WalkAim",
     "GravityOnly"
+  ],
+  "gameOnlineSystemErrors": [
+    "None",
+    "RequestFailed",
+    "TemporaryFailure",
+    "NoInternetConnection",
+    "NotSignedInGalaxy",
+    "NotSignedInLauncher",
+    "NotSignedInGame"
+  ],
+  "gameOnlineSystemStatus": [
+    "Uninitialized",
+    "GeneratingCPID",
+    "CheckingRegistrationStatus",
+    "RegistrationPending",
+    "Registered",
+    "Error"
   ],
   "gamePSMBodyCarrying": [
     "Any",
@@ -6451,7 +6565,12 @@
     "EnemyToPlayer",
     "EnemyToCompanion",
     "PlayerToEnemy",
-    "CompanionToEnemy"
+    "CompanionToEnemy",
+    "PlayerToPlayer"
+  ],
+  "gameTelemetryHitDefenseType": [
+    "Block",
+    "Deflect"
   ],
   "gameTelemetryMilestoneType": [
     "StartFact",
@@ -6460,6 +6579,13 @@
     "EndReward",
     "EndFact",
     "Invalid"
+  ],
+  "gameTelemetryMovementType": [
+    "Jump",
+    "DoubleJump",
+    "ChargedJump",
+    "Dodge",
+    "AirDodge"
   ],
   "gameTickableEventState": [
     "Idle",
@@ -6726,6 +6852,7 @@
     "CloseRing2ndFilter",
     "Crouch",
     "DefaultRing",
+    "Dodge",
     "Equip",
     "EquipMelee",
     "ExtremeRing",
@@ -7015,6 +7142,17 @@
     "Overcharging",
     "Discharging"
   ],
+  "gamedataCheckType": [
+    "Category",
+    "Evolution",
+    "FullyModded",
+    "None",
+    "Record",
+    "Tag",
+    "Type",
+    "Count",
+    "Invalid"
+  ],
   "gamedataChoiceCaptionPartType": [
     "Blueline",
     "Icon",
@@ -7282,6 +7420,7 @@
     "ExitReload",
     "MeleeBlock",
     "MeleeHit",
+    "MuzzleBrakeShoot",
     "Shoot",
     "SilencedShoot",
     "Count",
@@ -7388,6 +7527,7 @@
     "Cyb_MantisBlades",
     "Cyb_NanoWires",
     "Cyb_StrongArms",
+    "Cyberware",
     "Fla_Launcher",
     "Fla_Rifle",
     "Fla_Shock",
@@ -7395,24 +7535,34 @@
     "Gad_Grenade",
     "Gen_CraftingMaterial",
     "Gen_DataBank",
+    "Gen_Jewellery",
     "Gen_Junk",
     "Gen_Keycard",
     "Gen_Misc",
     "Gen_Readable",
     "GrenadeDelivery",
     "Grenade_Core",
+    "Prt_BootsFabricEnhancer",
     "Prt_Capacitor",
     "Prt_FabricEnhancer",
+    "Prt_FaceFabricEnhancer",
     "Prt_Fragment",
+    "Prt_HandgunMuzzle",
+    "Prt_HeadFabricEnhancer",
     "Prt_Magazine",
     "Prt_Mod",
     "Prt_Muzzle",
+    "Prt_OuterTorsoFabricEnhancer",
+    "Prt_PantsFabricEnhancer",
     "Prt_Program",
     "Prt_Receiver",
+    "Prt_RifleMuzzle",
     "Prt_Scope",
     "Prt_ScopeRail",
     "Prt_Stock",
     "Prt_TargetingSystem",
+    "Prt_TorsoFabricEnhancer",
+    "VendorToken",
     "Wea_AssaultRifle",
     "Wea_Fists",
     "Wea_Hammer",
@@ -7582,6 +7732,10 @@
     "Zzz01_CarForPurchaseVariant",
     "Zzz02_MotorcycleForPurchaseVariant",
     "Zzz03_MotorcycleVariant",
+    "Zzz04_PreventionVehicleVariant",
+    "Zzz05_ApartmentToPurchaseVariant",
+    "Zzz06_NCPDGigVariant",
+    "Zzz07_PlayerStashVariant",
     "CPO_PingDoorVariant",
     "CPO_PingGoHereVariant",
     "CPO_PingLootVariant",
@@ -7674,6 +7828,7 @@
   "gamedataNPCType": [
     "Android",
     "Any",
+    "Device",
     "Drone",
     "Human",
     "Mech",
@@ -8232,6 +8387,7 @@
   "gamedataStatPoolType": [
     "Adrenaline",
     "Aggressiveness",
+    "Armor",
     "BleedingTrigger",
     "BurningTrigger",
     "CPUPower",
@@ -8241,6 +8397,7 @@
     "ElectrocutedTrigger",
     "Fear",
     "Health",
+    "HitShapeArmor",
     "LeftArmHealth",
     "LeftLegHealth",
     "Memory",
@@ -8273,6 +8430,7 @@
     "AimOutTime",
     "AllowMovementInput",
     "AllowRotation",
+    "AmmoPerQuickMelee",
     "Armor",
     "Assault",
     "AssaultMastery",
@@ -8296,6 +8454,7 @@
     "BaseDamage",
     "BaseDamageMax",
     "BaseDamageMin",
+    "BaseKnockdownImpulse",
     "BerserkArmorBonus",
     "BerserkCooldownBase",
     "BerserkCooldownReduction",
@@ -8314,13 +8473,22 @@
     "BlockFactor",
     "BlockLocomotionWhenLeaningOutOfCover",
     "BlockReduction",
+    "BonusCarryCapacity",
     "BonusChargeDamage",
     "BonusDPS",
+    "BonusDamageAgainstBosses",
     "BonusDamageAgainstElites",
     "BonusDamageAgainstMechanicals",
     "BonusDamageAgainstRares",
+    "BonusDamagePerHit",
+    "BonusDmgVsRaresAndElites",
+    "BonusHealth",
+    "BonusMemory",
     "BonusQuickHackDamage",
+    "BonusRecoilKick",
     "BonusRicochetDamage",
+    "BonusSpreadChange",
+    "BonusStamina",
     "Brake",
     "BrakeDot",
     "Brawling",
@@ -8383,6 +8551,7 @@
     "CanExitWSOnSoundStimuli",
     "CanExplodeQuickHack",
     "CanFastTravelWhileEncumbered",
+    "CanForceDismbember",
     "CanFullyChargeWeapon",
     "CanGrab",
     "CanGrappleAndroids",
@@ -8395,11 +8564,13 @@
     "CanHeartattackQuickHack",
     "CanIgnoreArmorDamageReduction",
     "CanIgnoreStamina",
+    "CanInstaKillNPCs",
     "CanInstallTechMods",
     "CanJamWeaponQuickHack",
     "CanJump",
     "CanLandSilently",
     "CanLegendaryCraftedWeaponsBeBoosted",
+    "CanLegendaryCraftedWeaponsBeBoosted2",
     "CanLocomotionMalfunctionQuickHack",
     "CanMadnessQuickHack",
     "CanMalfunctionQuickHack",
@@ -8419,6 +8590,7 @@
     "CanPingQuickHack",
     "CanPlayerBoostConsumables",
     "CanPlayerBoostGrenades",
+    "CanPlayerPiercePoisonImmunity",
     "CanPoisonLowerArmor",
     "CanPoisonSlow",
     "CanPreciseShoot",
@@ -8484,6 +8656,7 @@
     "CanUseOpticalCamo",
     "CanUsePainInhibitors",
     "CanUsePersonalSoundSilencer",
+    "CanUsePhoneUnderWater",
     "CanUseProjectileLauncher",
     "CanUseReconGrenades",
     "CanUseRetractableShield",
@@ -8508,6 +8681,7 @@
     "CanWeaponJumpAttack",
     "CanWeaponLeap",
     "CanWeaponMalfunctionQuickHack",
+    "CanWeaponReduceArmor",
     "CanWeaponReload",
     "CanWeaponReloadWhileInactive",
     "CanWeaponReloadWhileSliding",
@@ -8548,6 +8722,7 @@
     "CloudComputingTraps",
     "ColdBlood",
     "ColdBloodBuffBonus",
+    "ColdBloodDurationReductor",
     "ColdBloodMastery",
     "ColdBloodMaxDuration",
     "ColdBloodMaxStacks",
@@ -8555,12 +8730,17 @@
     "CombatHacking",
     "CombatHackingMastery",
     "CommsNoiseJamOnQuickhack",
+    "ControlledRandomPower",
     "Cool",
+    "CoolAlocated",
+    "CoolAvailable",
     "Crafting",
     "CraftingBonusArmorValue",
+    "CraftingBonusArmorValue2",
     "CraftingBonusConsumableDuration",
     "CraftingBonusGrenadeDamage",
     "CraftingBonusWeaponDamage",
+    "CraftingBonusWeaponDamage2",
     "CraftingCostReduction",
     "CraftingItemLevelBoost",
     "CraftingMastery",
@@ -8590,6 +8770,8 @@
     "DamagePerHit",
     "DamageReductionDamageOverTime",
     "DamageReductionExplosion",
+    "DamageReductionMelee",
+    "DamageReductionQuickhacks",
     "DashAttackStaminaCostReduction",
     "DataLeakTraps",
     "DealsChemicalDamage",
@@ -8625,6 +8807,7 @@
     "DurationBonusPoisoned",
     "DurationBonusQuickhack",
     "DurationBonusStun",
+    "DurationReductionDot",
     "EMPImmunity",
     "EffectiveDPS",
     "EffectiveDamagePerHit",
@@ -8653,12 +8836,14 @@
     "EquipDuration_First",
     "EquipItemTime_Corpo",
     "EquipItemTime_Gang",
+    "EvadeImpulse",
     "Evasion",
     "ExplosionKillsRecudeUltimateHacksCost",
     "FFInputLock",
     "FallDamageReduction",
     "FearOnQuickHackKill",
     "FullAutoOnFullCharge",
+    "GenericStatPrereqValue",
     "Gunslinger",
     "GunslingerMastery",
     "GunslingerTrait01Stat",
@@ -8714,6 +8899,7 @@
     "HasMeleeImmunity",
     "HasMeleeTargeting",
     "HasMetabolicEnhancer",
+    "HasMuzzleBrake",
     "HasPoisonHeal",
     "HasPoisonImmunity",
     "HasPowerGrip",
@@ -8761,6 +8947,7 @@
     "HitDismembermentFactor",
     "HitReactionDamageHealthFactor",
     "HitReactionFactor",
+    "HitShapeArmor",
     "HitTimerAfterDefeated",
     "HitTimerAfterImpact",
     "HitTimerAfterImpactMelee",
@@ -8774,15 +8961,23 @@
     "HoldTimeoutDuration",
     "HolographicSkinCooldownDuration",
     "HolographicSkinDuration",
+    "HousingBuffsDurationBonus",
     "IconicItemUpgraded",
     "ImpactDamageThreshold",
     "ImpactDamageThresholdImpulse",
     "ImpactDamageThresholdInCover",
     "Intelligence",
+    "IntelligenceAlocated",
+    "IntelligenceAvailable",
+    "IntelligenceSkillcheckBonus",
+    "IntrinsicQuickHackUploadBonus",
+    "IntrinsicReloadTimeBonus",
+    "IntrinsicZoomLevelBonus",
     "IsAggressive",
     "IsBalanced",
     "IsBlocking",
     "IsCautious",
+    "IsCrowd",
     "IsDefensive",
     "IsDeflecting",
     "IsDodgeStaminaFree",
@@ -8832,6 +9027,7 @@
     "KnockdownImmunity",
     "KnockdownImpulse",
     "Level",
+    "Liberty_Padre_BurningApplicationRate",
     "LimbHealth",
     "LinearDirectionUpdateMax",
     "LinearDirectionUpdateMaxADS",
@@ -8850,6 +9046,7 @@
     "MaxStacksBonusBurning",
     "MaximumRange",
     "MechanicalsBuffDPSBonus",
+    "MeleeAttackComboDuration",
     "MeleeAttackDuration",
     "Memory",
     "MemoryCostModifier",
@@ -8883,6 +9080,9 @@
     "MinigameShardChanceMultiplier",
     "MinigameTimeLimitExtension",
     "MinigameTrapsPossibilityChance",
+    "MitigationChance",
+    "MitigationStrength",
+    "MuzzleBreakRicochetBonus",
     "NPCAnimationTime",
     "NPCCorpoEquipItemDuration",
     "NPCCorpoUnequipItemDuration",
@@ -8924,6 +9124,8 @@
     "PoisonImmunity",
     "PoisonRegenHealth",
     "PoisonedApplicationRate",
+    "PostLexWilsonBuyPrice",
+    "PostTutorialCyberwarePrice",
     "PowerLevel",
     "PreFireTime",
     "PrefersCovers",
@@ -9010,6 +9212,8 @@
     "RecoilTimeADS",
     "RecoilUseDifferentStatsInADS",
     "Reflexes",
+    "ReflexesAlocated",
+    "ReflexesAvailable",
     "RefreshesPingOnQuickhack",
     "RegenerateHPMinigamePerk",
     "ReloadAmount",
@@ -9039,6 +9243,7 @@
     "ShortCircuitOnCriticalHit",
     "ShorterChains",
     "ShotDelay",
+    "SimpleWeaponMod04",
     "SlideWhenLeaningOutOfCover",
     "SmartGunAddSpiralTrajectory",
     "SmartGunAdsLockingAnglePitch",
@@ -9164,8 +9369,13 @@
     "StealthTrait01Stat",
     "StealthWeakspotDamageMultiplier",
     "StreetCred",
+    "StreetCredXPBonusMultiplier",
     "Strength",
+    "StrengthAlocated",
+    "StrengthAvailable",
+    "StrengthSkillcheckBonus",
     "StunImmunity",
+    "StyleOverSubstanceCount",
     "Sway",
     "SwayCenterMaximumAngleOffset",
     "SwayCurvatureMaximumFactor",
@@ -9192,8 +9402,13 @@
     "TechMaxChargeThreshold",
     "TechOverChargeThreshold",
     "TechPierceChargeLevel",
+    "TechPierceDamageFactor",
     "TechPierceEnabled",
+    "TechPierceScanAngle",
     "TechnicalAbility",
+    "TechnicalAbilityAlocated",
+    "TechnicalAbilityAvailable",
+    "TechnicalAbilitySkillcheckBonus",
     "ThermalDamage",
     "ThermalDamageMax",
     "ThermalDamageMin",
@@ -9236,11 +9451,15 @@
     "UnequipItemTime_Corpo",
     "UnequipItemTime_Gang",
     "UnlockProgress",
+    "UpgradeCompensate",
+    "UpgradeCount",
     "UpgradingCostReduction",
     "UpgradingMaterialDropChance",
     "UpgradingMaterialRandomGrantChance",
     "UpgradingMaterialRetrieveChance",
     "UploadQuickHackMod",
+    "VendorBuyPriceDiscount",
+    "VendorSellPriceDiscount",
     "Visibility",
     "VisualStimRangeMultiplier",
     "VulnerabilityExtension",
@@ -9271,6 +9490,7 @@
     "WoundLLegDamageThreshold",
     "WoundRArmDamageThreshold",
     "WoundRLegDamageThreshold",
+    "XPbonusMultiplier",
     "ZoomLevel",
     "CPO_Armor",
     "CPO_NPC_Importance",
@@ -10331,6 +10551,7 @@
     "Exhausted",
     "ForceShoot",
     "Grapple",
+    "Housing",
     "Jam",
     "JamCommuniations",
     "Kill",
@@ -10388,6 +10609,13 @@
   "gamedataStimPropagation": [
     "Audio",
     "Visual",
+    "Count",
+    "Invalid"
+  ],
+  "gamedataStimTargets": [
+    "All",
+    "Puppets",
+    "Vehicles",
     "Count",
     "Invalid"
   ],
@@ -10575,13 +10803,18 @@
     "Colby",
     "Columbus",
     "Cortes",
+    "Deleon",
     "Emperor",
     "Galena",
     "GalenaNomad",
+    "Hearse",
+    "Hozuki",
     "Kusanagi",
     "Mackinaw",
     "Maimai",
+    "Merrimac",
     "Octant",
+    "Riptide",
     "Shion",
     "Supron",
     "Thrax",
@@ -10666,14 +10899,23 @@
     "Invalid"
   ],
   "gamedataWorldMapFilter": [
-    "All",
+    "ApartmentToPurchaseFilter",
+    "CommonFilter",
+    "CustomFilter",
     "DropPoint",
+    "ExplorationFilter",
     "FastTravel",
+    "Gigs",
     "NoFilter",
+    "PsychoFilter",
     "Quest",
+    "RipperdocFilter",
     "ServicePoint",
     "Story",
+    "TarotFilter",
+    "VehicleForSaleFilter",
     "VehiclesForPurchaseFilter",
+    "VendorFilter",
     "Count",
     "Invalid"
   ],
@@ -10944,6 +11186,10 @@
     "EquipItem",
     "UnequipItem"
   ],
+  "gameuiCharacterCustomizationEditTag": [
+    "NewGame",
+    "HairDresser"
+  ],
   "gameuiCharacterCustomizationPart": [
     "Head",
     "Body",
@@ -11014,7 +11260,6 @@
   ],
   "gameuiEWorldMapCameraMode": [
     "TopDown",
-    "Free",
     "ZoomLevels",
     "COUNT"
   ],
@@ -11050,6 +11295,14 @@
     "Grouped",
     "GroupedCollection",
     "GroupedHidden"
+  ],
+  "gameuiPatchIntro": [
+    "Patch1500_NextGen"
+  ],
+  "gameuiTutorialHiddenReason": [
+    "None",
+    "DefaultHiddenReason",
+    "InPhotomode"
   ],
   "gameweaponReloadStatus": [
     "Standard",
@@ -11105,6 +11358,8 @@
     "WasBlocked",
     "WasDeflected",
     "WasDodged",
+    "WasEvaded",
+    "WasMitigated",
     "Kill",
     "DontShowDamageFloater",
     "DealNoDamage",
@@ -11135,6 +11390,7 @@
     "QuickHack",
     "IgnoreVehicles",
     "DamageOverTime",
+    "DotApplied",
     "PROJECT_SPECIFIC_FLAGS",
     "UsedKerenzikov",
     "FragmentationSplinter",
@@ -11143,7 +11399,8 @@
     "GrenadeQuickhackExplosion",
     "FriendlyFireIgnored",
     "ForceNoCrit",
-    "ReduceDamage"
+    "ReduceDamage",
+    "ForceDismember"
   ],
   "inkBrushDrawType": [
     "NoDraw",
@@ -11240,6 +11497,10 @@
     "MITER",
     "BEVEL",
     "ROUND"
+  ],
+  "inkELayerLoadPriority": [
+    "Normal",
+    "High"
   ],
   "inkELayerType": [
     "Watermarks",
@@ -11378,6 +11639,10 @@
     "Drawn",
     "Paused"
   ],
+  "inkLayerDrawingPolicy": [
+    "InOrder",
+    "InParallel"
+  ],
   "inkLifePath": [
     "Corporate",
     "Nomad",
@@ -11407,6 +11672,24 @@
   "inkMenuState": [
     "Enabled",
     "Disabled"
+  ],
+  "inkSaveStatus": [
+    "Invalid",
+    "Local",
+    "Cloud",
+    "InSync",
+    "Conflict"
+  ],
+  "inkSaveTransferStatus": [
+    "ExportStarted",
+    "ExportSuccess",
+    "ExportFailed",
+    "ImportChecking",
+    "ImportStarted",
+    "ImportSuccess",
+    "ImportNoSave",
+    "ImportFailed",
+    "ImportNotEnoughSpace"
   ],
   "inkSaveType": [
     "ManualSave",
@@ -11601,6 +11884,16 @@
     "Keep",
     "Avoid"
   ],
+  "moveLocomotionAction": [
+    "Undefined",
+    "Exploration",
+    "Idle",
+    "IdleTurn",
+    "Reposition",
+    "Start",
+    "Move",
+    "Stop"
+  ],
   "moveMovementOrientationType": [
     "NotSet",
     "Forward",
@@ -11685,34 +11978,32 @@
   ],
   "physicsPhysicalSystemOwner": [
     "Unknown",
-    "StaticMeshNode",
-    "StaticCollisionAreaNode",
+    "BakedDestructionNode",
+    "ClothMeshNode",
+    "CollisionAreaNode",
+    "DecorationMeshNode",
     "DynamicMeshNode",
-    "TerrainMeshNode",
-    "TerrainCollisionNode",
+    "InstancedDestructibleNode",
     "PhysicalDestructionNode",
-    "PhysicalDestructionComponent",
-    "PhysicalDecorationNode",
-    "PhysicalMeshComponent",
-    "PhysicalSkinnedMeshComponent",
-    "ColliderComponent",
-    "SimpleColliderComponent",
-    "RagdollBinder",
+    "PhysicalTriggerNode",
+    "StaticMeshNode",
+    "TerrainCollisionNode",
     "WaterPatchNode",
     "WorldCollisionNode",
-    "AggregateSystemComponent",
-    "ClothComponent",
-    "SkinnedClothComponent",
-    "ClothMeshNodeInstance",
-    "PhysicalTriggerComponent",
-    "PhysicalTriggerNode",
-    "StateMachineComponent",
-    "PhysicalParticleSystem",
     "BakedDestructionComponent",
-    "BakedDestructionNode",
-    "InstancedDestructibleNode",
-    "PhotoModeSystem",
+    "ClothComponent",
+    "ColliderComponent",
+    "PhysicalDestructionComponent",
+    "PhysicalMeshComponent",
+    "PhysicalSkinnedMeshComponent",
+    "PhysicalTriggerComponent",
+    "SimpleColliderComponent",
+    "SkinnedClothComponent",
+    "StateMachineComponent",
     "VehicleChassisComponent",
+    "PhysicalParticleSystem",
+    "PhotoModeSystem",
+    "RagdollBinder",
     "FoliageDestruction",
     "EntityProxy"
   ],
@@ -11749,6 +12040,8 @@
     "Terrain",
     "SimpleCollider",
     "AggregateSystem",
+    "CharacterObstacle",
+    "Ragdoll",
     "FoliageDestruction"
   ],
   "physicsQueryUseCase": [
@@ -11815,6 +12108,13 @@
     "TimeDeltaOverride",
     "Radius",
     "SimulationFilter"
+  ],
+  "physicsStaticCollisionShapeCategory": [
+    "Interior",
+    "Exterior",
+    "Architecture",
+    "Decoration",
+    "Other"
   ],
   "populationSpawnerObjectCtrlAction": [
     "Undefined",
@@ -11972,7 +12272,9 @@
     "Undefined",
     "KeyboardMouse",
     "XBoxGamepad",
-    "PS4Gamepad"
+    "PS4Gamepad",
+    "StadiaGamepad",
+    "NintendoGamepad"
   ],
   "questJournalAlignmentEventType": [
     "Left",
@@ -12101,11 +12403,14 @@
   "questPhoneTalkingState": [
     "Ended",
     "Initializing",
-    "Talking"
+    "Talking",
+    "Rejected"
   ],
   "questPlatform": [
     "PC",
-    "Console"
+    "Console",
+    "LastGenConsole",
+    "CurrGenConsole"
   ],
   "questProximityProgressBarAction": [
     "Activated",
@@ -12332,11 +12637,13 @@
     "2560x1080",
     "2560x1440",
     "Console_Pro_Prospero_Lockhart",
-    "Console_Anaconda",
     "3440x1440",
     "3840x1600",
     "3840x2160",
-    "Console_Scorpio"
+    "Console_Scorpio",
+    "Console_Anaconda",
+    "688x388",
+    "776x436"
   ],
   "renderDevEnvProbeView": [
     "RADIANCE",
@@ -12544,6 +12851,31 @@
     "Vehicle",
     "Holocall"
   ],
+  "scnInterruptionPhase": [
+    "WaitForInterruption",
+    "WaitForInterrupted",
+    "Interrupted",
+    "ClearTier",
+    "FadeOutLines",
+    "InterruptionVoiceset",
+    "WaitForReturn",
+    "InstallTalkInteraction",
+    "WaitForTalkInteraction",
+    "ReturnVoiceset",
+    "ReturnAnswerVoiceset",
+    "ShowLines",
+    "SyncTime",
+    "RestoreTier",
+    "Returned",
+    "FadeOutLookAt",
+    "FadeInLookAt",
+    "InterruptSignal",
+    "PostInterruptSignalTimeDelay",
+    "ReturnSignal",
+    "PostReturnSignalTimeDelay",
+    "ProcessTalkInteraction",
+    "ClearCommands"
+  ],
   "scnLookAtTargetType": [
     "Actor",
     "Prop"
@@ -12615,6 +12947,7 @@
     "cityOpenWorld",
     "chatsOpenWorld",
     "otherOpenWorld",
+    "holocalls",
     "other"
   ],
   "scnSceneVersionCheck": [
@@ -12793,7 +13126,8 @@
   ],
   "vehicleBikeCurve": [
     "SpeedToTilt",
-    "InputToTilt"
+    "InputToTilt",
+    "SpeedToTiltSpeed"
   ],
   "vehicleCameraPerspective": [
     "FPP",
@@ -13038,6 +13372,12 @@
     "Allow",
     "Deny"
   ],
+  "worldCommunityRegistryItemAreaNodeType": [
+    "Regular",
+    "Streamable",
+    "Background",
+    "Count"
+  ],
   "worldEClusteringModel": [
     "HierarchicalGrid",
     "AlwaysLoaded",
@@ -13106,6 +13446,11 @@
     "LookAt",
     "ClearLookAt"
   ],
+  "worldPrefabInteriorMapContribution": [
+    "Auto",
+    "Include",
+    "Discard"
+  ],
   "worldPrefabMinimapContribution": [
     "Auto",
     "Include",
@@ -13127,8 +13472,17 @@
     "Enabled",
     "Disabled"
   ],
+  "worldPrefabStreamingImportance": [
+    "Auto",
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5"
+  ],
   "worldPrefabStreamingOcclusion": [
     "Default",
+    "Exterior",
     "Interior",
     "OpenInterior"
   ],
@@ -13169,6 +13523,7 @@
   ],
   "worldProxyMeshDependencyMode": [
     "Auto",
+    "Include",
     "Discard"
   ],
   "worldProxyMeshOutputType": [
@@ -13239,6 +13594,14 @@
     "KeepYaw_WorldSpacePitchRoll",
     "KeepRoll_WorldSpacePitchYaw",
     "KeepPitch_WorldSpaceYawRoll"
+  ],
+  "worldStreamingSectorCategory": [
+    "Unknown",
+    "Exterior",
+    "Interior",
+    "Quest",
+    "Navigation",
+    "AlwaysLoaded"
   ],
   "worldStreamingTestCheckpointType": [
     "BeginMove",
