@@ -671,6 +671,8 @@ public:
     ImGui::Text("%s", revhash32_str.c_str());
     */
 
+    ImGui::Text("search is currently disabled (search_pattern_in_nodes needs a fix..)");
+
     static char search_text[256];
     const bool text_search = ImGui::Button("search text", ImVec2(150, 0)); ImGui::SameLine();
     ImGui::PushItemWidth(slider_width);
@@ -879,10 +881,10 @@ protected:
   {
     auto& haystack = node->data();
     std::vector<uintptr_t> match_offsets;
-    if (mask.size())
+    /*if (mask.size())
       match_offsets = sse2_strstr_masked((uint8_t*)haystack.data(), haystack.size(), (uint8_t*)needle.data(), needle.size(), mask.data(), mask.size());
     else
-      match_offsets = sse2_strstr((uint8_t*)haystack.data(), haystack.size(), (uint8_t*)needle.data(), needle.size());
+      match_offsets = sse2_strstr((uint8_t*)haystack.data(), haystack.size(), (uint8_t*)needle.data(), needle.size());*/
     for (auto off : match_offsets)
       matches.emplace_back(search_match{node, off, needle.size()});
     for (auto& c : node->children())
