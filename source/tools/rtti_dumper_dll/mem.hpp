@@ -9,30 +9,41 @@ namespace dumper {
 
 struct address_range
 {
-  uintptr_t start = 0;
+  uintptr_t beg = 0;
   uintptr_t end = 0;
 
   size_t size() const
   {
-    return end - start;
+    return end - beg;
   }
 
   operator bool() const
   {
-    return start < end;
+    return beg < end;
   }
 
   bool operator==(const address_range& rhs) const
   {
-    return start == rhs.start && end == rhs.end;
+    return beg == rhs.beg && end == rhs.end;
   }
 };
 
-inline std::vector<uintptr_t> find_pattern_in(const address_range& range, std::string pattern, std::string mask = "")
+inline std::vector<uintptr_t> find_pattern_in(const address_range& range, std::wstring masked_pattern)
 {
-  const uint8_t* needle = reinterpret_cast<unsigned char*>(pattern.data());
-  std::vector<uintptr_t> ret = redx::sse2_strstr_masked(range.start, range.size(), needle, pattern.size(), mask.c_str());
-  std::transform(std::begin(ret), std::end(ret), std::begin(ret), [](uintptr_t x) { return x; });
+  std::vector<uintptr_t> ret;
+
+  const char* it = reinterpret_cast<const char*>(range.beg);
+  const char* end = reinterpret_cast<const char*>(range.end);
+  
+  while (1)
+  {
+    it = redx::sse2_strstr_masked(it, end - it, masked_pattern.data(), masked_pattern.size());
+    if (!it)
+      break;
+    ret.push_back(reinterpret_cast<uintptr_t>(it));
+    ++it;
+  }
+
   return ret;
 }
 

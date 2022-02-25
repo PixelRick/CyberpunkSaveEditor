@@ -28,7 +28,7 @@ uintptr_t GetDataHolder(const void* a)
 
   static fn_t fn = []() -> fn_t {
 
-    auto matches = find_pattern_in_game_text("\x40\x53\x48\x83\xEC\x20\x48\x83\x79\x38\x00\x48\x8B\xD9\x75\x3B", "xxxxxxxxxxxxxxxx");
+    auto matches = find_pattern_in_game_text(L"\x40\x53\x48\x83\xEC\x20\x48\x83\x79\x38\x00\x48\x8B\xD9\x75\x3B");
     if (matches.size() != 1)
     {
       SPDLOG_ERROR("couldn't find GetDataHolder pattern");
@@ -598,7 +598,7 @@ CRTTISystem* CRTTISystem::Get()
 
   static fn_t fn = []() -> fn_t {
 
-    auto matches = find_pattern_in_game_text("\x40\x53\x48\x83\xEC\x20\x65\x48\x8B\x04\x25\x58\x00\x00\x00\x48\x8D\x1D", "xxxxxxxxxxxxxxxxxx");
+    auto matches = find_pattern_in_game_text(L"\x40\x53\x48\x83\xEC\x20\x65\x48\x8B\x04\x25\x58\x00\x00\x00\x48\x8D\x1D");
     if (matches.size() != 1)
     {
       SPDLOG_ERROR("couldn't find CRTTISystem::Get pattern");
@@ -623,7 +623,7 @@ const char* CName::ToString() const
 
   static fn_t fn = []() -> fn_t {
 
-    auto matches = find_pattern_in_game_text("\x48\x83\xEC\x38\x48\x8B\x11\x48\x8D\x4C\x24\x20\xE8", "xxxxxxxxxxxxx");
+    auto matches = find_pattern_in_game_text(L"\x48\x83\xEC\x38\x48\x8B\x11\x48\x8D\x4C\x24\x20\xE8");
     if (matches.size() != 1)
     {
       SPDLOG_ERROR("couldn't find CNamePool::Get pattern");
@@ -662,10 +662,18 @@ uintptr_t CClass::GetDefaultInstance() const
 
   static fn_t fn = []() -> fn_t {
 
-    auto matches = find_pattern_in_game_text("\x40\x56\x48\x83\xEC\x30\x48\x8B\x81\xE0\x00\x00\x00\x48\x8B\xF1", "xxxxxxxxxxxxxxxx");
+    auto matches = find_pattern_in_game_text(L"\x40\xF00\x48\x83\xEC\xF00\x48\x8B\x81\xE0\x00\x00\x00\x48\x8B\xF00\x48\x85");
+
     if (matches.size() != 1)
     {
-      SPDLOG_ERROR("couldn't find CClass::GetDefaultInstance pattern");
+      if (matches.size() == 0)
+      {
+        SPDLOG_ERROR("couldn't find CClass::GetDefaultInstance pattern, no match");
+      }
+      else
+      {
+        SPDLOG_ERROR("couldn't find CClass::GetDefaultInstance pattern, multiple matches");
+      }
       return (fn_t)nullptr;
     }
 
@@ -687,7 +695,7 @@ DynArray<CProperty*>* CClass::GetAllProps() const
 
   static fn_t fn = []() -> fn_t {
 
-    auto matches = find_pattern_in_game_text("\x40\x53\x48\x83\xEC\x20\x33\xD2\x48\x8B\xD9\xE8\x80\x33\x00\x00", "xxxxxxxxxxxxxxxx");
+    auto matches = find_pattern_in_game_text(L"\x40\x53\x48\x83\xEC\x20\x33\xD2\x48\x8B\xD9\xE8\x80\x33\x00\x00");
     if (matches.size() != 1)
     {
       SPDLOG_ERROR("couldn't find CClass::GetAllProps pattern");

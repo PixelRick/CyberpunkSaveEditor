@@ -42,16 +42,14 @@ inline address_range get_code_section_range(uintptr_t image_base)
   return {};
 }
 
-inline std::vector<uintptr_t> find_pattern_in_game_text(std::string pattern, std::string mask = "")
+inline std::vector<uintptr_t> find_pattern_in_game_text(std::wstring masked_pattern)
 {
-  SPDLOG_INFO("find_pattern_in_game_text: {} {}", pattern.size(), strlen(mask.c_str()));
-
   static address_range range = []()
   {
     uintptr_t image_base = (uintptr_t)GetModuleHandle(0);
     address_range ret = get_code_section_range(image_base);
 
-    SPDLOG_INFO("game text range: {:016X}-{:016X}", ret.start, ret.end);
+    SPDLOG_INFO("game text range: {:016X}-{:016X}", ret.beg, ret.end);
 
     if (!ret)
     {
@@ -67,16 +65,14 @@ inline std::vector<uintptr_t> find_pattern_in_game_text(std::string pattern, std
     return {};
   }
 
-  const uint8_t* needle = reinterpret_cast<uint8_t*>(pattern.data());
-  std::vector<uintptr_t> ret = redx::sse2_strstr_masked(range.start, range.size(), needle, pattern.size(), mask.c_str());
-  std::transform(std::begin(ret), std::end(ret), std::begin(ret), [](uintptr_t x) { return range.start + x; });
+  std::vector<uintptr_t> ret = find_pattern_in(range, masked_pattern);
   return ret;
 }
 
 template <size_t N>
-inline std::vector<uintptr_t> find_pattern_in_game_text(const char(&pattern)[N], std::string mask = "")
+inline std::vector<uintptr_t> find_pattern_in_game_text(const wchar_t(&masked_pattern)[N])
 {
-    return find_pattern_in_game_text(std::string(pattern, N-1), mask);
+  return find_pattern_in_game_text(std::wstring(masked_pattern, N-1));
 }
 
 } // namespace dumper

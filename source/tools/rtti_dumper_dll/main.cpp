@@ -69,7 +69,7 @@ bool WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
 
       try
       {
-        auto matches = dumper::find_pattern_in_game_text("\x40\x56\x48\x83\xEC\x30\x48\x8B\x81\xE0\x00\x00\x00\x48\x8B\xF1", "xxxxxxxxxxxxxxxx");
+        auto matches = dumper::find_pattern_in_game_text(L"\x40\xF00\x48\x83\xEC\xF00\x48\x8B\x81\xE0\x00\x00\x00\x48\x8B\xF00\x48\x85");
         if (matches.size() != 1)
         {
           SPDLOG_CRITICAL("couldn't find CClass::GetDefaultInstance pattern");
@@ -96,6 +96,7 @@ bool WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
       }
       catch (std::exception& e)
       {
+        std::ignore = e;
         SPDLOG_DEBUG("hook failed", e.what());
       }
 
