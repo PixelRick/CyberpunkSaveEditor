@@ -144,7 +144,22 @@ protected:
   {
     auto new_node = var.to_node(tree.ver());
     if (!new_node)
+    {
+      MessageBoxA(
+        0,
+        fmt::format(
+          "Could not reserialize \"{}\" node\n"
+          "\n"
+          "If your save has been edited with an older version of CPSE,\n"
+          "please make the game save it again.\n"
+          "\n"
+          "Otherwise, please open an issue.",
+          node->name()
+        ).c_str(), 
+        "Reserialization test failed.",
+        0);
       return false;
+    }
 
     serial_tree stree1, stree2;
 
@@ -174,7 +189,7 @@ protected:
       MessageBoxA(
         0,
         fmt::format(
-          "Reserialized \"{}\" node_t differs from original\n"
+          "Reserialized \"{}\" node differs from original\n"
           "\n"
           "If your save has been edited with an older version of CPSE,\n"
           "please make the game save it again.\n"
