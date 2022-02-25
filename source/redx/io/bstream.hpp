@@ -607,7 +607,7 @@ struct obstream
   template <typename T, std::enable_if_t<std::is_arithmetic_v<T> && (sizeof(T) > 1), bool> = true>
   FORCE_INLINE obstream& write(const T& value)
   {
-    static_assert(is_ibstreamable_v<T>, "T is not obstreamable");
+    static_assert(is_obstreamable_v<T>, "T is not obstreamable");
     return *this << value;
   }
 
@@ -632,7 +632,7 @@ struct obstream
   template <typename T>
   inline obstream& write_array(const T* arr, size_t count)
   {
-    static_assert(is_ibstreamable_v<T>, "T is not obstreamable");
+    static_assert(is_obstreamable_v<T>, "T is not obstreamable");
 
     if constexpr (is_trivially_serializable_v<T>)
     {
@@ -654,7 +654,7 @@ struct obstream
   template <typename T>
   FORCE_INLINE obstream& write_array(const std::span<const T>& span)
   {
-    static_assert(is_ibstreamable_v<T>, "T is not obstreamable");
+    static_assert(is_obstreamable_v<T>, "T is not obstreamable");
     return write_array<T>(span.data(), span.size());
   }
 
@@ -662,7 +662,7 @@ struct obstream
   template <typename T, std::enable_if_t<!std::is_same_v<T, bool>, bool> = true>
   FORCE_INLINE obstream& write_array(const std::vector<T>& span)
   {
-    static_assert(is_ibstreamable_v<T>, "T is not obstreamable");
+    static_assert(is_obstreamable_v<T>, "T is not obstreamable");
     return write_array<T>(span.data(), span.size());
   }
 
@@ -677,7 +677,7 @@ struct obstream
   template <typename T>
   obstream& write_vec_lpfxd(const std::vector<T>& vec)
   {
-    static_assert(is_ibstreamable_v<T>, "T is not obstreamable");
+    static_assert(is_obstreamable_v<T>, "T is not obstreamable");
 
     if (!has_failed())
     {
