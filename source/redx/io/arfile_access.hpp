@@ -41,7 +41,7 @@ struct arfile_access
     return true;
   }
 
-  FORCE_INLINE bool is_open() const noexcept
+  FORCE_INLINE bool is_open() const override
   {
     return m_archive != nullptr;
   }
@@ -87,8 +87,10 @@ struct arfile_access
 
   bool read_some(const std::span<char>& dst, size_t& rsize);
 
-  bool read(char* dst, size_t count)
+  virtual bool read(char* dst, size_t count, size_t& out_count)
   {
+    out_count = 0;
+
     if (!is_open() || static_cast<std::streamoff>(m_pos) < 0)
     {
       return false;
@@ -109,6 +111,7 @@ struct arfile_access
       {
         return false;
       }
+      out_count += rsize;
       dstrem = dstrem.subspan(rsize);
     }
 

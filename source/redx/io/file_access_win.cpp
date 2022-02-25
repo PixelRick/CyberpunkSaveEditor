@@ -67,18 +67,18 @@ struct file_access_win
   }
 
   // read max_count bytes (or until EOF)
-  inline bool read(char* dst, size_t max_count, size_t& read_size) override
+  inline bool read(char* dst, size_t count, size_t& out_count) override
   {
-    read_size = 0;
+    out_count = 0;
 
     if (!is_open() || !(m_mode & std::ios::in))
     {
       return false;
     }
 
-    while (max_count > 0)
+    while (count > 0)
     {
-      DWORD dwcnt = static_cast<DWORD>(std::min(max_count, 0x40000000ull));
+      DWORD dwcnt = static_cast<DWORD>(std::min(count, 0x40000000ull));
       DWORD rsize{};
 
       if (!ReadFile(m_h, dst, dwcnt, &rsize, nullptr))
@@ -90,9 +90,9 @@ struct file_access_win
       }
 
       m_fptr.QuadPart += rsize;
-      read_size += rsize;
+      out_count += rsize;
       dst += rsize;
-      max_count -= rsize;
+      count -= rsize;
 
       // EOF isn't an error
       if (rsize != dwcnt)
