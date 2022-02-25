@@ -473,24 +473,11 @@ insert_sorted_nodupe(std::vector<T>& vec, typename std::vector<T>::iterator star
 //--------------------------------------------------------
 //  fast binary search
 
-inline constexpr uintptr_t sse2_strstr_npos = uintptr_t(-1);
+const char* sse2_strstr(const char* haystack, size_t haystack_size, const char* needle, size_t needle_size);
 
 // values > 0xFF are considered wildcards
 // mask must not begin nor end with a wildcard value
-uintptr_t sse2_strstr_masked(uintptr_t haystack, size_t haystack_size, const wchar_t* masked_needle, size_t needle_size);
-uintptr_t sse2_strstr(uintptr_t haystack, size_t haystack_sizem, const char* needle, size_t needle_size);
-
-// values > 0xFF are considered wildcards
-// mask must not begin nor end with a wildcard value
-inline uintptr_t sse2_strstr_masked(const void* haystack, size_t haystack_size, const wchar_t* masked_needle, size_t needle_size)
-{
-  return sse2_strstr_masked((uintptr_t)haystack, haystack_size, masked_needle, needle_size);
-}
-
-inline uintptr_t sse2_strstr(const void* haystack, size_t haystack_size, const char* needle, size_t needle_size)
-{
-  return sse2_strstr((uintptr_t)haystack, haystack_size, needle, needle_size);
-}
+const char* sse2_strstr_masked(const char* haystack, size_t haystack_size, const wchar_t* masked_needle, size_t needle_size);
 
 } // namespace redx
 

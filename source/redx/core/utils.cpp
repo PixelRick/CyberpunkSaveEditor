@@ -42,29 +42,29 @@ struct needle_chunk
   __m128i value {};
 };
 
-uintptr_t sse2_strstr(uintptr_t haystack, size_t haystack_size, const char* needle, size_t needle_size)
+const char* sse2_strstr(const char* haystack, size_t haystack_size, const char* needle, size_t needle_size)
 {
   if (needle_size == 0 || haystack_size < needle_size)
   {
-    return sse2_strstr_npos;
+    return nullptr;
   }
 
-  const char* s = (const char*)haystack;
+  const char* hs = haystack;
 
   if (needle_size == 1)
   {
     // fallback to simple loop
-    const char* c = s;
-    const char* e = s + haystack_size;
+    const char* c = hs;
+    const char* e = hs + haystack_size;
     while (c < e)
     {
       if (*c == *needle)
       {
-        return s - c;
+        return c;
       }
       c++;
     }
-    return sse2_strstr_npos;
+    return nullptr;
   }
 
   const __m128i headblk = _mm_set1_epi8(needle[0]);
@@ -77,7 +77,7 @@ uintptr_t sse2_strstr(uintptr_t haystack, size_t haystack_size, const char* need
       pos = haystack_size - needle_size - 15;
     }
 
-    const char* pc = s + pos;
+    const char* pc = hs + pos;
 
     uint16_t bitmask = candidates_lookup(headblk, tailblk, pc, pc + needle_size - 1);
     while (bitmask != 0)
@@ -85,28 +85,28 @@ uintptr_t sse2_strstr(uintptr_t haystack, size_t haystack_size, const char* need
       const auto match_offset = ctz(bitmask);
       if (!inl::memcmp(pc + match_offset + 1, needle + 1, needle_size - 2))
       {
-        return pos + match_offset;
+        return pc + match_offset;
       }
       bitmask ^= (1 << match_offset);
     }
   }
 
-  return sse2_strstr_npos;
+  return nullptr;
 }
 
 constexpr size_t max_nchunks = 8;
 
 // values > 0xFF are considered wildcards
 // mask must not begin nor end with a wildcard value, and cannot be longer than (2 + 16 * max_nchunks)
-uintptr_t sse2_strstr_masked(uintptr_t haystack, size_t haystack_size, const wchar_t* masked_needle, size_t needle_size)
+const char* sse2_strstr_masked(const char* haystack, size_t haystack_size, const wchar_t* masked_needle, size_t needle_size)
 {
   if (needle_size == 0 || needle_size > haystack_size || needle_size > (2 + 16 * max_nchunks))
-    return sse2_strstr_npos;
+    return nullptr;
 
   const wchar_t wc_mask = 0xFF00;
 
   if (masked_needle[0] & wc_mask || masked_needle[needle_size - 1] & wc_mask)
-    return sse2_strstr_npos;
+    return nullptr;
 
   if (needle_size <= 2)
   {
@@ -180,14 +180,14 @@ uintptr_t sse2_strstr_masked(uintptr_t haystack, size_t haystack_size, const wch
       }
       if (matched)
       {
-        return pos + match_offset;
+        return pc + match_offset;
       }
 
       bitmask ^= (1 << match_offset);
     }
   }
 
-  return sse2_strstr_npos;
+  return nullptr;
 }
 
 } // namespace redx
