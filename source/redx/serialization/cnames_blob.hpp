@@ -163,7 +163,7 @@ public:
       const uint32_t str_size = WithNullTerminators ? desc.size() - 1 : desc.size();
       std::string_view str(buffer + desc.offset(), str_size);
 
-      if (&*str.end() > data_end)
+      if ((str.data() + str.size()) > data_end)
       {
         SPDLOG_ERROR("string out of bounds");
         return false;

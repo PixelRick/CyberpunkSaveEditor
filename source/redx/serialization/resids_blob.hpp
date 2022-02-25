@@ -161,7 +161,7 @@ public:
       else
       {
         std::string_view str(buffer + desc.offset(), desc.size());
-        if (&*str.end() > data_end)
+        if ((str.data() + str.size()) > data_end)
         {
           SPDLOG_ERROR("string out of bounds");
           return false;
