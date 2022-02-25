@@ -85,9 +85,12 @@ bool init_redx(bool with_archive_names)
     std::vector<gname> names;
     load_names_from_txt("./db/internal_names.txt", names);
 
-    if (0 && with_archive_names)
+    if (with_archive_names)
     {
-      load_names_from_txt("./db/archive_names.txt", names);
+      if (std::filesystem::exists("./db/archive_names.txt"))
+      {
+        load_names_from_txt("./db/archive_names.txt", names);
+      }
 
       if (std::filesystem::exists("./db/custom_archive_names.txt"))
       {
