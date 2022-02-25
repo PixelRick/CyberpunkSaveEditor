@@ -21,7 +21,7 @@ inline cpfs* fs_from_ffs(FSP_FILE_SYSTEM* FileSystem)
   return reinterpret_cast<cpfs*>(FileSystem->UserContext);
 }
 
-NTSTATUS fill_winfsp_file_info(FSP_FSCTL_FILE_INFO& fsp_finfo, const cp::depot::directory_entry& de)
+NTSTATUS fill_winfsp_file_info(FSP_FSCTL_FILE_INFO& fsp_finfo, const redx::depot::directory_entry& de)
 {
   fsp_finfo = {};
 
@@ -55,7 +55,7 @@ NTSTATUS fill_winfsp_file_info(FSP_FSCTL_FILE_INFO& fsp_finfo, HANDLE handle)
   if (!GetFileInformationByHandle(handle, &finfo))
   {
     DWORD dwErr = GetLastError();
-    SPDLOG_ERROR("GetFileInformationByHandle: {}", cp::os::format_error(dwErr));
+    SPDLOG_ERROR("GetFileInformationByHandle: {}", redx::os::format_error(dwErr));
     return FspNtStatusFromWin32(dwErr);
   }
 
@@ -63,7 +63,7 @@ NTSTATUS fill_winfsp_file_info(FSP_FSCTL_FILE_INFO& fsp_finfo, HANDLE handle)
   if (!GetFileInformationByHandleEx(handle, FileStandardInfo, &fstdinfo, sizeof(fstdinfo)))
   {
     DWORD dwErr = GetLastError();
-    SPDLOG_ERROR("GetFileInformationByHandleEx: {}", cp::os::format_error(dwErr));
+    SPDLOG_ERROR("GetFileInformationByHandleEx: {}", redx::os::format_error(dwErr));
     return FspNtStatusFromWin32(dwErr);
   }
 
@@ -144,9 +144,9 @@ struct file_context
 
   std::wstring wrel_path;
 
-  cp::depot::directory_entry cp_dirent;
-  cp::archive_file_istream afs;
-  mutable std::mutex afs_mtx;
+  redx::depot::directory_entry cp_dirent;
+  redx::arfile_access afa;
+  mutable std::mutex afa_mtx;
   
   winfsp_directory_buffer dirbuf;
 };
@@ -188,7 +188,7 @@ NTSTATUS GetSecurityByName(
   std::wstring_view wrelpath = FileName;
 
   bool tfs_compatible{};
-  cp::path tfs_path(wrelpath, tfs_compatible);
+  redx::path tfs_path(wrelpath, tfs_compatible);
 
   //if (fs->has_diffdir)
   //{
@@ -255,7 +255,7 @@ NTSTATUS GetSecurityByName(
 
   if (tfs_compatible)
   {
-    cp::depot::directory_entry entry(fs->tfs, tfs_path);
+    redx::depot::directory_entry entry(fs->tfs, tfs_path);
     if (!entry.exists() || !(entry.is_file() || entry.is_directory()))
     {
       // TODO: if not found, check for parent directory
@@ -405,7 +405,7 @@ NTSTATUS Open(
   std::wstring_view wfilepath = FileName;
 
   bool tfs_compatible{};
-  cp::path tfs_path(wfilepath, tfs_compatible);
+  redx::path tfs_path(wfilepath, tfs_compatible);
 
   //SPDLOG_DEBUG("Open(.., \"{}\", ..)", tfs_path.strv());
 
@@ -452,8 +452,8 @@ NTSTATUS Open(
 
     if (dirent.is_file())
     {
-      fs->tfs.open_archive_file_istream(fctx->afs, dirent.pid());
-      assert(fctx->afs.is_open());
+      fs->tfs.open_archive_file_istream(fctx->afa, dirent.pid());
+      assert(fctx->afa.is_open());
     }
 
     if (!dirent.exists() || !(dirent.is_file() || dirent.is_directory()))
@@ -620,36 +620,45 @@ static NTSTATUS Read(
 
   if (fctx->cp_dirent.is_file())
   {
-    auto& afs = fctx->afs;
-    if (!afs.is_open())
+    auto& afa = fctx->afa;
+    if (!afa.is_open())
     {
-      SPDLOG_ERROR("!fctx->afs.is_open()");
+      SPDLOG_ERROR("!fctx->afa.is_open()");
       return STATUS_INVALID_HANDLE;
     }
 
-    if (!afs.size())
+    if (!afa.size())
     {
-      SPDLOG_ERROR("!fctx->afs.size()");
+      SPDLOG_ERROR("!fctx->afa.size()");
       return STATUS_INVALID_HANDLE;
     }
 
-    ULONG len = 0;
+    ULONG len{};
+    size_t olen{};
 
-    if (Offset < afs.size())
+    if (Offset < static_cast<UINT64>(afa.size()))
     {
-      len = std::min(ULONG(afs.size() - Offset), Length);
+      len = std::min(ULONG(afa.size() - Offset), Length);
 
       if (Buffer)
       {
-        std::scoped_lock<std::mutex> sl(fctx->afs_mtx);
-        afs.seek(Offset);
-        afs.read(std::span<char>((char*)Buffer, len));
+        std::scoped_lock<std::mutex> sl(fctx->afa_mtx);
+        if (!afa.seekpos(Offset))
+        {
+          SPDLOG_ERROR("!fctx->afa.seekpos(..)");
+          return STATUS_END_OF_FILE;
+        }
+        if (!afa.read((char*)Buffer, len, olen))
+        {
+          SPDLOG_ERROR("!fctx->afa.read(..)");
+          return STATUS_ACCESS_DENIED;
+        }
       }
     }
 
     if (PBytesTransferred)
     {
-      *PBytesTransferred = len;
+      *PBytesTransferred = static_cast<ULONG>(olen);
     }
 
     return STATUS_SUCCESS;
@@ -1109,11 +1118,11 @@ NTSTATUS ReadDirectory(
       }
     }
 
-    cp::depot::directory_entry iter_dirent;
+    redx::depot::directory_entry iter_dirent;
 
     if (use_marker_for_tfs)
     {
-      cp::path marker_path = dirent.tfs_path() / cp::path(tfs_marker, cp::path::already_normalized_tag{});
+      redx::path marker_path = dirent.tfs_path() / redx::path(tfs_marker, redx::path::already_normalized_tag{});
 
       SPDLOG_DEBUG("dir:{} marker_path:{}", fctx->cp_dirent.tfs_path().strv(), marker_path.strv());
 
@@ -1156,7 +1165,7 @@ NTSTATUS ReadDirectory(
         ++added_cnt;
         single_entry = true;
       
-        iter_dirent = cp::depot::directory_entry();
+        iter_dirent = redx::depot::directory_entry();
       }
       else if (!iter_dirent.exists())
       {
@@ -1212,7 +1221,7 @@ NTSTATUS ReadDirectory(
   return STATUS_SUCCESS;
 }
 
-bool try_fill_symlink_reparse_data(const cp::depot::directory_entry& dirent, void* buffer, size_t* inout_size)
+bool try_fill_symlink_reparse_data(const redx::depot::directory_entry& dirent, void* buffer, size_t* inout_size)
 {
   assert(dirent.path().strv().size() == 16);
 
@@ -1273,11 +1282,11 @@ NTSTATUS ResolveReparsePoints(
   std::wstring_view wfilepath = FileName;
 
   bool tfs_compatible{};
-  cp::path tfs_path(wfilepath, tfs_compatible);
+  redx::path tfs_path(wfilepath, tfs_compatible);
 
   if (tfs_compatible)
   {
-    cp::depot::directory_entry dirent(fs->tfs, tfs_path);
+    redx::depot::directory_entry dirent(fs->tfs, tfs_path);
     if (dirent.is_pidlink())
     {
       if (!ResolveLastPathComponent)

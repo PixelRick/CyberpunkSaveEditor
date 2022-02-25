@@ -64,7 +64,7 @@ struct security_desc
 
     if (!ConvertStringSecurityDescriptorToSecurityDescriptorA(sddl.c_str(), SDDL_REVISION_1, &m_psecdesc, &m_secdesc_size))
     {
-      SPDLOG_ERROR("security_desc::set_sddl: ", cp::os::last_error_string());
+      SPDLOG_ERROR("security_desc::set_sddl: ", redx::os::last_error_string());
       return false;
     }
 
@@ -161,7 +161,7 @@ inline constexpr LARGE_INTEGER winfsp_time_to_largeinteger(uint64_t fspt)
   return tmp;
 }
 
-bool set_file_times(HANDLE file_handle, cp::file_time creation, cp::file_time last_access, cp::file_time last_write, cp::file_time change);
+bool set_file_times(HANDLE file_handle, redx::file_time creation, redx::file_time last_access, redx::file_time last_write, redx::file_time change);
 
 struct winfsp_directory_buffer
 {

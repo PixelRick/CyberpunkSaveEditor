@@ -4,12 +4,12 @@
 // Microsoft said:
 // Do not cast a pointer to a FILETIME structure to either a ULARGE_INTEGER* or __int64* value because it can cause alignment faults on 64-bit Windows.
 
-bool set_file_times(HANDLE file_handle, cp::file_time creation, cp::file_time last_access, cp::file_time last_write, cp::file_time change)
+bool set_file_times(HANDLE file_handle, redx::file_time creation, redx::file_time last_access, redx::file_time last_write, redx::file_time change)
 {
   FILE_BASIC_INFO fbinfo{};
   if (!GetFileInformationByHandleEx(file_handle, FileBasicInfo, &fbinfo, sizeof(fbinfo)))
   {
-    SPDLOG_ERROR("set_file_times: {}", cp::os::last_error_string());
+    SPDLOG_ERROR("set_file_times: {}", redx::os::last_error_string());
     return false;
   }
 
@@ -20,7 +20,7 @@ bool set_file_times(HANDLE file_handle, cp::file_time creation, cp::file_time la
 
   if (!SetFileInformationByHandle(file_handle, FileBasicInfo, &fbinfo, sizeof(fbinfo)))
   {
-    SPDLOG_ERROR("set_file_times: {}", cp::os::last_error_string());
+    SPDLOG_ERROR("set_file_times: {}", redx::os::last_error_string());
     return false;
   }
 

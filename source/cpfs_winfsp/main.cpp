@@ -243,7 +243,7 @@ BOOL AddNotificationIcon(HWND hWnd)
 
   if (!Shell_NotifyIconW(NIM_ADD, &nid))
   {
-    SPDLOG_CRITICAL("couldn't add notify icon, {}", cp::os::last_error_string());
+    SPDLOG_CRITICAL("couldn't add notify icon, {}", redx::os::last_error_string());
     return false;
   }
 
@@ -425,7 +425,7 @@ void debug_symlink(const std::filesystem::path& p)
     }
     else
     {
-      SPDLOG_INFO("GetFileInformationByHandleEx failed:{}", cp::os::last_error_string());
+      SPDLOG_INFO("GetFileInformationByHandleEx failed:{}", redx::os::last_error_string());
     }
 
     BY_HANDLE_FILE_INFORMATION ByHandleInfo;
@@ -436,7 +436,7 @@ void debug_symlink(const std::filesystem::path& p)
     }
     else
     {
-      SPDLOG_INFO("GetFileInformationByHandle failed:{}", cp::os::last_error_string());
+      SPDLOG_INFO("GetFileInformationByHandle failed:{}", redx::os::last_error_string());
     }
 
     WCHAR wbuf[1000]{};
@@ -446,7 +446,7 @@ void debug_symlink(const std::filesystem::path& p)
     }
     else
     {
-      SPDLOG_INFO("GetFinalPathNameByHandleW failed:{}", cp::os::last_error_string());
+      SPDLOG_INFO("GetFinalPathNameByHandleW failed:{}", redx::os::last_error_string());
     }
 
     CloseHandle(Handle);
@@ -467,7 +467,7 @@ void debug_symlink(const std::filesystem::path& p)
     }
     else
     {
-      SPDLOG_INFO("GetFileInformationByHandleEx failed:{}", cp::os::last_error_string());
+      SPDLOG_INFO("GetFileInformationByHandleEx failed:{}", redx::os::last_error_string());
     }
 
     char buf[2000];
@@ -494,7 +494,7 @@ void debug_symlink(const std::filesystem::path& p)
     }
     else
     {
-      SPDLOG_INFO("DeviceIoControl failed:{}", cp::os::last_error_string());
+      SPDLOG_INFO("DeviceIoControl failed:{}", redx::os::last_error_string());
     }
 
     WCHAR wbuf[1000]{};
@@ -504,7 +504,7 @@ void debug_symlink(const std::filesystem::path& p)
     }
     else
     {
-      SPDLOG_INFO("GetFinalPathNameByHandleW failed:{}", cp::os::last_error_string());
+      SPDLOG_INFO("GetFinalPathNameByHandleW failed:{}", redx::os::last_error_string());
     }
 
     CloseHandle(Handle);

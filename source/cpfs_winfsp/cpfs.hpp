@@ -10,7 +10,7 @@
 
 extern FSP_FILE_SYSTEM_INTERFACE s_cpfs_interface;
 
-NTSTATUS fill_winfsp_file_info(FSP_FSCTL_FILE_INFO& fsp_finfo, const cp::depot::directory_entry& de);
+NTSTATUS fill_winfsp_file_info(FSP_FSCTL_FILE_INFO& fsp_finfo, const redx::depot::directory_entry& de);
 NTSTATUS fill_winfsp_file_info(FSP_FSCTL_FILE_INFO& fsp_finfo, HANDLE handle);
 
 // todo list:
@@ -23,7 +23,7 @@ struct cpfs
     m_volume_params = {};
     m_volume_params.SectorSize = 1;
     m_volume_params.SectorsPerAllocationUnit = 1;
-    m_volume_params.VolumeCreationTime = cp::file_time(cp::clock::now()).hns_since_win_epoch.count();
+    m_volume_params.VolumeCreationTime = redx::file_time(redx::clock::now()).hns_since_win_epoch.count();
     m_volume_params.VolumeSerialNumber = 0;
     m_volume_params.FileInfoTimeout = 1000;
     m_volume_params.ReparsePointsAccessCheck = 1;
@@ -73,7 +73,7 @@ struct cpfs
       return false;
     }
 
-    auto game_bin_path_opt = cp::os::get_cp_executable_path();
+    auto game_bin_path_opt = redx::os::get_cp_executable_path();
     if (!game_bin_path_opt.has_value())
     {
       MessageBoxA(0, "Game path could not be located", "error", 0);
@@ -204,7 +204,7 @@ struct cpfs
   std::wstring volume_label;
 
   std::filesystem::path content_path;
-  cp::depot::treefs tfs;
+  redx::depot::treefs tfs;
   std::shared_mutex mtx;
 
 private:
