@@ -89,6 +89,9 @@ public:
 
   bool serialize_in(std::istream& reader)
   {
+    // disable for now
+    return false;
+
     uint32_t blob_size = 0;
     reader >> cbytes_ref(blob_size);
 
