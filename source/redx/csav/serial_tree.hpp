@@ -79,6 +79,7 @@ struct serial_tree
   std::vector<char> nodedata;
 
 protected:
+
   std::shared_ptr<const node_t> read_node(serial_node_desc& desc, int32_t idx)
   {
     uint32_t cur_offset = desc.data_offset + 4;

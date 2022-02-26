@@ -40,6 +40,7 @@ struct savegame
   //CGenericSystem            scriptables;
 
 public:
+
   // reserialization test can only be done with file saved by the game
   // this is because although the order of the CProperties isn't important for the game
   // we don't want to keep the initial order for each object but rely on a standardized one (blueprint db)
@@ -111,7 +112,30 @@ public:
     return status;
   }
 
+  shared_node_type search_node(std::string_view name) const
+  {
+    if (root)
+      return search_node(root, name);
+
+    return nullptr;
+  }
+
+  std::shared_ptr<const node_t> search_node(const shared_node_type& node, std::string_view name) const
+  {
+    if (node->name() == name)
+      return node;
+
+    for (auto& c : node->children())
+    {
+      auto res = search_node(c, name);
+      if (res) return res;
+    }
+
+    return nullptr;
+  }
+
 protected:
+
   bool try_load_node_data_struct(redx::csav::node_serializable& var, std::string_view nodename, progress_t& progress, float end_progress, bool test=false)
   {
     auto node = search_node(nodename);
@@ -236,30 +260,6 @@ protected:
     ncnode->assign_data(new_node->data());
 
     return true;
-  }
-
-
-public:
-  shared_node_type search_node(std::string_view name) const
-  {
-    if (root)
-      return search_node(root, name);
-
-    return nullptr;
-  }
-
-  std::shared_ptr<const node_t> search_node(const shared_node_type& node, std::string_view name) const
-  {
-    if (node->name() == name)
-      return node;
-
-    for (auto& c : node->children())
-    {
-      auto res = search_node(c, name);
-      if (res) return res;
-    }
-
-    return nullptr;
   }
 };
 

@@ -27,6 +27,7 @@ struct node_listener_t
   virtual void on_node_event(const std::shared_ptr<const node_t>& node, node_event_e evt) = 0;
 };
 
+
 class node_t
   : public std::enable_shared_from_this<const node_t>
   , public node_listener_t
@@ -34,17 +35,13 @@ class node_t
   struct create_tag {};
 
 public:
-  static const int32_t null_node_idx = -1;
-  static const int32_t root_node_idx = -2;
-  static const int32_t blob_node_idx = -3;
 
-private:
-  int32_t           m_idx;
-  const std::string m_name;
-  std::vector<char> m_data;
-  std::vector<std::shared_ptr<const node_t>> m_children;
+  static constexpr int32_t null_node_idx = -1;
+  static constexpr int32_t root_node_idx = -2;
+  static constexpr int32_t blob_node_idx = -3;
 
 public:
+
   explicit node_t(create_tag&&, int32_t idx, std::string name)
     : m_name(name)
   {
@@ -106,7 +103,6 @@ public:
   bool is_cnode() const { return m_idx >= 0; }
   bool is_leaf()  const { return !has_children(); }
 
-public:
   size_t calcsize() const
   {
     size_t base_size = m_data.size() + (is_cnode() ? 4 : 0);
@@ -141,7 +137,6 @@ public:
     return new_node;
   }
 
-public: 
   // non const setters
 
   template <class Iter>
@@ -179,7 +174,22 @@ public:
     post_node_event(node_event_e::children_update);
   }
 
+  // provided as const for ease of use
+
+  void add_listener(node_listener_t* listener) const
+  {
+    auto& listeners = nonconst().m_listeners;
+    listeners.insert(listener);
+  }
+
+  void remove_listener(node_listener_t* listener) const
+  {
+    auto& listeners = nonconst().m_listeners;
+    listeners.erase(listener);
+  }
+
 protected:
+
   std::set<node_listener_t*> m_listeners;
 
   void post_node_event(node_event_e evt) const
@@ -195,21 +205,14 @@ protected:
     post_node_event(node_event_e::subtree_update);
   }
 
-public:
-  // provided as const for ease of use
+private:
 
-  void add_listener(node_listener_t* listener) const
-  {
-    auto& listeners = nonconst().m_listeners;
-    listeners.insert(listener);
-  }
-
-  void remove_listener(node_listener_t* listener) const
-  {
-    auto& listeners = nonconst().m_listeners;
-    listeners.erase(listener);
-  }
+  int32_t             m_idx;
+  const std::string   m_name;
+  std::vector<char>   m_data;
+  std::vector<std::shared_ptr<const node_t>> m_children;
 };
+
 
 // Only to read at node level.
 // Buffer and position in the istream is only relevant between child nodes.
@@ -223,6 +226,7 @@ class node_reader
   bool m_missed_data = false;
 
 public:
+
   explicit node_reader(const std::shared_ptr<const node_t>& root, const version& version)
     : m_node(root), m_ver(version), m_cur_idx(0), std::istream(&m_sbuf)
   {
@@ -245,6 +249,7 @@ public:
   }
 
 protected:
+
   std::shared_ptr<const node_t> current_blob()
   {
     // the node is the blob (leaf)
@@ -276,6 +281,7 @@ protected:
   }
 
 public:
+
   std::shared_ptr<const node_t> read_child(std::string_view name)
   {
     seek_past_current_blob_if_any();
@@ -332,6 +338,7 @@ class node_writer
   version m_ver;
 
 public:
+
   explicit node_writer(const version& ver)
     : m_ver(ver) {}
 
@@ -340,6 +347,7 @@ public:
   const version& version() const { return m_ver; }
 
 protected:
+
   void blobize_pending_data_if_any()
   {
     auto data = str();
@@ -352,6 +360,7 @@ protected:
   }
   
 public:
+
   void write_child(const std::shared_ptr<const node_t>& node)
   {
     blobize_pending_data_if_any();
@@ -401,6 +410,7 @@ struct node_serializable
   }
 
 private:
+
   virtual bool from_node_impl(const std::shared_ptr<const node_t>& node, const version& version) = 0;
   virtual std::shared_ptr<const node_t> to_node_impl(const version& version) const = 0;
 };

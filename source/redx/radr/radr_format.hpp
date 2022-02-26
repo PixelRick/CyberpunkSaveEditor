@@ -9,7 +9,6 @@ namespace redx::radr::format {
 
 using file_id = redx::path_id;
 
-
 struct version
 {
   friend bool operator==(const version& a, const version& b)
