@@ -238,7 +238,7 @@ public:
 
     bool modified = false;
 
-    ImGui::BeginChild(label, ImVec2(0,0), true, ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::BeginChild(label, ImVec2(0, 80), true, ImGuiWindowFlags_AlwaysAutoResize);
 
     ImGui::Text("unsupported ctypename: %s", ctypename().c_str());
     ImGui::Text("data size: %08X", m_data.size());
@@ -246,6 +246,11 @@ public:
       ImGui::Text("data: %s...", bytes_to_hex(m_data.data(), 50).c_str());
     else
       ImGui::Text("data: %s", bytes_to_hex(m_data.data(), m_data.size()).c_str());
+
+    if (ImGui::Button("copy content to clipboard as hex"))
+    {
+      ImGui::SetClipboardText(bytes_to_hex(m_data.data(), m_data.size()).c_str());
+    }
 
     ImGui::EndChild();
 
