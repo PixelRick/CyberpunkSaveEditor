@@ -18,7 +18,20 @@ namespace std { using tcb::span; }
 namespace redx {
 
 //--------------------------------------------------------
-//  std lib helpers
+// C++20 backports
+
+template <typename T, typename U>
+constexpr bool cmp_less(T t, U u) noexcept
+{
+  using UT = std::make_unsigned_t<T>;
+  using UU = std::make_unsigned_t<U>;
+  if constexpr (std::is_signed_v<T> == std::is_signed_v<U>)
+    return t < u;
+  else if constexpr (std::is_signed_v<T>)
+    return t < 0 ? true : static_cast<UT>(t) < u;
+  else
+    return u < 0 ? false : t < static_cast<UU>(u);
+}
 
 template <typename EnumT>
 constexpr std::underlying_type_t<EnumT> to_underlying(EnumT e) noexcept
@@ -43,6 +56,9 @@ struct remove_cvref
 
 template <typename T>
 using remove_cvref_t = typename remove_cvref<T>::type;
+
+//--------------------------------------------------------
+//  std lib helpers
 
 template <typename T, class = void>
 inline constexpr bool is_iterator_v = false;
