@@ -61,9 +61,9 @@ bool metadata::serialize_out(obstream& st) const
   metadata_trampoline trp;
   metadata_tbls_header hdr;
 
-  hdr.files_cnt = numeric_cast<uint32_t>(records.size());
-  hdr.segments_cnt = numeric_cast<uint32_t>(segments.size());
-  hdr.dependencies_cnt = numeric_cast<uint32_t>(dependencies.size());
+  hdr.files_cnt = integral_cast<uint32_t>(records.size());
+  hdr.segments_cnt = integral_cast<uint32_t>(segments.size());
+  hdr.dependencies_cnt = integral_cast<uint32_t>(dependencies.size());
   hdr.crc = compute_tbls_crc64();
 
   trp.tbls_offset = 8;
@@ -82,7 +82,7 @@ bool metadata::serialize_out(obstream& st) const
   st.write_array(dependencies);
 
   auto end_spos = st.tellp();
-  trp.tbls_size = numeric_cast<uint32_t>(end_spos - tbls_spos);
+  trp.tbls_size = integral_cast<uint32_t>(end_spos - tbls_spos);
 
   if (!st) // let's check before calling seek
   {
@@ -109,15 +109,15 @@ uint64_t metadata::compute_tbls_crc64() const
 
   b.init();
 
-  cnt = numeric_cast<uint32_t>(records.size());
+  cnt = integral_cast<uint32_t>(records.size());
   b.update(&cnt, 4);
   const size_t records_bsize = cnt * sizeof(file_record);
 
-  cnt = numeric_cast<uint32_t>(segments.size());
+  cnt = integral_cast<uint32_t>(segments.size());
   b.update(&cnt, 4);
   const size_t segments_bsize = cnt * sizeof(segment_descriptor);
 
-  cnt = numeric_cast<uint32_t>(dependencies.size());
+  cnt = integral_cast<uint32_t>(dependencies.size());
   b.update(&cnt, 4);
   const size_t dependencies_bsize = cnt * sizeof(dependency);
 

@@ -183,7 +183,7 @@ bool arfile_access::read_some(const std::span<char>& dst, size_t& rsize)
   // offset the descriptor beginning
   if (pos > seg_offset)
   {
-    const uint32_t offset_in_seg = reliable_numeric_cast<uint32_t>(pos - seg_offset);
+    const uint32_t offset_in_seg = reliable_integral_cast<uint32_t>(pos - seg_offset);
     SPDLOG_DEBUG("offset'in bulk by {:08X}", offset_in_seg);
     bulk_sd.offset_in_archive += offset_in_seg;
     bulk_sd.disk_size -= offset_in_seg;

@@ -323,7 +323,7 @@ void node_tree::serialize_out(obstream& st)
   //  WEIRD PREP
   // --------------------------------------------------------
 
-  chunkdescs_start = reliable_numeric_cast<uint32_t>(st.tellp());
+  chunkdescs_start = reliable_integral_cast<uint32_t>(st.tellp());
 
   uint32_t expected_raw_size = (uint32_t)root->calcsize();
   size_t max_chunkcnt = LZ4_compressBound(expected_raw_size) / XLZ4_CHUNK_SIZE + 2; // tbl should fit in 1 extra XLZ4_CHUNK_SIZE 
@@ -364,8 +364,8 @@ void node_tree::serialize_out(obstream& st)
   {
     auto& chunk_desc = chunk_descs.emplace_back();
 
-    //chunk_desc.data_offset = reliable_numeric_cast<uint32_t>(pcur - prealbeg);
-    chunk_desc.offset = reliable_numeric_cast<uint32_t>(st.tellp());
+    //chunk_desc.data_offset = reliable_integral_cast<uint32_t>(pcur - prealbeg);
+    chunk_desc.offset = reliable_integral_cast<uint32_t>(st.tellp());
 
     int srcsize = (int)(pend - pcur);
 
@@ -406,7 +406,7 @@ void node_tree::serialize_out(obstream& st)
     return;
   }
 
-  nodedescs_start = reliable_numeric_cast<uint32_t>(st.tellp());
+  nodedescs_start = reliable_integral_cast<uint32_t>(st.tellp());
 
   // descriptors
 
@@ -432,7 +432,7 @@ void node_tree::serialize_out(obstream& st)
   st << magic;
 
   // now write node descs
-  const uint32_t node_cnt = reliable_numeric_cast<uint32_t>(stree.descs.size());
+  const uint32_t node_cnt = reliable_integral_cast<uint32_t>(stree.descs.size());
   st.write_int_packed(node_cnt);
   st.write_array(stree.descs);
 

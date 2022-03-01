@@ -46,7 +46,7 @@ struct mem_bstreambuf
       ? (egptr() - eback())                  // readonly  -> size == buffer == get area
       : (std::max(m_egp, pptr()) - pbase()); // writeable -> size == written area
 
-    return {eback(), reliable_numeric_cast<size_t>(size)};
+    return {eback(), reliable_integral_cast<size_t>(size)};
   }
 
   bool reserve(std::streamsize count)
@@ -185,7 +185,7 @@ protected:
     pos_type pos,
     std::ios::openmode mode = std::ios::in | std::ios::out) override
   {
-    return seekoff(reliable_numeric_cast<off_type>(static_cast<size_t>(pos)), std::ios::beg, mode);
+    return seekoff(reliable_integral_cast<off_type>(static_cast<size_t>(pos)), std::ios::beg, mode);
   }
 
   virtual std::streambuf* setbuf(char* data, std::streamsize size) override

@@ -82,77 +82,128 @@ struct nop_mutex
 //--------------------------------------------------------
 //  casts helpers
 
-template <typename To, typename From>
-class is_unsafe_numeric_cast
+enum class integral_cast_result {
+  lossless = 0,
+  negative_overflow,
+  positive_overflow,
+};
+
+namespace detail {
+
+template <typename TargetT, typename SourceT>
+struct integral_cast_traits
 {
-  using tgt_type = std::remove_cv_t<std::remove_reference_t<To>>;
-  using src_type = std::remove_cv_t<std::remove_reference_t<From>>;
+  using tgt_type = std::remove_cv_t<std::remove_reference_t<TargetT>>;
+  using src_type = std::remove_cv_t<std::remove_reference_t<SourceT>>;
+  using tgt_lim = std::numeric_limits<tgt_type>;
+  using src_lim = std::numeric_limits<src_type>;
+
+  static_assert(tgt_lim::is_integer && src_lim::is_integer);
+
+  static constexpr tgt_type tgt_max = (tgt_lim::max)();
+  static constexpr src_type src_max = (src_lim::max)();
+  static constexpr tgt_type tgt_low = tgt_lim::lowest();
+  static constexpr src_type src_low = src_lim::lowest();
+
+  static constexpr bool may_positive_overflow = src_max > tgt_max;
+  static constexpr bool may_negative_overflow = cmp_less(src_low, tgt_low);
+};
+
+template <typename TargetT, typename SourceT>
+constexpr integral_cast_result integral_cast_check(SourceT x)
+{
+  using traits = integral_cast_traits<TargetT, SourceT>;
+
+  if constexpr (traits::may_negative_overflow) // (src_low < tgt_low)
+  {
+    // (src_low < tgt_low) implies src_type negatively outrange tgt_type
+    // also we can assume (tgt_low <= 0)
+    // so tgt_low can be safely casted to src_type for comparison
+    if (x < static_cast<traits::src_type>(traits::tgt_low))
+    {
+      return integral_cast_result::negative_overflow;
+    }
+  }
+  if constexpr (traits::may_positive_overflow) // (src_max > tgt_max)
+  {
+    // (src_max > tgt_max) implies src_type positively outrange tgt_type
+    // so tgt_max can be safely casted to src_type for comparison
+    if (x > static_cast<traits::src_type>(traits::tgt_max))
+    {
+      return integral_cast_result::positive_overflow;
+    }
+  }
+
+  return integral_cast_result::lossless;
+}
+
+// experimental optimization if the side of overflow isn't required
+// returns true if conversion is lossless
+template <typename TargetT, typename SourceT>
+constexpr bool integral_cast_check2(SourceT x, TargetT casted)
+{
+  using traits = integral_cast_traits<TargetT, SourceT>;
+
+  constexpr bool same_signedness = (traits::tgt_lim::is_signed == traits::src_lim::is_signed);
+
+  if constexpr (same_signedness && (traits::src_max > traits::tgt_max))
+  {
+    return static_cast<SourceT>(casted) == x;
+  }
+  else
+  {
+    return integral_cast_check<TargetT, SourceT>(x) == integral_cast_result::lossless;
+  }
+}
+
+} // namespace detail
+
+template <typename TargetT, typename SourceT>
+class is_unsafe_integral_cast
+{
+  using traits = detail::integral_cast_traits<TargetT, SourceT>;
 
 public:
 
-  static constexpr bool value = std::conjunction_v<
-    std::bool_constant<std::is_signed_v<tgt_type> != std::is_signed_v<src_type>>,
-    std::bool_constant<((std::numeric_limits<std::make_unsigned_t<tgt_type>>::max)() < (std::numeric_limits<std::make_unsigned_t<src_type>>::max)())>>;
+  static constexpr bool value = std::disjunction_v<
+    traits::may_positive_overflow,
+    traits::may_negative_overflow>;
 };
 
-template <typename To, typename From>
-inline constexpr bool is_unsafe_numeric_cast_v = is_unsafe_numeric_cast<To, From>::value;
+template <typename TargetT, typename SourceT>
+inline constexpr bool is_unsafe_integral_cast_v = is_unsafe_integral_cast<TargetT, SourceT>::value;
+
+template <typename T, typename U>
+FORCE_INLINE T integral_cast(U x, bool& ok)
+{
+  const auto res = static_cast<T>(x);
+  ok = detail::integral_cast_check2(x, res);
+  return res;
+}
+
+template <typename T, typename U>
+FORCE_INLINE T integral_cast(U x)
+{
+  const auto res = static_cast<T>(x);
+
+  if (!detail::integral_cast_check2(x, res))
+  {
+    SPDLOG_CRITICAL("integral_cast error {} -> {}", x, res);
+    DEBUG_BREAK();
+  }
+
+  return static_cast<T>(x);
+}
 
 // this one checks for overflow in debug mode only
 template <typename T, typename U>
-FORCE_INLINE T reliable_numeric_cast(U x)
+FORCE_INLINE T reliable_integral_cast(U x)
 {
-  auto ret = static_cast<T>(x);
-
 #ifdef _DEBUG
-  if constexpr (is_unsafe_numeric_cast_v<T, U>)
-  {
-    if (static_cast<U>(ret) != x)
-    {
-      SPDLOG_CRITICAL("numeric_cast error {} -> {}", x, ret);
-      DEBUG_BREAK();
-    }
-
-  }
+  return integral_cast<T, U>(x);
+#else
+  return static_cast<T>(x);
 #endif
-
-  return ret;
-}
-
-template <typename T, typename U>
-FORCE_INLINE T numeric_cast(U x)
-{
-  auto ret = static_cast<T>(x);
-
-  if constexpr (is_unsafe_numeric_cast_v<T, U>)
-  {
-    if (static_cast<U>(ret) != x)
-    {
-      SPDLOG_CRITICAL("numeric_cast error {} -> {}", x, ret);
-      DEBUG_BREAK();
-    }
-  }
-
-  return ret;
-}
-
-template <typename T, typename U>
-FORCE_INLINE T numeric_cast(U x, bool& ok)
-{
-  const T ret = static_cast<T>(x);
-  ok = true;
-
-  if constexpr (is_unsafe_numeric_cast_v<T, U>)
-  {
-    if (static_cast<U>(ret) != x)
-    {
-      // print only in debug since caller is in charge of handling the error
-      SPDLOG_DEBUG("numeric_cast error {} -> {}", x, ret);
-      ok = false;
-    }
-  }
-
-  return ret;
 }
 
 //--------------------------------------------------------

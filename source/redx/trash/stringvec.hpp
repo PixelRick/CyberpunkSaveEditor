@@ -31,8 +31,8 @@ public:
   {
     REDX_ASSERT(offset < (std::numeric_limits<uint32_t>::max)() );
     REDX_ASSERT(size < (std::numeric_limits<uint32_t>::max)() );
-    this->set_offset(reliable_numeric_cast<uint32_t>(offset));
-    this->set_size(reliable_numeric_cast<uint32_t>(size));
+    this->set_offset(reliable_integral_cast<uint32_t>(offset));
+    this->set_size(reliable_integral_cast<uint32_t>(size));
   }
 
   inline uint32_t offset() const noexcept
@@ -159,7 +159,7 @@ struct stringvec
   // returns count of strings
   inline uint32_t size() const
   {
-    return reliable_numeric_cast<uint32_t>(m_descs.size());
+    return reliable_integral_cast<uint32_t>(m_descs.size());
   }
 
   // view can be invalidated on insertion

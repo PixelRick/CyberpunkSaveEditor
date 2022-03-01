@@ -214,7 +214,7 @@ std::vector<char> compress(std::span<const char> src, compression_level level)
   {
     header& hdr = *reinterpret_cast<header*>(buf.data());
     hdr = header(); // sets magic
-    hdr.size = numeric_cast<uint32_t>(src.size());
+    hdr.size = integral_cast<uint32_t>(src.size());
   }
 
   return buf;

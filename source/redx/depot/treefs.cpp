@@ -41,7 +41,7 @@ bool treefs::load_archive(const std::filesystem::path& p)
     return false;
   }
 
-  uint16_t ar_idx = reliable_numeric_cast<uint16_t>(m_archives.size());
+  uint16_t ar_idx = reliable_integral_cast<uint16_t>(m_archives.size());
   if (ar_idx == std::numeric_limits<uint16_t>::max())
   {
     m_full = true;
@@ -287,7 +287,7 @@ std::pair<int32_t, bool> treefs::insert_child_entry(int32_t parent_entry_idx, fs
     return {-1, false};
   }
 
-  entry_idx = reliable_numeric_cast<int32_t>(m_entries.size());
+  entry_idx = reliable_integral_cast<int32_t>(m_entries.size());
   auto& new_entry = m_entries.emplace_back(pid, name, type, is_depot_path);
 
   new_entry.parent_entry_idx = parent_entry_idx;

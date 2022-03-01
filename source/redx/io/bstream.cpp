@@ -49,7 +49,7 @@ ibstream& ibstream::read_str_lpfxd(std::string& s)
 obstream& obstream::write_str_lpfxd(const std::string& s)
 {
   const size_t len = s.size();
-  const int64_t cnt = -reliable_numeric_cast<int64_t>(len);
+  const int64_t cnt = -reliable_integral_cast<int64_t>(len);
 
   write_int64_packed(cnt);
   if (len)

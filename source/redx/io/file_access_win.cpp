@@ -58,7 +58,7 @@ struct file_access_win
       return std::streamsize(-1);
     }
 
-    return reliable_numeric_cast<std::streamsize>(fsize.QuadPart);
+    return reliable_integral_cast<std::streamsize>(fsize.QuadPart);
   }
 
   bool seekpos(bstreampos pos) override

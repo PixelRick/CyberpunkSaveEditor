@@ -29,7 +29,7 @@ struct file_access
     switch (dir)
     {
       case std::ios::cur:
-        new_off = reliable_numeric_cast<std::streamoff>(tell()) + off;
+        new_off = reliable_integral_cast<std::streamoff>(tell()) + off;
         break;
       case std::ios::end:
         new_off = size() + off;
@@ -42,7 +42,7 @@ struct file_access
 
     if (new_off >= 0)
     {
-      return seekpos(reliable_numeric_cast<bstreampos>(new_off));
+      return seekpos(reliable_integral_cast<bstreampos>(new_off));
     }
 
     return false;

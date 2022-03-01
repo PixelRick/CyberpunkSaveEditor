@@ -281,7 +281,7 @@ struct ibstream
   ibstream& read_bytes(void* dst, size_t count)
   {
     auto& sb = get_sbuf();
-    const std::streamsize ssize = reliable_numeric_cast<std::streamsize>(count);
+    const std::streamsize ssize = reliable_integral_cast<std::streamsize>(count);
     // skip checking for overflow.. 
 
     if (!has_failed())
@@ -572,7 +572,7 @@ struct obstream
   obstream& write_bytes(const void* src, size_t count)
   {
     auto& sb = get_sbuf();
-    const std::streamsize ssize = reliable_numeric_cast<std::streamsize>(count);
+    const std::streamsize ssize = reliable_integral_cast<std::streamsize>(count);
     // skip checking for overflow.. 
 
     if (!has_failed())
