@@ -20,7 +20,7 @@ struct aligned_storage_allocator
     }
   }
 
-  static inline void* deallocate(void* p, size_t size, size_t alignment)
+  static inline void deallocate(void* p, size_t size, size_t alignment)
   {
     if (alignment > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
     {
