@@ -6,7 +6,7 @@ namespace redx {
 
 struct aligned_storage_allocator
 {
-  static inline void* allocate(size_t size, size_t alignment)
+  [[nodiscard]] static inline void* allocate(size_t size, size_t alignment)
   {
     if (alignment > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
     {
