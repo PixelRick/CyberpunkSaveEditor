@@ -1,9 +1,3 @@
-To read about the game vulnerability (patched in v1.12):
-- https://github.com/PixelRick/CyberpunkSaveEditor/blob/main/XPLOIT.md
-
-To view the related xinput1_3.dll exploit POC:
-- https://github.com/PixelRick/xinput1_3_dep_bypass_poc
-
 # CyberpunkSaveEditor
 A tool to edit Cyberpunk 2077 sav.dat files (join the CP modding discord: https://discord.gg/cp77modding)
 
@@ -13,6 +7,9 @@ This is a holidays project and will probably not reach the user-friendly GUI sta
 
 If you are looking for an intuitive editor, please take a look at the other save editor project made by a group of C# developers on the CP modding discord:
 - https://github.com/Deweh/CyberCAT-SimpleGUI (forked from https://github.com/WolvenKit/CyberCAT).
+
+For an all-in-one modding tool (with save editor soon..):
+- https://github.com/WolvenKit/WolvenKit
 
 # Install
 To download CPSE as an executable, please click on Releases in the right pane as shown in this screenshot:
@@ -36,3 +33,10 @@ To download CPSE as an executable, please click on Releases in the right pane as
 # Roadmap
 1) Code cleaning
 2) Work on github issues
+
+# Misc
+To read about the game vulnerability (patched in v1.12):
+- https://github.com/PixelRick/CyberpunkSaveEditor/blob/main/XPLOIT.md
+
+To view the related xinput1_3.dll exploit POC:
+- https://github.com/PixelRick/xinput1_3_dep_bypass_poc
