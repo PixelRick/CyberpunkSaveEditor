@@ -338,6 +338,13 @@
     "LimbCyber",
     "Count"
   ],
+  "ArcadeMinigame": [
+    "INVALID",
+    "RoachRace",
+    "Panzer",
+    "Retros",
+    "Quadracer"
+  ],
   "AttitudeChange": [
     "DONT_CHANGE",
     "FRIENDLY",
@@ -390,6 +397,7 @@
     "Medium",
     "High",
     "Ultra",
+    "SteamDeck",
     "RaytracingLow",
     "RaytracingMedium",
     "RaytracingUltra",
@@ -405,7 +413,8 @@
     "PlayStation5_Quality",
     "PlayStation5_Backcompat_Performance",
     "PlayStation5_Backcompat_Quality",
-    "XboxSeriesS",
+    "XboxSeriesS_Performance",
+    "XboxSeriesS_Quality",
     "XboxSeriesS_Backcompat",
     "XboxSeriesX_Performance",
     "XboxSeriesX_Quality",
@@ -1430,6 +1439,11 @@
     "FVA_Three",
     "FVA_Four"
   ],
+  "EGOGMenuState": [
+    "None",
+    "LoadGame",
+    "MainMenu"
+  ],
   "EGameSessionDataType": [
     "NONE",
     "CameraDeadBody",
@@ -1473,7 +1487,8 @@
     "DistractVendingMachine",
     "NPC",
     "Clue",
-    "PlayerStash"
+    "PlayerStash",
+    "Wardrobe"
   ],
   "EGenericNotificationPriority": [
     "Default",
@@ -1834,7 +1849,7 @@
     "IK_UnknownDF",
     "IK_UnknownE0",
     "IK_UnknownE1",
-    "IK_UnknownE2",
+    "IK_IntlBackslash",
     "IK_MouseHover",
     "IK_MouseX",
     "IK_MouseY",
@@ -2038,6 +2053,11 @@
     "MSH_VertexShader",
     "MSH_PixelShader",
     "MSH_MAX"
+  ],
+  "EMaterialShadingRateMode": [
+    "MSRM_Default",
+    "MSRM_Disable",
+    "MSRM_Force2x2"
   ],
   "EMaterialVertexFactory": [
     "MVF_Terrain",
@@ -2703,6 +2723,8 @@
     "DeleteSaveFile",
     "TransferSaveFile",
     "CorruptedSaveFile",
+    "UnreachableCloudFile",
+    "RegionMismatchSaveFile",
     "NoPlayerProfile",
     "GameSaved",
     "SaveFailed",
@@ -2718,6 +2740,7 @@
     "TrialPeriodEnded",
     "TrialPeriodTimer",
     "FailedToRemoveTransferredSave",
+    "LoadModdedSaveFile",
     "MAX"
   ],
   "ESystems": [
@@ -3462,6 +3485,7 @@
     "Tarot",
     "Gear",
     "Cyberware",
+    "VisualSets",
     "Count"
   ],
   "HubVendorMenuItems": [
@@ -3585,6 +3609,11 @@
     "PRICE",
     "TYPE"
   ],
+  "ItemDisplayNotificationMessage": [
+    "Default",
+    "AddRef",
+    "RemoveRef"
+  ],
   "ItemDisplayType": [
     "Item",
     "Weapon"
@@ -3603,6 +3632,7 @@
     "Junk",
     "BaseCount",
     "Quest",
+    "NewWardrobeAppearances",
     "Buyback",
     "AllItems",
     "AllCount"
@@ -3629,6 +3659,10 @@
     "Owned",
     "Buyback",
     "DLCNew"
+  ],
+  "ItemModeGridSize": [
+    "Default",
+    "Outfit"
   ],
   "ItemSortMode": [
     "Default",
@@ -4146,6 +4180,14 @@
     "ImportFailed",
     "ImportNotEnoughSpace"
   ],
+  "TransmogSlots": [
+    "Head",
+    "Face",
+    "InnerChest",
+    "OuterChest",
+    "Legs",
+    "Feet"
+  ],
   "TweakWeaponPose": [
     "Nothing",
     "Position",
@@ -4172,7 +4214,15 @@
     "CantSaveDeathRestriction",
     "NotEnoughSlotsSaveResctriction",
     "NotEnoughSpaceSaveResctriction",
-    "PhotoModeDisabledRestriction"
+    "PhotoModeDisabledRestriction",
+    "GenericNotification"
+  ],
+  "UIItemCategory": [
+    "Default",
+    "Weapon",
+    "Clothing",
+    "Grenade",
+    "Cyberware"
   ],
   "UIMenuNotificationType": [
     "VendorNotEnoughMoney",
@@ -4187,7 +4237,8 @@
     "MaxLevelPerks",
     "NoAttributePoints",
     "InCombat",
-    "CraftingQuickhack"
+    "CraftingQuickhack",
+    "CraftingAmmoCap"
   ],
   "UIObjectiveEntryType": [
     "Invalid",
@@ -4219,6 +4270,12 @@
     "Scope",
     "Magazine",
     "Silencer"
+  ],
+  "WeaponType": [
+    "Invalid",
+    "Ranged",
+    "Melee",
+    "Count"
   ],
   "WorkspotConditionOperators": [
     "OR",
@@ -4975,73 +5032,118 @@
     "Light_Soft",
     "Light_Solid",
     "Light_Flesh",
+    "Light_Flesh_Head",
     "Light_Robot",
+    "Light_Robot_Head",
     "Light_Android",
+    "Light_Android_Head",
     "Light_Mech",
+    "Light_Mech_Head",
     "Light_Water",
     "Normal",
     "Normal_Hard",
     "Normal_Soft",
     "Normal_Solid",
     "Normal_Flesh",
+    "Normal_Flesh_Head",
     "Normal_Robot",
+    "Normal_Robot_Head",
     "Normal_Android",
+    "Normal_Android_Head",
     "Normal_Mech",
+    "Normal_Mech_Head",
     "Normal_Water",
     "Heavy",
     "Heavy_Hard",
     "Heavy_Soft",
     "Heavy_Solid",
     "Heavy_Flesh",
+    "Heavy_Flesh_Head",
     "Heavy_Robot",
+    "Heavy_Robot_Head",
     "Heavy_Android",
+    "Heavy_Android_Head",
     "Heavy_Mech",
+    "Heavy_Mech_Head",
     "Heavy_Water",
     "Slash",
     "Slash_Hard",
     "Slash_Soft",
     "Slash_Solid",
     "Slash_Flesh",
+    "Slash_Flesh_Head",
     "Slash_Robot",
+    "Slash_Robot_Head",
     "Slash_Android",
+    "Slash_Android_Head",
     "Slash_Mech",
+    "Slash_Mech_Head",
     "Slash_Water",
     "Cut",
     "Cut_Hard",
     "Cut_Soft",
     "Cut_Solid",
     "Cut_Flesh",
+    "Cut_Flesh_Head",
     "Cut_Robot",
+    "Cut_Robot_Head",
     "Cut_Android",
+    "Cut_Android_Head",
     "Cut_Mech",
+    "Cut_Mech_Head",
     "Cut_Water",
     "Stab",
     "Stab_Hard",
     "Stab_Soft",
     "Stab_Solid",
     "Stab_Flesh",
+    "Stab_Flesh_Head",
     "Stab_Robot",
+    "Stab_Robot_Head",
     "Stab_Android",
+    "Stab_Android_Head",
     "Stab_Mech",
+    "Stab_Mech_Head",
     "Stab_Water",
     "Finisher",
     "Finisher_Hard",
     "Finisher_Soft",
     "Finisher_Solid",
     "Finisher_Flesh",
+    "Finisher_Flesh_Head",
     "Finisher_Robot",
+    "Finisher_Robot_Head",
     "Finisher_Android",
+    "Finisher_Android_Head",
     "Finisher_Mech",
+    "Finisher_Mech_Head",
     "Finisher_Water",
     "Weak",
     "Weak_Hard",
     "Weak_Soft",
     "Weak_Solid",
     "Weak_Flesh",
+    "Weak_Flesh_Head",
     "Weak_Robot",
+    "Weak_Robot_Head",
     "Weak_Android",
+    "Weak_Android_Head",
     "Weak_Mech",
-    "Weak_Water"
+    "Weak_Mech_Head",
+    "Weak_Water",
+    "Throw",
+    "Throw_Hard",
+    "Throw_Soft",
+    "Throw_Solid",
+    "Throw_Flesh",
+    "Throw_Flesh_Head",
+    "Throw_Robot",
+    "Throw_Robot_Head",
+    "Throw_Android",
+    "Throw_Android_Head",
+    "Throw_Mech",
+    "Throw_Mech_Head",
+    "Throw_Water"
   ],
   "audioMeleeHitType": [
     "Light",
@@ -5051,7 +5153,8 @@
     "Cut",
     "Stab",
     "Finisher",
-    "Weak"
+    "Weak",
+    "Throw"
   ],
   "audioMeleeMaterialType": [
     "Hard",
@@ -5656,6 +5759,9 @@
   "gameEInventoryFlags": [
     "MustSave"
   ],
+  "gameEItemIDFlag": [
+    "Preview"
+  ],
   "gameELootGenerationType": [
     "DropChance",
     "NumberBased",
@@ -5796,6 +5902,9 @@
     "CP77_Patch_1_4",
     "CP77_Patch_1_3_Development",
     "CP77_Patch_1_5",
+    "CP77_Patch_1_5_Hotfix1",
+    "CP77_Patch_1_5_Actual_Hotfix1",
+    "CP77_Patch_1_6",
     "Current"
   ],
   "gameGameplayEventFlag": [
@@ -6635,6 +6744,17 @@
     "Default",
     "Focus"
   ],
+  "gameWardrobeClothingSetIndex": [
+    "Slot1",
+    "Slot2",
+    "Slot3",
+    "Slot4",
+    "Slot5",
+    "Slot6",
+    "Slot7",
+    "COUNT",
+    "INVALID"
+  ],
   "gameWorkspotSlidingBehaviour": [
     "DontPlayAtResourcePosition",
     "PlayAtResourcePosition",
@@ -6974,6 +7094,7 @@
     "VoodooBoys",
     "Wraiths",
     "WraithsAndroid",
+    "Zetatech",
     "Count",
     "Invalid"
   ],
@@ -7263,6 +7384,7 @@
     "Coastview_VDBMaglev",
     "Coastview_q110Cyberspace",
     "CorpoPlaza",
+    "CorpoPlaza_Apartment",
     "CorpoPlaza_ArasakaTowerAtrium",
     "CorpoPlaza_ArasakaTowerCEOFloor",
     "CorpoPlaza_ArasakaTowerJenkins",
@@ -7277,12 +7399,14 @@
     "Downtown_Jinguji",
     "Downtown_TheHammer",
     "Glen",
+    "Glen_Apartment",
     "Glen_Embers",
     "Glen_MusicStore",
     "Glen_NCPDLab",
     "Glen_WichedTires",
     "Heywood",
     "JapanTown",
+    "JapanTown_Apartment",
     "JapanTown_Clouds",
     "JapanTown_DarkMatter",
     "JapanTown_Fingers",
@@ -7312,6 +7436,7 @@
     "NorthOaks_Kerry_Estate",
     "Northside",
     "Northside_All_Foods",
+    "Northside_Apartment",
     "Northside_CleanCut",
     "Northside_Totentaz",
     "Northside_WNS",
@@ -7337,6 +7462,13 @@
     "Wellsprings",
     "WestWindEstate",
     "Westbrook",
+    "Count",
+    "Invalid"
+  ],
+  "gamedataEffectorTimeDilationDriver": [
+    "Source",
+    "Target",
+    "World",
     "Count",
     "Invalid"
   ],
@@ -7418,6 +7550,7 @@
     "ExitNoAmmo",
     "ExitOverheat",
     "ExitReload",
+    "ExitShoot",
     "MeleeBlock",
     "MeleeHit",
     "MuzzleBrakeShoot",
@@ -7564,6 +7697,8 @@
     "Prt_TorsoFabricEnhancer",
     "VendorToken",
     "Wea_AssaultRifle",
+    "Wea_Axe",
+    "Wea_Chainsword",
     "Wea_Fists",
     "Wea_Hammer",
     "Wea_Handgun",
@@ -7572,6 +7707,7 @@
     "Wea_Knife",
     "Wea_LightMachineGun",
     "Wea_LongBlade",
+    "Wea_Machete",
     "Wea_Melee",
     "Wea_OneHandedClub",
     "Wea_PrecisionRifle",
@@ -7736,6 +7872,7 @@
     "Zzz05_ApartmentToPurchaseVariant",
     "Zzz06_NCPDGigVariant",
     "Zzz07_PlayerStashVariant",
+    "Zzz08_WardrobeVariant",
     "CPO_PingDoorVariant",
     "CPO_PingGoHereVariant",
     "CPO_PingLootVariant",
@@ -8410,6 +8547,7 @@
     "RightLegHealth",
     "Stamina",
     "StunTrigger",
+    "ThrowRecovery",
     "UnlockProgress",
     "WeakspotHealth",
     "WeaponCharge",
@@ -8825,6 +8963,7 @@
     "ElementalDamagePerHit",
     "ElementalResistanceMultiplier",
     "EmptyReloadTime",
+    "EnemyChemicalResistanceReduction",
     "Engineering",
     "EngineeringMastery",
     "EngineeringTrait01",
@@ -9048,6 +9187,7 @@
     "MechanicalsBuffDPSBonus",
     "MeleeAttackComboDuration",
     "MeleeAttackDuration",
+    "MeleeBorgStaminaDrain",
     "Memory",
     "MemoryCostModifier",
     "MemoryCostReduction",
@@ -9233,6 +9373,7 @@
     "RicochetMinAngle",
     "RicochetTargetSearchAngle",
     "SandevistanDashShoot",
+    "ScalingBlocked",
     "ScanDepth",
     "ScanTimeReduction",
     "ScopeFOV",
@@ -9241,6 +9382,7 @@
     "SharedCacheTraps",
     "ShootingOffsetAI",
     "ShortCircuitOnCriticalHit",
+    "ShortDistanceDamageIncrease",
     "ShorterChains",
     "ShotDelay",
     "SimpleWeaponMod04",
@@ -9416,6 +9558,7 @@
     "ThermalResistance",
     "ThreeOrMoreProgramsCooldownRedPerk",
     "ThreeOrMoreProgramsMemoryRegPerk",
+    "ThrowRecovery",
     "TimeDilationGenericDuration",
     "TimeDilationGenericTimeScale",
     "TimeDilationKerenzikovDuration",
@@ -9484,6 +9627,7 @@
     "WeaponRotX",
     "WeaponRotY",
     "WeaponRotZ",
+    "WeaponSwapDuration",
     "Weight",
     "WoundHeadDamageThreshold",
     "WoundLArmDamageThreshold",
@@ -10744,6 +10888,8 @@
     "InEyesSubMenu",
     "InHandsSubMenu",
     "InSubMenu",
+    "IsIntroFinished",
+    "IsSetEquippingSubMenu",
     "Visible",
     "Count",
     "Invalid"
@@ -11184,11 +11330,13 @@
     "Activate",
     "Deactivate",
     "EquipItem",
-    "UnequipItem"
+    "UnequipItem",
+    "Refresh"
   ],
   "gameuiCharacterCustomizationEditTag": [
     "NewGame",
-    "HairDresser"
+    "HairDresser",
+    "Ripperdoc"
   ],
   "gameuiCharacterCustomizationPart": [
     "Head",
@@ -11297,12 +11445,21 @@
     "GroupedHidden"
   ],
   "gameuiPatchIntro": [
-    "Patch1500_NextGen"
+    "Patch1500_NextGen",
+    "Patch1600"
   ],
   "gameuiTutorialHiddenReason": [
     "None",
     "DefaultHiddenReason",
     "InPhotomode"
+  ],
+  "gameuiarcadeArcadeMinigame": [
+    "RoachRace"
+  ],
+  "gameuiarcadeRoachRaceObjectType": [
+    "BoostObject_Apple",
+    "BoostObject_Carrot",
+    "Obstacle"
   ],
   "gameweaponReloadStatus": [
     "Standard",
@@ -11340,10 +11497,12 @@
     "StateError_CantLoadSave_CantLoadFile",
     "StateError_CantLoadSave_CantCreateLoadStream",
     "StateError_CantLoadSave_CensorshipLevelMismatch",
+    "StateError_CantLoadSave_RegionMismatch",
     "StateError_CantLoadSave_CensorshipOptionalNudity",
     "StateError_CantLoadSave_VersionMismatch",
     "StateError_CantLoadSave_Corrupted",
-    "StateError_CantLoadSave_SessionDescInvalid"
+    "StateError_CantLoadSave_SessionDescInvalid",
+    "StateError_CantLoadSave_CantLoadCloudFile"
   ],
   "hitFlag": [
     "None",
@@ -11676,9 +11835,9 @@
   "inkSaveStatus": [
     "Invalid",
     "Local",
+    "Upload",
     "Cloud",
-    "InSync",
-    "Conflict"
+    "InSync"
   ],
   "inkSaveTransferStatus": [
     "ExportStarted",
@@ -11974,7 +12133,8 @@
   "physicsMaterialTagVisibility": [
     "None",
     "SemiTransparent",
-    "Transparent"
+    "Transparent",
+    "Ignore"
   ],
   "physicsPhysicalSystemOwner": [
     "Unknown",
@@ -13031,6 +13191,13 @@
     "Medium",
     "High",
     "Highest"
+  ],
+  "servicesCloudSavesQueryStatus": [
+    "NotFetched",
+    "FetchedSuccessfully",
+    "CloudSavesDisabled",
+    "NotLoggedIn",
+    "FetchFailed"
   ],
   "sharedCommandResult": [
     "Success",
