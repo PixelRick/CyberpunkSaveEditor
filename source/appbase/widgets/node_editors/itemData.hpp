@@ -17,6 +17,7 @@ struct uk_thing_widget
     modified |= ImGui::InputScalar("u32 hash (or 2)##uk4",   ImGuiDataType_U32, &x.uk4, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
     modified |= ImGui::InputScalar("unknown u8  field##uk1", ImGuiDataType_U8,  &x.uk1,  NULL, NULL, "%u");
     modified |= ImGui::InputScalar("unknown u16 field##uk2", ImGuiDataType_U16, &x.uk2,  NULL, NULL, "%u");
+    modified |= ImGui::InputScalar("unknown u8  field##uk5", ImGuiDataType_U8,  &x.uk5,  NULL, NULL, "%u");
 
     return modified;
   }

@@ -16,20 +16,23 @@ struct uk_thing
   uint32_t uk4 = 0;
   uint8_t  uk1 = 0;
   uint16_t uk2 = 0;
+  uint8_t  uk5 = 0;
 
-  friend std::istream& operator>>(std::istream& reader, uk_thing& kt)
+  friend std::istream& operator>>(std::istream& reader, uk_thing& x)
   {
-    reader >> cbytes_ref(kt.uk4);
-    reader >> cbytes_ref(kt.uk1);
-    reader >> cbytes_ref(kt.uk2);
+    reader >> cbytes_ref(x.uk4);
+    reader >> cbytes_ref(x.uk1);
+    reader >> cbytes_ref(x.uk2);
+    reader >> cbytes_ref(x.uk5);
     return reader;
   }
 
-  friend std::ostream& operator<<(std::ostream& writer, const uk_thing& kt)
+  friend std::ostream& operator<<(std::ostream& writer, const uk_thing& x)
   {
-    writer << cbytes_ref(kt.uk4);
-    writer << cbytes_ref(kt.uk1);
-    writer << cbytes_ref(kt.uk2);
+    writer << cbytes_ref(x.uk4);
+    writer << cbytes_ref(x.uk1);
+    writer << cbytes_ref(x.uk2);
+    writer << cbytes_ref(x.uk5);
     return writer;
   }
 
