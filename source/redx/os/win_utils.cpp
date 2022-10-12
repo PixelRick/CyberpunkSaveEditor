@@ -17,80 +17,83 @@
 
 namespace redx::os {
 
-    std::optional<std::filesystem::path> find_exe_path(std::string_view exename) {
-        // Computer\HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Compatibility Assistant\Store
-        // Computer\HKEY_CURRENT_USER\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\Shell\MuiCache
+std::optional<std::filesystem::path> find_exe_path(std::string_view exename) {
+  // Computer\HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Compatibility Assistant\Store
+  // Computer\HKEY_CURRENT_USER\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\Shell\MuiCache
 
-        std::optional<std::filesystem::path> ret;
+  HKEY hKey;
 
-        HKEY hKey;
+  if (RegOpenKeyExA(
+    HKEY_CURRENT_USER,
+    "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Compatibility Assistant\\Store",
+    0, KEY_READ, &hKey)
+    == ERROR_SUCCESS)
+  {
+    WCHAR ValueName[MAX_VALUE_NAME];
+    DWORD cchValueName = MAX_VALUE_NAME;
 
-        if (RegOpenKeyExA(
-            HKEY_CURRENT_USER,
-            "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Compatibility Assistant\\Store",
-            0, KEY_READ, &hKey)
-            == ERROR_SUCCESS) 
-        {
-            WCHAR ValueName[MAX_VALUE_NAME];
-            DWORD cchValueName = MAX_VALUE_NAME;
+    DWORD i = 0;
+    while (1)
+    {
+      cchValueName = MAX_VALUE_NAME;
+      ValueName[0] = '\0';
 
-            DWORD i = 0;
-            while (1) 
-            {
-                cchValueName = MAX_VALUE_NAME;
-                ValueName[0] = '\0';
+      if (RegEnumValueW(
+        hKey, i++, ValueName, &cchValueName, NULL, NULL, NULL, NULL)
+        != ERROR_SUCCESS)
+      {
+        RegCloseKey(hKey);
+        break;
+      }
 
-                if (RegEnumValueW(
-                    hKey, i++, ValueName, &cchValueName, NULL, NULL, NULL, NULL)
-                    != ERROR_SUCCESS) 
-                {
-                    RegCloseKey(hKey);
-                    break;
-                }
+      std::filesystem::path p(ValueName);
 
-                std::filesystem::path p(ValueName);
-
-                if (p.filename() == exename && std::filesystem::exists(p)) 
-                {
-                    RegCloseKey(hKey);
-                    return p;
-                }
-            }
-        }
-
-        if (RegOpenKeyExA(
-            HKEY_CURRENT_USER,
-            "SOFTWARE\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\MuiCache",
-            0, KEY_READ, &hKey)
-            == ERROR_SUCCESS) 
-        {
-            WCHAR ValueName[MAX_VALUE_NAME];
-            DWORD cchValueName = MAX_VALUE_NAME;
-
-            DWORD i = 0;
-            while (1) 
-            {
-                cchValueName = MAX_VALUE_NAME;
-                ValueName[0] = '\0';
-
-                if (RegEnumValueW(hKey, i++, ValueName, &cchValueName, NULL, NULL, NULL, NULL) != ERROR_SUCCESS) 
-                {
-                    RegCloseKey(hKey);
-                    break;
-                }
-                std::filesystem::path p(ValueName);
-
-                // Keys here are in format: Cyberpunk2077.exe.XXX
-                // -Cyberpunk2077.exe.ApplicationCompany
-                // -Cyberpunk2077.exe.FriendlyAppName
-                if (p.filename().string().find(exename) != std::string::npos && std::filesystem::exists(p.remove_filename().append(exename))) 
-                {
-                    RegCloseKey(hKey);
-                    return p.string();
-                }
-            }
-        }
+      if (p.filename() == exename && std::filesystem::exists(p))
+      {
+        RegCloseKey(hKey);
+        return p;
+      }
     }
+  }
+
+  if (RegOpenKeyExA(
+    HKEY_CURRENT_USER,
+    "SOFTWARE\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\MuiCache",
+    0, KEY_READ, &hKey)
+    == ERROR_SUCCESS)
+  {
+    WCHAR ValueName[MAX_VALUE_NAME];
+    DWORD cchValueName = MAX_VALUE_NAME;
+
+    DWORD i = 0;
+    while (1)
+    {
+      cchValueName = MAX_VALUE_NAME;
+      ValueName[0] = '\0';
+
+      if (RegEnumValueW(hKey, i++, ValueName, &cchValueName, NULL, NULL, NULL, NULL) != ERROR_SUCCESS)
+      {
+        RegCloseKey(hKey);
+        break;
+      }
+      std::filesystem::path p(ValueName);
+
+      // Keys here are in format: Cyberpunk2077.exe.XXX
+      // -Cyberpunk2077.exe.ApplicationCompany
+      // -Cyberpunk2077.exe.FriendlyAppName
+      if (p.filename().string().find(exename) != std::string::npos)
+      {
+        p.remove_filename().append(exename);
+        if (std::filesystem::exists(p))
+        {
+          RegCloseKey(hKey);
+          return p;
+        }
+      }
+    }
+  }
+  return std::nullopt;
+}
 
 std::optional<std::filesystem::path> get_cp_executable_path()
 {
