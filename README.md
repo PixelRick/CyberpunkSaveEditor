@@ -1,5 +1,5 @@
 # CyberpunkSaveEditor
-A tool to edit Cyberpunk 2077 sav.dat files (join the CP modding discord: https://discord.gg/cp77modding)
+A tool to edit Cyberpunk 2077 sav.dat files
 
 ![](./imgs/basilisks.png)
 
