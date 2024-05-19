@@ -110,9 +110,9 @@ protected:
   void reset_fields_from_bp()
   {
     clear_fields();
-    for (auto& field_desc : m_blueprint->field_bps())
+    for (auto& field_bp : m_blueprint->field_bps())
     {
-      m_fields.emplace_back(field_desc.name(), std::move(field_desc.create_prop(this)));
+      m_fields.emplace_back(field_bp.name(), std::move(field_bp.create_prop(this)));
     }
   }
 
@@ -267,14 +267,14 @@ public:
     // but it would also reverse the order of appearance in the log
 
     //auto field_it = m_fields.begin();
-    auto prev_field_it = m_fields.begin();
+    auto next_field_it = m_fields.begin();
     for (size_t i = 0; i < serial_fields_cnt; ++i)
     {
       auto& fdesc = field_descs[i];
       auto& ddesc = data_descs[i];
 
       // search for field
-      auto field_it(prev_field_it);
+      auto field_it(next_field_it);
       while (field_it != m_fields.end() && field_it->name != fdesc.name)
         ++field_it;
 
@@ -293,7 +293,8 @@ public:
       }
       else
       {
-        prev_field_it = field_it;
+        next_field_it = field_it;
+        ++next_field_it;
       }
 
       if (field_it == m_fields.end())
