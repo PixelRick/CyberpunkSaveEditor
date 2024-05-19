@@ -55,6 +55,7 @@ struct CSystem_widget
       return false;
 
     bool modified = false;
+    //const bool use_blueprints = sys.are_blueprints_enabled();
 
     auto& objects = sys.objects();
 

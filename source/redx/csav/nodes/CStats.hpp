@@ -107,7 +107,7 @@ protected:
     auto new_handle = dynamic_cast<CHandleProperty*>(mods->emplace(mods->begin())->get());
     if (!new_handle)
       return nullptr;//damnit
-    auto new_obj = std::make_shared<CObject>(name);
+    auto new_obj = std::make_shared<CObject>(name, m_sys.is_using_blueprints());
     new_handle->set_obj(new_obj);
     return new_obj;
   }
@@ -142,17 +142,17 @@ public:
 public:
   std::string node_name() const override { return "StatsSystem"; }
 
-  bool from_node_impl(const std::shared_ptr<const node_t>& node, const version& version) override
+  bool from_node_impl(const std::shared_ptr<const node_t>& node, const version& ver) override
   {
     if (!node)
       return false;
 
     m_raw = node;
 
-    node_reader reader(node, version);
+    node_reader reader(node, ver);
 
     // todo: catch exception at upper level to display error
-    if (!m_sys.serialize_in(reader))
+    if (!m_sys.serialize_in(reader, ver))
       return false;
 
     if (!reader.at_end())

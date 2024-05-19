@@ -62,11 +62,12 @@ protected:
   CObjectBPSPtr m_blueprint;
 
 public:
-  CObject(gname ctypename, bool delay_fields_init=false)
+  CObject(gname ctypename, bool setup_fields_from_bp=false)
   {
     m_blueprint = CObjectBPList::get().get_or_make_bp(ctypename);
-    if (!delay_fields_init)
+    if (setup_fields_from_bp) {
       reset_fields_from_bp();
+    }
   }
 
   ~CObject() override
@@ -261,7 +262,10 @@ public:
     //if (!m_blueprint->register_partial_field_descs(field_descs))
     //  return false;
 
-    reset_fields_from_bp();
+    const bool use_blueprints = serctx.is_blueprint_compatible();
+    if (use_blueprints) {
+        reset_fields_from_bp();
+    }
 
     // ideally doing it in reverse order would catch failures earlier (unknown prop with unknown end)
     // but it would also reverse the order of appearance in the log
@@ -291,22 +295,21 @@ public:
             i, this->ctypename().c_str(), fdesc.name.c_str(), fdesc.ctypename.c_str()));
         }
       }
-      else
-      {
-        next_field_it = field_it;
-        ++next_field_it;
-      }
 
       if (field_it == m_fields.end())
-      {
-        bool a = false;
-        // todo: replace with logging
-        throw std::runtime_error(
-          fmt::format(
+      { 
+        if (use_blueprints)
+        {
+          throw std::runtime_error(fmt::format(
             "CObject::serialize_in: serial field {}::{} is missing from bp fields",
-            this->ctypename().c_str(), fdesc.name.c_str())
-        );
-        return false;
+            this->ctypename().c_str(), fdesc.name.c_str()));
+          return false;
+        }
+        else
+        {
+          CFieldBP field_bp{fdesc};
+          field_it = m_fields.emplace(next_field_it, field_bp.name(), std::move(field_bp.create_prop(this)));
+        }
       }
 
       if (field_it->prop->ctypename() != fdesc.ctypename)
@@ -339,6 +342,8 @@ public:
       serctx.log(fmt::format(
         "serialized_in ({}) {}::{} (ctype:{}) in {} bytes",
         i, this->ctypename().c_str(), fdesc.name.c_str(), fdesc.ctypename.c_str(), ddesc.data_size));
+
+      next_field_it = ++field_it;
     }
 
     if (is.eof()) // tellg would fail if eofbit is set

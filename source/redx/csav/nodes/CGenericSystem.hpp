@@ -34,7 +34,7 @@ public:
 
     node_reader reader(node, version);
 
-    if (!m_sys.serialize_in(reader))
+    if (!m_sys.serialize_in(reader, version))
       return false;
 
     return reader.at_end();

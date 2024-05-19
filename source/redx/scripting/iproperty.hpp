@@ -146,7 +146,7 @@ public:
   {
     //if (imgui_show_skipped && is_skippable_in_serialization())
     //  ImGui::Text("(default, may be skipped during serialization)");
-    if (imgui_show_skipped && (has_construction_value() && !m_is_unskippable))
+    if (imgui_show_skipped && (is_skippable_in_serialization()))
     {
       ImGui::Text("(!)"); ImGui::SameLine();
     }

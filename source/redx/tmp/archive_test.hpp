@@ -380,7 +380,7 @@ public:
         return false;
 
       auto obj_ctypename = m_serctx.strpool.at(desc.name_idx).gstr();
-      auto new_obj = std::make_shared<CObject>(obj_ctypename, true); // todo: static create method
+      auto new_obj = std::make_shared<CObject>(obj_ctypename, false); // todo: static create method
       m_serctx.m_objects.push_back(new_obj);
     }
 

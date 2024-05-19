@@ -33,7 +33,7 @@ public:
     node_reader reader(node, version);
 
     // todo: catch exception at upper level to display error
-    if (!m_sys.serialize_in(reader))
+    if (!m_sys.serialize_in(reader, version))
       return false;
 
     return reader.at_end();

@@ -79,7 +79,6 @@ public:
       m_field_bps.emplace_back(fdesc);
   }
 
-
   gname ctypename() const { return m_ctypename; }
   CObjectBPSPtr parent() const { return m_parent; }
 
@@ -93,7 +92,6 @@ public:
   }
 
 };
-
 
 class CObjectBPList
 {
@@ -116,7 +114,7 @@ public:
   }
 
 public:
-  // always returns a class, so that unknown ones can be configured
+  // always returns a class, so that new ones can be configured
   CObjectBPSPtr get_or_make_bp(gname objtype)
   {
     auto it = m_classmap.find(objtype);

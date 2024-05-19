@@ -8,6 +8,7 @@
 #include "redx/ctypes.hpp"
 #include "redx/csav/node.hpp"
 #include "redx/csav/serializers.hpp"
+#include "redx/csav/version.hpp"
 #include "CStringPool.hpp"
 #include "cobject.hpp"
 #include "redx/io/bstream.hpp"
@@ -33,8 +34,6 @@ enum class ESystemKind : uint8_t
   DataTrackingSystem,
 };
 
-
-
 class CSystem
 {
 private:
@@ -43,7 +42,7 @@ private:
     uint16_t uk1                  = 0;
     uint16_t uk2                  = 0;
     uint32_t cnames_cnt           = 0;
-    uint32_t strpool_descs_offset                  = 0;
+    uint32_t strpool_descs_offset = 0;
     uint32_t strpool_data_offset  = 0;
     uint32_t obj_descs_offset     = 0;
     // tricky: obj offsets are relative to the strpool base
@@ -85,18 +84,23 @@ public:
   const std::vector<CObjectSPtr>& objects() const { return m_objects; }
         std::vector<CObjectSPtr>& objects()       { return m_objects; }
 
+  bool is_using_blueprints() const {
+    return m_serctx.is_blueprint_compatible();
+  }
+
 public:
 
-  bool serialize_in(std::istream& reader)
+  bool serialize_in(std::istream& reader, redx::csav::version version)
   {
     uint32_t blob_size = 0;
     reader >> cbytes_ref(blob_size);
 
-    return serialize_in_sized(reader, blob_size, true);
+    return serialize_in_sized(reader, version, blob_size, true);
   }
 
-  bool serialize_in_sized(std::istream& reader, uint32_t blob_size, bool do_cnames=false)
+  bool serialize_in_sized(std::istream& reader, redx::csav::version version, uint32_t blob_size, bool do_cnames)
   {
+    m_serctx.set_version(version);
     m_subsys_names.clear();
     m_objects.clear();
     m_handle_objects.clear();
@@ -136,7 +140,6 @@ public:
 
     const uint32_t strpool_descs_size = m_header.strpool_data_offset;
     const uint32_t strpool_data_size = m_header.obj_descs_offset - strpool_descs_size;
-
 
     auto blob = std::make_unique<char[]>(blob_size - base_offset);
     reader.read(blob.get(), blob_size - base_offset);
@@ -191,7 +194,7 @@ public:
         return false;
 
       auto obj_ctypename = strpool.at(desc.name_idx).gstr();
-      auto new_obj = std::make_shared<CObject>(obj_ctypename, true); // todo: static create method
+      auto new_obj = std::make_shared<CObject>(obj_ctypename, false); // todo: static create method
       m_serctx.m_objects.push_back(new_obj);
     }
 
@@ -316,7 +319,7 @@ public:
 
   friend std::istream& operator>>(std::istream& reader, CSystem& sys)
   {
-    if (!sys.serialize_in(reader))
+    if (!sys.serialize_in(reader, redx::csav::version{}))
       reader.setstate(std::ios_base::badbit);
     return reader;
   }
