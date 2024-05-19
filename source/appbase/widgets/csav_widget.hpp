@@ -75,7 +75,6 @@ public:
   }
 };
 
-static inline bool s_use_ps4_weird_format = false;
 static inline bool s_dump_decompressed_data = false;
 
 class csav_collapsable_header
@@ -157,7 +156,7 @@ protected:
     std::weak_ptr<redx::savegame> weak_csav = m_csav;
     save_job.start([weak_csav](progress_t& progress) -> bool {
       auto csav = weak_csav.lock();
-      return !!csav->save_with_progress(csav->filepath, progress, s_dump_decompressed_data, s_use_ps4_weird_format);
+      return !!csav->save_with_progress(csav->filepath, progress, s_dump_decompressed_data);
     });
     ImGui::OpenPopup("Saving..##SAVE"); // should be in parent class
   }
@@ -1024,7 +1023,6 @@ public:
 
     if (ImGui::BeginMenu("Options"))
     {
-      ImGui::Checkbox("use ps4wizard format", &s_use_ps4_weird_format);
       ImGui::Checkbox("dump decompressed data", &s_dump_decompressed_data);
       ImGui::Checkbox("show CObject field types", &CObject::show_field_types);
       ImGui::Checkbox("show CProperty skipped flag", &CProperty::imgui_show_skipped);

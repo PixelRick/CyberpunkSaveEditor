@@ -19,7 +19,7 @@ struct version
 
   std::string string() const
   {
-    return fmt::format("v{}-{}.{}{}", v1, v2, v3, (ps4w ? "(PS4W)" : ""));
+    return fmt::format("v{}-{}.{}", v1, v2, v3);
   }
 
   uint32_t v1 = 0;

@@ -88,7 +88,7 @@ public:
     return try_load_node_data_struct(chtrcustom,   "CharacetrCustomization_Appearances"  , dummy, 0.f, true);
   }
 
-  op_status save_with_progress(std::filesystem::path path, progress_t& progress, bool dump_decompressed_data=false, bool ps4_weird_format=false)
+  op_status save_with_progress(std::filesystem::path path, progress_t& progress, bool dump_decompressed_data=false)
   {
     progress.value = 0.00f;
 
@@ -103,8 +103,7 @@ public:
 
     try_save_node_data_struct(stats,        "StatsSystem"                           );  progress.value = 0.70f;
     try_save_node_data_struct(statspool,    "StatPoolsSystem"                       );  progress.value = 0.80f;
-    
-    tree.ver().ps4w = ps4_weird_format;
+
     tree.root = root;
     op_status status = tree.save(path);
     progress.value = 1.00f;
