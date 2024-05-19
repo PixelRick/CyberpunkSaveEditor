@@ -17,50 +17,30 @@ std::string bytes_to_hex(const void* buf, size_t len)
   return ss.str();
 }
 
-
 #define GEN_OLD_DB_FORMAT 1
 
 namespace dumper {
 
-uintptr_t GetDataHolder(const void* a)
-{
-  using fn_t = uintptr_t (*)(const void*);
+uintptr_t CProperty::get_value_address(void* parent_instance) {
 
+  using fn_t = uintptr_t (*)(CProperty* prop, const void* inst);
   static fn_t fn = []() -> fn_t {
-
-    auto matches = find_pattern_in_game_text(L"\x40\x53\x48\x83\xEC\x20\x48\x83\x79\x38\x00\x48\x8B\xD9\x75\x3B");
-    if (matches.size() != 1)
-    {
-      SPDLOG_ERROR("couldn't find GetDataHolder pattern");
+    // 2.12
+    // 48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 57 48 83 EC 20 8B 41 28 48 8B DA 48 8B E9 48 0F BA E0 15
+    auto matches = find_pattern_in_game_text(L"\x48\x89\x5C\x24\x08\x48\x89\x6C\x24\x10\x48\x89\x74\x24\x18\x57\x48\x83\xEC\x20\x8B\x41\x28\x48\x8B\xDA\x48\x8B\xE9\x48\x0F\xBA\xE0\x15");
+    if (matches.size() != 1) {
+      SPDLOG_ERROR("couldn't find GetPropValueAddress pattern");
       return (fn_t)nullptr;
     }
-
     return (fn_t)matches[0];
-
   }();
 
-  if (fn)
-  {
-    return fn(a);
+  if (fn) {
+    return fn(this, parent_instance);
   }
 
   return 0;
 }
-
-uintptr_t CProperty::get_final_address(void* parent_instance)
-{
-  uintptr_t base = (uintptr_t)parent_instance;
-  if (flags.isScripted)
-  {
-    base = GetDataHolder(parent_instance);
-    if (base == 0)
-    {
-      return 0;
-    }
-  }
-  return base + valueOffset;
-}
-
 
 void dump_prop_default_value(nlohmann::json::reference jref, IRTTIType* type, void* prop_addr, void* ref_prop_addr);
 
@@ -122,7 +102,7 @@ nlohmann::json dump_props_default_values(CClass* cls, void* instance, void* ref_
       continue;
     }
 
-    uintptr_t prop_addr = pprop->get_final_address(instance);
+    uintptr_t prop_addr = pprop->get_value_address(instance);
     if (!prop_addr)
     {
       j[prop_name] = "!!!failed_to_get_addr!!!";
@@ -132,7 +112,7 @@ nlohmann::json dump_props_default_values(CClass* cls, void* instance, void* ref_
     uintptr_t ref_prop_addr = 0;
     if (ref_instance)
     {
-      ref_prop_addr = pprop->get_final_address(ref_instance);
+      ref_prop_addr = pprop->get_value_address(ref_instance);
       if (!ref_prop_addr)
       {
         j[prop_name] = "!!!failed_to_get_ref_addr!!!";
@@ -595,22 +575,18 @@ void dump_prop_default_value(nlohmann::json::reference jref, IRTTIType* type, vo
 CRTTISystem* CRTTISystem::Get()
 {
   using fn_t = CRTTISystem * (*)();
-
   static fn_t fn = []() -> fn_t {
-
-    auto matches = find_pattern_in_game_text(L"\x40\x53\x48\x83\xEC\x20\x65\x48\x8B\x04\x25\x58\x00\x00\x00\x48\x8D\x1D");
-    if (matches.size() != 1)
-    {
+    // 2.12
+    // 48 83 EC ?? 65 48 8B 04 25 ?? ?? ?? ?? BA ?? ?? ?? ?? 48 8B 08 8B 04 0A 39 05 ?? ?? ?? ?? 0F 8F
+    auto matches = find_pattern_in_game_text(L"\x48\x83\xEC\xF00\x65\x48\x8B\x04\x25\xF00\xF00\x00\x00\xBA\xF00\xF00\xF00\xF00\x48\x8B\x08\x8B\x04\x0A\x39\x05\xF00\xF00\xF00\xF00\x0F\x8F");
+    if (matches.size() != 5) {
       SPDLOG_ERROR("couldn't find CRTTISystem::Get pattern");
       return (fn_t)nullptr;
     }
-
-    return (fn_t)matches[0];
-
+    return (fn_t)matches[1];
   }();
 
-  if (fn)
-  {
+  if (fn) {
     return fn();
   }
 
@@ -620,22 +596,18 @@ CRTTISystem* CRTTISystem::Get()
 const char* CName::ToString() const
 {
   using fn_t = const char* (*)(const CName&);
-
   static fn_t fn = []() -> fn_t {
-
+    // 2.12
+    // 48 83 EC 38 48 8B 11 48 8D 4C 24 20 E8
     auto matches = find_pattern_in_game_text(L"\x48\x83\xEC\x38\x48\x8B\x11\x48\x8D\x4C\x24\x20\xE8");
-    if (matches.size() != 1)
-    {
+    if (matches.size() != 1) {
       SPDLOG_ERROR("couldn't find CNamePool::Get pattern");
       return (fn_t)nullptr;
     }
-
     return (fn_t)matches[0];
-
   }();
 
-  if (fn)
-  {
+  if (fn) {
     return fn(*this);
   }
 
@@ -659,30 +631,23 @@ uintptr_t foo(uintptr_t (*fn)(const CClass*), const CClass* cls)
 uintptr_t CClass::GetDefaultInstance() const
 {
   using fn_t = uintptr_t (*)(const CClass*);
-
   static fn_t fn = []() -> fn_t {
-
+    // 2.12
+    // 40 ?? 48 83 EC ?? 48 8B 81 E0 00 00 00 48 8B ?? 48 85
     auto matches = find_pattern_in_game_text(L"\x40\xF00\x48\x83\xEC\xF00\x48\x8B\x81\xE0\x00\x00\x00\x48\x8B\xF00\x48\x85");
-
-    if (matches.size() != 1)
-    {
-      if (matches.size() == 0)
-      {
+    if (matches.size() != 1) {
+      if (matches.size() == 0) {
         SPDLOG_ERROR("couldn't find CClass::GetDefaultInstance pattern, no match");
       }
-      else
-      {
+      else {
         SPDLOG_ERROR("couldn't find CClass::GetDefaultInstance pattern, multiple matches");
       }
       return (fn_t)nullptr;
     }
-
     return (fn_t)matches[0];
-
   }();
 
-  if (fn)
-  {
+  if (fn) {
     return foo(fn, this);
   }
 
@@ -691,27 +656,24 @@ uintptr_t CClass::GetDefaultInstance() const
 
 DynArray<CProperty*>* CClass::GetAllProps() const
 {
-  using fn_t = DynArray<CProperty*>* (*)(const CClass*);
-
+  using fn_t = DynArray<CProperty*>* (*)(const CClass*, uint64_t);
   static fn_t fn = []() -> fn_t {
-
-    auto matches = find_pattern_in_game_text(L"\x40\x53\x48\x83\xEC\x20\x33\xD2\x48\x8B\xD9\xE8\x80\x33\x00\x00");
-    if (matches.size() != 1)
-    {
+    // 2.12
+    // 48 89 5C 24 10 48 89 6C 24 20 56 57 41 54 41 56 41 57 48 83 EC 30 33 ED
+    auto matches = find_pattern_in_game_text(L"\x48\x89\x5C\x24\x10\x48\x89\x6C\x24\x20\x56\x57\x41\x54\x41\x56\x41\x57\x48\x83\xEC\x30\x33\xED");
+    if (matches.size() != 1) {
       SPDLOG_ERROR("couldn't find CClass::GetAllProps pattern");
       return (fn_t)nullptr;
     }
-
     return (fn_t)matches[0];
-
   }();
 
-  if (fn)
-  {
-    return fn(this);
+  if (fn) {
+    fn(this, 0);
+    return &(const_cast<CClass*>(this)->unk118);
   }
 
-  return 0;
+  return nullptr;
 }
 
 // 

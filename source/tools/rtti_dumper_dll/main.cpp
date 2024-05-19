@@ -69,14 +69,14 @@ bool WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
 
       try
       {
-        auto matches = dumper::find_pattern_in_game_text(L"\x40\xF00\x48\x83\xEC\xF00\x48\x8B\x81\xE0\x00\x00\x00\x48\x8B\xF00\x48\x85");
-        if (matches.size() != 1)
+        auto matches = dumper::find_pattern_in_game_text(L"\x48\x83\xEC\xF00\x65\x48\x8B\x04\x25\xF00\xF00\x00\x00\xBA\xF00\xF00\xF00\xF00\x48\x8B\x08\x8B\x04\x0A\x39\x05\xF00\xF00\xF00\xF00\x0F\x8F");
+        if (matches.size() != 5)
         {
           SPDLOG_CRITICAL("couldn't find CClass::GetDefaultInstance pattern");
         }
         else
         {
-          hook_addr = matches[0];
+          hook_addr = matches[1];
           DWORD old;
           if (!VirtualProtect((void*)hook_addr, 0x100, PAGE_EXECUTE_READWRITE, &old))
           {

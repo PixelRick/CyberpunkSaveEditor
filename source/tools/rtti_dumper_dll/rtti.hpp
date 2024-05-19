@@ -15,12 +15,6 @@ void dump();
 struct IRTTIType;
 struct CClass;
 
-struct IScriptable
-{
-  uint64_t pad[6];
-  uint64_t scriptDataHolder;
-};
-
 struct CName
 {
   constexpr CName(uint64_t aHash = 0) noexcept
@@ -205,7 +199,7 @@ struct CProperty
     uint64_t isNotSerialized : 1; // 03
     uint64_t isNotSerializedIfUnknownCond : 1; // 04
     uint64_t b5 : 1;           // 05
-    uint64_t b6 : 1;           // 06 - Is true when it is a return property, might be "isReturn".
+    uint64_t isReturn : 1;     // 06 - Is true when it is a return property, might be "isReturn".
     uint64_t b7 : 1;           // 07
     uint64_t b8 : 1;           // 08
     uint64_t isOut : 1;        // 09
@@ -215,7 +209,7 @@ struct CProperty
     uint64_t isProtected : 1;  // 11
     uint64_t isPublic : 1;     // 12
     uint64_t b19 : 2;          // 13
-    uint64_t isScripted : 1;          // 15 - When true, acquire value from holder (isScripted?)
+    uint64_t isScripted : 1;   // 15 - When true, acquire value from holder (isScripted?)
     uint64_t b22 : 5;          // 16
     uint64_t isHandle : 1;     // 1B
     uint64_t isPersistent : 1; // 1C
@@ -229,7 +223,7 @@ struct CProperty
   uint32_t valueOffset; // 20
   Flags flags;          // 28
 
-  uintptr_t get_final_address(void* parent_instance);
+  uintptr_t get_value_address(void* parent_instance);
 
 private:
 
@@ -256,6 +250,7 @@ enum class ERTTIType : uint8_t
   BitField = 13,
   LegacySingleChannelCurve = 14,
   ScriptReference = 15,
+  FixedArray = 16
 };
 
 struct IRTTIType
@@ -267,14 +262,14 @@ struct IRTTIType
   virtual uint32_t GetAlignment() const = 0;                    // 18
   virtual ERTTIType GetType() const = 0;                        // 20
   virtual void GetTypeName(CString& aOut) const = 0;            // 28
-  virtual void GetName2(CName& aOut) const = 0;                 // 30
-  virtual void Init(void* aMemory) const = 0;                   // 38
+  virtual void GetComputedName(CName& aOut) const = 0;          // 30
+  virtual void Construct(void* aMemory) const = 0;              // 38
   virtual void Destroy(void* aMemory) const = 0;                // 40
   virtual bool IsEqual(const void* aLhs, const void* aRhs, uint64_t h = 0) = 0; // 48
   virtual void Assign(void* aLhs, const void* aRhs) = 0;        // 50
   virtual void Move(void* aLhs, const void* aRhs) = 0;          // 58
   virtual void sub_60() = 0;                                    // 60
-  virtual bool GetDebugString(const void* aInstance, CString& aOut) const = 0; // 68
+  virtual bool ToString(const void* aInstance, CString& aOut) const = 0; // 68
   virtual bool sub_70() = 0;                                    // 70
   virtual bool sub_78() = 0;                                    // 78
   virtual void sub_80() = 0;                                    // 80
