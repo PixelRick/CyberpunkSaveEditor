@@ -392,12 +392,16 @@ public:
 
 struct node_serializable
 {
+  // in CItemData which made inventory to not be saved when a new item
+  // was present..
+  // TODO: think about a better solution.
   bool has_valid_data = false;
 
   virtual std::string node_name() const = 0;
 
   bool from_node(const std::shared_ptr<const node_t>& node, const version& version)
   {
+    has_valid_data = false;
     has_valid_data = from_node_impl(node, version);
     return has_valid_data;
   }
@@ -416,4 +420,3 @@ private:
 };
 
 } // namespace redx::csav
-

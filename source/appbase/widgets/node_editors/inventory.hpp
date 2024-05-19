@@ -29,7 +29,6 @@ struct CInventory_widget
 
       auto& subinv = *inv_it;
 
-
       std::string inv_label = "V's bag";
       switch (subinv.uid)
       {
@@ -71,6 +70,7 @@ struct CInventory_widget
           modified = true;
         }
 
+        // TODO: handle !has_valid_data of CItemData..
         static auto name_fn = [](const redx::csav::CItemData& item) { return item.iid.shortname(); };
         modified |= imgui_list_tree_widget(subinv.items, name_fn,
          [stats](redx::csav::CItemData& itemData) { return CItemData_widget::draw(itemData, stats); },

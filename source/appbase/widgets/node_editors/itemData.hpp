@@ -140,6 +140,11 @@ struct CItemData_widget
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     ImGuiID id = window->GetID("itemData");
 
+    if (!item.has_valid_data) {
+        ImGui::Text("Item couldn't be loaded for edition.");
+        return false;
+    }
+
     bool modified = false;
 
     static ImGuiTableFlags tbl_flags = ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV | ImGuiTableFlags_Resizable

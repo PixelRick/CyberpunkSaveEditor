@@ -251,8 +251,10 @@ protected:
     if (!node)
       return false;
     auto new_node = var.to_node(tree.ver());
-    if (!new_node)
+    if (!new_node) {
+      // TODO: issue warning on !new_node when node was loaded (thus was editable) but couldn't be saved.
       return false;
+    }
 
     auto ncnode = std::const_pointer_cast<node_t>(node);
     ncnode->assign_children(new_node->children());

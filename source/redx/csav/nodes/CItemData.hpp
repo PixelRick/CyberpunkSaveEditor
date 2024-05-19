@@ -203,6 +203,10 @@ struct CItemData
 
   CItemMod root2;
 
+  CItemData() {
+    has_valid_data = true;
+  }
+
   std::string node_name() const override { return "itemData"; }
 
   bool from_node_impl(const std::shared_ptr<const node_t>& node, const version& version) override
