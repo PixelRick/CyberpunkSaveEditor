@@ -297,9 +297,10 @@ void node_tree::serialize_out(obstream& st) {
     chunkdescs_start = reliable_integral_cast<uint32_t>(st.tellp());
 
     uint32_t expected_raw_size = (uint32_t)root->calcsize();
-    size_t   max_chunkcnt      = LZ4_compressBound(expected_raw_size) / XLZ4_CHUNK_SIZE
-                        + 2; // tbl should fit in 1 extra XLZ4_CHUNK_SIZE
-    size_t chunktbl_maxsize = (max_chunkcnt * sizeof(compressed_chunk_desc)) + 8;
+    size_t   compress_bound    = LZ4_compressBound(expected_raw_size);
+    // tbl should fit in 1 extra XLZ4_CHUNK_SIZE
+    size_t   max_chunkcnt      = compress_bound / XLZ4_CHUNK_SIZE + 2;
+    size_t   chunktbl_maxsize  = (max_chunkcnt * sizeof(compressed_chunk_desc)) + 8;
 
     std::vector<char> tmp;
     tmp.resize(XLZ4_CHUNK_SIZE);

@@ -330,7 +330,7 @@ public:
 
 protected:
     void blobize_pending_data_if_any() {
-        auto data = str();
+        auto data = str(); // unwanted copy
         if (data.size()) {
             m_new_children.push_back(node_t::create_shared_blob(data.begin(), data.end()));
         }
@@ -357,7 +357,7 @@ public:
         if (m_new_children.size())
             blobize_pending_data_if_any();
         // there is still pending data only if there are no children
-        auto data = str();
+        auto data = str(); // unwanted copy
         node.assign_data(data.begin(), data.end());
         node.assign_children(m_new_children.begin(), m_new_children.end());
     }

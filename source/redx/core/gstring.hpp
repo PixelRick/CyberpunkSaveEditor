@@ -113,7 +113,7 @@ struct gstring
     return std::string(strv());
   }
 
-  FORCE_INLINE size_t hash() const noexcept
+  FORCE_INLINE fnv1a64_t hash() const noexcept
   {
     return m_idx.hash();
   }

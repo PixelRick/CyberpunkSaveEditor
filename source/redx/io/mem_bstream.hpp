@@ -365,6 +365,8 @@ protected:
   bstreambuf_type m_buf;
 };
 
+// don't use it, it is broken
+// TODO: import stream classes from starfield project
 struct mem_obstream
   : obstream
 {
