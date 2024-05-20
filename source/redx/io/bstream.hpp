@@ -10,7 +10,7 @@
 // stream classes are either for input or output but not both.
 // this makes the expected usage explicit and spares us from virtual inheritance
 // if both accesses are necessary the user could instantiate two different
-// ones with a shared underlying bstreambuf..
+// ones with a shared underlying bstreambuf.
 
 namespace redx {
 

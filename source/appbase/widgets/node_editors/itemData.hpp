@@ -1,10 +1,13 @@
 #pragma once
 #include <inttypes.h>
+
+
+#include <redx/csav/nodes/inventory.h>
+
 #include <appbase/IApp.hpp>
-#include "redx/csav/nodes/CItemData.hpp"
-#include "appbase/widgets/list_widget.hpp"
-#include "appbase/widgets/redx.hpp"
-#include "node_editor.hpp"
+#include <appbase/widgets/list_widget.hpp>
+#include <appbase/widgets/redx.hpp>
+#include <appbase/widgets/node_editors/node_editor.hpp>
 
 struct uk_thing_widget
 {

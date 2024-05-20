@@ -158,7 +158,7 @@ protected:
     const std::streamoff off = parent_gpos() - m_pos;
     if (off < 0 || off >= m_len)
       return 0;
-    return std::min(m_sbuf->in_avail(), m_len - off);
+    return (std::min)(m_sbuf->in_avail(), m_len - off);
   }
 
   int underflow() override

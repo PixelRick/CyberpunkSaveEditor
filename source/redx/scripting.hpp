@@ -1,7 +1,5 @@
 #pragma once
-
-#include "scripting/fwd.hpp"
-#include "scripting/cproperty.hpp"
-#include "scripting/cobject.hpp"
-#include "scripting/csystem.hpp"
-
+#include <redx/scripting/fwd.h>
+#include <redx/scripting/cproperty.h>
+#include <redx/scripting/cobject.h>
+#include <redx/scripting/csystem.h>

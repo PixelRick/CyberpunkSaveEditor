@@ -3,12 +3,12 @@
 #include <appbase/IApp.hpp>
 #include <appbase/extras/imgui_better_combo.hpp>
 
-#include "redx/core.hpp"
-#include "redx/ctypes.hpp"
-#include "redx/csav/node.hpp"
-#include "redx/csav/serializers.hpp"
-#include "redx/scripting/csystem.hpp"
-#include "redx/scripting/cproperty.hpp"
+#include <redx/core.hpp>
+#include <redx/ctypes.hpp>
+#include <redx/csav/node.h>
+#include <redx/csav/serializers.h>
+#include <redx/scripting/csystem.h>
+#include <redx/scripting/cproperty.h>
 
 namespace UI {
 

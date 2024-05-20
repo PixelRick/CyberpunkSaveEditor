@@ -39,7 +39,7 @@ public:
     return this->operator()(); 
   } 
 
-  constexpr T max()
+  constexpr T (max)()
   {
     return static_cast<T>((1ull << Bits) - 1);
   }

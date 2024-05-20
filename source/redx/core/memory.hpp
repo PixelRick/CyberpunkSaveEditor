@@ -11,7 +11,7 @@ struct aligned_storage_allocator
     if (alignment > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
     {
       // microsoft trick to help autovectorization
-      size_t al_alignment = (size > 0x1000) ? std::max(alignment, 32ull): alignment;
+      size_t al_alignment = (size > 0x1000) ? (std::max)(alignment, 32ull): alignment;
       return ::operator new (size, std::align_val_t{al_alignment});
     }
     else
@@ -25,7 +25,7 @@ struct aligned_storage_allocator
     if (alignment > __STDCPP_DEFAULT_NEW_ALIGNMENT__)
     {
       // microsoft trick to help autovectorization
-      size_t al_alignment = (size > 0x1000) ? std::max(alignment, 32ull): alignment;
+      size_t al_alignment = (size > 0x1000) ? (std::max)(alignment, 32ull): alignment;
       ::operator delete (p, size, std::align_val_t{al_alignment});
     }
     else

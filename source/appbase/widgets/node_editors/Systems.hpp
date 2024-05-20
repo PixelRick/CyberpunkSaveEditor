@@ -11,7 +11,7 @@
 #include "node_editor.hpp"
 #include "hexedit.hpp"
 
-#include "redx/csav/nodes.hpp"
+#include <redx/csav/nodes.h>
 
 // to be used with CScriptObjProperty struct
 struct CProperty_widget

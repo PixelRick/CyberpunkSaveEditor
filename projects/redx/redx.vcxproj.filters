@@ -74,6 +74,9 @@
     <Filter Include="source\games\cp77">
       <UniqueIdentifier>{7c8ececb-6376-48bc-afe1-ddc1f7a4cfe9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\csav\nodes\inventory">
+      <UniqueIdentifier>{1b2540f8-d7df-4a44-8abc-537880648356}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\redx\init.cpp">
@@ -165,85 +168,79 @@
     <ClInclude Include="..\..\source\redx\init.hpp">
       <Filter>source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\csav\version.hpp">
+    <ClInclude Include="..\..\source\redx\csav\version.h">
       <Filter>source\csav</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\csav\node.hpp">
+    <ClInclude Include="..\..\source\redx\csav\node.h">
       <Filter>source\csav</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\csav\serial_tree.hpp">
+    <ClInclude Include="..\..\source\redx\csav\serial_tree.h">
       <Filter>source\csav</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\csav\serializers.hpp">
+    <ClInclude Include="..\..\source\redx\csav\serializers.h">
       <Filter>source\csav</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\scripting\cclass.hpp">
+    <ClInclude Include="..\..\source\redx\scripting\cclass.h">
       <Filter>source\scripting</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\scripting\cobject.hpp">
+    <ClInclude Include="..\..\source\redx\scripting\cobject.h">
       <Filter>source\scripting</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\scripting\cproperty.hpp">
+    <ClInclude Include="..\..\source\redx\scripting\cproperty.h">
       <Filter>source\scripting</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\scripting\cproperty_factory.hpp">
+    <ClInclude Include="..\..\source\redx\scripting\cproperty_factory.h">
       <Filter>source\scripting</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\scripting\CStringPool.hpp">
+    <ClInclude Include="..\..\source\redx\scripting\cstringpool.h">
       <Filter>source\scripting</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\scripting\csystem.hpp">
+    <ClInclude Include="..\..\source\redx\scripting\csystem.h">
       <Filter>source\scripting</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\scripting\csystem_serctx.hpp">
+    <ClInclude Include="..\..\source\redx\scripting\csystem_serctx.h">
       <Filter>source\scripting</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\scripting\fwd.hpp">
+    <ClInclude Include="..\..\source\redx\scripting\fwd.h">
       <Filter>source\scripting</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\scripting\iproperty.hpp">
+    <ClInclude Include="..\..\source\redx\scripting\iproperty.h">
       <Filter>source\scripting</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\csav\nodes\CCharacterCustomization.hpp">
+    <ClInclude Include="..\..\source\redx\csav\nodes\CharacetrCustomization_Appearances.h">
       <Filter>source\csav\nodes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\csav\nodes\CGenericSystem.hpp">
+    <ClInclude Include="..\..\source\redx\csav\nodes\generic_system.h">
       <Filter>source\csav\nodes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\csav\nodes\CInventory.hpp">
+    <ClInclude Include="..\..\source\redx\csav\nodes\PersistencySystem2.h">
       <Filter>source\csav\nodes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\csav\nodes\CItemData.hpp">
+    <ClInclude Include="..\..\source\redx\csav\nodes\StatsSystem.h">
       <Filter>source\csav\nodes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\csav\nodes\CPSData.hpp">
+    <ClInclude Include="..\..\source\redx\csav\nodes\StatPoolsSystem.h">
       <Filter>source\csav\nodes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\csav\nodes\CStats.hpp">
-      <Filter>source\csav\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\csav\nodes\CStatsPool.hpp">
-      <Filter>source\csav\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\redx\csav\nodes\questSystem\FactsDB.hpp">
+    <ClInclude Include="..\..\source\redx\csav\nodes\questSystem\FactsDB.h">
       <Filter>source\csav\nodes\questSystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\csav\nodes\questSystem\FactsDB\FactsDB.hpp">
+    <ClInclude Include="..\..\source\redx\csav\nodes\questSystem\FactsDB\FactsDB.h">
       <Filter>source\csav\nodes\questSystem\FactsDB</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\csav\nodes\questSystem\FactsDB\FactsTable.hpp">
+    <ClInclude Include="..\..\source\redx\csav\nodes\questSystem\FactsDB\FactsTable.h">
       <Filter>source\csav\nodes\questSystem\FactsDB</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\ctypes.hpp">
       <Filter>source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\csav\nodes.hpp">
+    <ClInclude Include="..\..\source\redx\csav\nodes.h">
       <Filter>source\csav</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\csav\savegame.hpp">
+    <ClInclude Include="..\..\source\redx\csav\savegame.h">
       <Filter>source\csav</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\redx\csav\node_tree.hpp">
+    <ClInclude Include="..\..\source\redx\csav\node_tree.h">
       <Filter>source\csav</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\redx\csav.hpp">
@@ -413,6 +410,18 @@
     </ClInclude>
     <ClInclude Include="..\..\source\redx\io\oodle\oodle.hpp">
       <Filter>source\io\oodle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\csav\nodes\inventory\inventory.h">
+      <Filter>source\csav\nodes\inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\csav\nodes\inventory\itemData.h">
+      <Filter>source\csav\nodes\inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\csav\nodes\inventory.h">
+      <Filter>source\csav\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\redx\csav\nodes\questSystem.h">
+      <Filter>source\csav\nodes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,11 +1,11 @@
 #pragma once
-#include <redx/csav/node.hpp>
-#include <redx/csav/node_tree.hpp>
-#include <redx/csav/savegame.hpp>
+#include <redx/csav/node.h>
+#include <redx/csav/node_tree.h>
+#include <redx/csav/SaveGame.h>
 
 namespace redx {
 
-using savegame = csav::savegame;
+using SaveGame = csav::SaveGame;
 
 } // namespace redx
 

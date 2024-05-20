@@ -186,7 +186,7 @@ struct stringpool_storage<stringpool_variant::default_u32_indices, BlockSize, Bl
 
   struct index_type
   {
-    static constexpr uint16_t null_block_idx = std::numeric_limits<uint16_t>::max();
+    static constexpr uint16_t null_block_idx = (std::numeric_limits<uint16_t>::max)();
 
     index_type() noexcept = default;
 

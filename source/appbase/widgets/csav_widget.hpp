@@ -15,6 +15,7 @@
 #include <redx/utils.hpp>
 #include <appbase/ps_json_storage.hpp>
 
+#include "redx/scripting.hpp"
 #include "redx/csav.hpp"
 #include "redx/ctypes.hpp"
 #include "hexeditor_windows_mgr.hpp"
@@ -83,7 +84,7 @@ protected:
   ImGui::FileBrowser save_dialog;
   static inline loading_bar_job_widget save_job; // only one save job
 
-  std::shared_ptr<redx::savegame> m_csav;
+  std::shared_ptr<redx::SaveGame> m_csav;
   std::shared_ptr<AppImage> m_img;
   std::string m_pretty_name;
 
@@ -100,7 +101,7 @@ protected:
   std::array<char, 24     + 1> search_mask = {};
 
 public:
-  csav_collapsable_header(const std::shared_ptr<redx::savegame>& csav, const std::shared_ptr<AppImage>& img, std::string_view name = "")
+  csav_collapsable_header(const std::shared_ptr<redx::SaveGame>& csav, const std::shared_ptr<AppImage>& img, std::string_view name = "")
     : save_dialog(ImGuiFileBrowserFlags_EnterNewFilename | ImGuiFileBrowserFlags_CreateNewDir)
     , m_csav(csav), m_img(img)
   {
@@ -153,7 +154,7 @@ public:
 protected:
   void do_save()
   {
-    std::weak_ptr<redx::savegame> weak_csav = m_csav;
+    std::weak_ptr<redx::SaveGame> weak_csav = m_csav;
     save_job.start([weak_csav](progress_t& progress) -> bool {
       auto csav = weak_csav.lock();
       return !!csav->save_with_progress(csav->filepath, progress, s_dump_decompressed_data);
@@ -182,7 +183,7 @@ public:
     return m_pretty_name;
   }
 
-  static inline std::shared_ptr<const redx::savegame::node_type> appearance_src;
+  static inline std::shared_ptr<const redx::SaveGame::node_type> appearance_src;
   static inline redx::csav::version appearance_version {};
 
   void draw()
@@ -793,7 +794,7 @@ public:
 
 
 protected:
-  void draw_tree_node(const std::shared_ptr<const redx::savegame::node_type>& node)
+  void draw_tree_node(const std::shared_ptr<const redx::SaveGame::node_type>& node)
   {
     if (!node)
     {
@@ -849,7 +850,7 @@ protected:
   // hex search.. 
 
   struct search_match {
-    std::shared_ptr<const redx::savegame::node_type> n;
+    std::shared_ptr<const redx::SaveGame::node_type> n;
     size_t offset;
     size_t size;
   };
@@ -876,7 +877,7 @@ protected:
     return search_result;
   }
 
-  void search_pattern_in_nodes_rec(std::vector<search_match>& matches, const std::shared_ptr<const redx::savegame::node_type> node, const std::string& needle, const std::string& mask)
+  void search_pattern_in_nodes_rec(std::vector<search_match>& matches, const std::shared_ptr<const redx::SaveGame::node_type> node, const std::string& needle, const std::string& mask)
   {
     auto& haystack = node->data();
     std::vector<uintptr_t> match_offsets;
@@ -897,7 +898,7 @@ protected:
   ImGui::FileBrowser open_dialog;
   loading_bar_job_widget open_job;
   std::filesystem::path open_filepath;
-  std::shared_ptr<redx::savegame> opened_save;
+  std::shared_ptr<redx::SaveGame> opened_save;
   std::shared_ptr<AppImage> opened_save_img;
 
   std::list<csav_collapsable_header> m_list;
@@ -996,7 +997,7 @@ public:
       opened_save_img = owning_app->load_texture_from_file(screenshot_path.string());
 
     open_job.start([this](progress_t& progress) -> bool {
-      auto cs = std::make_shared<redx::savegame>();
+      auto cs = std::make_shared<redx::SaveGame>();
       if (!cs->open_with_progress(open_filepath, progress, s_dump_decompressed_data))
         return false;
       opened_save = cs;

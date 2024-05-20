@@ -601,7 +601,7 @@ struct sha1_builder
 
     while (1)
     {
-      const uint32_t n = (uint32_t)std::min(len, sizeof(m_buf) - m_len);
+      const uint32_t n = (uint32_t)(std::min)(len, sizeof(m_buf) - m_len);
       memcpy(m_buf + m_len, data, n);
       m_len += n;
       if (m_len != 64)

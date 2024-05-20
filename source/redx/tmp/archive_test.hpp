@@ -5,7 +5,7 @@
 #include <numeric>
 #include <list>
 #include <appbase/widgets/redx.hpp>
-#include "redx/scripting/csystem.hpp"
+#include <redx/scripting/csystem.h>
 #include <redx/core.hpp>
 #include <redx/io/bstream.hpp>
 #include <redx/serialization/cnames_blob.hpp>

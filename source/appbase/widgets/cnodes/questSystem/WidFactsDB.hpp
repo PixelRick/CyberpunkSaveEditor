@@ -2,7 +2,7 @@
 #include <inttypes.h>
 #include <appbase/IApp.hpp>
 #include <appbase/extras/imgui_better_combo.hpp>
-#include "redx/csav/nodes/questSystem/FactsDB.hpp"
+#include <redx/csav/nodes/questSystem.h>
 #include <appbase/widgets/redx.hpp>
 
 namespace UI {

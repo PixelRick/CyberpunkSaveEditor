@@ -1,11 +1,11 @@
 #pragma once
 #include "node_editor.hpp"
 
-#include "redx/core.hpp"
-#include "redx/ctypes.hpp"
-#include "redx/csav/nodes/CInventory.hpp"
-#include "itemData.hpp"
+#include <redx/core.hpp>
+#include <redx/ctypes.hpp>
+#include <redx/csav/nodes/inventory.h>
 
+#include <appbase/widgets/node_editors/itemData.hpp>
 
 // to be used with CInventory struct
 struct CInventory_widget
