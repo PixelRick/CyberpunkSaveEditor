@@ -438,7 +438,7 @@ public:
       //if (ImGui::TabItemButton("  +  ", ImGuiTabItemFlags_Leading | ImGuiTabItemFlags_NoTooltip) && !open_job.is_running())
       //  open_dialog.Open();
 
-      if (ImGui::BeginTabItem("Fun Stuff", 0, ImGuiTabItemFlags_None))
+      if (0 && ImGui::BeginTabItem("Fun Stuff", 0, ImGuiTabItemFlags_None))
       {
         ImGui::BeginChild("current editor", ImVec2(0, 0), false, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse);
         
