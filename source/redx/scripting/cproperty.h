@@ -848,11 +848,14 @@ public:
     };
 
     bool serialize_in_impl(std::istream& is, CSystemSerCtx& serctx) override {
+        // Read value (pooled string)
         uint16_t strpool_idx = 0;
         is >> cbytes_ref(strpool_idx);
-        if (strpool_idx >= serctx.strpool.size())
+        if (strpool_idx >= serctx.strpool.size()) {
             return false;
+        }
         m_val_name         = serctx.strpool.at(strpool_idx).gstr();
+        // Find index in blueprint
         auto& enum_members = m_enum_desc->members();
         m_bp_index         = (uint32_t)enum_members.size();
         for (size_t i = 0; i < enum_members.size(); ++i) {
@@ -862,10 +865,10 @@ public:
             }
         }
         if (m_bp_index == enum_members.size()) {
-            // TODO: Ensure the db is correct to avoid this. The value is unknown..
-            enum_members.emplace_back(m_val_name, 0);
+            // The value is unknown
+            enum_members.emplace_back(m_val_name, (uint32_t)(-1));
         }
-
+        // Return stream status
         return is.good();
     }
 
