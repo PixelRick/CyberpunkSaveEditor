@@ -81,6 +81,16 @@ struct TweakDBID_widget
     // tricky ;)
     int item_current = 0;
 
+    bool namehash_opened = false;
+    if (advanced_edit)
+    {
+        //ImGuiStyle& style = ImGui::GetStyle();
+        //ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(style.FramePadding.x, style.));
+        namehash_opened = ImGui::TreeNodeEx("##namehash", ImGuiTreeNodeFlags_FramePadding);
+        //ImGui::PopStyleVar();
+        ImGui::SameLine();
+    }
+
     ItemGetterData data {x.name(), namelist};
     ImGui::BetterCombo(label, &item_current, &ItemGetter, (void*)&data, (int)namelist.size()+1);
 
@@ -90,24 +100,13 @@ struct TweakDBID_widget
       modified = true;
     }
 
-    if (advanced_edit)
+    if (namehash_opened)
     {
-      bool namehash_opened = ImGui::TreeNode("> edit tdbid by value");
-
-      {
-        scoped_imgui_style_color _stc(ImGuiCol_Text, ImColor::HSV(0.f, 1.f, 0.7f, 1.f).Value);
-        ImGui::SameLine();
-        ImGui::Text("(TweakDBID's DB is not complete yet !)"); // you can enter its hash manually too meanwhile
-      }
-
-      if (namehash_opened)
-      {
-        modified |= ImGui::InputScalar("crc32(name) hex",  ImGuiDataType_U32, &x.crc, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
-        modified |= ImGui::InputScalar("length(name) hex", ImGuiDataType_U8,  &x.slen,  NULL, NULL, "%02X");
-        modified |= ImGui::InputScalar("raw u64 hex",  ImGuiDataType_U64, &x.as_u64,  NULL, NULL, "%016llX", ImGuiInputTextFlags_CharsHexadecimal);
-        //ImGui::Text("resolved name: %s", x.name().c_str());
-        ImGui::TreePop();
-      }
+      modified |= ImGui::InputScalar("crc32(name) hex",  ImGuiDataType_U32, &x.crc, NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
+      modified |= ImGui::InputScalar("length(name) hex", ImGuiDataType_U8,  &x.slen,  NULL, NULL, "%02X");
+      modified |= ImGui::InputScalar("raw u64 hex",  ImGuiDataType_U64, &x.as_u64,  NULL, NULL, "%016llX", ImGuiInputTextFlags_CharsHexadecimal);
+      //ImGui::Text("resolved name: %s", x.name().c_str());
+      ImGui::TreePop();
     }
 
     return modified;
