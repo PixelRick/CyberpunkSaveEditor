@@ -29,7 +29,7 @@ enum class ObjectEventType {
 };
 
 struct ObjectListener {
-    virtual ~ObjectListener()                                          = default;
+    virtual ~ObjectListener()                                              = default;
     virtual void on_cobject_event(const CObject& obj, ObjectEventType evt) = 0;
 };
 
@@ -208,7 +208,7 @@ public:
 
         struct data_desc_t {
             uint32_t data_offset = 0;
-            uint32_t data_size = 0;
+            uint32_t data_size   = 0;
         };
 
         std::vector<CFieldDesc>  field_descs(serial_descs.size());
@@ -243,8 +243,8 @@ public:
         //if (!m_blueprint->register_partial_field_descs(field_descs))
         //  return false;
 
-        const bool use_blueprints = serctx.is_blueprint_compatible();
-        bool is_dumped_class = false;
+        const bool use_blueprints  = serctx.is_blueprint_compatible();
+        bool       is_dumped_class = false;
         if (use_blueprints) {
             reset_fields_from_bp();
             is_dumped_class = m_blueprint->is_from_dump();
@@ -281,17 +281,16 @@ public:
 
             if (field_it == m_fields.end()) {
                 if (use_blueprints && is_dumped_class) {
-                    throw std::runtime_error(fmt::format(
-                        "CObject::serialize_in: serial field {}::{} is missing from bp fields",
+                    // TODO: flag field as modded ?
+                    serctx.log(fmt::format(
+                        "CObject::serialize_in: serial field {}::{} is missing from bp fields.",
                         this->ctypename().c_str(),
                         fdesc.name.c_str()));
-                    return false;
                 }
-                else {
-                    CFieldBP field_bp{fdesc};
-                    field_it = m_fields.emplace(
-                        next_field_it, field_bp.name(), std::move(field_bp.create_prop(this)));
-                }
+                // Add it right after last initialized field.
+                CFieldBP field_bp{fdesc};
+                field_it = m_fields.emplace(
+                    next_field_it, field_bp.name(), std::move(field_bp.create_prop(this)));
             }
 
             if (field_it->prop->ctypename() != fdesc.ctypename) {
