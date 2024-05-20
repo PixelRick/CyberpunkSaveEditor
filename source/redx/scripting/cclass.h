@@ -63,11 +63,6 @@ public:
 };
 
 class CObjectBP {
-    gname                                 m_ctypename;
-    std::vector<CFieldBP>                 m_field_bps;
-    CObjectBPSPtr                         m_parent;
-    std::vector<std::weak_ptr<CObjectBP>> m_children;
-
 public:
     explicit CObjectBP(gname ctypename)
         : m_ctypename(ctypename) {
@@ -75,18 +70,22 @@ public:
 
     CObjectBP(gname ctypename, CObjectBPSPtr parent, const std::vector<CFieldDesc>& fdescs)
         : m_ctypename(ctypename)
-        , m_parent(parent) {
+        , m_parent(parent)
+        , m_is_from_dump(true) {
+
         if (m_parent) {
             const auto& parent_fields_bps = m_parent->m_field_bps;
             m_field_bps.assign(parent_fields_bps.begin(), parent_fields_bps.end());
         }
-        for (const auto& fdesc : fdescs)
+        for (const auto& fdesc : fdescs) {
             m_field_bps.emplace_back(fdesc);
+        }
     }
 
     gname ctypename() const {
         return m_ctypename;
     }
+
     CObjectBPSPtr parent() const {
         return m_parent;
     }
@@ -102,6 +101,19 @@ public:
     void add_child(const CObjectBPSPtr& child) {
         m_children.emplace_back(child);
     }
+
+    bool is_from_dump() const {
+        return m_is_from_dump;
+    }
+
+private:
+    friend class CObjectBPList;
+
+    gname                                 m_ctypename;
+    std::vector<CFieldBP>                 m_field_bps;
+    CObjectBPSPtr                         m_parent;
+    std::vector<std::weak_ptr<CObjectBP>> m_children;
+    bool                                  m_is_from_dump = false;
 };
 
 class CObjectBPList {

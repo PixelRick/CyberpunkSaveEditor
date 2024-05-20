@@ -52,10 +52,6 @@ private:
         }
     };
 
-protected:
-    std::vector<Field> m_fields;
-    CObjectBPSPtr      m_blueprint;
-
 public:
     CObject(gname ctypename, bool setup_fields_from_bp = false) {
         m_blueprint = CObjectBPList::get().get_or_make_bp(ctypename);
@@ -94,6 +90,9 @@ public:
     }
 
 protected:
+    std::vector<Field> m_fields;
+    CObjectBPSPtr      m_blueprint;
+
     void clear_fields() {
         m_fields.clear();
     }
@@ -208,7 +207,7 @@ public:
         auto& bpdescs = m_blueprint->field_bps();
 
         struct data_desc_t {
-            uint32_t data_offset;
+            uint32_t data_offset = 0;
             uint32_t data_size = 0;
         };
 
@@ -245,8 +244,10 @@ public:
         //  return false;
 
         const bool use_blueprints = serctx.is_blueprint_compatible();
+        bool is_dumped_class = false;
         if (use_blueprints) {
             reset_fields_from_bp();
+            is_dumped_class = m_blueprint->is_from_dump();
         }
 
         // ideally doing it in reverse order would catch failures earlier (unknown prop with unknown end)
@@ -279,7 +280,7 @@ public:
             }
 
             if (field_it == m_fields.end()) {
-                if (use_blueprints) {
+                if (use_blueprints && is_dumped_class) {
                     throw std::runtime_error(fmt::format(
                         "CObject::serialize_in: serial field {}::{} is missing from bp fields",
                         this->ctypename().c_str(),
