@@ -1,0 +1,62 @@
+---
+BasedOnStyle: LLVM
+AccessModifierOffset: -4
+AlignAfterOpenBracket: AlwaysBreak
+AlignArrayOfStructures: Right
+AlignConsecutiveAssignments: AcrossComments
+AlignConsecutiveBitFields: AcrossComments
+AlignConsecutiveDeclarations: AcrossComments
+AlignConsecutiveShortCaseStatements:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: true
+  AlignCaseColons: false
+AlignOperands: AlignAfterOperator
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: All
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: false
+BinPackParameters: false
+BraceWrapping:
+  AfterCaseLabel:           false
+  AfterClass:               false
+  AfterControlStatement:    Never
+  AfterEnum:                false
+  AfterFunction:            false
+  AfterNamespace:           false
+  AfterObjCDeclaration:     false
+  AfterStruct:              false
+  AfterUnion:               false
+  AfterExternBlock:         false
+  BeforeCatch:              true
+  BeforeElse:               true
+  BeforeLambdaBody:         false
+  BeforeWhile:              false
+  IndentBraces:             false
+  SplitEmptyFunction:       true
+  SplitEmptyRecord:         true
+  SplitEmptyNamespace:      true
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBraces: Custom
+BreakConstructorInitializers: BeforeComma
+ColumnLimit: 100
+ConstructorInitializerIndentWidth: 4
+ContinuationIndentWidth: 4
+Cpp11BracedListStyle: true
+DerivePointerAlignment: false
+IndentPPDirectives: AfterHash
+IndentWidth: 4
+InsertNewlineAtEOF: true
+PointerAlignment: Left
+QualifierAlignment: Custom
+QualifierOrder: ['static', 'inline', 'constexpr', 'const', 'volatile', 'type', 'restrict']
+ReflowComments:  false
+SpaceAfterTemplateKeyword: false
+UseTab: Never
+...
